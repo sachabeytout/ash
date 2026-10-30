@@ -10,6 +10,9 @@ import { GAME_HEIGHT } from './theme';
  */
 function computeRenderScale(): number {
   if (typeof window === 'undefined') return 1;
+  // `?res=1` force la résolution (tests automatiques : sans carte graphique, la haute résolution est lente).
+  const forced = Number(new URLSearchParams(window.location.search).get('res'));
+  if (forced >= 1) return Math.min(3, forced);
   const physical = Math.min(window.innerWidth, window.innerHeight) * (window.devicePixelRatio || 1);
   // Plafond selon la qualité : moins de pixels à dessiner sur les téléphones modestes.
   const cap = settings.quality === 'low' ? 1.5 : settings.quality === 'medium' ? 2 : 3;

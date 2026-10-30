@@ -7,7 +7,8 @@ test('écran titre → cage → don → combat → reprise après fermeture', as
     page.screenshot({ path: `tests/e2e/screenshots/${testInfo.project.name}-${name}.png` });
 
   // Chemins relatifs : le jeu peut être servi sous un sous-chemin (GitHub Pages).
-  await page.goto('./');
+  // `res=1` : résolution d'origine, sinon le rendu sans carte graphique est trop lent pour le test.
+  await page.goto('./?res=1');
   await expect(page.locator('body')).toHaveAttribute('data-scene', 'title');
   await expect(page.locator('#game canvas')).toBeVisible();
   await page.waitForTimeout(800); // fin du fondu d'entrée
