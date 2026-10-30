@@ -68,4 +68,5 @@ Retour sur le lore v0.2 toujours attendu (« quand le fond aura avancé »).
 - [x] **M2.7 (0.11.0)** : histoire (dialogues dans la Cage, arc des 10 victoires, Lame de l'Aube, vraie fin)
 - [x] **M2.8 (0.12.0)** : Mesures d'urgence (6 réglages, récompense +10 %/point), fontaines, télémétrie locale + menu de debug caché
 - [x] **M3.1 (0.13.0)** : Épreuves de Vesper (salle chronométrée, coffre ; échec sans pénalité)
+- [x] **M3.2 (0.14.0)** : obstacles dans les arènes (6 dispositions, couvert contre les tirs, contournement par les ennemis)
 - [ ] **M3** : finitions — coffres et évènements, préréglages de qualité, équilibrage avec la télémétrie, accessibilité

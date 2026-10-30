@@ -27,6 +27,7 @@ import {
 import type { AttackStep } from '../../core/combat/attack';
 import { edgeIndicator, hitsArc, type Vec2 } from '../../core/geometry';
 import { createRng, type Rng } from '../../core/rng';
+import { insideAny, planObstacles, type KeepOut, type Rect } from '../../core/arena/obstacles';
 import { rollDoors, type DoorReward, type RewardKind } from '../../core/run/rewards';
 import {
   afterBoss,
@@ -82,6 +83,14 @@ import { markScene } from './markScene';
 
 /** Arène de combat (coordonnées du monde). La caméra la centre, la largeur d'écran varie selon le téléphone. */
 const ARENA = new Phaser.Geom.Rectangle(40, 34, 560, 300);
+/** Zones sans obstacle : apparition d'Ash, les trois portes, le centre (fontaine, coffre). */
+const KEEP_OUT: readonly KeepOut[] = [
+  { x: ARENA.centerX, y: ARENA.bottom - 30, r: 48 },
+  { x: ARENA.centerX - 120, y: ARENA.top + 16, r: 44 },
+  { x: ARENA.centerX, y: ARENA.top + 16, r: 44 },
+  { x: ARENA.centerX + 120, y: ARENA.top + 16, r: 44 },
+  { x: ARENA.centerX, y: ARENA.centerY + 10, r: 44 },
+];
 /** Zoom de la caméra : Ash fait ~1/13 de la hauteur d'écran, lisible au pouce. */
 const CAMERA_ZOOM = 2;
 const POOL_SIZE = 16;
@@ -206,6 +215,8 @@ export class RunScene extends Phaser.Scene {
     g: Phaser.GameObjects.Graphics;
     glow: Phaser.GameObjects.Image;
   } | null = null;
+  /** Piliers et murets de la salle (bloquent les déplacements et les tirs). */
+  private obstacles: Rect[] = [];
   private shopOpen = false;
   private shopSold = new Set<ShopItemId>();
   private shots: Shot[] = [];
@@ -261,6 +272,7 @@ export class RunScene extends Phaser.Scene {
     this.chest = null;
     this.roomStart = { elapsed: this.run.elapsedMs, hp: this.run.hp };
     this.drawArena();
+    this.placeObstacles();
     this.physics.world.setBounds(ARENA.x, ARENA.y, ARENA.width, ARENA.height);
 
     this.juice = new Juice(this);
@@ -332,6 +344,7 @@ export class RunScene extends Phaser.Scene {
       this.enemies.map((e) => e.sprite),
     );
 
+    this.addObstacleColliders();
     this.setupCamera();
     this.waves =
       this.kind === 'combat'
@@ -921,6 +934,46 @@ export class RunScene extends Phaser.Scene {
 
   // ---------- Arène ----------
 
+  /** Obstacles : seulement en combat, jamais dans la 1re salle d'un biome. */
+  private placeObstacles(): void {
+    this.obstacles =
+      this.kind === 'combat' && this.run.room > 1
+        ? planObstacles(
+            createRng(
+              (this.run.seed ^ Math.imul(this.run.biome * 64 + this.run.room + 1, 0x85ebca6b)) >>>
+                0,
+            ),
+            { x: ARENA.x, y: ARENA.y, w: ARENA.width, h: ARENA.height },
+            KEEP_OUT,
+          )
+        : [];
+    const theme = getBiome(this.run.biome).theme;
+    const g = this.add.graphics().setDepth(2);
+    for (const r of this.obstacles) {
+      // Bloc sombre au liseré du mur : même langage visuel que les bords de l'arène.
+      g.fillStyle(0x07060d, 0.35).fillRect(r.x + 3, r.y + 4, r.w, r.h);
+      g.fillStyle(theme.wall, 1).fillRect(r.x, r.y, r.w, r.h);
+      g.fillStyle(0x07060d, 0.35).fillRect(r.x + 3, r.y + 3, r.w - 6, r.h - 6);
+      g.lineStyle(1.5, theme.wallGlow, 0.9).strokeRect(r.x, r.y, r.w, r.h);
+    }
+  }
+
+  private addObstacleColliders(): void {
+    if (this.obstacles.length === 0) return;
+    const blocks = this.obstacles.map((r) => {
+      const zone = this.add.zone(r.x + r.w / 2, r.y + r.h / 2, r.w, r.h);
+      this.physics.add.existing(zone, true);
+      return zone;
+    });
+    this.physics.add.collider(this.player.sprite, blocks);
+    this.physics.add.collider(
+      this.enemies.map((e) => e.sprite),
+      blocks,
+    );
+    for (const e of this.enemies) e.obstacles = this.obstacles;
+    this.shotsP.obstacles = this.obstacles;
+  }
+
   private drawArena(): void {
     const pad = 400;
     this.add.rectangle(
@@ -1081,6 +1134,7 @@ export class RunScene extends Phaser.Scene {
         x: ARENA.left + margin + this.rng.next() * (ARENA.width - margin * 2),
         y: ARENA.top + margin + this.rng.next() * (ARENA.height - margin * 2),
       };
+      if (insideAny(p, this.obstacles, 16)) continue;
       const d = Math.hypot(p.x - this.player.x, p.y - this.player.y);
       if (d >= MIN_SPAWN_DISTANCE) return p;
       if (d > bestDist) {
@@ -1355,7 +1409,7 @@ export class RunScene extends Phaser.Scene {
     for (const s of this.shots) {
       const sp = s.sprite;
       if (!sp.active) continue;
-      if (!ARENA.contains(sp.x, sp.y)) {
+      if (!ARENA.contains(sp.x, sp.y) || insideAny(sp, this.obstacles)) {
         this.removeShot(s);
         continue;
       }

@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { insideAny, type Rect } from '../../core/arena/obstacles';
 import type { AttackStep, ProjectileSpec, ZoneSpec } from '../../core/combat/attack';
 import type { Vec2 } from '../../core/geometry';
 import type { Hittable } from './Hittable';
@@ -70,6 +71,8 @@ export class PlayerShots {
   /** Le disque est rattrapé au retour. */
   onCatch: () => void = () => undefined;
   onZone: (at: Vec2, radius: number) => void = () => undefined;
+  /** Obstacles de la salle : ils arrêtent les projectiles. */
+  obstacles: readonly Rect[] = [];
 
   constructor(
     private readonly scene: Phaser.Scene,
@@ -231,7 +234,7 @@ export class PlayerShots {
       this.chainLine.lineStyle(2, 0xffb86a, 0.9).lineBetween(player.x, player.y, s.x, s.y);
     }
 
-    const out = !this.bounds.contains(s.x, s.y);
+    const out = !this.bounds.contains(s.x, s.y) || insideAny(s, this.obstacles);
     if (!s.returning && (s.travelled >= spec.range || out)) {
       if (spec.returns) {
         s.returning = true;

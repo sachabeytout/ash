@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { steerAround, type Rect } from '../../core/arena/obstacles';
 import type { Health } from '../../core/combat/health';
 import {
   isBurning,
@@ -39,6 +40,8 @@ export class Enemy {
   status: StatusState = newStatus();
   /** Mesure « Surcadençage » : ennemis plus rapides. */
   private speedMul = 1;
+  /** Obstacles de la salle : en poursuite, l'ennemi les contourne. */
+  obstacles: readonly Rect[] = [];
   uid = 0;
   health: Health = { hp: 1, maxHp: 1 };
   state: EnemyState = 'dead';
@@ -262,6 +265,11 @@ export class Enemy {
           break;
       }
 
+    if (this.state === 'chase' && this.obstacles.length > 0) {
+      const steered = steerAround(this, def.radius, vx, vy, this.obstacles);
+      vx = steered.x;
+      vy = steered.y;
+    }
     // Le recul s'ajoute au mouvement et s'amortit vite.
     const decay = Math.exp(-dt / 90);
     this.knock.x *= decay;

@@ -2,6 +2,16 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.14.0 — Des salles qui ne se ressemblent plus
+
+- **Obstacles dans les salles de combat** : piliers, murets, blocs… Six dispositions différentes (dont la salle vide), parfois en miroir. La disposition change d'une salle à l'autre et d'une run à l'autre.
+  - Ils **bloquent les tirs ennemis** : cache-toi derrière pour souffler. Ils arrêtent aussi la plupart de tes projectiles (les zones du bâton passent par-dessus).
+  - Les ennemis les **contournent** au lieu de rester bloqués.
+  - Jamais d'obstacle là où tu apparais, devant les portes ou au centre (fontaine, coffre), et il y a toujours de larges passages.
+  - La 1re salle de chaque biome, les fontaines, le marchand et les boss restent dégagés.
+
+**Quoi tester** : utilises-tu les obstacles pour te protéger des tireurs ? Te gênent-ils parfois (dash bloqué, ennemi coincé) ?
+
 ## 0.13.1 — Correctif musique (iPhone)
 
 - **La musique revient** après être passé du mode silencieux au mode sonnerie (ou après un appel, ou en revenant dans l'app). Si le son ne revient pas tout seul, il revient au **premier toucher** sur l'écran.
