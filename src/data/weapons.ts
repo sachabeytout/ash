@@ -1,6 +1,16 @@
 import type { AttackStep } from '../core/combat/attack';
 
-export type WeaponId = 'katana' | 'twinBlades';
+export type WeaponId = 'katana' | 'twinBlades' | 'staff' | 'crossbow' | 'disc' | 'chain';
+
+/** Ordre d'affichage dans la Cage (touches 1 à 6). */
+export const WEAPON_ORDER: readonly WeaponId[] = [
+  'katana',
+  'twinBlades',
+  'staff',
+  'crossbow',
+  'disc',
+  'chain',
+];
 
 export interface WeaponDef {
   id: WeaponId;
@@ -27,6 +37,82 @@ const STORM_SPIN: AttackStep = {
   lunge: 0,
   knockback: 50,
   hitstopMs: 18,
+  shake: 0,
+};
+
+/** Coup « à distance » : pas de zone de frappe, le projectile ou la zone fait les dégâts. */
+function ranged(
+  timing: { windupMs: number; activeMs: number; recoveryMs: number },
+  extra: Pick<AttackStep, 'projectile' | 'zone'> & {
+    lunge?: number;
+    hitstopMs?: number;
+    shake?: number;
+  },
+): AttackStep {
+  return {
+    damage: 0,
+    range: 0,
+    arcDeg: 0,
+    knockback: 0,
+    lunge: extra.lunge ?? 0,
+    hitstopMs: extra.hitstopMs ?? 30,
+    shake: extra.shake ?? 0,
+    ...timing,
+    ...(extra.projectile ? { projectile: extra.projectile } : {}),
+    ...(extra.zone ? { zone: extra.zone } : {}),
+  };
+}
+
+const ORB = {
+  damage: 9,
+  speed: 260,
+  radius: 4,
+  range: 220,
+  pierce: 0,
+  knockback: 40,
+  look: 'orb',
+} as const;
+const BOLT = {
+  damage: 8,
+  speed: 430,
+  radius: 3,
+  range: 300,
+  pierce: 0,
+  knockback: 30,
+  look: 'bolt',
+} as const;
+const DISC = {
+  damage: 14,
+  speed: 300,
+  radius: 6,
+  range: 150,
+  pierce: 99,
+  knockback: 60,
+  look: 'disc',
+  returns: true,
+} as const;
+const LASH: AttackStep = {
+  damage: 12,
+  windupMs: 80,
+  activeMs: 70,
+  recoveryMs: 190,
+  range: 58,
+  arcDeg: 40,
+  lunge: 4,
+  knockback: 60,
+  hitstopMs: 40,
+  shake: 0,
+};
+const WHIRL: AttackStep = {
+  damage: 14,
+  windupMs: 0,
+  activeMs: 90,
+  recoveryMs: 50,
+  range: 70,
+  arcDeg: 360,
+  lunge: 0,
+  knockback: 60,
+  hitstopMs: 20,
   shake: 0,
 };
 
@@ -188,6 +274,125 @@ export const WEAPONS: Record<WeaponId, WeaponDef> = {
         recoveryMs: 220,
         shake: 0.006,
       },
+    ],
+  },
+  // Bâton à pierre : orbes à distance ; la puissante fait exploser une zone au sol devant Ash.
+  staff: {
+    id: 'staff',
+    nameKey: 'weapon.staff',
+    color: 0xffd27a,
+    comboWindowMs: 260,
+    combo: [
+      ranged({ windupMs: 90, activeMs: 40, recoveryMs: 200 }, { projectile: ORB }),
+      ranged({ windupMs: 90, activeMs: 40, recoveryMs: 200 }, { projectile: ORB }),
+      ranged(
+        { windupMs: 140, activeMs: 50, recoveryMs: 300 },
+        { projectile: { ...ORB, damage: 12, count: 3, spreadDeg: 24 } },
+      ),
+    ],
+    power: ranged(
+      { windupMs: 280, activeMs: 60, recoveryMs: 300 },
+      {
+        zone: { damage: 30, radius: 34, delayMs: 450, distance: 70, knockback: 160 },
+        shake: 0.004,
+      },
+    ),
+    superNameKey: 'super.staff',
+    super: [
+      ranged(
+        { windupMs: 150, activeMs: 60, recoveryMs: 500 },
+        {
+          zone: {
+            damage: 36,
+            radius: 30,
+            delayMs: 350,
+            distance: 0,
+            knockback: 180,
+            count: 6,
+            spread: 62,
+          },
+          shake: 0.006,
+        },
+      ),
+    ],
+  },
+  // Arbalète : carreaux rapides ; la puissante, chargée, traverse les ennemis.
+  crossbow: {
+    id: 'crossbow',
+    nameKey: 'weapon.crossbow',
+    color: 0xff9f6a,
+    comboWindowMs: 220,
+    combo: [
+      ranged({ windupMs: 50, activeMs: 30, recoveryMs: 150 }, { projectile: BOLT }),
+      ranged({ windupMs: 50, activeMs: 30, recoveryMs: 150 }, { projectile: BOLT }),
+    ],
+    power: ranged(
+      { windupMs: 380, activeMs: 40, recoveryMs: 260 },
+      {
+        projectile: { ...BOLT, damage: 36, speed: 540, pierce: 5, range: 360, knockback: 120 },
+        shake: 0.003,
+      },
+    ),
+    superNameKey: 'super.crossbow',
+    super: [
+      ranged(
+        { windupMs: 160, activeMs: 40, recoveryMs: 450 },
+        { projectile: { ...BOLT, damage: 16, pierce: 2, count: 9, spreadDeg: 90 }, shake: 0.005 },
+      ),
+    ],
+  },
+  // Disque d'Hélios : il part et revient ; le rattraper renforce le lancer suivant.
+  disc: {
+    id: 'disc',
+    nameKey: 'weapon.disc',
+    color: 0xffe08a,
+    comboWindowMs: 260,
+    combo: [ranged({ windupMs: 80, activeMs: 40, recoveryMs: 260 }, { projectile: DISC })],
+    power: ranged(
+      { windupMs: 260, activeMs: 50, recoveryMs: 320 },
+      { projectile: { ...DISC, damage: 26, radius: 9, range: 200, knockback: 140 } },
+    ),
+    superNameKey: 'super.disc',
+    super: [
+      ranged(
+        { windupMs: 150, activeMs: 50, recoveryMs: 600 },
+        { projectile: { ...DISC, damage: 20, count: 8, spreadDeg: 360 }, shake: 0.005 },
+      ),
+    ],
+  },
+  // Gleipnir : chaîne de plasma ; fouet long, et grappin en attaque puissante.
+  chain: {
+    id: 'chain',
+    nameKey: 'weapon.chain',
+    color: 0xffb86a,
+    comboWindowMs: 240,
+    combo: [
+      LASH,
+      LASH,
+      { ...LASH, damage: 18, range: 66, arcDeg: 60, recoveryMs: 280, knockback: 150, shake: 0.003 },
+    ],
+    power: ranged(
+      { windupMs: 150, activeMs: 40, recoveryMs: 280 },
+      {
+        projectile: {
+          damage: 14,
+          speed: 480,
+          radius: 5,
+          range: 200,
+          pierce: 0,
+          knockback: 0,
+          look: 'chain',
+          grapple: true,
+        },
+      },
+    ),
+    superNameKey: 'super.chain',
+    super: [
+      { ...WHIRL, windupMs: 120 },
+      WHIRL,
+      WHIRL,
+      WHIRL,
+      { ...WHIRL, damage: 28, range: 76, knockback: 220, recoveryMs: 260, shake: 0.006 },
     ],
   },
 };

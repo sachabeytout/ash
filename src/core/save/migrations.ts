@@ -1,5 +1,5 @@
 import { BIOMES } from '../../data/biomes';
-import { WEAPONS } from '../../data/weapons';
+import { WEAPONS, type WeaponId } from '../../data/weapons';
 import { GOD_IDS } from '../../data/gods';
 import { getBoon } from '../../data/boons';
 import { DEFAULT_SETTINGS, type Settings } from '../settings';
@@ -32,6 +32,11 @@ const MIGRATIONS: Record<number, (save: Raw) => Raw> = {
   1: (old) => {
     const meta = isObject(old.meta) ? old.meta : {};
     return { ...old, version: 2, meta: { ...meta, forge: {}, assistDeaths: 0 } };
+  },
+  // v2 → v3 : armes à débloquer chez Brokk (aucune au départ, les armes de départ restent).
+  2: (old) => {
+    const meta = isObject(old.meta) ? old.meta : {};
+    return { ...old, version: 3, meta: { ...meta, unlocked: [] } };
   },
 };
 
@@ -86,6 +91,13 @@ function sanitizeMeta(raw: unknown): MetaState {
     skills,
     forge: sanitizeForge(m.forge),
     assistDeaths: num(m.assistDeaths, 0, 0),
+    unlocked: Array.isArray(m.unlocked)
+      ? [
+          ...new Set(
+            m.unlocked.filter((id): id is WeaponId => typeof id === 'string' && id in WEAPONS),
+          ),
+        ]
+      : [],
   };
 }
 

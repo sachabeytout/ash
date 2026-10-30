@@ -2,6 +2,18 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.9.0 — Quatre nouvelles armes
+
+- **4 nouvelles armes**, à débloquer chez **Brokk** avec les pièces d'arme. Une arme verrouillée renvoie vers la forge depuis la Cage.
+  - **Bâton à pierre** (3 pièces) : il tire des orbes. L'attaque puissante fait **exploser une zone** au sol devant toi : un cercle doré montre où. Super : six explosions tout autour de toi.
+  - **Arbalète** (3 pièces) : tir rapide. L'attaque puissante est un **carreau chargé qui traverse** les ennemis. Super : une volée de 9 carreaux.
+  - **Disque d'Hélios** (5 pièces) : il **part et revient**. Si tu le **rattrapes**, le lancer suivant frappe 50 % plus fort. Super : 8 disques partent tout autour.
+  - **Gleipnir** (5 pièces), une chaîne de plasma : un fouet long. L'attaque puissante est un **grappin** qui attire les petits ennemis, ou qui te tire vers les gros (élites, boss). Super : un tourbillon de chaînes.
+- La Cage affiche les 6 armes (touches 1 à 6). La forge de Brokk montre aussi les armes à débloquer.
+- Ta sauvegarde passe au nouveau format **sans rien perdre**.
+
+**Quoi tester** : débloque une nouvelle arme et fais une run avec. Laquelle préfères-tu ? Le grappin de Gleipnir est-il agréable ?
+
 ## 0.8.0 — La Volière : une vraie victoire
 
 - **Quatrième et dernier biome : la Volière**, au sommet de la tour (7 salles, plumes qui tombent, musique inquiétante et sa version boss).

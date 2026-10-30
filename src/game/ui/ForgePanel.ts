@@ -1,8 +1,14 @@
 import Phaser from 'phaser';
-import { forgeLevel, nextForgeLevel, upgradeWeapon } from '../../core/forge';
+import {
+  forgeLevel,
+  isUnlocked,
+  nextForgeLevel,
+  unlockWeapon,
+  upgradeWeapon,
+} from '../../core/forge';
 import type { MetaState } from '../../core/save/schema';
-import { FORGE, type ForgeEffect } from '../../data/forge';
-import { WEAPONS, type WeaponId } from '../../data/weapons';
+import { FORGE, UNLOCK_COST, type ForgeEffect } from '../../data/forge';
+import { WEAPON_ORDER, WEAPONS } from '../../data/weapons';
 import { t, type TextKey } from '../../i18n';
 import { sfx } from '../audio/sfx';
 import { COLORS, FONT_FAMILY } from '../theme';
@@ -38,7 +44,7 @@ export class ForgePanel {
     const cx = cam.midPoint.x;
     const cy = cam.midPoint.y;
     const w = Math.min(600, cam.width - 24);
-    const h = 300;
+    const h = 318;
     const left = cx - w / 2;
     const top = cy - h / 2;
     const veil = scene.add
@@ -60,62 +66,58 @@ export class ForgePanel {
       true,
     ).setOrigin(1, 0);
 
-    (Object.keys(WEAPONS) as WeaponId[]).forEach((id, i) => {
-      const y = top + 58 + i * 74;
+    WEAPON_ORDER.forEach((id, i) => {
+      const y = top + 52 + i * 38;
+      const unlocked = isUnlocked(this.meta, id);
       const level = forgeLevel(this.meta, id);
       const max = FORGE[id].length;
       const next = nextForgeLevel(this.meta, id);
-      this.text(left + 14, y, t(WEAPONS[id].nameKey as TextKey), 13, COLORS.text, true);
+      this.text(left + 14, y + 2, t(WEAPONS[id].nameKey as TextKey), 12, COLORS.text, true);
       const pips = scene.add.graphics();
       for (let p = 0; p < max; p++) {
-        const px = left + 18 + p * 14;
-        pips.lineStyle(1.5, BROKK, 1).strokeRect(px - 5, y + 22, 10, 10);
-        if (p < level) pips.fillStyle(BROKK, 1).fillRect(px - 3, y + 24, 6, 6);
+        const px = left + 18 + p * 12;
+        pips.lineStyle(1.5, unlocked ? BROKK : 0x3a3550, 1).strokeRect(px - 4, y + 20, 8, 8);
+        if (p < level) pips.fillStyle(BROKK, 1).fillRect(px - 2, y + 22, 4, 4);
       }
       this.root.add(pips);
-      // Ce qui est déjà acquis, puis le prochain palier.
-      const owned = FORGE[id]
-        .slice(0, level)
-        .map((l) => effectText(l.descKey, l.effect))
-        .join(' · ');
-      this.text(
-        left + 150,
-        y + 2,
-        owned || t('forge.level', { level, max }),
-        10,
-        COLORS.textDim,
-      ).setWordWrapWidth(w - 150 - 150);
-      this.text(
-        left + 150,
-        y + 30,
-        next
+      // Prochain palier (ou état de l'arme).
+      const info = !unlocked
+        ? t('forge.locked')
+        : next
           ? t('forge.next', { effect: effectText(next.descKey, next.effect) })
-          : t('forge.maxed'),
+          : t('forge.maxed');
+      this.text(
+        left + 150,
+        y + 10,
+        info,
         10,
-        COLORS.text,
+        unlocked ? COLORS.text : COLORS.textDim,
       ).setWordWrapWidth(w - 150 - 150);
 
-      const bx = left + w - 76;
-      const by = y + 20;
-      const affordable = next !== undefined && this.meta.weaponParts >= next.cost;
+      const cost = !unlocked ? (UNLOCK_COST[id] ?? 0) : (next?.cost ?? 0);
+      const possible = !unlocked || next !== undefined;
+      const affordable = possible && this.meta.weaponParts >= cost;
+      const label = !unlocked
+        ? t('forge.unlock', { cost })
+        : next
+          ? t('forge.short', { cost })
+          : t('forge.maxed');
+      const bx = left + w - 72;
+      const by = y + 15;
       const btn = scene.add.graphics();
-      btn.fillStyle(0x07060d, 1).fillRoundedRect(bx - 64, by - 15, 128, 30, 6);
+      btn.fillStyle(0x07060d, 1).fillRoundedRect(bx - 60, by - 13, 120, 26, 6);
       btn
         .lineStyle(2, affordable ? BROKK : 0x3a3550, 1)
-        .strokeRoundedRect(bx - 64, by - 15, 128, 30, 6);
+        .strokeRoundedRect(bx - 60, by - 13, 120, 26, 6);
       this.root.add(btn);
-      this.text(
-        bx,
-        by,
-        next ? t('forge.buy', { cost: next.cost }) : t('forge.maxed'),
-        11,
-        affordable ? COLORS.text : COLORS.textDim,
-        affordable,
-      ).setOrigin(0.5);
+      this.text(bx, by, label, 11, affordable ? COLORS.text : COLORS.textDim, affordable).setOrigin(
+        0.5,
+      );
       if (affordable) {
-        const zone = scene.add.zone(bx, by, 128, 30).setInteractive({ useHandCursor: true });
+        const zone = scene.add.zone(bx, by, 120, 30).setInteractive({ useHandCursor: true });
         zone.on('pointerup', () => {
-          if (!upgradeWeapon(this.meta, id)) return;
+          const ok = unlocked ? upgradeWeapon(this.meta, id) : unlockWeapon(this.meta, id);
+          if (!ok) return;
           sfx.hit(true);
           this.onChange();
           this.build();

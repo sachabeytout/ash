@@ -232,5 +232,13 @@
   "boss.oiseleur": "L'Oiseleur",
   "boss.oiseleur.title": "Le Dieu des filets et des serments",
   "boss.oiseleur.phase2": "L'Oiseleur déploie ses filets !",
-  "boss.oiseleur.defeated": "L'Oiseleur tombe… la tour tremble."
+  "boss.oiseleur.defeated": "L'Oiseleur tombe… la tour tremble.",
+  "weapon.staff": "Bâton à pierre",
+  "weapon.crossbow": "Arbalète",
+  "weapon.disc": "Disque d'Hélios",
+  "weapon.chain": "Gleipnir",
+  "hub.locked": "Brokk · {cost} pièces",
+  "forge.unlock": "Débloquer · {cost}",
+  "forge.locked": "Pas encore forgée",
+  "forge.short": "Forger · {cost}"
 }

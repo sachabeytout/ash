@@ -32,4 +32,17 @@ const STANDARD: readonly ForgeLevel[] = [
 export const FORGE: Record<WeaponId, readonly ForgeLevel[]> = {
   katana: STANDARD,
   twinBlades: STANDARD,
+  staff: STANDARD,
+  crossbow: STANDARD,
+  disc: STANDARD,
+  chain: STANDARD,
+};
+
+/** Armes de départ ; les autres se débloquent chez Brokk contre des pièces d'arme. */
+export const STARTING_WEAPONS: readonly WeaponId[] = ['katana', 'twinBlades'];
+export const UNLOCK_COST: Partial<Record<WeaponId, number>> = {
+  staff: 3,
+  crossbow: 3,
+  disc: 5,
+  chain: 5,
 };

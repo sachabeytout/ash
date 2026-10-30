@@ -14,6 +14,42 @@ export interface AttackStep {
   hitstopMs: number;
   /** Tremblement de caméra à l'impact (0 = aucun). */
   shake: number;
+  /** Armes à distance : projectile(s) lancé(s) au début du coup actif (la zone `range` vaut alors 0). */
+  projectile?: ProjectileSpec;
+  /** Zone au sol qui explose après un délai (bâton à pierre). */
+  zone?: ZoneSpec;
+}
+
+/** Projectile d'Ash (bâton, arbalète, disque, grappin). */
+export interface ProjectileSpec {
+  damage: number;
+  speed: number;
+  radius: number;
+  /** Distance maximale (px). */
+  range: number;
+  /** Nombre d'ennemis traversés en plus du premier. */
+  pierce: number;
+  knockback: number;
+  look: 'orb' | 'bolt' | 'disc' | 'chain';
+  /** Plusieurs projectiles en éventail (360 = tout autour). */
+  count?: number;
+  spreadDeg?: number;
+  /** Revient vers Ash (disque) : le rattraper renforce le lancer suivant. */
+  returns?: boolean;
+  /** Grappin : attire les petits ennemis, ou tire Ash vers les gros. */
+  grapple?: boolean;
+}
+
+export interface ZoneSpec {
+  damage: number;
+  radius: number;
+  delayMs: number;
+  /** Distance devant Ash (0 = autour de lui). */
+  distance: number;
+  knockback: number;
+  /** Plusieurs zones réparties en cercle autour du point visé. */
+  count?: number;
+  spread?: number;
 }
 
 export type AttackPhase = 'windup' | 'active' | 'recovery' | 'done';

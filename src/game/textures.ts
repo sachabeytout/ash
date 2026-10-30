@@ -287,6 +287,29 @@ export function ensureGameTextures(scene: Phaser.Scene): void {
     g.fillStyle(0xd8b8ff).fillRect(0, 0, 2, 2);
   });
 
+  // Projectiles d'Ash : couleurs chaudes (jamais le rouge-magenta des ennemis).
+  shapeTexture(scene, 'p_orb', 9, 9, (g) => {
+    g.fillStyle(0xffd27a, 0.5).fillCircle(4.5, 4.5, 4.5);
+    g.fillStyle(0xfff2d0).fillCircle(4.5, 4.5, 2.5);
+  });
+  shapeTexture(scene, 'p_bolt', 12, 4, (g) => {
+    g.fillStyle(0xff9f6a).fillRect(0, 1, 9, 2);
+    g.fillStyle(0xfff2d0).fillTriangle(8, 0, 12, 2, 8, 4);
+  });
+  shapeTexture(scene, 'p_disc', 13, 13, (g) => {
+    g.fillStyle(0xffe08a).fillCircle(6.5, 6.5, 6.5);
+    g.fillStyle(0x7a4a10).fillCircle(6.5, 6.5, 2.5);
+    g.fillStyle(0xfff2d0)
+      .fillRect(6, 0, 1, 3)
+      .fillRect(6, 10, 1, 3)
+      .fillRect(0, 6, 3, 1)
+      .fillRect(10, 6, 3, 1);
+  });
+  shapeTexture(scene, 'p_chain', 9, 7, (g) => {
+    g.fillStyle(0xffb86a).fillTriangle(0, 0, 9, 3.5, 0, 7);
+    g.fillStyle(0xfff2d0).fillRect(1, 3, 4, 1);
+  });
+
   // Projectile ennemi : losange magenta à cœur blanc (forme + couleur).
   shapeTexture(scene, 'shot', 9, 9, (g) => {
     g.fillStyle(0xff2a6d).fillTriangle(4.5, 0, 9, 4.5, 4.5, 9).fillTriangle(4.5, 0, 0, 4.5, 4.5, 9);

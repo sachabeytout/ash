@@ -1,4 +1,4 @@
-import { FORGE, type ForgeLevel } from '../data/forge';
+import { FORGE, STARTING_WEAPONS, UNLOCK_COST, type ForgeLevel } from '../data/forge';
 import type { WeaponId } from '../data/weapons';
 import type { MetaState } from './save/schema';
 
@@ -31,6 +31,19 @@ export function upgradeWeapon(meta: MetaState, weapon: WeaponId): boolean {
   if (!next || meta.weaponParts < next.cost) return false;
   meta.weaponParts -= next.cost;
   meta.forge[weapon] = forgeLevel(meta, weapon) + 1;
+  return true;
+}
+
+export function isUnlocked(meta: MetaState, weapon: WeaponId): boolean {
+  return STARTING_WEAPONS.includes(weapon) || meta.unlocked.includes(weapon);
+}
+
+/** Débloque une arme chez Brokk. Renvoie vrai en cas de succès. */
+export function unlockWeapon(meta: MetaState, weapon: WeaponId): boolean {
+  const cost = UNLOCK_COST[weapon];
+  if (cost === undefined || isUnlocked(meta, weapon) || meta.weaponParts < cost) return false;
+  meta.weaponParts -= cost;
+  meta.unlocked.push(weapon);
   return true;
 }
 

@@ -33,7 +33,7 @@ type State =
       startedAt: number;
       id: number;
     }
-  | { kind: 'dash'; startedAt: number; dir: Vec2 };
+  | { kind: 'dash'; startedAt: number; dir: Vec2; distance?: number };
 
 let swingCounter = 0;
 
@@ -53,6 +53,9 @@ export class Player {
 
   /** Rappels vers la scène (sons, effets). */
   onSwing: (heavy: boolean) => void = () => undefined;
+  /** Armes à distance : le coup actif lance un projectile ou une zone (géré par la scène). */
+  onFire: (step: AttackStep, angle: number, kind: ActiveSwing['kind'], id: number) => void = () =>
+    undefined;
   onDash: () => void = () => undefined;
   /** Le Super est-il prêt ? (la scène gère la jauge) */
   canSuper: () => boolean = () => false;
@@ -93,6 +96,7 @@ export class Player {
   /** Le coup actuellement « actif » (qui peut toucher), s'il y en a un. */
   activeSwing(now: number): ActiveSwing | null {
     if (this.state.kind !== 'attack') return null;
+    if (this.state.step.range <= 0) return null; // coup à distance : pas de zone de frappe
     if (phaseAt(this.state.step, now - this.state.startedAt) !== 'active') return null;
     return {
       step: this.state.step,
@@ -123,7 +127,8 @@ export class Player {
         this.state = { kind: 'free' };
         this.lastDashEnd = now;
       } else {
-        const speed = PLAYER.dash.distance / (PLAYER.dash.durationMs / 1000);
+        const speed =
+          (this.state.distance ?? PLAYER.dash.distance) / (PLAYER.dash.durationMs / 1000);
         this.velocity = { x: this.state.dir.x * speed, y: this.state.dir.y * speed };
       }
     }
@@ -262,6 +267,21 @@ export class Player {
     this.drawnPhase = null;
   }
 
+  /** Grappin : Ash est tiré vers un point (comme un dash, invincible pendant le trajet). */
+  pullTo(now: number, target: Vec2): void {
+    const dx = target.x - this.x;
+    const dy = target.y - this.y;
+    const dist = Math.hypot(dx, dy);
+    if (dist < 4) return;
+    this.state = {
+      kind: 'dash',
+      startedAt: now,
+      dir: { x: dx / dist, y: dy / dist },
+      distance: Math.max(0, dist - 14),
+    };
+    this.onDash();
+  }
+
   private startDash(now: number, controls: Controls): void {
     const m = controls.move;
     const angle = Math.hypot(m.x, m.y) > 0.2 ? Math.atan2(m.y, m.x) : this.facing;
@@ -290,8 +310,16 @@ export class Player {
     }
     if (phase !== this.drawnPhase) {
       this.drawnPhase = phase;
-      if (phase === 'active')
-        this.drawSlash(step, this.state.power, this.state.superIndex !== null ? 0xffe08a : null);
+      if (phase === 'active') {
+        const st = this.state;
+        const kind = st.superIndex !== null ? 'super' : st.power ? 'power' : 'attack';
+        if (step.projectile || step.zone) {
+          this.onSwing(st.power);
+          this.onFire(step, this.facing, kind, st.id);
+        } else {
+          this.drawSlash(step, st.power, st.superIndex !== null ? 0xffe08a : null);
+        }
+      }
     }
   }
 

@@ -1,10 +1,17 @@
 import { describe, expect, it } from 'vitest';
 import { assistReduction, reducedDamage } from '../../src/core/assist';
-import { forgeLevel, nextForgeLevel, upgradeWeapon, weaponBonuses } from '../../src/core/forge';
+import {
+  forgeLevel,
+  isUnlocked,
+  nextForgeLevel,
+  unlockWeapon,
+  upgradeWeapon,
+  weaponBonuses,
+} from '../../src/core/forge';
 import { migrate } from '../../src/core/save/migrations';
 import { SAVE_VERSION, defaultMeta } from '../../src/core/save/schema';
-import { FORGE } from '../../src/data/forge';
-import { WEAPONS } from '../../src/data/weapons';
+import { FORGE, UNLOCK_COST } from '../../src/data/forge';
+import { WEAPON_ORDER, WEAPONS } from '../../src/data/weapons';
 import { allDictionaries } from '../../src/i18n';
 
 describe('forge de Brokk', () => {
@@ -78,5 +85,40 @@ describe('migration v1 → v2', () => {
     expect(save.meta.assistDeaths).toBe(0);
     expect(save.settings.musicVolume).toBe(0.3);
     expect(save.settings.assist).toBe(false);
+  });
+});
+
+describe('armes à débloquer', () => {
+  it('katana et doubles lames dès le départ ; les autres contre des pièces', () => {
+    const meta = defaultMeta();
+    expect(isUnlocked(meta, 'katana')).toBe(true);
+    expect(isUnlocked(meta, 'staff')).toBe(false);
+    expect(unlockWeapon(meta, 'staff')).toBe(false);
+    meta.weaponParts = 10;
+    expect(unlockWeapon(meta, 'staff')).toBe(true);
+    expect(isUnlocked(meta, 'staff')).toBe(true);
+    expect(meta.weaponParts).toBe(10 - (UNLOCK_COST.staff ?? 0));
+    expect(unlockWeapon(meta, 'staff')).toBe(false);
+  });
+
+  it('chaque arme a un nom traduit, un Super et une forge', () => {
+    for (const id of WEAPON_ORDER) {
+      for (const dict of Object.values(allDictionaries))
+        expect(dict[WEAPONS[id].nameKey], id).toBeDefined();
+      expect(WEAPONS[id].super.length).toBeGreaterThan(0);
+      expect(FORGE[id].length).toBeGreaterThan(0);
+    }
+  });
+
+  it('migration v2 → v3 : rien de perdu, aucune arme débloquée', () => {
+    const save = migrate({
+      version: 2,
+      meta: { xp: 12, weaponParts: 7, forge: { katana: 2 }, assistDeaths: 1 },
+      run: null,
+      settings: {},
+    });
+    expect(save.meta.forge).toEqual({ katana: 2 });
+    expect(save.meta.weaponParts).toBe(7);
+    expect(save.meta.unlocked).toEqual([]);
   });
 });

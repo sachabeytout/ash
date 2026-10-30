@@ -35,6 +35,7 @@ import { t, type TextKey } from '../../i18n';
 import { music } from '../audio/music';
 import { sfx } from '../audio/sfx';
 import { Boss } from '../entities/Boss';
+import { PlayerShots, type ShotHit } from '../entities/PlayerShots';
 import { DANGER, Enemy } from '../entities/Enemy';
 import type { Hittable } from '../entities/Hittable';
 import { Player } from '../entities/Player';
@@ -124,6 +125,9 @@ export class RunScene extends Phaser.Scene {
   /** Tout ce qu'Ash peut toucher cette frame (ennemis vivants + boss), tableau réutilisé. */
   private readonly targets: Hittable[] = [];
   private boss: Boss | null = null;
+  private shotsP!: PlayerShots;
+  /** Disque rattrapé : le prochain lancer frappe plus fort. */
+  private discCharged = false;
   private kind: RoomKind = 'combat';
   private shopOpen = false;
   private shopSold = new Set<ShopItemId>();
@@ -198,6 +202,26 @@ export class RunScene extends Phaser.Scene {
       sfx.dash();
       this.juice.burst(this.player.x, this.player.y, 0xff7a2a, 6);
       this.dashEffects();
+    };
+    this.shotsP = new PlayerShots(this, ARENA);
+    this.discCharged = false;
+    this.shotsP.onHit = (target, hit) =>
+      this.weaponHit(target, { ...hit, hitstopMs: hit.heavy ? 40 : 18 });
+    this.shotsP.onGrapple = (target, hit) => this.grapple(target, hit);
+    this.shotsP.onCatch = () => {
+      this.discCharged = true;
+      sfx.tap();
+      this.juice.burst(this.player.x, this.player.y, 0xffe08a, 10);
+    };
+    this.shotsP.onZone = (at, radius) => {
+      this.lightning.ring(at, radius, 0xffb02e);
+      this.juice.burst(at.x, at.y, 0xffd27a, 10);
+      sfx.explode();
+    };
+    this.player.onFire = (step, angle, kind, id) => {
+      const charged = this.discCharged && step.projectile?.returns === true;
+      if (charged) this.discCharged = false;
+      this.shotsP.fire(this.sim, this.player, angle, step, kind, id, charged ? 1.5 : 1);
     };
     this.player.canSuper = () => superReady(this.run.superGauge) && !this.choosing;
     this.player.onSuper = () => {
@@ -590,6 +614,7 @@ export class RunScene extends Phaser.Scene {
     for (const e of alive) e.update(this.sim, dt, this.player, this.isOnScreen(e));
     this.updateBoss(dt);
     this.resolvePlayerAttack(this.targets);
+    this.shotsP.update(this.sim, dt, this.targets, this.player);
     this.updateBurns();
     this.resolveEnemyAttacks(alive);
     this.updateShots();
@@ -787,47 +812,94 @@ export class RunScene extends Phaser.Scene {
     const swing = this.player.activeSwing(this.sim);
     if (!swing) return;
     const { step } = swing;
-    const fx: HitEffects = swing.kind === 'super' ? {} : this.profile.on[swing.kind];
     for (const e of alive) {
       if (!e.alive || e.lastSwingId === swing.id) continue;
       if (!hitsArc(this.player, this.player.facing, step.range, step.arcDeg, e, e.radius)) continue;
-      // Un seul éclair en chaîne par coup, même si le coup touche plusieurs ennemis.
-      const firstHit = this.lastChainSwing !== swing.id;
-      this.lastChainSwing = swing.id;
       e.lastSwingId = swing.id;
-      const mult = damageMultiplier(this.profile, {
-        burning: isBurning(e.status, this.sim),
-        chilled: isFrozen(e.status, this.sim) || this.sim < e.status.chillUntil,
+      this.weaponHit(e, {
+        damage: step.damage,
+        kind: swing.kind,
+        knockback: step.knockback,
+        hitstopMs: step.hitstopMs,
+        shake: step.shake,
+        heavy: swing.heavy,
+        id: swing.id,
+        from: this.player,
       });
-      const at = { x: e.x, y: e.y };
-      // Bouclier frontal (Einherjar) : le coup est presque entièrement bloqué, sans effet de don.
-      const blocked = e instanceof Enemy && e.blocks(this.player, this.sim);
-      const shieldFactor = blocked ? (e.def.shield?.blocked ?? 1) : 1;
-      const { dealt, killed } = applyDamage(
-        e.health,
-        step.damage * this.weaponMultiplier(swing.kind) * mult * shieldFactor,
-      );
-      if (blocked) {
-        e.hit(this.sim, this.player, step.knockback * 0.3);
-        this.juice.burst(e.x, e.y, 0xe8f2ff, 8);
-        this.juice.damageNumber(e.x, e.y - e.radius, dealt, '#9a8fb5');
-        sfx.block();
-        if (killed) this.killEnemy(e);
-        continue;
-      }
-      e.hit(this.sim, this.player, step.knockback);
-      this.juice.hitstop(killed ? step.hitstopMs + 30 : step.hitstopMs);
-      this.juice.shake(step.shake);
-      this.juice.burst(e.x, e.y, 0xffe9d6, swing.heavy ? 10 : 6);
-      this.juice.damageNumber(e.x, e.y - e.radius, dealt);
-      if (swing.kind !== 'super')
-        this.run.superGauge = gainSuper(this.run.superGauge, dealt * (1 + this.forge.superGain));
-      sfx.hit(swing.heavy);
-      if (killed) this.killEnemy(e);
-      else this.applyHitEffects(e, fx);
-      if (fx.chain && firstHit) this.chainLightning(e, fx.chain);
-      if (fx.bolt) this.lightningBolt(at, fx.bolt.damage, fx.bolt.radius);
     }
+  }
+
+  /**
+   * Un coup d'arme touche une cible (corps à corps, projectile ou zone) : bouclier, bonus, dégâts,
+   * ressenti, jauge de Super, puis effets des dons de l'action (attaque, puissante).
+   */
+  private weaponHit(
+    e: Hittable,
+    hit: {
+      damage: number;
+      kind: 'attack' | 'power' | 'super';
+      knockback: number;
+      hitstopMs: number;
+      shake: number;
+      heavy: boolean;
+      id: number;
+      from: Vec2;
+    },
+  ): void {
+    const fx: HitEffects = hit.kind === 'super' ? {} : this.profile.on[hit.kind];
+    // Un seul éclair en chaîne par coup, même si le coup touche plusieurs ennemis.
+    const firstHit = this.lastChainSwing !== hit.id;
+    this.lastChainSwing = hit.id;
+    const mult = damageMultiplier(this.profile, {
+      burning: isBurning(e.status, this.sim),
+      chilled: isFrozen(e.status, this.sim) || this.sim < e.status.chillUntil,
+    });
+    const at = { x: e.x, y: e.y };
+    // Bouclier frontal (Einherjar, Héraut) : le coup est presque entièrement bloqué, sans effet de don.
+    const blocked = e instanceof Enemy && e.blocks(hit.from, this.sim);
+    const shieldFactor = blocked && e instanceof Enemy ? (e.def.shield?.blocked ?? 1) : 1;
+    const { dealt, killed } = applyDamage(
+      e.health,
+      hit.damage * this.weaponMultiplier(hit.kind) * mult * shieldFactor,
+    );
+    if (blocked) {
+      e.hit(this.sim, hit.from, hit.knockback * 0.3);
+      this.juice.burst(e.x, e.y, 0xe8f2ff, 8);
+      this.juice.damageNumber(e.x, e.y - e.radius, dealt, '#9a8fb5');
+      sfx.block();
+      if (killed) this.killEnemy(e);
+      return;
+    }
+    e.hit(this.sim, hit.from, hit.knockback);
+    this.juice.hitstop(killed ? hit.hitstopMs + 30 : hit.hitstopMs);
+    this.juice.shake(hit.shake);
+    this.juice.burst(e.x, e.y, 0xffe9d6, hit.heavy ? 10 : 6);
+    this.juice.damageNumber(e.x, e.y - e.radius, dealt);
+    if (hit.kind !== 'super')
+      this.run.superGauge = gainSuper(this.run.superGauge, dealt * (1 + this.forge.superGain));
+    sfx.hit(hit.heavy);
+    if (killed) this.killEnemy(e);
+    else this.applyHitEffects(e, fx);
+    if (fx.chain && firstHit) this.chainLightning(e, fx.chain);
+    if (fx.bolt) this.lightningBolt(at, fx.bolt.damage, fx.bolt.radius);
+  }
+
+  /**
+   * Grappin de Gleipnir : un petit ennemi est attiré vers Ash ; un gros ennemi (élite, boss)
+   * tire Ash vers lui. Dans les deux cas le coup fait aussi des dégâts.
+   */
+  private grapple(target: Hittable, hit: ShotHit): void {
+    this.weaponHit(target, { ...hit, knockback: 0, hitstopMs: 40 });
+    if (!target.alive) return;
+    const small = target instanceof Enemy && !target.def.elite && target.radius <= 9;
+    if (small) {
+      // Point « derrière » la cible : le recul part de là, donc vers Ash.
+      const from = { x: target.x * 2 - this.player.x, y: target.y * 2 - this.player.y };
+      target.hit(this.sim, from, 260);
+    } else {
+      this.player.pullTo(this.sim, target);
+    }
+    sfx.zap();
   }
 
   private killEnemy(e: Hittable): void {

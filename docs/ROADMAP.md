@@ -2,7 +2,7 @@
 
 ## Prochaine étape
 
-M2.5 : armes 3 à 6 (bâton à pierre, arbalète, Disque d'Hélios, Gleipnir). Les questions en attente sont dans `docs/QUESTIONS.md`.
+M2.6 : les 6 autres dieux (Anubis, Bastet, Athéna, Artémis, Thor, Hel). Les questions en attente sont dans `docs/QUESTIONS.md`.
 Retour sur le lore v0.2 toujours attendu (« quand le fond aura avancé »).
 
 ## M0 — Fondations
@@ -63,7 +63,7 @@ Retour sur le lore v0.2 toujours attendu (« quand le fond aura avancé »).
 - [x] **M2.2 (0.6.0)** : forge de Brokk (améliorations d'armes), Bénédiction du Phénix (mode assistance), victoires
 - [x] **M2.3 (0.7.0)** : biome 3, l'Olympe Corporatif (ennemis, élite, boss Talos)
 - [x] **M2.4 (0.8.0)** : biome 4, la Volière (7 salles, boss l'Oiseleur) → vraie victoire
-- [ ] **M2.5 (0.9.0)** : armes 3 à 6 (bâton à pierre, arbalète, Disque d'Hélios, Gleipnir)
+- [x] **M2.5 (0.9.0)** : armes 3 à 6 (bâton à pierre, arbalète, Disque d'Hélios, Gleipnir)
 - [ ] **M2.6 (0.10.0)** : les 6 autres dieux (Anubis, Bastet, Athéna, Artémis, Thor, Hel), nouveaux dons et duos
 - [ ] **M2.7** : histoire (dialogues dans la Cage, arc des 10 victoires, Lame de l'Aube, vraie fin)
 - [ ] **M2.8** : Mesures d'urgence, salles variées (fontaines, coffres, évènements), télémétrie + menu de debug caché

@@ -7,7 +7,8 @@ import { NewerSaveError } from '../../core/save/migrations';
 import { getBiome } from '../../data/biomes';
 import { GOD_IDS } from '../../data/gods';
 import { PLAYER } from '../../data/player';
-import { WEAPONS, type WeaponId } from '../../data/weapons';
+import { WEAPON_ORDER, WEAPONS, type WeaponId } from '../../data/weapons';
+import { UNLOCK_COST } from '../../data/forge';
 import { t, type TextKey } from '../../i18n';
 import { music } from '../audio/music';
 import { sfx } from '../audio/sfx';
@@ -22,7 +23,7 @@ import { OptionsPanel } from '../ui/OptionsPanel';
 import { ForgePanel } from '../ui/ForgePanel';
 import { ThothPanel } from '../ui/ThothPanel';
 import { assistReduction } from '../../core/assist';
-import { forgeLevel } from '../../core/forge';
+import { forgeLevel, isUnlocked } from '../../core/forge';
 import { settings } from '../../core/settings';
 import { markScene } from './markScene';
 
@@ -183,7 +184,14 @@ export class HubScene extends Phaser.Scene {
 
     this.input.keyboard?.on('keydown', (e: KeyboardEvent) => {
       if (this.modal) return;
+      if (cheatsEnabled && e.code === 'KeyU') {
+        session.save.meta.unlocked = [...WEAPON_ORDER];
+        session.commit();
+        this.scene.restart({});
+        return;
+      }
       if (cheatsEnabled && e.code === 'KeyX') {
+        session.save.meta.weaponParts += 10;
         session.save.meta.xp += 100;
         session.commit();
         this.scene.restart({});
@@ -201,8 +209,10 @@ export class HubScene extends Phaser.Scene {
         if (e.code === 'Enter' || e.code === 'Space' || e.code === 'Digit1') this.resume();
         return;
       }
-      if (e.code === 'Digit1' || e.code === 'Enter' || e.code === 'Space') this.start('katana');
-      if (e.code === 'Digit2') this.start('twinBlades');
+      if (e.code === 'Enter' || e.code === 'Space') this.start('katana');
+      const digit = Number(/^Digit([1-6])$/.exec(e.code)?.[1] ?? 0);
+      const id = WEAPON_ORDER[digit - 1];
+      if (id && isUnlocked(session.save.meta, id)) this.start(id);
     });
 
     this.cameras.main.fadeIn(500, 7, 6, 13);
@@ -225,7 +235,7 @@ export class HubScene extends Phaser.Scene {
   private showWeapons(): void {
     const cx = GAME_WIDTH / 2;
     this.add
-      .text(cx, 222, t('hub.chooseWeapon'), {
+      .text(cx, 214, t('hub.chooseWeapon'), {
         fontFamily: FONT_FAMILY,
         fontSize: '12px',
         color: COLORS.text,
@@ -233,19 +243,23 @@ export class HubScene extends Phaser.Scene {
         strokeThickness: 3,
       })
       .setOrigin(0.5);
-    const ids: WeaponId[] = ['katana', 'twinBlades'];
-    ids.forEach((id, i) =>
+    // 6 armes sur 2 rangées ; une arme verrouillée renvoie vers la forge de Brokk.
+    WEAPON_ORDER.forEach((id, i) => {
+      const unlocked = isUnlocked(session.save.meta, id);
       makeButton(this, {
-        x: cx + (i === 0 ? -95 : 95),
-        y: 262,
-        w: 160,
-        h: 46,
+        x: cx + ((i % 3) - 1) * 164,
+        y: 248 + Math.floor(i / 3) * 50,
+        w: 156,
+        h: 42,
         label: t(WEAPONS[id].nameKey as TextKey),
-        sub: t('hub.escape', { key: i + 1 }),
-        color: WEAPONS[id].color,
-        onTap: () => this.start(id),
-      }),
-    );
+        sub: unlocked
+          ? t('hub.escape', { key: i + 1 })
+          : t('hub.locked', { cost: UNLOCK_COST[id] ?? 0 }),
+        color: unlocked ? WEAPONS[id].color : 0x3a3550,
+        fontSize: 13,
+        onTap: () => (unlocked ? this.start(id) : this.openForge()),
+      });
+    });
   }
 
   /** Une run est sauvegardée : on la reprend (ou on l'abandonne, avec confirmation). */

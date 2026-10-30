@@ -232,5 +232,13 @@
   "boss.oiseleur": "The Fowler",
   "boss.oiseleur.title": "God of Nets and Oaths",
   "boss.oiseleur.phase2": "The Fowler casts his nets!",
-  "boss.oiseleur.defeated": "The Fowler falls… the tower shakes."
+  "boss.oiseleur.defeated": "The Fowler falls… the tower shakes.",
+  "weapon.staff": "Stone Staff",
+  "weapon.crossbow": "Crossbow",
+  "weapon.disc": "Disc of Helios",
+  "weapon.chain": "Gleipnir",
+  "hub.locked": "Brokk · {cost} parts",
+  "forge.unlock": "Unlock · {cost}",
+  "forge.locked": "Not forged yet",
+  "forge.short": "Forge · {cost}"
 }
