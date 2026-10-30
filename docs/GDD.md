@@ -183,3 +183,14 @@ Ennemis : **Loup-relais** (meute rapide), **Givreur** (3 éclats en éventail), 
 ## 8. Chiffres d'équilibrage
 
 Voir `src/data/` (sources de vérité). À ajuster avec la télémétrie et les retours de test.
+
+## 9. Musique
+
+Synthétisée en code (`src/data/music.ts`). Un thème par biome + **une version boss du même thème** (même tonalité et mêmes
+accords, tempo plus rapide, arpège doublé, percussions plus denses) — demande de l'utilisateur. La Cage et le marchand
+partagent un thème calme.
+
+| Biome         | Thème (combat) | Version boss   |
+| ------------- | -------------- | -------------- |
+| Les Bas-Fonds | la mineur, 112 | 134 (Ammit)    |
+| Givre-Serveur | si mineur, 104 | 128 (Fenrir-Ω) |

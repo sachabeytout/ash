@@ -2,6 +2,13 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.5.1 — Une musique par biome
+
+- Chaque biome a son propre thème : les Bas-Fonds et le Givre-Serveur.
+- Chaque boss a **sa version du thème de son biome** : même mélodie et mêmes accords, mais plus rapide et plus intense (Ammit pour les Bas-Fonds, Fenrir-Ω pour le Givre-Serveur).
+
+**Quoi tester** : écoute la musique en arrivant chez Ammit, puis chez Fenrir. Reconnais-tu le thème de chaque biome dans la version du boss ?
+
 ## 0.5.0 — Le Givre-Serveur
 
 - **Deuxième biome : le Givre-Serveur**, un datacenter gelé (sol givré, flocons, néons froids, nouvelle musique). Après avoir battu Ammit, la run **continue** au lieu de s'arrêter. Le nom du biome est affiché en haut de l'écran.

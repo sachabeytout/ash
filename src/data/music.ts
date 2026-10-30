@@ -2,7 +2,8 @@
  * Musique composée en code (synthèse Web Audio) : 100 % originale, aucun fichier, aucune licence.
  * Motifs sur 16 pas par mesure ; un caractère = un pas ('.' = silence).
  */
-export type TrackId = 'hub' | 'combat' | 'frost' | 'boss';
+/** Chaque biome a son thème, et une version « boss » du même thème (même tonalité, mêmes accords, plus intense). */
+export type TrackId = 'hub' | 'lowtown' | 'lowtownBoss' | 'frost' | 'frostBoss';
 
 export interface TrackDef {
   bpm: number;
@@ -40,8 +41,8 @@ export const TRACKS: Record<TrackId, TrackDef> = {
     pad: true,
     mix: { bass: 0.5, arp: 0.35, kick: 0, hat: 0, pad: 0.4 },
   },
-  // Combat : pulsation régulière, basse qui avance.
-  combat: {
+  // Les Bas-Fonds : pulsation régulière, basse qui avance.
+  lowtown: {
     bpm: 112,
     rootHz: 110,
     progression: [0, 0, -4, -2],
@@ -66,17 +67,30 @@ export const TRACKS: Record<TrackId, TrackDef> = {
     pad: true,
     mix: { bass: 0.5, arp: 0.24, kick: 0.5, hat: 0.1, pad: 0.22 },
   },
-  // Les boss : plus rapide, demi-ton menaçant (couleur phrygienne).
-  boss: {
-    bpm: 132,
-    rootHz: 98, // sol
-    progression: [0, 1, 0, -2],
-    chord: [0, 3, 7, 8, 12],
+  // Ammit : le thème des Bas-Fonds en double vitesse, basse martelée.
+  lowtownBoss: {
+    bpm: 134,
+    rootHz: 110,
+    progression: [0, 0, -4, -2],
+    chord: MINOR7,
     bass: 'xxx.xxx.xxx.x.x.',
-    arp: '0123012301230124',
+    arp: '0121013101210131',
     kick: 'x..x..x.x..x..x.',
     hat: 'x.xxx.xxx.xxx.xx',
     pad: true,
-    mix: { bass: 0.6, arp: 0.2, kick: 0.7, hat: 0.14, pad: 0.15 },
+    mix: { bass: 0.6, arp: 0.22, kick: 0.7, hat: 0.14, pad: 0.16 },
+  },
+  // Fenrir-Ω : le thème du Givre-Serveur, plus rapide, arpège continu.
+  frostBoss: {
+    bpm: 128,
+    rootHz: 123.47,
+    progression: [0, -3, -5, -2],
+    chord: [0, 3, 7, 10, 14],
+    bass: 'x.x.x.x.x.x.x.xx',
+    arp: '0242134302421343',
+    kick: 'x...x..xx...x..x',
+    hat: '.xxx.xxx.xxx.xxx',
+    pad: true,
+    mix: { bass: 0.58, arp: 0.22, kick: 0.65, hat: 0.12, pad: 0.18 },
   },
 };

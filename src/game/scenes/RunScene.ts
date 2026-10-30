@@ -229,7 +229,7 @@ export class RunScene extends Phaser.Scene {
     }
 
     this.cameras.main.fadeIn(350, 7, 6, 13);
-    music.play(this.kind === 'boss' ? 'boss' : this.kind === 'shop' ? 'hub' : biome.music);
+    music.play(this.kind === 'boss' ? biome.bossMusic : this.kind === 'shop' ? 'hub' : biome.music);
     markScene('run');
     // Sauvegarde à chaque entrée de salle : fermer l'app à tout moment, reprendre ici.
     session.snapshotRun(this.run);

@@ -16,8 +16,9 @@ export interface BiomeDef {
   eliteRooms: readonly number[];
   elite: EnemyId;
   boss: BossId;
-  /** Musique des salles de combat. */
+  /** Thème du biome (salles de combat) et sa version pour le boss. */
   music: TrackId;
+  bossMusic: TrackId;
   /** Ambiance visuelle (jamais de rouge-magenta : réservé aux dangers). */
   theme: BiomeTheme;
 }
@@ -47,7 +48,8 @@ export const BIOMES: readonly BiomeDef[] = [
     eliteRooms: [5, 8],
     elite: 'stalker',
     boss: 'ammit',
-    music: 'combat',
+    music: 'lowtown',
+    bossMusic: 'lowtownBoss',
     theme: {
       floor: 'floor',
       wall: 0x2a2048,
@@ -71,6 +73,7 @@ export const BIOMES: readonly BiomeDef[] = [
     elite: 'einherjar',
     boss: 'fenrir',
     music: 'frost',
+    bossMusic: 'frostBoss',
     theme: {
       floor: 'floorIce',
       wall: 0x1c3348,

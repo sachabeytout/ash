@@ -69,6 +69,15 @@ Format : date — décision — raison — validée par l'utilisateur (oui / non
 | D. Ash        | Le lore doit dire qu'Ash est **réellement né des cendres de quelque chose / quelqu'un d'important** → proposé : les cendres de l'Aube (le Phénix-Soleil)                                              | oui (principe) |
 | Méthode       | « Commence à travailler », poser les questions de lore / gameplay / DA au fil de l'eau                                                                                                                | oui            |
 
+## Retours de l'utilisateur (30/10/2026, après la 0.4.0)
+
+| Sujet      | Retour                                                                             | Suite donnée                                                         |
+| ---------- | ---------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| Affichage  | Aucun problème d'affichage ni de son                                               | —                                                                    |
+| Difficulté | « Assez dur mais pas frustrant »                                                   | On garde l'équilibrage actuel                                        |
+| Lisibilité | Les attaques se voient bien                                                        | —                                                                    |
+| Musique    | Elle plaît ; souhaite **une musique par biome** et **une version boss de chacune** | 0.5.1 : thème par biome + version boss (même tonalité, plus intense) |
+
 ## En attente de l'utilisateur
 
 - Retour sur le lore v0.2 (dimension divine de l'Oiseleur, nouvelle malédiction d'Aelia, arc en 10 victoires).
