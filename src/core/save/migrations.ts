@@ -295,6 +295,8 @@ function sanitizeSettings(raw: unknown): Settings {
     quality: s.quality === 'low' || s.quality === 'medium' ? s.quality : 'high',
     // Ajouté en 0.16.0 : activé par défaut (ne fait que baisser la qualité si le jeu rame).
     autoQuality: bool(s.autoQuality, d.autoQuality),
+    // Ajouté en 0.39.0 : texte normal par défaut.
+    textSize: s.textSize === 'large' ? 'large' : 'normal',
     language: s.language === 'fr' || s.language === 'en' ? s.language : 'auto',
     assist: bool(s.assist, d.assist),
   };

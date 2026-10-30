@@ -10,6 +10,7 @@ import {
 import { requestPersistentStorage, setupPwa } from './platform/pwa';
 import { session } from './game/session';
 import { settings } from './core/settings';
+import { installTextScale } from './game/textScale';
 
 session.load();
 setLocale(settings.language === 'auto' ? detectLocale(navigator.languages) : settings.language);
@@ -19,6 +20,7 @@ lockBrowserGestures();
 setupPwa();
 void requestPersistentStorage();
 
+installTextScale();
 const game = new Phaser.Game(createGameConfig('game'));
 
 // Après une rotation, on recadre le jeu sur l'écran réel.

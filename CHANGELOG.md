@@ -2,6 +2,13 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.39.0 — Taille du texte
+
+- **Nouvelle option « Taille du texte »** (Options) : **Normale** ou **Grande**. En Grande, les petits textes (cartes de dons, boutique, Archives, bulles, descriptions…) sont **20 % plus grands**. Les grands titres ne changent pas.
+- Le réglage s'applique en revenant dans la Cage, ou à la salle suivante.
+
+**Quoi tester** : sur ton iPhone, essaie « Grande ». Est-ce plus confortable ? Un texte déborde-t-il ?
+
 ## 0.38.0 — L'introduction
 
 - **Une introduction au lancement** (une seule fois, environ 10 secondes) :

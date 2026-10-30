@@ -673,5 +673,8 @@
   "story.aelia_memory.1": "Ce matin, j'ai oublié ton nom. Puis j'ai vu une braise danser, et je me suis souvenue.",
   "story.aelia_memory.2": "Ne t'inquiète pas. Je me souviens toujours de toi. Toujours.",
   "story.brokk_marks.1": "Les bêtes de l'Oiseleur portent des marques, maintenant ? Moi aussi, j'en porte : des brûlures de forge. Rien de plus solide.",
-  "intro.skip": "Toucher pour passer"
+  "intro.skip": "Toucher pour passer",
+  "options.textSize": "Taille du texte",
+  "options.textSize.normal": "Normale",
+  "options.textSize.large": "Grande"
 }

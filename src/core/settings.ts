@@ -1,3 +1,5 @@
+import type { TextSize } from './textScale';
+
 export type Quality = 'low' | 'medium' | 'high';
 export type LanguageSetting = 'auto' | 'fr' | 'en';
 
@@ -19,6 +21,8 @@ export interface Settings {
   /** Qualité automatique : baisse d'un cran si le jeu rame. */
   autoQuality: boolean;
   language: LanguageSetting;
+  /** Taille des petits textes (accessibilité). */
+  textSize: TextSize;
   /** Bénédiction du Phénix (mode assistance). */
   assist: boolean;
 }
@@ -37,6 +41,7 @@ export const DEFAULT_SETTINGS: Settings = {
   quality: 'high',
   autoQuality: true,
   language: 'auto',
+  textSize: 'normal',
   assist: false,
 };
 

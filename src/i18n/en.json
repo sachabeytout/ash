@@ -673,5 +673,8 @@
   "story.aelia_memory.1": "This morning I forgot your name. Then I saw an ember dance, and I remembered.",
   "story.aelia_memory.2": "Don't worry. I always remember you. Always.",
   "story.brokk_marks.1": "The Fowler's beasts wear marks now? So do I: forge burns. Nothing tougher.",
-  "intro.skip": "Tap to skip"
+  "intro.skip": "Tap to skip",
+  "options.textSize": "Text size",
+  "options.textSize.normal": "Normal",
+  "options.textSize.large": "Large"
 }

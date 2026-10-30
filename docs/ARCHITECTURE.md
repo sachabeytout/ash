@@ -1,6 +1,6 @@
 # Architecture (carte du projet)
 
-> Statut 0.38.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
+> Statut 0.39.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
 > combat/attack+health+status+superGauge, boons/boons, run/waves+rewards+state, save/schema+migrations+codec+store),
 > `data/` (player, weapons, enemies, biomes, gods, boons, status, skills, bosses, music, shop), `game/` (scenes Title, Hub,
 > Run, Ui, Boon, Pause, Shop ; entities Player, Enemy, Boss, Hittable ; input Controls, TouchControls ; fx/Juice+Lightning ;
@@ -88,6 +88,8 @@ par-dessus). Mort ou sortie → `hub` avec un `RunSummary`.
 - Étincelle du Phénix : récompense `spark` (`src/core/run/rewards.ts`, exclue sans don améliorable),
   `rollUpgrades` / `upgradableBoons` (`src/core/boons/boons.ts`), `upgradeBoon` et `pendingSpark` (sauvegarde v10,
   `src/core/run/state.ts`) ; choix via `BoonScene` en mode `upgrade` (`RunScene.offerSpark`).
+- Taille du texte : `src/core/textScale.ts` (`scaledFontSize`), crochet sur `scene.add.text` dans
+  `src/game/textScale.ts` (`installTextScale`, appelé par `main.ts`) ; réglage `textSize`.
 - Réduire les flashs : réglage `reduceFlashes`, `src/game/fx/hitFlash.ts` (ennemis, boss), `UiScene.flashHurt`.
 - Marques de l'Oiseleur : valeurs `src/data/affixes.ts`, tirage `src/core/affixes.ts` (`rollAffix`), dessin
   `Enemy.drawAffix`, explosion des Instables `RunScene.armBlast` / `updateBlasts`.

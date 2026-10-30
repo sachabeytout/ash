@@ -2,7 +2,7 @@
 
 ## Prochaine étape
 
-Équilibrage selon les retours de l'utilisateur ; enrichir la Cage (PNJ qui parlent quand on les approche). Les questions en attente sont dans `docs/QUESTIONS.md`.
+Le lore avec l'utilisateur, puis l'équilibrage selon ses retours. Les questions en attente sont dans `docs/QUESTIONS.md`.
 Retour sur le lore v0.2 toujours attendu (« quand le fond aura avancé »).
 
 ## M0 — Fondations
@@ -93,4 +93,5 @@ Retour sur le lore v0.2 toujours attendu (« quand le fond aura avancé »).
 - [x] **M6.4 (0.36.0)** : salles spéciales (survie, sombre, champion)
 - [x] **M6.5 (0.37.0)** : les dieux parlent à l'offre de don (36 répliques) + 8 dialogues de la Cage
 - [x] **M6.6 (0.38.0)** : introduction (cendres, feu, Ash qui se lève, fumée qui forme le logo)
+- [x] **M6.7 (0.39.0)** : option « Taille du texte » (Normale / Grande)
 - [ ] **M3** : finitions — coffres et évènements, préréglages de qualité, équilibrage avec la télémétrie, accessibilité

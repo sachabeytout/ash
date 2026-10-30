@@ -13,7 +13,11 @@ type Row =
       kind: 'toggle';
       key: 'screenShake' | 'reduceFlashes' | 'vibration' | 'aimAssist' | 'damageNumbers' | 'assist';
     }
-  | { kind: 'choice'; key: 'joystick' | 'quality' | 'language'; values: readonly string[] };
+  | {
+      kind: 'choice';
+      key: 'joystick' | 'quality' | 'language' | 'textSize';
+      values: readonly string[];
+    };
 
 const ROWS: readonly Row[] = [
   { kind: 'step', key: 'masterVolume' },
@@ -21,6 +25,7 @@ const ROWS: readonly Row[] = [
   { kind: 'step', key: 'musicVolume' },
   { kind: 'choice', key: 'quality', values: ['auto', 'low', 'medium', 'high'] },
   { kind: 'choice', key: 'language', values: ['auto', 'fr', 'en'] },
+  { kind: 'choice', key: 'textSize', values: ['normal', 'large'] },
   { kind: 'toggle', key: 'screenShake' },
   { kind: 'toggle', key: 'reduceFlashes' },
   { kind: 'toggle', key: 'vibration' },

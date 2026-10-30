@@ -3,7 +3,7 @@
 Liste tenue à jour par Claude. Réponds quand tu veux, même en vrac (« 3 : oui, 7 : plutôt la B »).
 En attendant ta réponse, Claude applique **ce qui est indiqué en gras** (toujours modifiable ensuite).
 
-Dernière mise à jour : 30/10/2026 (version 0.38.0).
+Dernière mise à jour : 30/10/2026 (version 0.39.0).
 
 ## A. Ressenti de jeu
 
@@ -14,7 +14,7 @@ Dernière mise à jour : 30/10/2026 (version 0.38.0).
 5. Quel dieu préfères-tu (il y en a 9 maintenant) ? Y en a-t-il un trop faible ou trop fort ?
 6. Le Super se remplit-il trop vite, trop lentement, ou c'est bien ?
 7. Les compétences de Thot (30 à 130 XP) : sens-tu que tu progresses assez vite ?
-8. Sur ton iPhone, les textes des cartes de don et du marchand sont-ils assez grands ?
+8. Sur ton iPhone, les textes sont-ils assez grands ? (Nouvelle option « Taille du texte : Grande » dans les Options.)
 9. Combien de temps dure une run complète pour toi (4 biomes) ? Trop long, trop court ? → **10/10/10/7 salles**
 10. Une victoire rapporte beaucoup d'XP et de pièces d'arme : la progression est-elle trop rapide une fois la première victoire obtenue ?
 11. Les boss (Talos, l'Oiseleur) : un boss te paraît-il injuste ou illisible ?
