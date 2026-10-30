@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { finishRun } from '../../core/meta';
+import { finishRun, runBonuses } from '../../core/meta';
 import { randomSeed } from '../../core/rng';
 import { newRun, summarize, type RunSummary } from '../../core/run/state';
 import { exportCode, importCode } from '../../core/save/codec';
@@ -10,11 +10,13 @@ import { WEAPONS, type WeaponId } from '../../data/weapons';
 import { t, type TextKey } from '../../i18n';
 import { sfx } from '../audio/sfx';
 import { addEmbers, drawCage, ensureTextures } from '../backdrop';
+import { cheatsEnabled } from '../debug/cheats';
 import { openSaveDialog } from '../dom/saveDialog';
 import { session } from '../session';
 import { ensureGameTextures } from '../textures';
 import { COLORS, FONT_FAMILY, GAME_HEIGHT, GAME_WIDTH } from '../theme';
 import { makeButton } from '../ui/button';
+import { ThothPanel } from '../ui/ThothPanel';
 import { markScene } from './markScene';
 
 /** La Cage (hub) : résumé de la dernière run, reprise, choix de l'arme, sauvegarde. */
@@ -117,6 +119,16 @@ export class HubScene extends Phaser.Scene {
       .setOrigin(0.5, 0);
 
     makeButton(this, {
+      x: 64,
+      y: 26,
+      w: 108,
+      h: 30,
+      label: t('hub.thothButton'),
+      color: 0x7fffc0,
+      fontSize: 12,
+      onTap: () => this.openThoth(),
+    });
+    makeButton(this, {
       x: GAME_WIDTH - 64,
       y: 26,
       w: 108,
@@ -132,6 +144,12 @@ export class HubScene extends Phaser.Scene {
 
     this.input.keyboard?.on('keydown', (e: KeyboardEvent) => {
       if (this.modal) return;
+      if (cheatsEnabled && e.code === 'KeyX') {
+        session.save.meta.xp += 100;
+        session.commit();
+        this.scene.restart({});
+        return;
+      }
       if (session.save.run) {
         if (e.code === 'Enter' || e.code === 'Space' || e.code === 'Digit1') this.resume();
         return;
@@ -234,6 +252,21 @@ export class HubScene extends Phaser.Scene {
     });
   }
 
+  private openThoth(): void {
+    if (this.modal || this.starting) return;
+    this.modal = true;
+    sfx.tap();
+    new ThothPanel(
+      this,
+      session.save.meta,
+      () => session.commit(),
+      () => {
+        this.modal = false;
+        this.scene.restart({});
+      },
+    );
+  }
+
   private openSave(): void {
     if (this.modal || this.starting) return;
     this.modal = true;
@@ -277,12 +310,15 @@ export class HubScene extends Phaser.Scene {
     this.starting = true;
     sfx.tap();
     const seed = randomSeed();
+    const bonus = runBonuses(session.save.meta);
     const run = newRun(
       seed,
       weapon,
-      PLAYER.maxHp,
+      PLAYER.maxHp + bonus.maxHpBonus,
       Date.now(),
       GOD_IDS[seed % GOD_IDS.length] ?? 'ra',
+      bonus.perks,
+      bonus.superStart,
     );
     this.go(run);
   }
