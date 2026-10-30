@@ -1,0 +1,16 @@
+{
+  "title.name": "ASH",
+  "title.subtitle": "Born of Ashes",
+  "title.tapToStart": "Tap to start",
+  "title.version": "version {version}",
+  "hub.name": "The Cage",
+  "hub.placeholder": "Ash rises from his ashes…",
+  "hub.comingSoon": "More is coming in the next version.",
+  "hub.deaths": {
+    "zero": "No deaths yet",
+    "one": "{count} death",
+    "other": "{count} deaths"
+  },
+  "pwa.updateReady": "New version available — tap to reload",
+  "pwa.offlineReady": "The game now works offline"
+}

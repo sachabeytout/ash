@@ -1,0 +1,16 @@
+{
+  "title.name": "ASH",
+  "title.subtitle": "Né des cendres",
+  "title.tapToStart": "Toucher pour commencer",
+  "title.version": "version {version}",
+  "hub.name": "La Cage",
+  "hub.placeholder": "Ash renaît de ses cendres…",
+  "hub.comingSoon": "La suite arrive dans la prochaine version.",
+  "hub.deaths": {
+    "zero": "Aucune mort pour l'instant",
+    "one": "{count} mort",
+    "other": "{count} morts"
+  },
+  "pwa.updateReady": "Nouvelle version disponible — toucher pour recharger",
+  "pwa.offlineReady": "Le jeu fonctionne maintenant hors ligne"
+}

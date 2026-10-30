@@ -1,0 +1,79 @@
+import Phaser from 'phaser';
+import { t } from '../../i18n';
+import { tryLandscapeFullscreen } from '../../platform/device';
+import { addEmbers, drawCage, ensureTextures } from '../backdrop';
+import { COLORS, FONT_FAMILY, GAME_HEIGHT, GAME_WIDTH } from '../theme';
+import { markScene } from './markScene';
+
+/** Écran titre « Toucher pour commencer » : le premier toucher débloque l'audio (exigence iOS). */
+export class TitleScene extends Phaser.Scene {
+  constructor() {
+    super('title');
+  }
+
+  create(): void {
+    ensureTextures(this);
+    const cx = GAME_WIDTH / 2;
+
+    drawCage(this, 0.8);
+    addEmbers(this);
+
+    const title = this.add
+      .text(cx, 120, t('title.name'), {
+        fontFamily: FONT_FAMILY,
+        fontSize: '72px',
+        fontStyle: 'bold',
+        color: COLORS.text,
+        padding: { x: 12, y: 8 }, // laisse la place au halo néon
+      })
+      .setOrigin(0.5);
+    title.enableFilters();
+    title.filters?.internal.addGlow(COLORS.phoenix, 4, 0, 1);
+
+    this.add
+      .text(cx, 172, t('title.subtitle'), {
+        fontFamily: FONT_FAMILY,
+        fontSize: '16px',
+        color: COLORS.textDim,
+      })
+      .setOrigin(0.5);
+
+    const prompt = this.add
+      .text(cx, 270, t('title.tapToStart'), {
+        fontFamily: FONT_FAMILY,
+        fontSize: '18px',
+        color: COLORS.text,
+      })
+      .setOrigin(0.5);
+    this.tweens.add({
+      targets: prompt,
+      alpha: 0.25,
+      duration: 900,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.InOut',
+    });
+
+    this.add
+      .text(GAME_WIDTH - 6, GAME_HEIGHT - 4, t('title.version', { version: __APP_VERSION__ }), {
+        fontFamily: FONT_FAMILY,
+        fontSize: '10px',
+        color: COLORS.textDim,
+      })
+      .setOrigin(1, 1);
+
+    this.cameras.main.fadeIn(600, 7, 6, 13);
+
+    const start = () => {
+      void tryLandscapeFullscreen();
+      this.cameras.main.fadeOut(400, 7, 6, 13);
+      this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () =>
+        this.scene.start('hub'),
+      );
+    };
+    this.input.once('pointerdown', start);
+    this.input.keyboard?.once('keydown', start);
+
+    markScene('title');
+  }
+}

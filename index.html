@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#07060d" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="ASH" />
+    <meta name="description" content="ASH — roguelite d'action cyberpunk." />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon-180x180.png" />
+    <title>ASH</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: #07060d;
+        overflow: hidden;
+        overscroll-behavior: none;
+        touch-action: none;
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+      #game {
+        position: fixed;
+        top: env(safe-area-inset-top);
+        right: env(safe-area-inset-right);
+        bottom: env(safe-area-inset-bottom);
+        left: env(safe-area-inset-left);
+      }
+      #toast {
+        position: fixed;
+        left: 50%;
+        bottom: calc(env(safe-area-inset-bottom) + 16px);
+        transform: translateX(-50%);
+        padding: 12px 20px;
+        border: 2px solid #ff7a2a;
+        border-radius: 8px;
+        background: #12101ccc;
+        color: #ffe9d6;
+        font:
+          600 16px/1.3 system-ui,
+          sans-serif;
+        cursor: pointer;
+        display: none;
+        z-index: 10;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="game"></div>
+    <div id="toast" role="button"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
