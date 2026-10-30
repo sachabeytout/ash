@@ -559,5 +559,20 @@
   "codex.records.kills": "Ennemis vaincus (total)",
   "codex.records.totalXp": "XP gagnée (total)",
   "codex.records.byWeapon": "Victoires par arme",
-  "codex.records.time": "{minutes} min {seconds} s"
+  "codex.records.time": "{minutes} min {seconds} s",
+  "hub.station.door": "Sortir · {weapon}",
+  "hub.station.resume": "Reprendre la run",
+  "hub.station.rack": "Râtelier · {weapon}",
+  "hub.station.thot": "Thot",
+  "hub.station.codex": "Archives",
+  "hub.station.aelia": "Aelia",
+  "hub.station.forge": "Brokk",
+  "hub.interact": "Entrée / toucher",
+  "rack.title": "Râtelier",
+  "rack.intro": "Choisis l'arme que tu emportes. Les armes verrouillées se débloquent chez Brokk.",
+  "rack.locked": "Brokk · {cost} pièces",
+  "rack.lockedDawn": "À la {count}e victoire",
+  "rack.equipped": "Équipée",
+  "rack.choose": "Choisir ({key})",
+  "rack.forgeLevel": "Forgée · niveau {level}"
 }

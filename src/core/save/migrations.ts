@@ -100,6 +100,11 @@ const MIGRATIONS: Record<number, (save: Raw) => Raw> = {
     const meta = isObject(old.meta) ? old.meta : {};
     return { ...old, version: 12, meta: { ...meta, records: emptyRecords() } };
   },
+  // v12 → v13 : la Cage devient un lieu à parcourir ; l'arme choisie au râtelier est mémorisée.
+  12: (old) => {
+    const meta = isObject(old.meta) ? old.meta : {};
+    return { ...old, version: 13, meta: { ...meta, selectedWeapon: 'katana' } };
+  },
 };
 
 function isObject(v: unknown): v is Raw {
@@ -166,6 +171,10 @@ function sanitizeMeta(raw: unknown): MetaState {
     heat: sanitizeHeat(m.heat),
     codex: sanitizeCodex(m.codex),
     records: sanitizeRecords(m.records),
+    selectedWeapon:
+      typeof m.selectedWeapon === 'string' && m.selectedWeapon in WEAPONS
+        ? (m.selectedWeapon as WeaponId)
+        : 'katana',
   };
 }
 

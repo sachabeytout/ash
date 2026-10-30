@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { assistReduction, reducedDamage } from '../../src/core/assist';
 import {
+  chosenWeapon,
   forgeLevel,
   isUnlocked,
   nextForgeLevel,
+  selectWeapon,
   unlockWeapon,
   upgradeWeapon,
   weaponBonuses,
@@ -120,5 +122,23 @@ describe('armes à débloquer', () => {
     expect(save.meta.forge).toEqual({ katana: 2 });
     expect(save.meta.weaponParts).toBe(7);
     expect(save.meta.unlocked).toEqual([]);
+  });
+});
+
+describe('râtelier de la Cage (0.30.0)', () => {
+  it('on ne peut équiper qu’une arme disponible ; sinon la Katana', () => {
+    const meta = defaultMeta();
+    expect(chosenWeapon(meta)).toBe('katana');
+    expect(selectWeapon(meta, 'staff')).toBe(false);
+    expect(selectWeapon(meta, 'twinBlades')).toBe(true);
+    expect(chosenWeapon(meta)).toBe('twinBlades');
+    meta.selectedWeapon = 'dawnblade';
+    expect(chosenWeapon(meta)).toBe('katana');
+  });
+
+  it('une sauvegarde v12 passe en v13 avec la Katana au râtelier', () => {
+    const save = migrate({ version: 12, meta: { xp: 3 }, settings: {}, run: null });
+    expect(save.meta.selectedWeapon).toBe('katana');
+    expect(save.meta.xp).toBe(3);
   });
 });

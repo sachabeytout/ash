@@ -2,7 +2,7 @@
 
 ## Prochaine étape
 
-M3 : finitions et équilibrage (coffres et évènements dans les salles, préréglages de qualité, réglages fins). Les questions en attente sont dans `docs/QUESTIONS.md`.
+Équilibrage selon les retours de l'utilisateur ; enrichir la Cage (PNJ qui parlent quand on les approche). Les questions en attente sont dans `docs/QUESTIONS.md`.
 Retour sur le lore v0.2 toujours attendu (« quand le fond aura avancé »).
 
 ## M0 — Fondations
@@ -84,4 +84,5 @@ Retour sur le lore v0.2 toujours attendu (« quand le fond aura avancé »).
 - [x] **M4.4 (0.27.0)** : 3 compétences de Thot (Bourse de Ratatosk, Pas de l'ibis, Renaissance), sauvegarde v11
 - [x] **M4.5 (0.28.0)** : Exploits (records dans les Archives), sauvegarde v12
 - [x] **0.28.1 → 0.29.0** : sons dédiés ; la Cage s'éveille (terminal, enclume, Vesper, braises)
+- [x] **M5.1 (0.30.0)** : la Cage niveau 0 (Ash s'y déplace ; stations : râtelier, Brokk, Thot, Archives, Aelia, Mesures, porte) — demandé par l'utilisateur
 - [ ] **M3** : finitions — coffres et évènements, préréglages de qualité, équilibrage avec la télémétrie, accessibilité

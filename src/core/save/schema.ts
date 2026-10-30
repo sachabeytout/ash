@@ -4,7 +4,7 @@ import type { HeatLevels } from '../heat';
 import type { RunState } from '../run/state';
 
 /** Version actuelle du format. Tout changement de format = nouvelle version + migration (voir migrations.ts). */
-export const SAVE_VERSION = 12;
+export const SAVE_VERSION = 13;
 
 /** Progression permanente (conservée entre les runs). */
 export interface MetaState {
@@ -32,6 +32,8 @@ export interface MetaState {
   codex: Record<string, number>;
   /** Exploits (Archives) : records de toutes les runs. Ajouté en v12. */
   records: Records;
+  /** Arme choisie au râtelier de la Cage. Ajouté en v13. */
+  selectedWeapon: WeaponId;
 }
 
 export interface Records {
@@ -73,6 +75,7 @@ export function defaultMeta(): MetaState {
     heat: {},
     codex: {},
     records: emptyRecords(),
+    selectedWeapon: 'katana',
   };
 }
 

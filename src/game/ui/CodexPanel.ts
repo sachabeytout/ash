@@ -48,9 +48,10 @@ export class CodexPanel {
     private readonly scene: Phaser.Scene,
     private readonly meta: MetaState,
     private readonly onClose: () => void,
+    initial: Tab = 'enemy',
   ) {
     this.root = scene.add.container(0, 0).setDepth(100);
-    this.show('enemy');
+    this.show(initial);
     setTimeout(() => window.addEventListener('keydown', this.onKey), 0);
   }
 

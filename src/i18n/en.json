@@ -559,5 +559,20 @@
   "codex.records.kills": "Enemies defeated (total)",
   "codex.records.totalXp": "XP earned (total)",
   "codex.records.byWeapon": "Victories per weapon",
-  "codex.records.time": "{minutes} min {seconds} s"
+  "codex.records.time": "{minutes} min {seconds} s",
+  "hub.station.door": "Leave · {weapon}",
+  "hub.station.resume": "Resume the run",
+  "hub.station.rack": "Rack · {weapon}",
+  "hub.station.thot": "Thoth",
+  "hub.station.codex": "Archives",
+  "hub.station.aelia": "Aelia",
+  "hub.station.forge": "Brokk",
+  "hub.interact": "Enter / tap",
+  "rack.title": "Weapon Rack",
+  "rack.intro": "Choose the weapon you take along. Locked weapons are unlocked at Brokk's.",
+  "rack.locked": "Brokk · {cost} parts",
+  "rack.lockedDawn": "At victory {count}",
+  "rack.equipped": "Equipped",
+  "rack.choose": "Choose ({key})",
+  "rack.forgeLevel": "Forged · level {level}"
 }

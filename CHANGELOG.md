@@ -2,6 +2,24 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.30.0 — La Cage, niveau 0
+
+- **La Cage devient un lieu à parcourir** : Ash s'y déplace librement.
+  - Sur téléphone, **touche le sol** pour marcher, ou **touche une station** : Ash y va et l'ouvre.
+  - Au clavier, déplace-toi puis appuie sur **Entrée** (ou E) devant une station. À la manette, utilise le bouton A.
+- **Les stations** :
+  - **Râtelier** : choisis ton arme. Elle reste mémorisée ; une arme verrouillée te renvoie chez Brokk.
+  - **Brokk et son enclume** : la forge.
+  - **Terminal de Thot** : les compétences.
+  - **Bibliothèque** : les Archives.
+  - **Brasero d'Aelia** : un nouveau dialogue s'il y en a un, sinon tes Souvenirs.
+  - **Tableau des Mesures** : les Mesures d'urgence, après ta 1re victoire.
+  - **La porte** en haut : sortir pour commencer la run (ou **reprendre** une run en cours). À côté, une chaîne brisée permet d'abandonner la run, avec confirmation.
+- Les boutons Options et Sauvegarde restent en haut. Les raccourcis 1 à 7 lancent toujours directement une run avec l'arme choisie.
+- Ta sauvegarde passe au nouveau format **sans rien perdre**.
+
+**Quoi tester** : te déplacer dans la Cage te plaît-il ? Trouves-tu facilement chaque station ? Le toucher pour marcher marche-t-il bien sur ton iPhone ?
+
 ## 0.29.0 — La Cage s'éveille
 
 - **La Cage change avec ta progression** :

@@ -8,7 +8,6 @@ import { getBiome } from '../../data/biomes';
 import { GOD_IDS } from '../../data/gods';
 import { PLAYER } from '../../data/player';
 import { WEAPON_ORDER, WEAPONS, type WeaponId } from '../../data/weapons';
-import { UNLOCK_COST } from '../../data/forge';
 import { t, type TextKey } from '../../i18n';
 import { music } from '../audio/music';
 import { sfx } from '../audio/sfx';
@@ -29,7 +28,7 @@ import { markSeen, nextDialogue } from '../../core/story';
 import { DAWNBLADE_VICTORIES } from '../../data/story';
 import { ThothPanel } from '../ui/ThothPanel';
 import { assistReduction } from '../../core/assist';
-import { forgeLevel, isUnlocked } from '../../core/forge';
+import { chosenWeapon, forgeLevel, isUnlocked, selectWeapon } from '../../core/forge';
 import { settings } from '../../core/settings';
 import type { MetaState } from '../../core/save/schema';
 import { applyPostFx, autoLowerQuality } from '../fx/postfx';
@@ -38,6 +37,8 @@ import { CodexPanel } from '../ui/CodexPanel';
 import { RecapPanel } from '../ui/RecapPanel';
 import { newAutoQuality } from '../../core/perf';
 import { markScene } from './markScene';
+import { Controls } from '../input/Controls';
+import { WeaponPanel } from '../ui/WeaponPanel';
 
 /** La Cage (hub) : résumé de la dernière run, reprise, choix de l'arme, sauvegarde. */
 export class HubScene extends Phaser.Scene {
@@ -45,6 +46,16 @@ export class HubScene extends Phaser.Scene {
   private starting = false;
   /** Une fenêtre (sauvegarde, Thot) est ouverte : la Cage ignore les touches. */
   private modal = false;
+  private controls!: Controls;
+  private stations: Station[] = [];
+  private ash!: Phaser.GameObjects.Image;
+  private ashGlow!: Phaser.GameObjects.Image;
+  /** Point où Ash marche (toucher), et la station à ouvrir en arrivant. */
+  private walkTarget: { x: number; y: number; station?: Station } | null = null;
+  private prompt!: Phaser.GameObjects.Text;
+  private padA = false;
+  /** Abandon de la run : deuxième appui pour confirmer. */
+  private abandonArmed = false;
 
   constructor() {
     super('hub');
@@ -54,6 +65,10 @@ export class HubScene extends Phaser.Scene {
     this.summary = data.summary;
     this.starting = false;
     this.modal = false;
+    this.stations = [];
+    this.walkTarget = null;
+    this.padA = false;
+    this.abandonArmed = false;
   }
 
   create(): void {
@@ -70,157 +85,46 @@ export class HubScene extends Phaser.Scene {
     drawCage(this, 0.7);
     addEmbers(this);
 
-    const ash = this.add.image(cx, 168, 'ash').setScale(2);
-    const glow = this.add
-      .image(cx, 168, 'glow')
-      .setTint(COLORS.phoenix)
-      .setAlpha(0.6)
-      .setScale(2.4)
-      .setBlendMode('ADD');
-    this.tweens.add({
-      targets: glow,
-      scale: 2.8,
-      alpha: 0.4,
-      duration: 1100,
-      yoyo: true,
-      repeat: -1,
-      ease: 'Sine.InOut',
-    });
-    this.tweens.add({
-      targets: ash,
-      y: 164,
-      duration: 1400,
-      yoyo: true,
-      repeat: -1,
-      ease: 'Sine.InOut',
-    });
-
-    // Les braises d'Aelia brillent plus fort à chaque victoire.
-    glow.setScale(2.4 + Math.min(meta.clears, 10) * 0.08);
-    this.decorateCage(meta);
-
     const style = {
       fontFamily: FONT_FAMILY,
       color: COLORS.text,
       stroke: '#07060d',
       strokeThickness: 3,
     };
-    this.add.text(cx, 54, t('hub.name'), { ...style, fontSize: '26px' }).setOrigin(0.5);
-
-    const lines: string[] = [];
-    if (this.summary) {
-      const minutes = Math.floor(this.summary.elapsedMs / 60000);
-      const seconds = Math.floor((this.summary.elapsedMs % 60000) / 1000);
-      lines.push(
-        this.summary.outcome === 'death'
-          ? this.summary.room > getBiome(this.summary.biome).rooms
-            ? t('hub.lastDeathBoss', {
-                biome: t(getBiome(this.summary.biome).nameKey as TextKey),
-                killer: this.summary.killedBy ?? '?',
-              })
-            : t('hub.lastDeath', {
-                biome: t(getBiome(this.summary.biome).nameKey as TextKey),
-                room: this.summary.room,
-                killer: this.summary.killedBy ?? '?',
-              })
-          : t('hub.lastClearAll'),
-        t('hub.lastStats', {
-          minutes,
-          seconds,
-          xp: this.summary.xp,
-          parts: this.summary.weaponParts,
-        }),
-      );
-    } else {
-      lines.push(t('hub.placeholder'));
-    }
-    lines.push(
-      t('hub.totals', {
-        xp: meta.xp,
-        parts: meta.weaponParts,
-        rebirths: t('hub.rebirths', { count: meta.deaths }),
-        victories: t('hub.victories', { count: meta.clears }),
-      }),
-    );
-    const assist = assistReduction(settings.assist, meta.assistDeaths);
-    if (assist > 0) lines.push(t('hub.assistActive', { value: Math.round(assist * 100) }));
+    this.add.text(cx, 14, t('hub.name'), { ...style, fontSize: '18px' }).setOrigin(0.5, 0);
     this.add
-      .text(cx, 84, lines.join('\n'), {
+      .text(cx, 38, this.infoLines(meta).join('\n'), {
         ...style,
-        fontSize: '11px',
+        fontSize: '9px',
         color: COLORS.textDim,
         align: 'center',
-        lineSpacing: 4,
+        lineSpacing: 2,
       })
       .setOrigin(0.5, 0);
 
     makeButton(this, {
-      x: 64,
-      y: 26,
-      w: 108,
-      h: 30,
-      label: t('hub.thothButton'),
-      color: 0x7fffc0,
-      fontSize: 12,
-      onTap: () => this.openThoth(),
-    });
-    makeButton(this, {
-      x: 64,
-      y: 62,
-      w: 108,
-      h: 30,
-      label: t('hub.forgeButton'),
-      color: 0xffe08a,
-      fontSize: 12,
-      onTap: () => this.openForge(),
-    });
-    makeButton(this, {
-      x: GAME_WIDTH - 180,
-      y: 62,
-      w: 108,
-      h: 30,
-      label: t('hub.codexButton'),
-      color: 0x7fffc0,
-      fontSize: 12,
-      onTap: () => this.openCodex(),
-    });
-    // Mesures d'urgence : après la 1re victoire.
-    if (meta.clears >= HEAT_UNLOCK_VICTORIES) {
-      const heat = heatTotal(meta.heat);
-      makeButton(this, {
-        x: GAME_WIDTH - 64,
-        y: 62,
-        w: 108,
-        h: 30,
-        label: heat > 0 ? t('hub.heatButtonOn', { heat }) : t('hub.heatButton'),
-        color: 0xffa040,
-        fontSize: 11,
-        onTap: () => this.openHeat(),
-      });
-    }
-    makeButton(this, {
-      x: GAME_WIDTH - 180,
-      y: 26,
-      w: 108,
-      h: 30,
+      x: 52,
+      y: 22,
+      w: 88,
+      h: 26,
       label: t('hub.optionsButton'),
       color: 0xffb02e,
-      fontSize: 12,
+      fontSize: 11,
       onTap: () => this.openOptions(),
     });
     makeButton(this, {
-      x: GAME_WIDTH - 64,
-      y: 26,
-      w: 108,
-      h: 30,
+      x: GAME_WIDTH - 52,
+      y: 22,
+      w: 88,
+      h: 26,
       label: t('hub.saveButton'),
       color: 0x6b4cff,
-      fontSize: 12,
+      fontSize: 11,
       onTap: () => this.openSave(),
     });
 
-    if (session.save.run) this.showResume();
-    else this.showWeapons();
+    this.buildStations(meta);
+    this.spawnAsh(meta);
 
     this.input.keyboard?.on('keydown', (e: KeyboardEvent) => {
       if (this.modal) return;
@@ -263,21 +167,24 @@ export class HubScene extends Phaser.Scene {
         this.openHeat();
         return;
       }
-      if (e.code === 'KeyA') {
-        this.openCodex();
-        return;
-      }
       if (cheatsEnabled && e.code === 'KeyK') {
         // Archives complètes (pour vérifier l'affichage).
         for (const entry of CODEX) recordCodex(session.save.meta, entry.key, 3);
         session.commit();
         return;
       }
-      if (session.save.run) {
-        if (e.code === 'Enter' || e.code === 'Space' || e.code === 'Digit1') this.resume();
+      if (e.code === 'Enter' || e.code === 'Space' || e.code === 'KeyE') {
+        // Station la plus proche ; sinon, une run en cours reprend.
+        const near = this.nearStation();
+        if (near) near.action();
+        else if (session.save.run) this.resume();
         return;
       }
-      if (e.code === 'Enter' || e.code === 'Space') this.start('katana');
+      if (session.save.run) {
+        if (e.code === 'Digit1') this.resume();
+        return;
+      }
+      // Raccourcis : 1 à 7 équipent l'arme et sortent directement.
       const digit = Number(/^Digit([1-7])$/.exec(e.code)?.[1] ?? 0);
       const id = WEAPON_ORDER[digit - 1];
       if (id && isUnlocked(session.save.meta, id)) this.start(id);
@@ -297,61 +204,40 @@ export class HubScene extends Phaser.Scene {
 
   override update(_time: number, delta: number): void {
     autoLowerQuality(this.autoQuality, delta, this.cameras.main);
-    if (this.modal) return;
+    this.controls.update();
+    if (this.modal || this.starting) return;
+    this.moveAsh(delta);
+    this.highlightStations();
+    // Manette : A agit sur la station la plus proche (ou reprend la run).
     const pad = navigator.getGamepads?.().find((p) => p?.connected);
-    if (!pad) return;
-    if (session.save.run) {
-      if (pad.buttons[0]?.pressed) this.resume();
-      return;
+    const pressed = pad?.buttons[0]?.pressed ?? false;
+    if (pressed && !this.padA) {
+      const near = this.nearStation();
+      if (near) near.action();
+      else if (session.save.run) this.resume();
     }
-    if (pad.buttons[0]?.pressed) this.start('katana');
-    if (pad.buttons[2]?.pressed) this.start('twinBlades');
+    this.padA = pressed;
   }
 
-  private showWeapons(): void {
-    const cx = GAME_WIDTH / 2;
-    this.add
-      .text(cx, 214, t('hub.chooseWeapon'), {
-        fontFamily: FONT_FAMILY,
-        fontSize: '12px',
-        color: COLORS.text,
-        stroke: '#07060d',
-        strokeThickness: 3,
-      })
-      .setOrigin(0.5);
-    // 7 armes sur 2 rangées (4 + 3) ; une arme verrouillée renvoie vers la forge de Brokk.
-    WEAPON_ORDER.forEach((id, i) => {
-      const unlocked = isUnlocked(session.save.meta, id);
-      const row = i < 4 ? 0 : 1;
-      const col = row === 0 ? i - 1.5 : i - 4 - 1;
-      const cost = UNLOCK_COST[id];
-      makeButton(this, {
-        x: cx + col * 128,
-        y: 248 + row * 50,
-        w: 122,
-        h: 42,
-        label: t(WEAPONS[id].nameKey as TextKey),
-        sub: unlocked
-          ? t('hub.escape', { key: i + 1 })
-          : cost !== undefined
-            ? t('hub.locked', { cost })
-            : t('hub.lockedDawn'),
-        color: unlocked ? WEAPONS[id].color : 0x3a3550,
-        fontSize: 11,
-        onTap: () => (unlocked ? this.start(id) : this.openForge()),
-      });
-    });
-  }
+  // ---------- La Cage, niveau 0 : Ash s'y déplace et visite les stations ----------
 
-  /** Une run est sauvegardée : on la reprend (ou on l'abandonne, avec confirmation). */
-  private showResume(): void {
+  /** Résumé en haut : dernière run, run en cours, totaux. */
+  private infoLines(meta: MetaState): string[] {
+    const lines: string[] = [];
+    const s = this.summary;
+    if (s) {
+      const biome = t(getBiome(s.biome).nameKey as TextKey);
+      lines.push(
+        s.outcome === 'death'
+          ? s.room > getBiome(s.biome).rooms
+            ? t('hub.lastDeathBoss', { biome, killer: s.killedBy ?? '?' })
+            : t('hub.lastDeath', { biome, room: s.room, killer: s.killedBy ?? '?' })
+          : t('hub.lastClearAll'),
+      );
+    }
     const run = session.save.run;
-    if (!run) return;
-    const cx = GAME_WIDTH / 2;
-    this.add
-      .text(
-        cx,
-        222,
+    if (run) {
+      lines.push(
         t('hub.runInProgress', {
           place:
             run.room <= 0
@@ -362,43 +248,299 @@ export class HubScene extends Phaser.Scene {
                 }),
           weapon: t(WEAPONS[run.weapon].nameKey as TextKey),
         }),
-        {
-          fontFamily: FONT_FAMILY,
-          fontSize: '12px',
-          color: COLORS.text,
-          stroke: '#07060d',
-          strokeThickness: 3,
-        },
-      )
-      .setOrigin(0.5);
-    makeButton(this, {
-      x: cx,
-      y: 262,
-      w: 200,
-      h: 46,
-      label: t('hub.resume'),
-      sub: t('hub.resumeSub', { hp: run.hp, maxHp: run.maxHp }),
+      );
+    }
+    lines.push(
+      t('hub.totals', {
+        xp: meta.xp,
+        parts: meta.weaponParts,
+        rebirths: t('hub.rebirths', { count: meta.deaths }),
+        victories: t('hub.victories', { count: meta.clears }),
+      }),
+    );
+    const assist = assistReduction(settings.assist, meta.assistDeaths);
+    if (assist > 0) lines.push(t('hub.assistActive', { value: Math.round(assist * 100) }));
+    return lines;
+  }
+
+  private buildStations(meta: MetaState): void {
+    const run = session.save.run;
+    const weapon = WEAPONS[chosenWeapon(meta)];
+    this.addStation({
+      id: 'door',
+      x: GAME_WIDTH / 2,
+      y: 128,
       color: 0xffb02e,
-      onTap: () => this.resume(),
+      label: run
+        ? t('hub.station.resume')
+        : t('hub.station.door', { weapon: t(weapon.nameKey as TextKey) }),
+      draw: (g, x, y) => drawDoor(g, x, y),
+      action: () => (run ? this.resume() : this.start(chosenWeapon(session.save.meta))),
     });
-    let confirming = false;
-    const abandon = makeButton(this, {
-      x: cx,
-      y: 314,
-      w: 200,
-      h: 30,
-      label: t('hub.abandon'),
-      color: 0x6b4cff,
-      fontSize: 11,
-      onTap: () => {
-        if (!confirming) {
-          confirming = true;
-          abandon.setLabel(t('hub.abandonConfirm'));
-          return;
-        }
-        this.abandon();
+    if (run) {
+      this.addStation({
+        id: 'abandon',
+        x: GAME_WIDTH / 2 + 92,
+        y: 140,
+        color: 0x6b4cff,
+        label: t('hub.abandon'),
+        draw: (g, x, y) => drawBrokenChain(g, x, y),
+        action: () => this.abandonStation(),
+      });
+    } else {
+      this.addStation({
+        id: 'rack',
+        x: 150,
+        y: 196,
+        color: weapon.color,
+        label: t('hub.station.rack', { weapon: t(weapon.nameKey as TextKey) }),
+        draw: (g, x, y) => drawRack(g, x, y),
+        action: () => this.openRack(),
+      });
+    }
+    this.addStation({
+      id: 'thot',
+      x: 150,
+      y: 290,
+      color: 0x7fffc0,
+      label: t('hub.station.thot'),
+      draw: (g, x, y) => drawTerminal(g, x, y),
+      action: () => this.openThoth(),
+    });
+    this.addStation({
+      id: 'codex',
+      x: 238,
+      y: 316,
+      color: 0x9ab4ff,
+      label: t('hub.station.codex'),
+      draw: (g, x, y) => drawShelf(g, x, y),
+      action: () => this.openCodex(),
+    });
+    this.addStation({
+      id: 'aelia',
+      x: GAME_WIDTH / 2,
+      y: 218,
+      color: 0xffa040,
+      label: t('hub.station.aelia'),
+      draw: (g, x, y) => drawBrazier(g, x, y),
+      action: () => this.talkToAelia(),
+    });
+    // Le brasero d'Aelia brille un peu plus à chaque victoire.
+    const flame = this.add
+      .image(GAME_WIDTH / 2, 210, 'glow')
+      .setTint(0xffa040)
+      .setAlpha(0.55)
+      .setScale(1.2 + Math.min(meta.clears, 10) * 0.08)
+      .setBlendMode('ADD');
+    this.tweens.add({ targets: flame, alpha: 0.3, duration: 700, yoyo: true, repeat: -1 });
+    this.addStation({
+      id: 'forge',
+      x: 490,
+      y: 196,
+      color: 0xffe08a,
+      label: t('hub.station.forge'),
+      draw: (g, x, y) => drawForge(g, x, y),
+      action: () => this.openForge(),
+    });
+    if (meta.clears >= HEAT_UNLOCK_VICTORIES) {
+      const heat = heatTotal(meta.heat);
+      this.addStation({
+        id: 'heat',
+        x: 490,
+        y: 290,
+        color: 0xffa040,
+        label: heat > 0 ? t('hub.heatButtonOn', { heat }) : t('hub.heatButton'),
+        draw: (g, x, y) => drawBoard(g, x, y),
+        action: () => this.openHeat(),
+      });
+    }
+    if (meta.deaths >= 1) {
+      // Vesper, perché près de la porte : il observe Ash.
+      const g = this.add.graphics();
+      drawRaven(g, GAME_WIDTH / 2 - 56, 112);
+      this.tweens.add({ targets: g, y: -1.5, duration: 1300, yoyo: true, repeat: -1 });
+    }
+    this.prompt = this.add
+      .text(0, 0, '', {
+        fontFamily: FONT_FAMILY,
+        fontSize: '9px',
+        color: '#ffe9d6',
+        stroke: '#07060d',
+        strokeThickness: 3,
+      })
+      .setOrigin(0.5, 1)
+      .setDepth(30)
+      .setVisible(false);
+  }
+
+  private addStation(def: Omit<Station, 'labelText' | 'graphics'>): void {
+    const g = this.add.graphics().setDepth(4);
+    def.draw(g, def.x, def.y);
+    const labelText = this.add
+      .text(def.x, def.y + 22, def.label, {
+        fontFamily: FONT_FAMILY,
+        fontSize: '9px',
+        color: `#${def.color.toString(16).padStart(6, '0')}`,
+        stroke: '#07060d',
+        strokeThickness: 3,
+        align: 'center',
+      })
+      .setOrigin(0.5, 0)
+      .setDepth(5)
+      .setAlpha(0.8);
+    const station: Station = { ...def, labelText, graphics: g };
+    this.stations.push(station);
+    // Toucher une station : Ash y marche, puis l'ouvre.
+    this.add
+      .zone(def.x, def.y + 6, 60, 54)
+      .setInteractive({ useHandCursor: true })
+      .on('pointerup', () => {
+        if (this.modal || this.starting) return;
+        if (this.distanceTo(station) <= INTERACT_RANGE) station.action();
+        else this.walkTarget = { ...this.approachPoint(station), station };
+      });
+  }
+
+  private spawnAsh(meta: MetaState): void {
+    const x = GAME_WIDTH / 2;
+    const y = 300;
+    this.ashGlow = this.add
+      .image(x, y, 'glow')
+      .setTint(COLORS.phoenix)
+      .setAlpha(0.5)
+      .setScale(1.8)
+      .setBlendMode('ADD');
+    this.ash = this.add.image(x, y, 'ash').setScale(2).setDepth(10);
+    this.controls = new Controls(this, () => this.time.now);
+    // Toucher le sol : Ash y marche.
+    this.input.on('pointerup', (p: Phaser.Input.Pointer, over: Phaser.GameObjects.GameObject[]) => {
+      if (this.modal || this.starting || over.length > 0) return;
+      const w = this.cameras.main.getWorldPoint(p.x, p.y);
+      this.walkTarget = clampToFloor(w.x, w.y);
+    });
+    void meta;
+  }
+
+  private moveAsh(delta: number): void {
+    const move = this.controls.move;
+    let vx = move.x;
+    let vy = move.y;
+    if (Math.hypot(vx, vy) > 0.1) {
+      this.walkTarget = null;
+    } else if (this.walkTarget) {
+      const dx = this.walkTarget.x - this.ash.x;
+      const dy = this.walkTarget.y - this.ash.y;
+      const d = Math.hypot(dx, dy);
+      if (d < 4) {
+        const station = this.walkTarget.station;
+        this.walkTarget = null;
+        station?.action();
+        return;
+      }
+      vx = dx / d;
+      vy = dy / d;
+    } else return;
+    const step = (ASH_SPEED * delta) / 1000;
+    const next = clampToFloor(this.ash.x + vx * step, this.ash.y + vy * step);
+    this.ash.setPosition(next.x, next.y);
+    if (Math.abs(vx) > 0.1) this.ash.setFlipX(vx < 0);
+    this.ashGlow.setPosition(next.x, next.y);
+  }
+
+  /** Distance d'Ash au pied de la station (on peut l'utiliser de côté comme de face). */
+  private distanceTo(station: Station): number {
+    return Math.hypot(this.ash.x - station.x, this.ash.y - (station.y + 18));
+  }
+
+  /** Là où Ash se tient pour utiliser une station : juste devant (en dessous). */
+  private approachPoint(station: Station): { x: number; y: number } {
+    return clampToFloor(station.x, station.y + 30);
+  }
+
+  private nearStation(): Station | undefined {
+    let best: Station | undefined;
+    let bestD = INTERACT_RANGE;
+    for (const st of this.stations) {
+      const d = this.distanceTo(st);
+      if (d <= bestD) {
+        best = st;
+        bestD = d;
+      }
+    }
+    return best;
+  }
+
+  private highlightStations(): void {
+    const near = this.nearStation();
+    for (const st of this.stations) st.labelText.setAlpha(st === near ? 1 : 0.75);
+    if (!near) {
+      this.prompt.setVisible(false);
+      return;
+    }
+    this.prompt
+      .setText(t('hub.interact'))
+      .setPosition(near.x, near.y - 22)
+      .setVisible(true);
+  }
+
+  private openRack(): void {
+    if (this.modal || this.starting) return;
+    this.modal = true;
+    sfx.tap();
+    new WeaponPanel(
+      this,
+      session.save.meta,
+      (weapon) => {
+        selectWeapon(session.save.meta, weapon);
+        session.commit();
+        this.modal = false;
+        this.scene.restart({});
       },
-    });
+      () => {
+        this.modal = false;
+        this.openForge();
+      },
+      () => {
+        this.modal = false;
+      },
+    );
+  }
+
+  /** Brasero d'Aelia : un dialogue nouveau s'il y en a un, sinon ses souvenirs. */
+  private talkToAelia(): void {
+    if (this.modal || this.starting) return;
+    const last = this.summary
+      ? { ...this.summary, atBoss: this.summary.room > getBiome(this.summary.biome).rooms }
+      : undefined;
+    if (nextDialogue(session.save.meta, last)) {
+      this.playStory();
+      return;
+    }
+    this.modal = true;
+    sfx.tap();
+    new CodexPanel(
+      this,
+      session.save.meta,
+      () => {
+        this.modal = false;
+      },
+      'memory',
+    );
+  }
+
+  private abandonStation(): void {
+    const st = this.stations.find((s) => s.id === 'abandon');
+    if (!this.abandonArmed) {
+      this.abandonArmed = true;
+      sfx.tap();
+      st?.labelText.setText(t('hub.abandonConfirm'));
+      this.time.delayedCall(3000, () => {
+        this.abandonArmed = false;
+        st?.labelText.setText(t('hub.abandon'));
+      });
+      return;
+    }
+    this.abandon();
   }
 
   /** En revenant dans la Cage : un personnage parle (une réplique nouvelle à la fois). */
@@ -420,79 +562,6 @@ export class HubScene extends Phaser.Scene {
       // La Lame de l'Aube vient d'être forgée : on redessine la Cage pour l'afficher.
       if (dialogue.id === `victory_${DAWNBLADE_VICTORIES}`) this.scene.restart({});
     });
-  }
-
-  /**
-   * La Cage s'éveille avec la progression : le terminal de Thot (après 2 runs), l'enclume de
-   * Brokk (une arme débloquée ou forgée), Vesper perché (après la 1re mort). Toucher le terminal
-   * ou l'enclume ouvre leur fenêtre.
-   */
-  private decorateCage(meta: MetaState): void {
-    if (meta.runs >= 2) {
-      const x = 196;
-      const y = 178;
-      const g = this.add.graphics();
-      g.fillStyle(0x0d1a16, 1).fillRect(x - 14, y - 12, 28, 20);
-      g.lineStyle(1.5, 0x7fffc0, 0.9).strokeRect(x - 14, y - 12, 28, 20);
-      g.fillStyle(0x7fffc0, 0.85)
-        .fillRect(x - 10, y - 8, 14, 2)
-        .fillRect(x - 10, y - 4, 20, 2);
-      g.fillRect(x - 10, y, 9, 2);
-      g.fillStyle(0x3a4a44, 1)
-        .fillRect(x - 3, y + 8, 6, 6)
-        .fillRect(x - 9, y + 14, 18, 3);
-      const screen = this.add
-        .image(x, y - 2, 'glow')
-        .setTint(0x7fffc0)
-        .setAlpha(0.35)
-        .setScale(0.9)
-        .setBlendMode('ADD');
-      this.tweens.add({ targets: screen, alpha: 0.15, duration: 900, yoyo: true, repeat: -1 });
-      this.add
-        .zone(x, y, 40, 40)
-        .setInteractive({ useHandCursor: true })
-        .on('pointerup', () => this.openThoth());
-    }
-    const forged = Object.values(meta.forge).some((level) => (level ?? 0) > 0);
-    if (meta.unlocked.length > 0 || forged) {
-      const x = 444;
-      const y = 184;
-      const g = this.add.graphics();
-      g.fillStyle(0xc0c8d8, 1).fillRect(x - 14, y - 8, 24, 7);
-      g.fillTriangle(x + 10, y - 8, x + 18, y - 8, x + 10, y - 1);
-      g.fillRect(x - 5, y - 1, 10, 8).fillRect(x - 11, y + 7, 22, 5);
-      const sparks = this.add
-        .image(x, y - 10, 'glow')
-        .setTint(0xffa040)
-        .setAlpha(0)
-        .setScale(0.6)
-        .setBlendMode('ADD');
-      this.tweens.add({
-        targets: sparks,
-        alpha: 0.7,
-        duration: 140,
-        yoyo: true,
-        repeat: -1,
-        repeatDelay: 1600,
-      });
-      this.add
-        .zone(x, y, 44, 36)
-        .setInteractive({ useHandCursor: true })
-        .on('pointerup', () => this.openForge());
-    }
-    if (meta.deaths >= 1) {
-      // Vesper, perché sur un barreau : il observe Ash.
-      const x = 232;
-      const y = 72;
-      const g = this.add.graphics();
-      g.fillStyle(0x1a1626, 1).fillEllipse(x, y, 14, 10);
-      g.fillCircle(x + 6, y - 4, 4);
-      g.fillTriangle(x + 9, y - 5, x + 14, y - 3, x + 9, y - 2);
-      g.fillTriangle(x - 6, y, x - 13, y + 4, x - 6, y + 3);
-      g.fillStyle(0xb8a8ff, 1).fillCircle(x + 7, y - 5, 1.2);
-      g.lineStyle(1, 0x6a5a8a, 1).lineBetween(x - 14, y + 6, x + 14, y + 6);
-      this.tweens.add({ targets: g, y: -1.5, duration: 1300, yoyo: true, repeat: -1 });
-    }
   }
 
   private openRecap(): void {
@@ -636,4 +705,136 @@ export class HubScene extends Phaser.Scene {
       this.scene.start('run', { run }),
     );
   }
+}
+
+/** Station de la Cage : une forme dessinée, un nom, une action. */
+interface Station {
+  id: string;
+  x: number;
+  y: number;
+  color: number;
+  label: string;
+  draw: (g: Phaser.GameObjects.Graphics, x: number, y: number) => void;
+  action: () => void;
+  labelText: Phaser.GameObjects.Text;
+  graphics: Phaser.GameObjects.Graphics;
+}
+
+/** Distance à laquelle Ash peut utiliser une station. */
+const INTERACT_RANGE = 40;
+const ASH_SPEED = 120;
+/** Sol de la Cage (entre les barreaux). */
+const FLOOR = { left: 104, right: GAME_WIDTH - 104, top: 150, bottom: 330 };
+
+function clampToFloor(x: number, y: number): { x: number; y: number } {
+  return {
+    x: Math.min(FLOOR.right, Math.max(FLOOR.left, x)),
+    y: Math.min(FLOOR.bottom, Math.max(FLOOR.top, y)),
+  };
+}
+
+// ---------- Dessins des stations (formes distinctes, pas seulement des couleurs) ----------
+
+function drawDoor(g: Phaser.GameObjects.Graphics, x: number, y: number): void {
+  g.fillStyle(0x07060d, 1).fillRoundedRect(x - 24, y - 30, 48, 44, {
+    tl: 24,
+    tr: 24,
+    bl: 0,
+    br: 0,
+  });
+  g.fillStyle(0x2a1a0a, 1).fillRoundedRect(x - 18, y - 24, 36, 38, {
+    tl: 18,
+    tr: 18,
+    bl: 0,
+    br: 0,
+  });
+  g.lineStyle(2, 0xffb02e, 1).strokeRoundedRect(x - 24, y - 30, 48, 44, {
+    tl: 24,
+    tr: 24,
+    bl: 0,
+    br: 0,
+  });
+  g.lineStyle(2, 0xffe08a, 0.9);
+  g.lineBetween(x - 7, y - 2, x, y - 10).lineBetween(x, y - 10, x + 7, y - 2);
+  g.lineBetween(x - 7, y + 6, x, y - 2).lineBetween(x, y - 2, x + 7, y + 6);
+}
+
+function drawBrokenChain(g: Phaser.GameObjects.Graphics, x: number, y: number): void {
+  g.lineStyle(2, 0x6b4cff, 1);
+  g.strokeEllipse(x - 7, y, 12, 8).strokeEllipse(x + 7, y, 12, 8);
+  g.lineBetween(x - 2, y - 6, x + 2, y + 6);
+}
+
+function drawRack(g: Phaser.GameObjects.Graphics, x: number, y: number): void {
+  g.fillStyle(0x3a2a1c, 1)
+    .fillRect(x - 20, y + 8, 40, 5)
+    .fillRect(x - 20, y - 16, 4, 26);
+  g.fillRect(x + 16, y - 16, 4, 26).fillRect(x - 20, y - 16, 40, 3);
+  g.lineStyle(2, 0xd8e2ff, 1);
+  for (const dx of [-9, 0, 9]) g.lineBetween(x + dx, y - 12, x + dx, y + 7);
+  g.fillStyle(0xffb02e, 1);
+  for (const dx of [-9, 0, 9]) g.fillRect(x + dx - 3, y + 2, 6, 2);
+}
+
+function drawTerminal(g: Phaser.GameObjects.Graphics, x: number, y: number): void {
+  g.fillStyle(0x0d1a16, 1).fillRect(x - 14, y - 12, 28, 20);
+  g.lineStyle(1.5, 0x7fffc0, 0.9).strokeRect(x - 14, y - 12, 28, 20);
+  g.fillStyle(0x7fffc0, 0.85)
+    .fillRect(x - 10, y - 8, 14, 2)
+    .fillRect(x - 10, y - 4, 20, 2);
+  g.fillRect(x - 10, y, 9, 2);
+  g.fillStyle(0x3a4a44, 1)
+    .fillRect(x - 3, y + 8, 6, 6)
+    .fillRect(x - 9, y + 14, 18, 3);
+}
+
+function drawShelf(g: Phaser.GameObjects.Graphics, x: number, y: number): void {
+  g.fillStyle(0x141a2a, 1).fillRect(x - 16, y - 18, 32, 32);
+  g.lineStyle(1.5, 0x9ab4ff, 0.9).strokeRect(x - 16, y - 18, 32, 32);
+  g.lineBetween(x - 16, y - 7, x + 16, y - 7).lineBetween(x - 16, y + 4, x + 16, y + 4);
+  const colors = [0x9ab4ff, 0x7fffc0, 0xb08cff, 0xffe08a];
+  [-12, -7, -2, 3, 8].forEach((dx, i) => {
+    g.fillStyle(colors[i % colors.length] ?? 0x9ab4ff, 0.9).fillRect(x + dx, y - 16, 3, 8);
+    g.fillRect(x + dx + 1, y - 5, 3, 8);
+  });
+}
+
+function drawBrazier(g: Phaser.GameObjects.Graphics, x: number, y: number): void {
+  g.fillStyle(0x3a2a1c, 1)
+    .fillRect(x - 3, y + 2, 6, 10)
+    .fillRect(x - 10, y + 11, 20, 3);
+  g.fillStyle(0x5a4030, 1).fillTriangle(x - 14, y - 4, x + 14, y - 4, x, y + 4);
+  g.fillStyle(0xffa040, 1).fillTriangle(x - 8, y - 4, x + 8, y - 4, x, y - 20);
+  g.fillStyle(0xffe08a, 1).fillTriangle(x - 4, y - 4, x + 4, y - 4, x, y - 13);
+}
+
+function drawForge(g: Phaser.GameObjects.Graphics, x: number, y: number): void {
+  // Enclume.
+  g.fillStyle(0xc0c8d8, 1).fillRect(x - 6, y - 4, 22, 6);
+  g.fillTriangle(x + 16, y - 4, x + 22, y - 4, x + 16, y + 2);
+  g.fillRect(x + 1, y + 2, 8, 7).fillRect(x - 3, y + 9, 16, 4);
+  // Brokk : trapu, barbe en pointe, tablier.
+  g.fillStyle(0x8a5a2e, 1).fillRect(x - 24, y - 6, 14, 18);
+  g.fillStyle(0xd8a070, 1).fillCircle(x - 17, y - 11, 5);
+  g.fillStyle(0xffe08a, 1).fillTriangle(x - 21, y - 9, x - 13, y - 9, x - 17, y + 2);
+  g.fillStyle(0x3a2a1c, 1).fillRect(x - 22, y + 4, 10, 8);
+}
+
+function drawBoard(g: Phaser.GameObjects.Graphics, x: number, y: number): void {
+  g.fillStyle(0x1a120a, 1).fillRect(x - 18, y - 14, 36, 26);
+  g.lineStyle(1.5, 0xffa040, 0.9).strokeRect(x - 18, y - 14, 36, 26);
+  for (let i = 0; i < 6; i++) {
+    const px = x - 13 + (i % 3) * 13;
+    const py = y - 8 + Math.floor(i / 3) * 11;
+    g.lineStyle(1.5, 0xffa040, 1).strokeRect(px - 3, py - 3, 6, 6);
+  }
+}
+
+function drawRaven(g: Phaser.GameObjects.Graphics, x: number, y: number): void {
+  g.fillStyle(0x1a1626, 1).fillEllipse(x, y, 14, 10);
+  g.fillCircle(x + 6, y - 4, 4);
+  g.fillTriangle(x + 9, y - 5, x + 14, y - 3, x + 9, y - 2);
+  g.fillTriangle(x - 6, y, x - 13, y + 4, x - 6, y + 3);
+  g.fillStyle(0xb8a8ff, 1).fillCircle(x + 7, y - 5, 1.2);
+  g.lineStyle(1, 0x6a5a8a, 1).lineBetween(x - 14, y + 6, x + 14, y + 6);
 }
