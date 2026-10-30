@@ -48,6 +48,8 @@ export class Controls {
   aimDir: Vec2 | null = null;
   mouseWorld: Vec2 | null = null;
   lastDevice: Device = 'keyboard';
+  /** Demande de pause (Échap, P, bouton Start, bouton pause tactile). */
+  onPause: () => void = () => undefined;
   /** Déplacement fourni par le joystick tactile. */
   touchMove: Vec2 = { x: 0, y: 0 };
 
@@ -55,6 +57,10 @@ export class Controls {
   private readonly padPrev = new Map<number, boolean>();
   private readonly onKeyDown = (e: KeyboardEvent) => {
     if (e.code in MOVE_KEYS || e.code in ACTION_KEYS) e.preventDefault();
+    if ((e.code === 'Escape' || e.code === 'KeyP') && !e.repeat) {
+      this.onPause();
+      return;
+    }
     this.held.add(e.code);
     this.lastDevice = 'keyboard';
     const action = ACTION_KEYS[e.code];
@@ -120,6 +126,7 @@ export class Controls {
         const was = this.padPrev.get(i) ?? false;
         if (b.pressed && !was) {
           this.lastDevice = 'gamepad';
+          if (i === 9) this.onPause();
           const action = PAD_BUTTONS[i];
           if (action) this.press(action);
         }

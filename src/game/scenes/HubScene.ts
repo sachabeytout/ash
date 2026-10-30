@@ -16,6 +16,7 @@ import { session } from '../session';
 import { ensureGameTextures } from '../textures';
 import { COLORS, FONT_FAMILY, GAME_HEIGHT, GAME_WIDTH } from '../theme';
 import { makeButton } from '../ui/button';
+import { OptionsPanel } from '../ui/OptionsPanel';
 import { ThothPanel } from '../ui/ThothPanel';
 import { markScene } from './markScene';
 
@@ -127,6 +128,16 @@ export class HubScene extends Phaser.Scene {
       color: 0x7fffc0,
       fontSize: 12,
       onTap: () => this.openThoth(),
+    });
+    makeButton(this, {
+      x: GAME_WIDTH - 180,
+      y: 26,
+      w: 108,
+      h: 30,
+      label: t('hub.optionsButton'),
+      color: 0xffb02e,
+      fontSize: 12,
+      onTap: () => this.openOptions(),
     });
     makeButton(this, {
       x: GAME_WIDTH - 64,
@@ -269,6 +280,16 @@ export class HubScene extends Phaser.Scene {
         this.scene.restart({});
       },
     );
+  }
+
+  private openOptions(): void {
+    if (this.modal || this.starting) return;
+    this.modal = true;
+    sfx.tap();
+    new OptionsPanel(this, () => {
+      this.modal = false;
+      this.scene.restart({});
+    });
   }
 
   private openSave(): void {

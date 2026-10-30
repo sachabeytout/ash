@@ -137,5 +137,8 @@ function sanitizeSettings(raw: unknown): Settings {
     damageNumbers: bool(s.damageNumbers, d.damageNumbers),
     joystick: s.joystick === 'fixed' ? 'fixed' : 'floating',
     touchButtonScale: num(s.touchButtonScale, d.touchButtonScale, 0.7, 1.5),
+    // Ajoutés en 0.4.0 : absents des anciennes sauvegardes → valeurs par défaut (pas de perte).
+    quality: s.quality === 'low' || s.quality === 'medium' ? s.quality : 'high',
+    language: s.language === 'fr' || s.language === 'en' ? s.language : 'auto',
   };
 }

@@ -9,9 +9,10 @@ import {
 } from './platform/device';
 import { requestPersistentStorage, setupPwa } from './platform/pwa';
 import { session } from './game/session';
+import { settings } from './core/settings';
 
 session.load();
-setLocale(detectLocale(navigator.languages));
+setLocale(settings.language === 'auto' ? detectLocale(navigator.languages) : settings.language);
 const rotateText = document.getElementById('rotate-text');
 if (rotateText) rotateText.textContent = t('device.rotate');
 lockBrowserGestures();

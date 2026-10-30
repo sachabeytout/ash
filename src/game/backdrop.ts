@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { QUALITY_PARTICLES, settings } from '../core/settings';
 import { COLORS, GAME_HEIGHT, GAME_WIDTH } from './theme';
 
 /** Textures générées par code (aucun fichier image à charger). */
@@ -41,7 +42,8 @@ export function addEmbers(scene: Phaser.Scene): Phaser.GameObjects.Particles.Par
     speedY: { min: -40, max: -15 },
     speedX: { min: -8, max: 8 },
     lifespan: 6000,
-    frequency: 120,
+    // Moins de braises en qualité basse.
+    frequency: 120 / QUALITY_PARTICLES[settings.quality],
     alpha: { start: 0.9, end: 0 },
     scale: { start: 1, end: 0.5 },
     tint: [COLORS.phoenix, COLORS.ember],

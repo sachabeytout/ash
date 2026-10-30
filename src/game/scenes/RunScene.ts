@@ -35,6 +35,7 @@ import { Juice } from '../fx/Juice';
 import { Lightning } from '../fx/Lightning';
 import { drawGodIcon } from '../icons';
 import type { BoonSceneData } from './BoonScene';
+import type { PauseSceneData } from './PauseScene';
 import { Controls } from '../input/Controls';
 import { UiScene, type Indicator } from './UiScene';
 import { finishRun } from '../../core/meta';
@@ -151,7 +152,14 @@ export class RunScene extends Phaser.Scene {
     this.lightning = new Lightning(this);
     this.profile = buildProfile(this.run.boons);
     this.controls = new Controls(this, () => this.sim);
+    this.controls.onPause = () => this.openPause();
     this.scene.launch('ui', { controls: this.controls });
+    // L'app passe en arrière-plan (appel, verrouillage) : pause automatique.
+    const onHidden = () => this.openPause();
+    this.game.events.on('app-hidden', onHidden);
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () =>
+      this.game.events.off('app-hidden', onHidden),
+    );
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.scene.stop('ui'));
 
     this.player = new Player(this, ARENA.centerX, ARENA.bottom - 30, WEAPONS[this.run.weapon]);
@@ -213,6 +221,30 @@ export class RunScene extends Phaser.Scene {
         this.enemies.filter((en) => en.alive).forEach((en) => this.killEnemy(en));
       }
     });
+  }
+
+  // ---------- Pause ----------
+
+  openPause(): void {
+    if (this.leaving || this.scene.isPaused() || this.scene.isActive('boon')) return;
+    this.scene.pause();
+    this.scene.pause('ui');
+    const data: PauseSceneData = {
+      run: this.run,
+      onResume: () => {
+        this.scene.resume('ui');
+        this.scene.resume();
+        markScene('run');
+      },
+      onAbandon: () => {
+        this.scene.resume('ui');
+        this.scene.resume();
+        this.leaving = true;
+        this.endRun('death', t('hub.abandoned'));
+      },
+    };
+    this.scene.launch('pause', data);
+    this.scene.bringToTop('pause');
   }
 
   // ---------- Dons ----------

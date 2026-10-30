@@ -1,4 +1,7 @@
-/** Réglages du joueur (options). Valeurs par défaut ; la sauvegarde viendra les remplacer. */
+export type Quality = 'low' | 'medium' | 'high';
+export type LanguageSetting = 'auto' | 'fr' | 'en';
+
+/** Réglages du joueur (options), enregistrés avec la sauvegarde. */
 export interface Settings {
   masterVolume: number;
   sfxVolume: number;
@@ -9,6 +12,9 @@ export interface Settings {
   damageNumbers: boolean;
   joystick: 'floating' | 'fixed';
   touchButtonScale: number;
+  /** Préréglage graphique : moins d'effets sur les petits téléphones. */
+  quality: Quality;
+  language: LanguageSetting;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -21,6 +27,11 @@ export const DEFAULT_SETTINGS: Settings = {
   damageNumbers: true,
   joystick: 'floating',
   touchButtonScale: 1,
+  quality: 'high',
+  language: 'auto',
 };
+
+/** Part des particules gardées selon la qualité. */
+export const QUALITY_PARTICLES: Record<Quality, number> = { low: 0.35, medium: 0.7, high: 1 };
 
 export const settings: Settings = { ...DEFAULT_SETTINGS };

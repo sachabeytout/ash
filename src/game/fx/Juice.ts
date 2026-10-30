@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { settings } from '../../core/settings';
+import { QUALITY_PARTICLES, settings } from '../../core/settings';
 import { vibrate } from '../../platform/device';
 
 /** Effets de « ressenti » : arrêt sur image, tremblement, étincelles, chiffres de dégâts. */
@@ -57,7 +57,7 @@ export class Juice {
 
   burst(x: number, y: number, color: number, count = 8): void {
     this.sparks.setParticleTint(color);
-    this.sparks.explode(count, x, y);
+    this.sparks.explode(Math.max(1, Math.round(count * QUALITY_PARTICLES[settings.quality])), x, y);
   }
 
   damageNumber(x: number, y: number, amount: number, color = '#ffe9d6'): void {

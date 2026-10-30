@@ -37,6 +37,7 @@ export class UiScene extends Phaser.Scene {
   private touch!: TouchControls;
   private superWasReady = false;
   private indicators: Phaser.GameObjects.Graphics[] = [];
+  private pauseButton!: Phaser.GameObjects.Container;
 
   constructor() {
     super('ui');
@@ -73,6 +74,14 @@ export class UiScene extends Phaser.Scene {
       return g;
     });
     this.touch = new TouchControls(this, this.controls);
+    // Bouton pause (deux barres), toujours visible en haut à droite.
+    const pg = this.add.graphics();
+    pg.fillStyle(0x07060d, 0.6).fillCircle(0, 0, 13);
+    pg.lineStyle(1.5, 0xffe9d6, 0.7).strokeCircle(0, 0, 13);
+    pg.fillStyle(0xffe9d6, 0.9).fillRect(-5, -6, 3, 12).fillRect(2, -6, 3, 12);
+    const pz = this.add.zone(0, 0, 40, 40).setInteractive({ useHandCursor: true });
+    pz.on('pointerdown', () => this.controls.onPause());
+    this.pauseButton = this.add.container(0, 0, [pg, pz]).setDepth(1001);
     this.superWasReady = false;
 
     this.layout();
@@ -86,7 +95,8 @@ export class UiScene extends Phaser.Scene {
     const { width, height } = this.scale;
     this.hpText.setPosition(12, 29);
     this.room.setPosition(width / 2, 8);
-    this.shards.setPosition(width - 12, 8);
+    this.shards.setPosition(width - 44, 8);
+    this.pauseButton.setPosition(width - 20, 20);
     this.hurtOverlay.setSize(width, height);
   }
 
