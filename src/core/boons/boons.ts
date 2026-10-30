@@ -166,6 +166,14 @@ export function mainValue(effect: BoonEffect, rarity: Rarity): number {
     case 'stormStun':
     case 'critStun':
       return effect.durationMs;
+    // Amplifications à paliers fixes (pas de rareté).
+    case 'chainBounces':
+    case 'chillStacks':
+    case 'executeBonus':
+    case 'arrowCount':
+      return effect.bonus;
+    case 'curseDamage':
+      return Math.round(effect.bonus * 100);
     case 'aegisStorm':
       return Math.round(effect.damage * p);
     case 'blackSun':
@@ -250,6 +258,7 @@ export function buildProfile(owned: readonly OwnedBoon[]): CombatProfile {
   };
   let burnDurationBonus = 0;
   let stunDurationBonus = 0;
+  const amp = { bounces: 0, chill: 0, execute: 0, arrows: 0, curse: 0 };
   for (const o of owned) {
     const def = getBoon(o.id);
     if (!def) continue;
@@ -364,6 +373,21 @@ export function buildProfile(owned: readonly OwnedBoon[]): CombatProfile {
       case 'stunDuration':
         stunDurationBonus += v / 100;
         break;
+      case 'chainBounces':
+        amp.bounces += v;
+        break;
+      case 'chillStacks':
+        amp.chill += v;
+        break;
+      case 'executeBonus':
+        amp.execute += v / 100;
+        break;
+      case 'arrowCount':
+        amp.arrows += v;
+        break;
+      case 'curseDamage':
+        amp.curse += v / 100;
+        break;
     }
   }
   for (const fx of Object.values(profile.on)) {
@@ -371,6 +395,11 @@ export function buildProfile(owned: readonly OwnedBoon[]): CombatProfile {
       fx.burn.durationMs = Math.round(fx.burn.durationMs * (1 + burnDurationBonus));
     if (fx.stun && stunDurationBonus > 0)
       fx.stun.durationMs = Math.round(fx.stun.durationMs * (1 + stunDurationBonus));
+    if (fx.chain) fx.chain.bounces += amp.bounces;
+    if (fx.chill) fx.chill += amp.chill;
+    if (fx.execute) fx.execute += amp.execute;
+    if (fx.arrows) fx.arrows.count += amp.arrows;
+    if (fx.curse) fx.curse.damage = Math.round(fx.curse.damage * (1 + amp.curse));
   }
   return profile;
 }

@@ -2,6 +2,18 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.25.0 — Cinq nouvelles amplifications
+
+- **5 nouvelles amplifications** (elles renforcent un don que tu as déjà) :
+  - **Arc supérieur** (Zeus) : ton éclair en chaîne rebondit 2 fois de plus.
+  - **Hiver profond** (Skadi) : tes dons de givre posent 1 charge de plus à chaque coup.
+  - **Balance de Maât** (Anubis) : le seuil d'exécution augmente de 5 %.
+  - **Carquois d'argent** (Artémis) : 1 flèche de plus.
+  - **Fléau** (Hel) : explosions de malédiction 50 % plus fortes.
+- Chaque dieu a maintenant **au moins une amplification**.
+
+**Quoi tester** : quand une amplification apparaît, la prends-tu ? Le gain se sent-il ?
+
 ## 0.24.0 — Quatre nouveaux duos
 
 - **4 nouveaux duos** (dons spéciaux qui combinent deux dieux ; ils apparaissent quand tu as déjà un don de chacun des deux) :

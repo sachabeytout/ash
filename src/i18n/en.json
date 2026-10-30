@@ -523,5 +523,15 @@
   "boon.duo_thunder_claws": "Thunder Claws",
   "boon.duo_thunder_claws.desc": "Your critical hits stun the enemy ({value} ms).",
   "boon.duo_embalm": "Embalming",
-  "boon.duo_embalm.desc": "An enemy that dies while burning restores {value} HP."
+  "boon.duo_embalm.desc": "An enemy that dies while burning restores {value} HP.",
+  "boon.amp_arc": "Greater Arc",
+  "boon.amp_arc.desc": "Your chain lightning bounces {value} more times.",
+  "boon.amp_winter": "Deep Winter",
+  "boon.amp_winter.desc": "Your frost boons add {value} more stack per hit.",
+  "boon.amp_scales": "Scales of Maat",
+  "boon.amp_scales.desc": "Anubis's execution threshold rises by {value}%.",
+  "boon.amp_quiver": "Silver Quiver",
+  "boon.amp_quiver.desc": "Your Artemis boons fire {value} more arrow.",
+  "boon.amp_plague": "Plague",
+  "boon.amp_plague.desc": "Curse explosions deal {value}% more damage."
 }

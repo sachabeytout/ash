@@ -65,6 +65,12 @@ export type BoonEffect =
   | { type: 'lastBreath'; hp: number }
   // ---------- Duos et amplifications ----------
   | { type: 'stormStun'; durationMs: number }
+  /** Amplifications : rebonds d'éclair, charges de givre, seuil d'exécution, flèches, malédiction. */
+  | { type: 'chainBounces'; bonus: number }
+  | { type: 'chillStacks'; bonus: number }
+  | { type: 'executeBonus'; bonus: number }
+  | { type: 'arrowCount'; bonus: number }
+  | { type: 'curseDamage'; bonus: number }
   /** Duo Athéna + Zeus : quand l'égide bloque un coup, la foudre frappe en chaîne. */
   | { type: 'aegisStorm'; damage: number }
   /** Duo Râ + Hel : les explosions de malédiction enflamment les ennemis touchés. */
@@ -520,6 +526,51 @@ export const BOONS: readonly BoonDef[] = [
     descKey: 'boon.amp_claws.desc',
     effect: { type: 'critDamage', bonus: 0.5 },
     requiresAny: ['bastet_attack', 'bastet_power'],
+  },
+  {
+    id: 'amp_arc',
+    gods: ['zeus'],
+    kind: 'amp',
+    nameKey: 'boon.amp_arc',
+    descKey: 'boon.amp_arc.desc',
+    effect: { type: 'chainBounces', bonus: 2 },
+    requiresAny: ['zeus_attack'],
+  },
+  {
+    id: 'amp_winter',
+    gods: ['skadi'],
+    kind: 'amp',
+    nameKey: 'boon.amp_winter',
+    descKey: 'boon.amp_winter.desc',
+    effect: { type: 'chillStacks', bonus: 1 },
+    requiresAny: ['skadi_attack', 'skadi_power', 'skadi_dash'],
+  },
+  {
+    id: 'amp_scales',
+    gods: ['anubis'],
+    kind: 'amp',
+    nameKey: 'boon.amp_scales',
+    descKey: 'boon.amp_scales.desc',
+    effect: { type: 'executeBonus', bonus: 5 },
+    requiresAny: ['anubis_attack', 'anubis_power'],
+  },
+  {
+    id: 'amp_quiver',
+    gods: ['artemis'],
+    kind: 'amp',
+    nameKey: 'boon.amp_quiver',
+    descKey: 'boon.amp_quiver.desc',
+    effect: { type: 'arrowCount', bonus: 1 },
+    requiresAny: ['artemis_attack', 'artemis_power', 'artemis_dash'],
+  },
+  {
+    id: 'amp_plague',
+    gods: ['hel'],
+    kind: 'amp',
+    nameKey: 'boon.amp_plague',
+    descKey: 'boon.amp_plague.desc',
+    effect: { type: 'curseDamage', bonus: 0.5 },
+    requiresAny: ['hel_attack', 'hel_dash'],
   },
 ];
 

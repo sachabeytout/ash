@@ -79,4 +79,5 @@ Retour sur le lore v0.2 toujours attendu (« quand le fond aura avancé »).
 - [x] **M3.10 (0.22.0)** : option « Réduire les flashs »
 - [x] **0.22.1 → 0.23.0** : 6 nouveaux dialogues ; Archives : armes et habitants de la Cage (41 fiches)
 - [x] **M4.1 (0.24.0)** : 4 nouveaux duos (Égide orageuse, Soleil noir, Griffes du tonnerre, Embaumement)
+- [x] **M4.2 (0.25.0)** : 5 amplifications (Zeus, Skadi, Anubis, Artémis, Hel)
 - [ ] **M3** : finitions — coffres et évènements, préréglages de qualité, équilibrage avec la télémétrie, accessibilité

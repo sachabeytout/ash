@@ -353,3 +353,32 @@ describe('nouveaux duos (0.24.0)', () => {
     expect(p.embalm).toBeGreaterThan(0);
   });
 });
+
+describe('nouvelles amplifications (0.25.0)', () => {
+  it('chaque amplification renforce le don de son dieu', () => {
+    const base = buildProfile([
+      { id: 'zeus_attack', rarity: 'common' },
+      { id: 'skadi_power', rarity: 'common' },
+      { id: 'anubis_attack', rarity: 'common' },
+      { id: 'artemis_dash', rarity: 'common' },
+      { id: 'hel_attack', rarity: 'common' },
+    ]);
+    const amped = buildProfile([
+      { id: 'zeus_attack', rarity: 'common' },
+      { id: 'skadi_power', rarity: 'common' },
+      { id: 'anubis_attack', rarity: 'common' },
+      { id: 'artemis_dash', rarity: 'common' },
+      { id: 'hel_attack', rarity: 'common' },
+      { id: 'amp_arc', rarity: 'amp' },
+      { id: 'amp_winter', rarity: 'amp' },
+      { id: 'amp_scales', rarity: 'amp' },
+      { id: 'amp_quiver', rarity: 'amp' },
+      { id: 'amp_plague', rarity: 'amp' },
+    ]);
+    expect(amped.on.attack.chain?.bounces).toBe((base.on.attack.chain?.bounces ?? 0) + 2);
+    expect(amped.on.power.chill).toBe((base.on.power.chill ?? 0) + 1);
+    expect(amped.on.attack.execute).toBeCloseTo((base.on.attack.execute ?? 0) + 0.05);
+    expect(amped.on.dash.arrows?.count).toBe((base.on.dash.arrows?.count ?? 0) + 1);
+    expect(amped.on.attack.curse?.damage).toBeGreaterThan(base.on.attack.curse?.damage ?? 0);
+  });
+});

@@ -523,5 +523,15 @@
   "boon.duo_thunder_claws": "Griffes du tonnerre",
   "boon.duo_thunder_claws.desc": "Tes coups critiques étourdissent l'ennemi ({value} ms).",
   "boon.duo_embalm": "Embaumement",
-  "boon.duo_embalm.desc": "Un ennemi qui meurt en brûlant te rend {value} PV."
+  "boon.duo_embalm.desc": "Un ennemi qui meurt en brûlant te rend {value} PV.",
+  "boon.amp_arc": "Arc supérieur",
+  "boon.amp_arc.desc": "Ton éclair en chaîne rebondit {value} fois de plus.",
+  "boon.amp_winter": "Hiver profond",
+  "boon.amp_winter.desc": "Tes dons de givre posent {value} charge de plus à chaque coup.",
+  "boon.amp_scales": "Balance de Maât",
+  "boon.amp_scales.desc": "Le seuil d'exécution d'Anubis augmente de {value} %.",
+  "boon.amp_quiver": "Carquois d'argent",
+  "boon.amp_quiver.desc": "Tes dons d'Artémis tirent {value} flèche de plus.",
+  "boon.amp_plague": "Fléau",
+  "boon.amp_plague.desc": "Les explosions de malédiction font {value} % de dégâts en plus."
 }

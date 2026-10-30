@@ -116,7 +116,7 @@ L'Oiseleur le laisse s'évader, encore et encore.
 | Hel     | nordique | Vol de vie, malédiction                  |     |
 
 Duos : Râ + Skadi = **Choc thermique** ; Zeus + Thor = **Tempête d'Asgard** ; Anubis + Hel = **Jugement dernier** ; Bastet + Artémis = **Chasse nocturne** ; Athéna + Zeus = **Égide orageuse** ; Râ + Hel = **Soleil noir** ; Bastet + Thor = **Griffes du tonnerre** ; Râ + Anubis = **Embaumement** (0.24.0).
-Amplification M1 : **Soleil de midi** (la brûlure de Râ dure 50 % plus longtemps).
+Amplifications : **Soleil de midi** (Râ), **Égide renforcée** (Athéna), **Mjölnir chargé** (Thor), **Griffes affûtées** (Bastet), **Arc supérieur** (Zeus), **Hiver profond** (Skadi), **Balance de Maât** (Anubis), **Carquois d'argent** (Artémis), **Fléau** (Hel).
 
 ### Dons des 6 autres dieux (0.10.0)
 
