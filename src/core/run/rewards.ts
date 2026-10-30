@@ -2,7 +2,7 @@ import { GOD_IDS, GODS, type GodId, type Pantheon } from '../../data/gods';
 import type { Rng } from '../rng';
 
 /** Les 5 récompenses possibles derrière une porte. */
-export const REWARD_KINDS = ['boon', 'shards', 'weaponMod', 'xp', 'weaponParts'] as const;
+export const REWARD_KINDS = ['boon', 'shards', 'weaponMod', 'xp', 'weaponParts', 'spark'] as const;
 export type RewardKind = (typeof REWARD_KINDS)[number];
 
 /** Poids de tirage : les dons sont plus fréquents (c'est le cœur de la run). */
@@ -12,11 +12,16 @@ const WEIGHTS: Record<RewardKind, number> = {
   weaponMod: 1,
   xp: 2,
   weaponParts: 1,
+  spark: 1,
 };
 
 /** Tire `count` récompenses différentes pour les portes de sortie. */
-export function rollDoorRewards(rng: Rng, count: number): RewardKind[] {
-  const pool = [...REWARD_KINDS];
+export function rollDoorRewards(
+  rng: Rng,
+  count: number,
+  exclude: readonly RewardKind[] = [],
+): RewardKind[] {
+  const pool = REWARD_KINDS.filter((k) => !exclude.includes(k));
   const result: RewardKind[] = [];
   while (result.length < count && pool.length > 0) {
     const total = pool.reduce((sum, k) => sum + WEIGHTS[k], 0);
@@ -51,8 +56,13 @@ export function rollGod(rng: Rng, favored?: Pantheon): GodId {
 }
 
 /** Portes de sortie d'une salle : récompenses différentes, un dieu tiré pour la porte de don. */
-export function rollDoors(rng: Rng, count: number, favored?: Pantheon): DoorReward[] {
-  return rollDoorRewards(rng, count).map((kind) =>
+export function rollDoors(
+  rng: Rng,
+  count: number,
+  favored?: Pantheon,
+  exclude: readonly RewardKind[] = [],
+): DoorReward[] {
+  return rollDoorRewards(rng, count, exclude).map((kind) =>
     kind === 'boon' ? { kind, god: rollGod(rng, favored) } : { kind },
   );
 }

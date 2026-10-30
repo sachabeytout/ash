@@ -11,7 +11,11 @@ export interface BoonSceneData {
   god: GodId;
   offers: BoonOffer[];
   onPick: (offer: BoonOffer) => void;
+  /** Étincelle du Phénix : on améliore un don déjà obtenu (titre et bas de carte différents). */
+  upgrade?: boolean;
 }
+
+const SPARK_COLOR = 0xffc46b;
 
 const RARITY_COLOR: Record<Rarity, string> = {
   common: '#d6cfe6',
@@ -52,20 +56,30 @@ export class BoonScene extends Phaser.Scene {
     const godColor = `#${god.color.toString(16).padStart(6, '0')}`;
 
     const veil = this.add.rectangle(0, 0, width, height, 0x07060d, 0.82).setOrigin(0);
+    const upgrade = this.data_.upgrade === true;
     const titleIcon = this.add.graphics();
-    drawGodIcon(titleIcon, god, width / 2, 26, 9);
+    if (upgrade) {
+      // Flamme du Phénix.
+      titleIcon
+        .fillStyle(SPARK_COLOR, 1)
+        .fillTriangle(width / 2 - 7, 32, width / 2 + 7, 32, width / 2, 14);
+      titleIcon.fillCircle(width / 2, 28, 6);
+    } else drawGodIcon(titleIcon, god, width / 2, 26, 9);
+    const titleText = upgrade
+      ? t('spark.title')
+      : t('boonChoice.title', { god: t(god.nameKey as TextKey) });
     const title = this.add
-      .text(width / 2, 44, t('boonChoice.title', { god: t(god.nameKey as TextKey) }), {
+      .text(width / 2, 44, titleText, {
         fontFamily: FONT_FAMILY,
         fontSize: '16px',
         fontStyle: 'bold',
-        color: godColor,
+        color: upgrade ? '#ffc46b' : godColor,
         stroke: '#07060d',
         strokeThickness: 3,
       })
       .setOrigin(0.5, 0);
     const subtitle = this.add
-      .text(width / 2, 64, t(god.titleKey as TextKey), {
+      .text(width / 2, 64, upgrade ? t('spark.subtitle') : t(god.titleKey as TextKey), {
         fontFamily: FONT_FAMILY,
         fontSize: '10px',
         color: COLORS.textDim,
@@ -183,9 +197,14 @@ export class BoonScene extends Phaser.Scene {
     const replaced = offer.replaces ? getBoon(offer.replaces) : undefined;
     text(
       y + h - 22,
-      replaced
-        ? t('boonChoice.replaces', { name: t(replaced.nameKey as TextKey) })
-        : t('boonChoice.new'),
+      offer.from
+        ? t('spark.from', {
+            from: t(`rarity.${offer.from}` as TextKey),
+            to: t(`rarity.${offer.rarity}` as TextKey),
+          })
+        : replaced
+          ? t('boonChoice.replaces', { name: t(replaced.nameKey as TextKey) })
+          : t('boonChoice.new'),
       9,
       COLORS.textDim,
     );

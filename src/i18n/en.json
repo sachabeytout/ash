@@ -477,5 +477,9 @@
   "recap.rewardsValue": "{xp} XP · {parts} parts",
   "recap.boons": "Boons this run",
   "recap.noBoons": "No boons this time.",
-  "recap.continue": "Continue"
+  "recap.continue": "Continue",
+  "reward.spark": "Spark",
+  "spark.title": "Phoenix Spark",
+  "spark.subtitle": "One of your boons gains a rarity tier",
+  "spark.from": "{from} → {to}"
 }

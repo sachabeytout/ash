@@ -24,6 +24,30 @@ export interface BoonOffer {
   rarity: Rarity;
   /** Le don déjà présent sur la même action, qui sera remplacé. */
   replaces?: string;
+  /** Étincelle du Phénix : rareté actuelle du don amélioré. */
+  from?: Rarity;
+}
+
+/** Rareté suivante (seuls les dons communs et rares progressent). */
+export function nextRarity(rarity: Rarity): Rarity | null {
+  return rarity === 'common' ? 'rare' : rarity === 'rare' ? 'epic' : null;
+}
+
+/** Dons pouvant gagner un cran de rareté. */
+export function upgradableBoons(owned: readonly OwnedBoon[]): OwnedBoon[] {
+  return owned.filter((o) => nextRarity(o.rarity) !== null && getBoon(o.id)?.kind === 'normal');
+}
+
+/** Étincelle : jusqu'à `count` dons possédés, chacun proposé au cran de rareté suivant. */
+export function rollUpgrades(rng: Rng, owned: readonly OwnedBoon[], count = 3): BoonOffer[] {
+  const pool = upgradableBoons(owned);
+  const offers: BoonOffer[] = [];
+  while (offers.length < count && pool.length > 0) {
+    const pick = pool.splice(Math.floor(rng.next() * pool.length), 1)[0];
+    const next = pick && nextRarity(pick.rarity);
+    if (pick && next) offers.push({ id: pick.id, rarity: next, from: pick.rarity });
+  }
+  return offers;
 }
 
 /** Duos et amplifications sortent plus souvent quand ils sont possibles (on veut les voir). */

@@ -72,6 +72,11 @@ const MIGRATIONS: Record<number, (save: Raw) => Raw> = {
     const run = isObject(old.run) ? { ...old.run, kills: 0, damageTaken: 0 } : old.run;
     return { ...old, version: 9, run };
   },
+  // v9 → v10 : Étincelle du Phénix (aucune en attente pour la run en cours).
+  9: (old) => {
+    const run = isObject(old.run) ? { ...old.run, pendingSpark: false } : old.run;
+    return { ...old, version: 10, run };
+  },
 };
 
 function isObject(v: unknown): v is Raw {
@@ -191,6 +196,7 @@ function sanitizeRun(raw: unknown): RunState | null {
       typeof pending === 'string' && (GOD_IDS as string[]).includes(pending)
         ? (pending as RunState['pendingBoon'])
         : null,
+    pendingSpark: raw.pendingSpark === true,
     superGauge: num(raw.superGauge, 0, 0, 1),
     weaponLevel: num(raw.weaponLevel, 0, 0, 20),
     lastBreathUsed: raw.lastBreathUsed === true,

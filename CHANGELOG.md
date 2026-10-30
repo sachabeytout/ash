@@ -2,6 +2,16 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.19.0 — L'Étincelle du Phénix
+
+- **Nouvelle récompense de porte : l'Étincelle** (icône : flamme et flèche vers le haut).
+  - Dans la salle suivante, tu choisis **un de tes dons**, qui gagne **un cran de rareté** : Commun → Rare, ou Rare → Épique. Ses effets deviennent plus forts.
+  - Les dons épiques, les duos et les amplifications ne peuvent pas monter plus haut.
+  - La porte n'apparaît que si tu as au moins un don à améliorer.
+- Ta sauvegarde passe au nouveau format **sans rien perdre**.
+
+**Quoi tester** : prends une Étincelle quand tu en vois une. Le gain se sent-il ? Préfères-tu une Étincelle ou un nouveau don ?
+
 ## 0.18.0 — Récapitulatif de fin de run
 
 - **Au retour dans la Cage**, une fenêtre résume ta run :

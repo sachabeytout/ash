@@ -49,11 +49,11 @@ describe('récompenses des portes', () => {
     }
   });
 
-  it('les 5 types finissent tous par sortir', () => {
+  it('tous les types de récompense finissent par sortir', () => {
     const seen = new Set<string>();
     const rng = createRng(1);
     for (let i = 0; i < 200; i++) rollDoorRewards(rng, 2).forEach((k) => seen.add(k));
-    expect(seen.size).toBe(5);
+    expect(seen.size).toBe(REWARD_KINDS.length);
   });
 });
 

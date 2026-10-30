@@ -3,6 +3,8 @@ import {
   buildProfile,
   damageMultiplier,
   rollOffer,
+  rollUpgrades,
+  upgradableBoons,
   type BoonOffer,
   type CombatProfile,
   type HitEffects,
@@ -41,6 +43,7 @@ import {
   type RunState,
   recordDamage,
   recordKill,
+  upgradeBoon,
 } from '../../core/run/state';
 import { chestLoot, openChest, trialRoom, trialTimeMs, type ChestLoot } from '../../core/run/trial';
 import { planWaves, type Wave } from '../../core/run/waves';
@@ -178,6 +181,7 @@ const REWARD_STYLE: Record<RewardKind | SpecialDoor, { color: number; label: Tex
   weaponMod: { color: 0xc0c8d8, label: 'reward.weaponMod' },
   xp: { color: 0xb08cff, label: 'reward.xp' },
   weaponParts: { color: 0xffe08a, label: 'reward.weaponParts' },
+  spark: { color: 0xffc46b, label: 'reward.spark' },
   exit: { color: 0xffffff, label: 'reward.exit' },
   boss: { color: 0xb8a8ff, label: 'reward.boss' },
   next: { color: 0x8ff0ff, label: 'reward.next' },
@@ -402,6 +406,9 @@ export class RunScene extends Phaser.Scene {
     if (this.run.pendingBoon) {
       this.choosing = true;
       this.time.delayedCall(380, () => this.offerBoon());
+    } else if (this.run.pendingSpark) {
+      this.choosing = true;
+      this.time.delayedCall(380, () => this.offerSpark());
     }
     if (cheatsEnabled) this.setupCheats();
   }
@@ -413,6 +420,12 @@ export class RunScene extends Phaser.Scene {
         this.run.pendingBoon = GOD_IDS[Math.floor(Math.random() * GOD_IDS.length)] ?? 'ra';
         this.choosing = true;
         this.offerBoon();
+      }
+      if (e.code === 'KeyU') {
+        // Étincelle du Phénix immédiate.
+        this.run.pendingSpark = true;
+        this.choosing = true;
+        this.offerSpark();
       }
       if (e.code === 'KeyG') this.run.superGauge = 1;
       if (e.code === 'KeyI') {
@@ -779,6 +792,35 @@ export class RunScene extends Phaser.Scene {
   }
 
   // ---------- Dons ----------
+
+  /** Étincelle du Phénix : choisir un don possédé qui gagne un cran de rareté. */
+  private offerSpark(): void {
+    const rng = createRng((this.run.seed ^ Math.imul(this.run.room + 101, 2654435761)) >>> 0);
+    const offers = rollUpgrades(rng, this.run.boons);
+    const first = offers[0] && getBoon(offers[0].id);
+    if (!first) {
+      this.run.pendingSpark = false;
+      this.choosing = false;
+      return;
+    }
+    const data: BoonSceneData = {
+      god: getBoonGod(offers[0] as BoonOffer),
+      offers,
+      upgrade: true,
+      onPick: (offer) => {
+        upgradeBoon(this.run, offer);
+        session.snapshotRun(this.run);
+        this.profile = buildProfile(this.run.boons);
+        this.applyProfile();
+        this.choosing = false;
+        this.nextWaveAt = this.sim + 600;
+        this.juice.burst(this.player.x, this.player.y, 0xffc46b, 28);
+        markScene('run');
+      },
+    };
+    this.scene.launch('boon', data);
+    this.scene.bringToTop('boon');
+  }
 
   private offerBoon(): void {
     const god = this.run.pendingBoon;
@@ -1663,7 +1705,9 @@ export class RunScene extends Phaser.Scene {
       this.trial.state = 'won';
       this.spawnChest();
     }
-    const [a, b] = rollDoors(this.rng, 2, biome.pantheon);
+    // Pas d'Étincelle s'il n'y a aucun don à améliorer.
+    const exclude: RewardKind[] = upgradableBoons(this.run.boons).length > 0 ? [] : ['spark'];
+    const [a, b] = rollDoors(this.rng, 2, biome.pantheon, exclude);
     if (a) this.addDoor(a, ARENA.centerX - 120);
     if (b) this.addDoor(b, ARENA.centerX + 120);
   }
@@ -1820,6 +1864,11 @@ function drawRewardIcon(
     case 'next': // double chevron vers le haut
       g.lineBetween(x - 7, y + 1, x, y - 6).lineBetween(x, y - 6, x + 7, y + 1);
       g.lineBetween(x - 7, y + 8, x, y + 1).lineBetween(x, y + 1, x + 7, y + 8);
+      break;
+    case 'spark': // flamme du Phénix surmontée d'une flèche vers le haut
+      g.fillTriangle(x - 6, y + 8, x + 6, y + 8, x, y - 2).fillCircle(x, y + 5, 5);
+      g.lineBetween(x, y - 4, x, y - 10).lineBetween(x - 4, y - 6, x, y - 10);
+      g.lineBetween(x + 4, y - 6, x, y - 10);
       break;
     case 'boss': // œil (forme propre à la porte du boss)
       g.strokeEllipse(x, y, 20, 11).fillCircle(x, y, 3.5);

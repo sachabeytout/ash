@@ -5,9 +5,12 @@ import {
   isEligible,
   mainValue,
   rollOffer,
+  rollUpgrades,
   takeBoon,
+  upgradableBoons,
   type OwnedBoon,
 } from '../../src/core/boons/boons';
+import { rollDoorRewards } from '../../src/core/run/rewards';
 import {
   applyBurn,
   applyChill,
@@ -25,7 +28,7 @@ import {
   weakenFactor,
 } from '../../src/core/combat/status';
 import { createRng } from '../../src/core/rng';
-import { chooseBoon, newRun } from '../../src/core/run/state';
+import { chooseBoon, newRun, upgradeBoon } from '../../src/core/run/state';
 import { rollDoors, rollGod } from '../../src/core/run/rewards';
 import { BOONS, getBoon, slotOf } from '../../src/data/boons';
 import { GOD_IDS, GODS } from '../../src/data/gods';
@@ -262,5 +265,41 @@ describe('nouveaux dieux : profil et états', () => {
     // 3 dieux à poids 3 contre 6 à poids 1 : 60 % attendus.
     expect(norse / 900).toBeGreaterThan(0.5);
     expect(norse / 900).toBeLessThan(0.7);
+  });
+});
+
+describe('Étincelle du Phénix', () => {
+  it('propose des dons possédés au cran suivant, jamais les épiques, duos ou amplifications', () => {
+    const owned = [
+      { id: 'ra_attack', rarity: 'common' as const },
+      { id: 'ra_power', rarity: 'rare' as const },
+      { id: 'zeus_attack', rarity: 'epic' as const },
+    ];
+    const offers = rollUpgrades(createRng(4), owned, 3);
+    expect(offers).toHaveLength(2);
+    for (const o of offers) {
+      const before = owned.find((b) => b.id === o.id);
+      expect(o.from).toBe(before?.rarity);
+      expect(o.rarity).toBe(before?.rarity === 'common' ? 'rare' : 'epic');
+    }
+    expect(upgradableBoons([{ id: 'zeus_attack', rarity: 'epic' }])).toHaveLength(0);
+  });
+
+  it('améliorer un don change sa rareté sur place et retire l’Étincelle en attente', () => {
+    const run = newRun(1, 'katana', 50, 0, 'ra');
+    run.boons = [{ id: 'ra_attack', rarity: 'common' }];
+    run.pendingSpark = true;
+    upgradeBoon(run, { id: 'ra_attack', rarity: 'rare', from: 'common' });
+    expect(run.boons).toEqual([{ id: 'ra_attack', rarity: 'rare' }]);
+    expect(run.pendingSpark).toBe(false);
+    // Une offre périmée (rareté déjà changée) ne fait rien.
+    upgradeBoon(run, { id: 'ra_attack', rarity: 'rare', from: 'common' });
+    expect(run.boons[0]?.rarity).toBe('rare');
+  });
+
+  it('la porte Étincelle peut être exclue quand rien n’est améliorable', () => {
+    for (let seed = 0; seed < 30; seed++) {
+      expect(rollDoorRewards(createRng(seed), 2, ['spark'])).not.toContain('spark');
+    }
   });
 });

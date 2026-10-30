@@ -37,6 +37,8 @@ export interface RunState {
   boons: OwnedBoon[];
   /** Un dieu attend qu'Ash choisisse son don (au début de la salle). */
   pendingBoon: GodId | null;
+  /** Étincelle du Phénix : Ash choisira un don à améliorer au début de la salle. Ajouté en v10. */
+  pendingSpark: boolean;
   /** Jauge de Super, de 0 à 1. */
   superGauge: number;
   perks: RunPerks;
@@ -107,6 +109,7 @@ export function newRun(
     boons: [],
     // Un premier don dès le départ : la run commence avec un pouvoir.
     pendingBoon: firstGod,
+    pendingSpark: false,
     superGauge,
     perks,
     weaponLevel,
@@ -136,6 +139,23 @@ export function applyReward(run: RunState, reward: RewardKind, god?: GodId): voi
     case 'weaponParts':
       run.weaponParts += 1;
       break;
+    case 'spark':
+      run.pendingSpark = true;
+      break;
+  }
+}
+
+/** Étincelle : le don gagne un cran de rareté (un don de vie agrandit la barre de la différence). */
+export function upgradeBoon(run: RunState, offer: BoonOffer): void {
+  run.pendingSpark = false;
+  const owned = run.boons.find((b) => b.id === offer.id);
+  if (!owned || !offer.from || owned.rarity !== offer.from) return;
+  owned.rarity = offer.rarity;
+  const def = getBoon(offer.id);
+  if (def?.effect.type === 'maxHp') {
+    const gain = mainValue(def.effect, offer.rarity) - mainValue(def.effect, offer.from);
+    run.maxHp += gain;
+    run.hp += gain;
   }
 }
 

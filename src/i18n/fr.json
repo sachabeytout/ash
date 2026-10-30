@@ -477,5 +477,9 @@
   "recap.rewardsValue": "{xp} XP · {parts} pièces",
   "recap.boons": "Dons de la run",
   "recap.noBoons": "Aucun don cette fois.",
-  "recap.continue": "Continuer"
+  "recap.continue": "Continuer",
+  "reward.spark": "Étincelle",
+  "spark.title": "Étincelle du Phénix",
+  "spark.subtitle": "Un de tes dons gagne un cran de rareté",
+  "spark.from": "{from} → {to}"
 }

@@ -3,7 +3,7 @@
 Liste tenue à jour par Claude. Réponds quand tu veux, même en vrac (« 3 : oui, 7 : plutôt la B »).
 En attendant ta réponse, Claude applique **ce qui est indiqué en gras** (toujours modifiable ensuite).
 
-Dernière mise à jour : 30/10/2026 (version 0.18.0).
+Dernière mise à jour : 30/10/2026 (version 0.19.0).
 
 ## A. Ressenti de jeu
 
@@ -28,6 +28,7 @@ Dernière mise à jour : 30/10/2026 (version 0.18.0).
     11 nonies. Le halo néon (qualité Haute) : te plaît-il ou trouves-tu l'image moins nette ? → **halo léger en Haute**
     11 decies. Les Archives de Thot : les textes des fiches te plaisent-ils ? Veux-tu des fiches en plus (armes, lieux, personnages de la Cage) ? → **ennemis, boss, dieux**
     11 undecies. Le récapitulatif de fin de run : une info te manque-t-elle (ex. dégâts infligés, meilleur coup) ? → **version actuelle**
+    11 duodecies. L'Étincelle du Phénix (améliorer un don) : sort-elle assez souvent ? Trop souvent ? → **aussi rare que les pièces d'arme**
 
 ## B. Histoire (lore v0.2, dans `docs/GDD.md`)
 
