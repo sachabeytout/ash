@@ -2,6 +2,14 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.42.0 — Des textes nets
+
+- **Tout est plus net, surtout les textes** : avant, le jeu était dessiné en petit (360 pixels de haut) puis agrandi par l'écran, d'où l'effet flou. Maintenant il est dessiné directement à la résolution de ton écran (jusqu'à 3 fois plus fin sur iPhone). Les traits, les cercles et les effets sont aussi plus fins ; les personnages gardent leur style pixel.
+- **Petits textes un tout petit peu plus grands** (+10 %, par exemple 10 → 11). L'option « Taille du texte : Grande » existe toujours (+20 %).
+- Si le jeu rame, la qualité « Moyenne » ou « Basse » (Options) réduit aussi cette finesse, au prochain lancement.
+
+**Quoi tester** : sur ton iPhone, les textes sont-ils nets maintenant ? Le jeu reste-t-il fluide en combat ?
+
 ## 0.41.0 — Une couleur pour chaque dieu
 
 - **Chaque dieu a sa couleur**, et tout ce qui lui appartient la reprend :

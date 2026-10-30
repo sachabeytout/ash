@@ -37,7 +37,7 @@ export class RecapPanel {
     const cam = scene.cameras.main;
     const cx = cam.midPoint.x;
     const cy = cam.midPoint.y;
-    const w = Math.min(560, cam.width - 24);
+    const w = Math.min(560, cam.displayWidth - 24);
     // Hauteur selon le nombre de dons (deux colonnes, six lignes au plus).
     const boonCount = Math.min(12, this.summary.boons?.length ?? 0);
     const perCol = Math.max(1, Math.min(6, Math.ceil(boonCount / 2)));
@@ -47,7 +47,7 @@ export class RecapPanel {
     const won = s.outcome === 'cleared';
     const color = won ? VICTORY_COLOR : RECAP_COLOR;
     const veil = scene.add
-      .rectangle(cx, cy, cam.width + 40, cam.height + 40, 0x07060d, 0.85)
+      .rectangle(cx, cy, cam.displayWidth + 40, cam.displayHeight + 40, 0x07060d, 0.85)
       .setInteractive();
     veil.on('pointerup', () => this.close());
     const frame = scene.add.graphics();

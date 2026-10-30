@@ -126,6 +126,7 @@ import { telemetry } from '../telemetry';
 import { bodyOf } from '../physics';
 import { ensureGameTextures } from '../textures';
 import { FONT_FAMILY } from '../theme';
+import { RENDER_SCALE, SCENE_ZOOM } from '../view';
 import { markScene } from './markScene';
 
 /** Arène de combat (coordonnées du monde). La caméra la centre, la largeur d'écran varie selon le téléphone. */
@@ -139,7 +140,6 @@ const KEEP_OUT: readonly KeepOut[] = [
   { x: ARENA.centerX, y: ARENA.centerY + 10, r: 44 },
 ];
 /** Zoom de la caméra : Ash fait ~1/13 de la hauteur d'écran, lisible au pouce. */
-const CAMERA_ZOOM = 2;
 const POOL_SIZE = 16;
 const SPAWN_WARNING_MS = 750;
 const MIN_SPAWN_DISTANCE = 110;
@@ -1667,7 +1667,7 @@ export class RunScene extends Phaser.Scene {
   private setupCamera(): void {
     const cam = this.cameras.main;
     const margin = 36;
-    cam.setZoom(CAMERA_ZOOM);
+    cam.setZoom(RENDER_SCALE * (SCENE_ZOOM.run ?? 1));
     cam.setBounds(
       ARENA.x - margin,
       ARENA.y - margin,
@@ -1700,7 +1700,8 @@ export class RunScene extends Phaser.Scene {
   private updateIndicators(): void {
     const cam = this.cameras.main;
     const view = cam.worldView;
-    const zoom = cam.zoom;
+    // Zoom de la salle seul (l'interface est en coordonnées logiques).
+    const zoom = cam.zoom / RENDER_SCALE;
     let n = 0;
     const push = (target: Vec2, spawn: boolean) => {
       const slot = this.indicatorBuf[n];

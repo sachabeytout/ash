@@ -6,6 +6,7 @@ import { makeButton } from '../ui/button';
 import { COLORS, FONT_FAMILY } from '../theme';
 import { markScene } from './markScene';
 import { drawEventIcon, EVENT_COLOR } from './eventIcons';
+import { viewSize } from '../view';
 
 export interface EventSceneData {
   id: EventId;
@@ -38,7 +39,7 @@ export class EventScene extends Phaser.Scene {
 
   create(): void {
     this.openedAt = this.time.now;
-    const { width, height } = this.scale;
+    const { width, height } = viewSize(this);
     const cx = width / 2;
     const cy = height / 2;
     const d = this.data_;

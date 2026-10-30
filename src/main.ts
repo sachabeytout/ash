@@ -11,6 +11,7 @@ import { requestPersistentStorage, setupPwa } from './platform/pwa';
 import { session } from './game/session';
 import { settings } from './core/settings';
 import { installTextScale } from './game/textScale';
+import { initRenderScale, installHighResolution } from './game/view';
 
 session.load();
 setLocale(settings.language === 'auto' ? detectLocale(navigator.languages) : settings.language);
@@ -20,6 +21,8 @@ lockBrowserGestures();
 setupPwa();
 void requestPersistentStorage();
 
+initRenderScale();
+installHighResolution();
 installTextScale();
 const game = new Phaser.Game(createGameConfig('game'));
 

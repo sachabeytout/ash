@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { settings } from '../../core/settings';
 import type { Action, Controls } from './Controls';
+import { screenPoint, viewSize } from '../view';
 
 interface Button {
   action: Action;
@@ -48,7 +49,7 @@ export class TouchControls {
       fromRight: fromRight * s,
       fromBottom: fromBottom * s,
       color,
-      g: scene.add.graphics().setScrollFactor(0).setDepth(DEPTH),
+      g: scene.add.graphics().setDepth(DEPTH),
       x: 0,
       y: 0,
     });
@@ -61,9 +62,9 @@ export class TouchControls {
     this.base = scene.add
       .circle(0, 0, JOY_RADIUS)
       .setStrokeStyle(2, 0xffe9d6, 0.35)
-      .setScrollFactor(0)
+
       .setDepth(DEPTH);
-    this.knob = scene.add.circle(0, 0, 12, 0xffe9d6, 0.35).setScrollFactor(0).setDepth(DEPTH);
+    this.knob = scene.add.circle(0, 0, 12, 0xffe9d6, 0.35).setDepth(DEPTH);
 
     scene.input.addPointer(2); // joystick + 2 boutons en même temps
     scene.input.on('pointerdown', this.onDown, this);
@@ -94,7 +95,7 @@ export class TouchControls {
   }
 
   private layout(): void {
-    const { width, height } = this.scene.scale;
+    const { width, height } = viewSize(this.scene);
     for (const b of this.buttons) {
       b.x = width - b.fromRight;
       b.y = height - b.fromBottom;
@@ -175,15 +176,16 @@ export class TouchControls {
     if (!this.shown) this.setVisible(true);
     this.controls.lastDevice = 'touch';
 
-    const btn = this.buttonAt(p.x, p.y);
+    const at = screenPoint(p);
+    const btn = this.buttonAt(at.x, at.y);
     if (btn) {
       this.controls.press(btn.action);
       this.scene.tweens.add({ targets: btn.g, alpha: 0.5, duration: 60, yoyo: true });
       return;
     }
-    if (p.x < this.scene.scale.width * 0.5 && this.joyPointer === null) {
+    if (at.x < viewSize(this.scene).width * 0.5 && this.joyPointer === null) {
       this.joyPointer = p.id;
-      if (settings.joystick === 'floating') this.joyCenter = { x: p.x, y: p.y };
+      if (settings.joystick === 'floating') this.joyCenter = { x: at.x, y: at.y };
       this.base.setPosition(this.joyCenter.x, this.joyCenter.y).setVisible(true);
       this.knob.setVisible(true);
       this.onMove(p);
@@ -192,8 +194,9 @@ export class TouchControls {
 
   private onMove(p: Phaser.Input.Pointer): void {
     if (p.id !== this.joyPointer) return;
-    const dx = p.x - this.joyCenter.x;
-    const dy = p.y - this.joyCenter.y;
+    const at = screenPoint(p);
+    const dx = at.x - this.joyCenter.x;
+    const dy = at.y - this.joyCenter.y;
     const dist = Math.hypot(dx, dy);
     const clamped = Math.min(dist, JOY_RADIUS);
     const nx = dist > 0 ? dx / dist : 0;

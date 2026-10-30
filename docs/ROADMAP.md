@@ -96,4 +96,5 @@ Retour sur le lore v0.2 toujours attendu (« quand le fond aura avancé »).
 - [x] **M6.7 (0.39.0)** : option « Taille du texte » (Normale / Grande)
 - [x] **M6.8 (0.40.0)** : décor propre à chaque monde — demandé par l'utilisateur
 - [x] **M6.9 (0.41.0)** : une couleur par dieu, reprise partout (cartes, effets, états, flèches) — demandé par l'utilisateur
+- [x] **M6.10 (0.42.0)** : rendu à la résolution de l'écran (textes nets) + petits textes +10 % — demandé par l'utilisateur
 - [ ] **M3** : finitions — coffres et évènements, préréglages de qualité, équilibrage avec la télémétrie, accessibilité

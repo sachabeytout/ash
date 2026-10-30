@@ -7,6 +7,7 @@ import { session } from '../session';
 import { ensureGameTextures } from '../textures';
 import { COLORS, FONT_FAMILY, GAME_HEIGHT, GAME_WIDTH } from '../theme';
 import { markScene } from './markScene';
+import { viewSize } from '../view';
 
 /** Identifiant « déjà vue » de l'introduction (rangé avec les dialogues entendus). */
 export const INTRO_ID = 'intro_cinematic';
@@ -133,10 +134,10 @@ export class IntroScene extends Phaser.Scene {
         color: COLORS.textDim,
       })
       .setOrigin(1, 1)
-      .setScrollFactor(0)
       .setAlpha(0);
     // Toujours dans le coin de l'écran, même s'il est plus large que la scène.
-    skip.setPosition(this.scale.width - 8, this.scale.height - 6);
+    const view = viewSize(this);
+    skip.setPosition((GAME_WIDTH + view.width) / 2 - 8, (GAME_HEIGHT + view.height) / 2 - 6);
     this.tweens.add({ targets: skip, alpha: 0.8, duration: 400, delay: 800 });
     // Passer : un toucher ou une touche (après un court instant, pour ne pas passer par erreur).
     const openedAt = this.time.now;

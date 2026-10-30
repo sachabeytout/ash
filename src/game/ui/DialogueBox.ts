@@ -67,14 +67,14 @@ export class DialogueBox {
     const scene = this.scene;
     const cam = scene.cameras.main;
     const cx = cam.midPoint.x;
-    const w = Math.min(600, cam.width - 24);
+    const w = Math.min(600, cam.displayWidth - 24);
     const h = 92;
     const left = cx - w / 2;
-    const top = cam.midPoint.y + cam.height / 2 - h - 10;
+    const top = cam.midPoint.y + cam.displayHeight / 2 - h - 10;
     const speaker = SPEAKERS[line.speaker];
 
     const veil = scene.add
-      .rectangle(cx, cam.midPoint.y, cam.width + 40, cam.height + 40, 0x07060d, 0.55)
+      .rectangle(cx, cam.midPoint.y, cam.displayWidth + 40, cam.displayHeight + 40, 0x07060d, 0.55)
       .setInteractive();
     veil.on('pointerup', () => this.advance());
     const g = scene.add.graphics();

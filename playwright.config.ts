@@ -5,7 +5,10 @@ const baseURL = `http://localhost:4173${process.env.BASE_PATH ?? '/'}`;
 
 export default defineConfig({
   testDir: 'tests/e2e',
-  timeout: 30_000,
+  // Rendu à la résolution de l'écran : plus lent sans carte graphique (CI), d'où la marge.
+  timeout: 120_000,
+  // Un test à la fois : deux rendus en parallèle sans carte graphique ralentissent trop le jeu.
+  workers: 1,
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? 'github' : 'list',
   use: {

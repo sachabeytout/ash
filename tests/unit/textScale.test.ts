@@ -3,11 +3,13 @@ import { scaledFontSize } from '../../src/core/textScale';
 import { migrate } from '../../src/core/save/migrations';
 
 describe('taille du texte', () => {
-  it('en Grand, les petits textes grandissent ; les titres ne bougent pas', () => {
+  it('les petits textes grandissent un peu (plus en Grand) ; les titres ne bougent pas', () => {
     expect(scaledFontSize('10px', 'large')).toBe('12px');
     expect(scaledFontSize('8px', 'large')).toBe('10px');
     expect(scaledFontSize('18px', 'large')).toBe('18px');
-    expect(scaledFontSize('10px', 'normal')).toBe('10px');
+    expect(scaledFontSize('10px', 'normal')).toBe('11px');
+    expect(scaledFontSize('9px', 'normal')).toBe('10px');
+    expect(scaledFontSize('18px', 'normal')).toBe('18px');
     expect(scaledFontSize(undefined, 'large')).toBeUndefined();
   });
 

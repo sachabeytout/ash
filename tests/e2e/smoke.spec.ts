@@ -70,11 +70,11 @@ test('écran titre → cage → don → combat → reprise après fermeture', as
   expect(saved).toContain('katana');
   await page.reload();
   await page.locator('#game canvas').click();
-  await expect(page.locator('body')).toHaveAttribute('data-scene', 'hub');
-  await page.waitForTimeout(800);
+  await expect(page.locator('body')).toHaveAttribute('data-scene', 'hub', { timeout: 15000 });
+  await page.waitForTimeout(1500);
   await shot('reprise');
   await page.keyboard.press('Enter');
-  await expect(page.locator('body')).toHaveAttribute('data-scene', 'run');
+  await expect(page.locator('body')).toHaveAttribute('data-scene', 'run', { timeout: 15000 });
 
   expect(errors).toEqual([]);
 });

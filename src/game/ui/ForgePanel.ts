@@ -43,12 +43,12 @@ export class ForgePanel {
     const cam = scene.cameras.main;
     const cx = cam.midPoint.x;
     const cy = cam.midPoint.y;
-    const w = Math.min(600, cam.width - 24);
+    const w = Math.min(600, cam.displayWidth - 24);
     const h = 332;
     const left = cx - w / 2;
     const top = cy - h / 2;
     const veil = scene.add
-      .rectangle(cx, cy, cam.width + 40, cam.height + 40, 0x07060d, 0.85)
+      .rectangle(cx, cy, cam.displayWidth + 40, cam.displayHeight + 40, 0x07060d, 0.85)
       .setInteractive();
     const frame = scene.add.graphics();
     frame.fillStyle(0x0d0a18, 0.98).fillRoundedRect(left, top, w, h, 10);

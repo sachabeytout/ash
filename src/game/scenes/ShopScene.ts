@@ -6,6 +6,7 @@ import { t, type TextKey } from '../../i18n';
 import { sfx } from '../audio/sfx';
 import { COLORS, FONT_FAMILY } from '../theme';
 import { markScene } from './markScene';
+import { viewSize } from '../view';
 
 export interface ShopSceneData {
   run: RunState;
@@ -42,7 +43,7 @@ export class ShopScene extends Phaser.Scene {
 
   create(): void {
     this.openedAt = this.time.now;
-    const { width, height } = this.scale;
+    const { width, height } = viewSize(this);
     const cx = width / 2;
     const run = this.data_.run;
     this.add.rectangle(0, 0, width, height, 0x07060d, 0.84).setOrigin(0).setInteractive();

@@ -13,6 +13,7 @@ import { settings } from '../../core/settings';
 import { drawGodIcon } from '../icons';
 import { TouchControls } from '../input/TouchControls';
 import { FONT_FAMILY } from '../theme';
+import { viewSize } from '../view';
 
 const INDICATOR_POOL = 24;
 
@@ -121,7 +122,7 @@ export class UiScene extends Phaser.Scene {
   }
 
   private layout(): void {
-    const { width, height } = this.scale;
+    const { width, height } = viewSize(this);
     this.hpText.setPosition(12, 29);
     this.room.setPosition(width / 2, 8);
     this.trial.setPosition(width / 2, 24);
@@ -230,7 +231,7 @@ export class UiScene extends Phaser.Scene {
 
   /** Barre de vie du boss, en haut au centre (marques à 50 % = changement de phase). */
   showBoss(ratio: number, phase: number): void {
-    const { width } = this.scale;
+    const { width } = viewSize(this);
     const w = Math.min(260, width * 0.4);
     const x = width / 2 - w / 2;
     const g = this.bossBar.clear();

@@ -7,6 +7,7 @@ import { COLORS, FONT_FAMILY, GAME_HEIGHT, GAME_WIDTH } from '../theme';
 import { markScene } from './markScene';
 import { INTRO_ID } from './IntroScene';
 import { session } from '../session';
+import { viewSize } from '../view';
 
 /** Écran titre « Toucher pour commencer » : le premier toucher débloque l'audio (exigence iOS). */
 export class TitleScene extends Phaser.Scene {
@@ -63,13 +64,13 @@ export class TitleScene extends Phaser.Scene {
         fontSize: '10px',
         color: COLORS.textDim,
       })
-      .setOrigin(1, 1)
-      .setScrollFactor(0);
+      .setOrigin(1, 1);
 
     // L'écran peut être plus large que 640 px (mode EXPAND) : on garde la scène centrée.
     const layout = () => {
       this.cameras.main.centerOn(GAME_WIDTH / 2, GAME_HEIGHT / 2);
-      version.setPosition(this.scale.width - 6, this.scale.height - 4);
+      const view = viewSize(this);
+      version.setPosition((GAME_WIDTH + view.width) / 2 - 6, (GAME_HEIGHT + view.height) / 2 - 4);
     };
     layout();
     this.scale.on('resize', layout);

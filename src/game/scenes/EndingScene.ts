@@ -5,6 +5,7 @@ import { music } from '../audio/music';
 import { sfx } from '../audio/sfx';
 import { COLORS, FONT_FAMILY, GAME_HEIGHT, GAME_WIDTH } from '../theme';
 import { markScene } from './markScene';
+import { viewSize } from '../view';
 
 /** Vraie fin (10e victoire) : le ciel s'éclaire, quelques lignes, puis retour dans la Cage. */
 export class EndingScene extends Phaser.Scene {
@@ -24,7 +25,7 @@ export class EndingScene extends Phaser.Scene {
     const cam = this.cameras.main;
     cam.centerOn(GAME_WIDTH / 2, GAME_HEIGHT / 2);
     const cx = GAME_WIDTH / 2;
-    const w = this.scale.width + 200;
+    const w = viewSize(this).width + 200;
     // Le ciel passe de la nuit à l'aube.
     const sky = this.add.rectangle(cx, GAME_HEIGHT / 2, w, GAME_HEIGHT + 200, 0x07060d);
     // Dégradé d'aube : bandes de plus en plus chaudes vers le bas (pas de bord net).
@@ -67,7 +68,7 @@ export class EndingScene extends Phaser.Scene {
           fontSize: '12px',
           color: COLORS.text,
           align: 'center',
-          wordWrap: { width: Math.min(560, this.scale.width - 40) },
+          wordWrap: { width: Math.min(560, viewSize(this).width - 40) },
           stroke: '#07060d',
           strokeThickness: 3,
         })

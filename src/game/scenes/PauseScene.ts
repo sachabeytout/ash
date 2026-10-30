@@ -6,6 +6,7 @@ import { sfx } from '../audio/sfx';
 import { OptionsPanel } from '../ui/OptionsPanel';
 import { COLORS, FONT_FAMILY } from '../theme';
 import { markScene } from './markScene';
+import { viewSize } from '../view';
 
 export interface PauseSceneData {
   run: RunState;
@@ -36,7 +37,7 @@ export class PauseScene extends Phaser.Scene {
   }
 
   create(): void {
-    const { width, height } = this.scale;
+    const { width, height } = viewSize(this);
     const cx = width / 2;
     this.add.rectangle(0, 0, width, height, 0x07060d, 0.8).setOrigin(0).setInteractive();
     const style = {

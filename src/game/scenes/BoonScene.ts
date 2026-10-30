@@ -6,6 +6,7 @@ import { t, type TextKey } from '../../i18n';
 import { sfx } from '../audio/sfx';
 import { drawGodIcon } from '../icons';
 import { COLORS, FONT_FAMILY } from '../theme';
+import { viewSize } from '../view';
 
 export interface BoonSceneData {
   god: GodId;
@@ -54,7 +55,7 @@ export class BoonScene extends Phaser.Scene {
 
   create(): void {
     this.openedAt = this.time.now;
-    const { width, height } = this.scale;
+    const { width, height } = viewSize(this);
     const god = GODS[this.data_.god];
 
     const veil = this.add.rectangle(0, 0, width, height, 0x07060d, 0.82).setOrigin(0);
