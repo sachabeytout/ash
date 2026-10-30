@@ -43,6 +43,8 @@ export class UiScene extends Phaser.Scene {
   private bossBar!: Phaser.GameObjects.Graphics;
   private fps!: Phaser.GameObjects.Text;
   private banner!: Phaser.GameObjects.Text;
+  private trial!: Phaser.GameObjects.Text;
+  private trialKey = '';
   private bannerSub!: Phaser.GameObjects.Text;
 
   constructor() {
@@ -72,6 +74,11 @@ export class UiScene extends Phaser.Scene {
       .text(0, 0, '', { ...style, fontSize: '12px', color: '#c8bde6' })
       .setOrigin(0.5)
       .setAlpha(0);
+    this.trial = this.add
+      .text(0, 0, '', { ...style, color: '#ffe08a' })
+      .setOrigin(0.5, 0)
+      .setVisible(false);
+    this.trialKey = '';
     this.boonIcons = this.add.graphics();
     this.boonKey = '';
     this.hpText = this.add.text(0, 0, '', style);
@@ -111,6 +118,7 @@ export class UiScene extends Phaser.Scene {
     const { width, height } = this.scale;
     this.hpText.setPosition(12, 29);
     this.room.setPosition(width / 2, 8);
+    this.trial.setPosition(width / 2, 24);
     this.banner.setPosition(width / 2, height * 0.32);
     this.bannerSub.setPosition(width / 2, height * 0.32 + 22);
     this.shards.setPosition(width - 44, 8);
@@ -189,6 +197,24 @@ export class UiScene extends Phaser.Scene {
         .setAlpha(ind.spawn ? 0.45 : pulse)
         .setScale(ind.spawn ? 0.8 : 1);
     });
+  }
+
+  /** Chrono de l'épreuve de Vesper, sous le nom de la salle (doré : ce n'est pas un danger). */
+  showTrial(state: 'waiting' | 'running' | 'won' | 'failed' | null, leftMs: number): void {
+    if (!this.trial) return;
+    const seconds = Math.max(0, Math.ceil(leftMs / 1000));
+    const key = `${state}:${seconds}`;
+    if (key === this.trialKey) return;
+    this.trialKey = key;
+    if (state === null || state === 'failed') {
+      this.trial.setVisible(false);
+      return;
+    }
+    const time = `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
+    this.trial
+      .setVisible(true)
+      .setText(state === 'won' ? t('trial.won') : t('trial.timer', { time }))
+      .setScale(state === 'running' && seconds <= 10 ? 1.15 : 1);
   }
 
   /** Barre de vie du boss, en haut au centre (marques à 50 % = changement de phase). */

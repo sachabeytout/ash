@@ -75,6 +75,7 @@ Format : date — décision — raison — validée par l'utilisateur (oui / non
 | 2026-10-30 | Fontaine : une salle calme par biome, soigne 30 % des PV | Respiration au milieu du biome (anti-frustration) | à signaler |
 | 2026-10-30 | Télémétrie 100 % locale (300 salles max), visible seulement dans un menu caché | Aider l'équilibrage sans rien envoyer en ligne | à signaler |
 | 2026-10-30 | Sauvegarde v6 (migration 5 → 6 : Mesures d'urgence) | Sans perte | oui (règle) |
+| 2026-10-30 | Épreuve de Vesper : 1 salle chronométrée par biome (9 s + 2,6 s/ennemi + 1,5 s/vague), coffre 30 éclats + 15 XP (+10/+5 par biome) ; échec sans pénalité | Variété des salles sans frustration | à signaler |
 
 ## Réponses de l'utilisateur (30/10/2026)
 

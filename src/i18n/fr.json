@@ -394,5 +394,13 @@
   "debug.noDeaths": "Aucune mort enregistrée",
   "debug.fpsOn": "FPS : affichés",
   "debug.fpsOff": "FPS : cachés",
-  "debug.clear": "Effacer le journal"
+  "debug.clear": "Effacer le journal",
+  "trial.title": "Épreuve de Vesper",
+  "trial.sub": "Vide la salle en {seconds} s : un coffre t'attend",
+  "trial.timer": "Épreuve · {time}",
+  "trial.won": "Épreuve réussie !",
+  "trial.failed": "Trop tard…",
+  "trial.failedSub": "Pas grave : la salle continue normalement",
+  "trial.chest": "Coffre de Vesper",
+  "trial.loot": "+{shards} éclats · +{xp} XP"
 }

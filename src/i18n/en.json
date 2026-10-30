@@ -394,5 +394,13 @@
   "debug.noDeaths": "No deaths recorded",
   "debug.fpsOn": "FPS: shown",
   "debug.fpsOff": "FPS: hidden",
-  "debug.clear": "Clear the log"
+  "debug.clear": "Clear the log",
+  "trial.title": "Vesper's Trial",
+  "trial.sub": "Clear the room in {seconds} s: a chest awaits",
+  "trial.timer": "Trial · {time}",
+  "trial.won": "Trial complete!",
+  "trial.failed": "Too late…",
+  "trial.failedSub": "No harm done: the room goes on as usual",
+  "trial.chest": "Vesper's Chest",
+  "trial.loot": "+{shards} shards · +{xp} XP"
 }

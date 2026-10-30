@@ -1,6 +1,6 @@
 # Architecture (carte du projet)
 
-> Statut 0.12.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
+> Statut 0.13.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
 > combat/attack+health+status+superGauge, boons/boons, run/waves+rewards+state, save/schema+migrations+codec+store),
 > `data/` (player, weapons, enemies, biomes, gods, boons, status, skills, bosses, music, shop), `game/` (scenes Title, Hub,
 > Run, Ui, Boon, Pause, Shop ; entities Player, Enemy, Boss, Hittable ; input Controls, TouchControls ; fx/Juice+Lightning ;
@@ -62,6 +62,8 @@ par-dessus). Mort ou sortie → `hub` avec un `RunSummary`.
   vagues, prix du marchand) et `summarize` (récompense). Sauvegarde v6 (`meta.heat`, `run.heat`).
 - Fontaines : `BiomeDef.fountainRooms` → `roomKind` = `fountain` ; `drinkFountain` (`src/core/run/state.ts`),
   `RunScene.startFountain`.
+- Épreuves de Vesper : salle, temps et coffre dans `src/core/run/trial.ts` (`trialRoom`, `trialTimeMs`, `chestLoot`) ;
+  `RunScene.startTrial` / `updateTrial` / `spawnChest`, chrono affiché par `UiScene.showTrial`.
 - Télémétrie locale : logique `src/core/telemetry.ts`, stockage `src/game/telemetry.ts` (`ash.telemetry`) ; menu caché
   `src/game/ui/DebugPanel.ts` (5 appuis sur le titre des Options), compteur FPS dans `UiScene`.
 - Bouclier frontal (Einherjar) : `shield` dans `src/data/enemies.ts`, `Enemy.blocks` ; runes : attaque `runes`.

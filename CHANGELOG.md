@@ -2,6 +2,15 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.13.0 — Épreuves de Vesper
+
+- **Une salle-épreuve par biome** : Vesper, le corbeau mécanique, te met au défi. Un chrono doré apparaît sous le nom de la salle (il démarre à l'arrivée des premiers ennemis).
+  - Vide la salle **avant la fin du chrono** : un **coffre** apparaît au centre (éclats + XP, plus dans les biomes lointains). Marche dessus pour l'ouvrir ; si tu l'oublies, il est ramassé quand tu passes la porte.
+  - Trop tard ? **Aucune pénalité** : la salle continue normalement, tu perds seulement le coffre.
+- La salle-épreuve change à chaque run (jamais une salle d'élite ni une fontaine).
+
+**Quoi tester** : le temps accordé est-il trop court, trop long ? Le coffre vaut-il l'effort ?
+
 ## 0.12.0 — Mesures d'urgence et fontaines
 
 - **Mesures d'urgence** (après ta 1re victoire, bouton « Mesures » dans la Cage) : tu peux rendre les runs plus difficiles, comme tu veux, en échange de **plus d'XP et de pièces d'arme** (+10 % par point).

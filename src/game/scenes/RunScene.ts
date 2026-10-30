@@ -39,8 +39,9 @@ import {
   summarize,
   type RunState,
 } from '../../core/run/state';
+import { chestLoot, openChest, trialRoom, trialTimeMs, type ChestLoot } from '../../core/run/trial';
 import { planWaves, type Wave } from '../../core/run/waves';
-import { BIOMES, getBiome } from '../../data/biomes';
+import { BIOMES, getBiome, type BiomeDef } from '../../data/biomes';
 import { BOSSES } from '../../data/bosses';
 import { DASH_AURA_RADIUS, DASH_BOLT_RANGE, getBoon } from '../../data/boons';
 import { GOD_IDS, GODS } from '../../data/gods';
@@ -190,6 +191,21 @@ export class RunScene extends Phaser.Scene {
     g: Phaser.GameObjects.Graphics;
     glow: Phaser.GameObjects.Image;
   } | null = null;
+  /** Épreuve de Vesper : salle chronométrée (le chrono part à la première vague). */
+  private trial: {
+    limitMs: number;
+    startAt: number;
+    state: 'waiting' | 'running' | 'won' | 'failed';
+  } | null = null;
+  /** Coffre de l'épreuve réussie : s'ouvre quand Ash s'en approche (ou en sortant). */
+  private chest: {
+    x: number;
+    y: number;
+    loot: ChestLoot;
+    open: boolean;
+    g: Phaser.GameObjects.Graphics;
+    glow: Phaser.GameObjects.Image;
+  } | null = null;
   private shopOpen = false;
   private shopSold = new Set<ShopItemId>();
   private shots: Shot[] = [];
@@ -241,6 +257,8 @@ export class RunScene extends Phaser.Scene {
     this.kind = roomKind(this.run, biome);
     this.heat = heatModifiers(this.run.heat);
     this.fountain = null;
+    this.trial = null;
+    this.chest = null;
     this.roomStart = { elapsed: this.run.elapsedMs, hp: this.run.hp };
     this.drawArena();
     this.physics.world.setBounds(ARENA.x, ARENA.y, ARENA.width, ARENA.height);
@@ -325,6 +343,8 @@ export class RunScene extends Phaser.Scene {
             this.heat.waveBudget,
           )
         : [];
+    if (this.kind === 'combat' && trialRoom(this.run.seed, this.run.biome, biome) === this.run.room)
+      this.startTrial(biome);
     if (this.kind === 'boss') this.startBoss();
     if (this.kind === 'fountain') this.startFountain();
     if (this.kind === 'shop') this.startShop();
@@ -480,6 +500,72 @@ export class RunScene extends Phaser.Scene {
     sfx.boonTaken();
     f.glow.setAlpha(0.15);
     f.g.setAlpha(0.4);
+  }
+
+  // ---------- Épreuve de Vesper ----------
+
+  private startTrial(biome: BiomeDef): void {
+    const limitMs = trialTimeMs(this.waves, biome.elite);
+    this.trial = { limitMs, startAt: 0, state: 'waiting' };
+    this.time.delayedCall(400, () =>
+      this.ui.showBanner(t('trial.title'), t('trial.sub', { seconds: Math.round(limitMs / 1000) })),
+    );
+  }
+
+  private updateTrial(): void {
+    const tr = this.trial;
+    if (!tr || this.chest?.open) {
+      this.ui.showTrial(null, 0);
+      return;
+    }
+    if (tr.state === 'running' && !this.roomCleared && this.sim - tr.startAt >= tr.limitMs) {
+      // Échec sans pénalité : la salle continue normalement, seul le coffre est perdu.
+      tr.state = 'failed';
+      sfx.block();
+      this.ui.showBanner(t('trial.failed'), t('trial.failedSub'));
+    }
+    const left = tr.state === 'running' ? tr.limitMs - (this.sim - tr.startAt) : tr.limitMs;
+    this.ui.showTrial(tr.state, left);
+  }
+
+  private spawnChest(): void {
+    const x = ARENA.centerX;
+    const y = ARENA.centerY + 20;
+    const g = this.add.graphics().setDepth(3);
+    // Coffre : caisse dorée, couvercle et serrure (forme reconnaissable sans la couleur).
+    g.fillStyle(0x07060d, 1).fillRoundedRect(x - 14, y - 11, 28, 22, 4);
+    g.lineStyle(2, 0xffe08a, 1).strokeRoundedRect(x - 14, y - 11, 28, 22, 4);
+    g.lineBetween(x - 14, y - 3, x + 14, y - 3);
+    g.fillStyle(0xffe08a, 1).fillRect(x - 3, y - 6, 6, 7);
+    const glow = this.add
+      .image(x, y, 'glow')
+      .setTint(0xffe08a)
+      .setAlpha(0.55)
+      .setScale(1.4)
+      .setBlendMode('ADD');
+    this.tweens.add({ targets: glow, alpha: 0.25, duration: 600, yoyo: true, repeat: -1 });
+    this.chest = { x, y, loot: chestLoot(this.run.biome), open: false, g, glow };
+    this.juice.burst(x, y, 0xffe08a, 20);
+  }
+
+  private updateChest(): void {
+    const c = this.chest;
+    if (!c || c.open || this.leaving) return;
+    if (Math.hypot(this.player.x - c.x, this.player.y - c.y) > 26) return;
+    this.takeChest();
+  }
+
+  private takeChest(): void {
+    const c = this.chest;
+    if (!c || c.open) return;
+    c.open = true;
+    openChest(this.run, c.loot);
+    this.tweens.killTweensOf(c.glow);
+    c.glow.setAlpha(0.1);
+    c.g.setAlpha(0.4);
+    this.juice.burst(c.x, c.y, 0xffe08a, 28);
+    sfx.boonTaken();
+    this.ui.showBanner(t('trial.chest'), t('trial.loot', { ...c.loot }));
   }
 
   // ---------- Marchand ----------
@@ -827,6 +913,8 @@ export class RunScene extends Phaser.Scene {
     this.updateWaves();
     this.checkDoors();
     this.updateFountain();
+    this.updateTrial();
+    this.updateChest();
     this.ui.showRun(this.run);
     this.updateIndicators();
   }
@@ -945,6 +1033,10 @@ export class RunScene extends Phaser.Scene {
     if (this.waveIndex < this.waves.length) {
       if (this.nextWaveAt === 0) this.nextWaveAt = this.sim + 500;
       if (this.sim >= this.nextWaveAt) {
+        if (this.trial?.state === 'waiting') {
+          this.trial.state = 'running';
+          this.trial.startAt = this.sim;
+        }
         this.spawnWave(this.waves[this.waveIndex] ?? []);
         this.waveIndex++;
         this.nextWaveAt = 0;
@@ -1373,6 +1465,10 @@ export class RunScene extends Phaser.Scene {
       this.addDoor('boss', ARENA.centerX);
       return;
     }
+    if (this.trial?.state === 'running') {
+      this.trial.state = 'won';
+      this.spawnChest();
+    }
     const [a, b] = rollDoors(this.rng, 2, biome.pantheon);
     if (a) this.addDoor(a, ARENA.centerX - 120);
     if (b) this.addDoor(b, ARENA.centerX + 120);
@@ -1425,6 +1521,8 @@ export class RunScene extends Phaser.Scene {
     if (!this.roomCleared || this.leaving) return;
     for (const d of this.doors) {
       if (Math.hypot(this.player.x - d.x, this.player.y - d.y) > 24) continue;
+      // Coffre oublié : on le ramasse en sortant (rien n'est perdu).
+      this.takeChest();
       this.leaving = true;
       sfx.door();
       if (d.reward === 'exit') {
