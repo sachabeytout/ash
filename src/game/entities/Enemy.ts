@@ -72,7 +72,8 @@ export class Enemy {
 
   constructor(private readonly scene: Phaser.Scene) {
     this.sprite = scene.physics.add.image(0, 0, 'prowler').setDepth(8);
-    this.telegraph = scene.add.graphics().setDepth(5);
+    // Au-dessus de l'obscurité des salles sombres : une attaque se voit toujours.
+    this.telegraph = scene.add.graphics().setDepth(7);
     this.mark = scene.add
       .text(0, 0, '!', {
         fontFamily: 'monospace',

@@ -8,7 +8,7 @@ import {
   eventOf,
   takeEvent,
 } from '../../src/core/run/events';
-import { specialRooms } from '../../src/core/run/special';
+import { CHALLENGE_IDS, challengeOf, specialRooms } from '../../src/core/run/special';
 import { newRun, recordDamage, recordKill, roomKind, summarize } from '../../src/core/run/state';
 import { migrate } from '../../src/core/save/migrations';
 import { BIOMES } from '../../src/data/biomes';
@@ -119,5 +119,24 @@ describe('nouveaux évènements (0.26.0)', () => {
     const weak = newRun(3, 'katana', 50, 0, 'ra');
     weak.hp = eventCost(weak, 'shrine').hp;
     expect(canTakeEvent(weak, 'shrine')).toBe(false);
+  });
+});
+
+describe('salles spéciales (0.36.0)', () => {
+  it('la salle spéciale est distincte de l’épreuve et de l’évènement', () => {
+    for (let seed = 0; seed < 50; seed++) {
+      BIOMES.forEach((biome, i) => {
+        const { event, trial, challenge } = specialRooms(seed, i, biome);
+        if (challenge === null) return;
+        expect(challenge).not.toBe(event);
+        expect(challenge).not.toBe(trial);
+      });
+    }
+  });
+
+  it('les trois types de salles spéciales finissent par sortir', () => {
+    const seen = new Set<string>();
+    for (let seed = 0; seed < 60; seed++) seen.add(challengeOf(seed, 0));
+    expect(seen).toEqual(new Set(CHALLENGE_IDS));
   });
 });

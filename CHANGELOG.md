@@ -2,6 +2,15 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.36.0 — Salles spéciales
+
+- **Une salle spéciale par monde** (sauf la Volière, trop courte), tirée parmi trois types. Son nom s'affiche en entrant :
+  - **Salle de survie** : tiens **25 secondes** pendant que des ennemis arrivent par petits groupes (chrono doré « Survie »). À la fin, les ennemis restants s'enfuient et **3 portes** t'attendent au lieu de 2.
+  - **Salle sombre** : la salle est plongée dans le noir, avec seulement un halo autour d'Ash. Les ennemis et **leurs attaques restent toujours visibles**, et il n'y a **pas de pièges**. Victoire = **+20 éclats** et la lumière revient.
+  - **Arène du champion** : un seul adversaire, l'élite du monde, **blindé et bien plus résistant**. Victoire = **3 portes** et **+20 éclats**.
+
+**Quoi tester** : quelle salle spéciale préfères-tu ? La survie est-elle trop longue ?
+
 ## 0.35.0 — Variantes de boss
 
 - **Chaque boss a une version renforcée**, débloquée dès que tu l'as battu une fois. Ensuite, elle apparaît **au hasard, une fois sur deux** :

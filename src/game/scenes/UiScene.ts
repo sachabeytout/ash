@@ -207,10 +207,14 @@ export class UiScene extends Phaser.Scene {
   }
 
   /** Chrono de l'épreuve de Vesper, sous le nom de la salle (doré : ce n'est pas un danger). */
-  showTrial(state: 'waiting' | 'running' | 'won' | 'failed' | null, leftMs: number): void {
+  showTrial(
+    state: 'waiting' | 'running' | 'won' | 'failed' | null,
+    leftMs: number,
+    label: 'trial.timer' | 'survival.timer' = 'trial.timer',
+  ): void {
     if (!this.trial) return;
     const seconds = Math.max(0, Math.ceil(leftMs / 1000));
-    const key = `${state}:${seconds}`;
+    const key = `${state}:${seconds}:${label}`;
     if (key === this.trialKey) return;
     this.trialKey = key;
     if (state === null || state === 'failed') {
@@ -220,7 +224,7 @@ export class UiScene extends Phaser.Scene {
     const time = `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
     this.trial
       .setVisible(true)
-      .setText(state === 'won' ? t('trial.won') : t('trial.timer', { time }))
+      .setText(state === 'won' ? t('trial.won') : t(label, { time }))
       .setScale(state === 'running' && seconds <= 10 ? 1.15 : 1);
   }
 

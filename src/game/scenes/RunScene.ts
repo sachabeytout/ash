@@ -58,6 +58,16 @@ import {
   upgradeBoon,
 } from '../../core/run/state';
 import { chestLoot, openChest, trialRoom, trialTimeMs, type ChestLoot } from '../../core/run/trial';
+import {
+  CHALLENGE_SHARDS,
+  CHAMPION_HP,
+  SURVIVAL_MAX_ALIVE,
+  SURVIVAL_MS,
+  SURVIVAL_SPAWN_MS,
+  challengeOf,
+  specialRooms,
+  type ChallengeId,
+} from '../../core/run/special';
 import { planWaves, type Wave } from '../../core/run/waves';
 import {
   ANVIL_DAMAGE,
@@ -133,6 +143,8 @@ const SPAWN_WARNING_MS = 750;
 const MIN_SPAWN_DISTANCE = 110;
 
 interface PendingSpawn {
+  /** Arène du champion : l'élite, bien plus résistant. */
+  champion?: boolean;
   def: EnemyDef;
   x: number;
   y: number;
@@ -253,6 +265,10 @@ export class RunScene extends Phaser.Scene {
   } | null = null;
   /** Piliers et murets de la salle (bloquent les déplacements et les tirs). */
   private obstacles: Rect[] = [];
+  /** Salle spéciale : survie, sombre ou champion. */
+  private challenge: ChallengeId | null = null;
+  private survival: { startAt: number; nextAt: number } | null = null;
+  private darkness: Phaser.GameObjects.Image | null = null;
   /** Pièges de la salle : trappes à pics et explosifs. */
   private spikeTraps: { rect: Rect; state: SpikeState; g: Phaser.GameObjects.Graphics }[] = [];
   private mines: {
@@ -330,6 +346,13 @@ export class RunScene extends Phaser.Scene {
     this.rng = createRng((this.run.seed + this.run.room * 7919) >>> 0);
 
     this.kind = roomKind(this.run, biome);
+    this.challenge =
+      this.kind === 'combat' &&
+      specialRooms(this.run.seed, this.run.biome, biome).challenge === this.run.room
+        ? challengeOf(this.run.seed, this.run.biome)
+        : null;
+    this.survival = null;
+    this.darkness = null;
     this.heat = heatModifiers(this.run.heat);
     this.fountain = null;
     this.trial = null;
@@ -430,6 +453,7 @@ export class RunScene extends Phaser.Scene {
         : [];
     if (this.kind === 'combat' && trialRoom(this.run.seed, this.run.biome, biome) === this.run.room)
       this.startTrial(biome);
+    if (this.challenge) this.startChallenge(biome);
     if (this.kind === 'boss') this.startBoss();
     if (this.kind === 'fountain') this.startFountain();
     if (this.kind === 'event') this.startEvent();
@@ -612,6 +636,76 @@ export class RunScene extends Phaser.Scene {
     f.g.setAlpha(0.4);
   }
 
+  // ---------- Salles spéciales ----------
+
+  private startChallenge(biome: BiomeDef): void {
+    const c = this.challenge;
+    if (!c) return;
+    if (c === 'survival') {
+      this.waves = [];
+      this.survival = { startAt: -1, nextAt: 0 };
+    } else if (c === 'champion') {
+      this.waves = [[biome.elite]];
+    } else {
+      this.addDarkness();
+    }
+    this.time.delayedCall(400, () =>
+      this.ui.showBanner(t(`challenge.${c}` as TextKey), t(`challenge.${c}.sub` as TextKey)),
+    );
+  }
+
+  /** Salle sombre : un halo autour d'Ash ; les ennemis et leurs attaques restent visibles. */
+  private addDarkness(): void {
+    if (!this.textures.exists('darkness')) {
+      const tex = this.textures.createCanvas('darkness', 256, 256);
+      const ctx = tex?.getContext();
+      if (tex && ctx) {
+        ctx.fillStyle = 'rgba(4,3,8,0.93)';
+        ctx.fillRect(0, 0, 256, 256);
+        ctx.globalCompositeOperation = 'destination-out';
+        const grad = ctx.createRadialGradient(128, 128, 10, 128, 128, 70);
+        grad.addColorStop(0, 'rgba(0,0,0,1)');
+        grad.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, 256, 256);
+        tex.refresh();
+      }
+    }
+    this.darkness = this.add
+      .image(this.player.x, this.player.y, 'darkness')
+      .setScale(3)
+      .setDepth(6.5);
+  }
+
+  private updateChallenge(): void {
+    if (this.darkness) this.darkness.setPosition(this.player.x, this.player.y);
+    const sv = this.survival;
+    if (!sv || this.roomCleared || this.leaving) return;
+    if (sv.startAt < 0) sv.startAt = this.sim;
+    const left = SURVIVAL_MS - (this.sim - sv.startAt);
+    this.ui.showTrial('running', left, 'survival.timer');
+    if (left <= 0) {
+      // Tenu ! Les ennemis restants fuient en fumée.
+      for (const e of this.enemies) {
+        if (!e.alive) continue;
+        this.juice.burst(e.x, e.y, e.def.color, 10);
+        e.deactivate();
+      }
+      this.pending.forEach((p) => p.marker.destroy());
+      this.pending = [];
+      this.survival = null;
+      this.ui.showTrial(null, 0);
+      this.clearRoom();
+      return;
+    }
+    const alive = this.enemies.filter((e) => e.alive).length + this.pending.length;
+    if (this.sim < sv.nextAt || alive >= SURVIVAL_MAX_ALIVE) return;
+    sv.nextAt = this.sim + SURVIVAL_SPAWN_MS;
+    const biome = getBiome(this.run.biome);
+    const pool = biome.roster.filter((r) => this.run.room >= r.fromRoom).map((r) => r.enemy);
+    if (pool.length > 0) this.spawnWave([this.rng.pick(pool), this.rng.pick(pool)]);
+  }
+
   // ---------- Ennemis de soutien ----------
 
   /** Rebouteux : soigne les alliés proches ; Porte-bouclier : leur donne un bouclier. */
@@ -636,7 +730,8 @@ export class RunScene extends Phaser.Scene {
 
   /** Pièges : seulement en combat, à partir de la 3e salle, loin de l'entrée, des portes et du centre. */
   private placeTraps(): void {
-    if (this.kind !== 'combat') return;
+    // Pas de piège dans le noir : ce serait injuste.
+    if (this.kind !== 'combat' || this.challenge === 'dark') return;
     const rng = createRng(
       (this.run.seed ^ Math.imul(this.run.biome * 64 + this.run.room + 5, 0x7feb352d)) >>> 0,
     );
@@ -907,7 +1002,7 @@ export class RunScene extends Phaser.Scene {
   private updateTrial(): void {
     const tr = this.trial;
     if (!tr || this.chest?.open) {
-      this.ui.showTrial(null, 0);
+      if (!this.survival) this.ui.showTrial(null, 0);
       return;
     }
     if (tr.state === 'running' && !this.roomCleared && this.sim - tr.startAt >= tr.limitMs) {
@@ -1435,6 +1530,7 @@ export class RunScene extends Phaser.Scene {
     this.checkDoors();
     this.updateFountain();
     this.updateTrial();
+    this.updateChallenge();
     this.updateMerchant();
     this.updateBlasts();
     this.updateTraps();
@@ -1602,6 +1698,8 @@ export class RunScene extends Phaser.Scene {
       return;
     }
     if (this.kind === 'shop' || this.kind === 'fountain' || this.kind === 'event') return;
+    // Survie : la salle se termine à la fin du chrono (updateChallenge).
+    if (this.survival) return;
     if (this.waveIndex < this.waves.length) {
       if (this.nextWaveAt === 0) this.nextWaveAt = this.sim + 500;
       if (this.sim >= this.nextWaveAt) {
@@ -1639,6 +1737,7 @@ export class RunScene extends Phaser.Scene {
         y: point.y,
         at: this.sim + SPAWN_WARNING_MS + i * 120,
         marker,
+        ...(this.challenge === 'champion' && ENEMIES[id].elite ? { champion: true } : {}),
       });
     });
     sfx.spawn();
@@ -1673,8 +1772,11 @@ export class RunScene extends Phaser.Scene {
       this.pending.splice(i, 1);
       const slot = this.enemies.find((e) => !e.alive);
       if (!slot) continue;
-      const affix = rollAffix(this.rng, this.run.biome, s.def.elite !== undefined);
-      slot.activate(s.def, s.x, s.y, this.sim, this.heat.enemyHp, this.heat.enemySpeed, affix);
+      const affix = s.champion
+        ? 'armored'
+        : rollAffix(this.rng, this.run.biome, s.def.elite !== undefined);
+      const hpMul = this.heat.enemyHp * (s.champion ? CHAMPION_HP : 1);
+      slot.activate(s.def, s.x, s.y, this.sim, hpMul, this.heat.enemySpeed, affix);
       this.juice.burst(s.x, s.y, s.def.color, 10);
     }
   }
@@ -2092,9 +2194,20 @@ export class RunScene extends Phaser.Scene {
     }
     // Pas d'Étincelle s'il n'y a aucun don à améliorer.
     const exclude: RewardKind[] = upgradableBoons(this.run.boons).length > 0 ? [] : ['spark'];
-    const [a, b] = rollDoors(this.rng, 2, biome.pantheon, exclude);
+    // Salles spéciales : la lumière revient ; survie et champion offrent 3 portes, sombre et
+    // champion des éclats en plus.
+    if (this.darkness) {
+      this.tweens.add({ targets: this.darkness, alpha: 0, duration: 600 });
+    }
+    if (this.challenge === 'dark' || this.challenge === 'champion') {
+      this.run.shards += CHALLENGE_SHARDS;
+      this.juice.damageNumber(this.player.x, this.player.y - 14, CHALLENGE_SHARDS, '#7fe7ff');
+    }
+    const three = this.challenge === 'survival' || this.challenge === 'champion';
+    const [a, b, c] = rollDoors(this.rng, three ? 3 : 2, biome.pantheon, exclude);
     if (a) this.addDoor(a, ARENA.centerX - 120);
     if (b) this.addDoor(b, ARENA.centerX + 120);
+    if (c) this.addDoor(c, ARENA.centerX);
   }
 
   private addDoor(reward: DoorReward | SpecialDoor, x: number): void {

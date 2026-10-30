@@ -619,5 +619,12 @@
   "boss.fenrir.variant": "Fenrir déchaîné",
   "boss.talos.variant": "Talos en surchauffe",
   "boss.oiseleur.variant": "L'Oiseleur au Serment brisé",
-  "boss.variantSub": "Une version plus dangereuse… et plus généreuse"
+  "boss.variantSub": "Une version plus dangereuse… et plus généreuse",
+  "challenge.survival": "Salle de survie",
+  "challenge.survival.sub": "Tiens 25 secondes : 3 portes t'attendent",
+  "challenge.dark": "Salle sombre",
+  "challenge.dark.sub": "Les ennemis voient dans le noir. Toi, un peu.",
+  "challenge.champion": "Arène du champion",
+  "challenge.champion.sub": "Un seul adversaire… mais quel adversaire",
+  "survival.timer": "Survie · {time}"
 }

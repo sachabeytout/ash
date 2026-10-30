@@ -619,5 +619,12 @@
   "boss.fenrir.variant": "Fenrir Unchained",
   "boss.talos.variant": "Talos Overheated",
   "boss.oiseleur.variant": "The Fowler, Oathbreaker",
-  "boss.variantSub": "A deadlier version… and a more generous one"
+  "boss.variantSub": "A deadlier version… and a more generous one",
+  "challenge.survival": "Survival Room",
+  "challenge.survival.sub": "Hold out 25 seconds: 3 doors await",
+  "challenge.dark": "Dark Room",
+  "challenge.dark.sub": "The enemies see in the dark. You, a little.",
+  "challenge.champion": "Champion's Arena",
+  "challenge.champion.sub": "A single opponent… but what an opponent",
+  "survival.timer": "Survival · {time}"
 }

@@ -1,6 +1,6 @@
 # Architecture (carte du projet)
 
-> Statut 0.35.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
+> Statut 0.36.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
 > combat/attack+health+status+superGauge, boons/boons, run/waves+rewards+state, save/schema+migrations+codec+store),
 > `data/` (player, weapons, enemies, biomes, gods, boons, status, skills, bosses, music, shop), `game/` (scenes Title, Hub,
 > Run, Ui, Boon, Pause, Shop ; entities Player, Enemy, Boss, Hittable ; input Controls, TouchControls ; fx/Juice+Lightning ;
@@ -95,6 +95,8 @@ par-dessus). Mort ou sortie → `hub` avec un `RunSummary`.
   (`Enemy.leapTo`, `justLanded` lu par `RunScene.resolveEnemyAttacks`).
 - Variantes de boss : données `src/data/bossVariants.ts`, choix `src/core/bossVariant.ts` (`bossFor`, débloquée par
   `meta.codex['boss.<id>']`), teinte `BossDef.tint` (`Boss.update`).
+- Salles spéciales : `src/core/run/special.ts` (`challengeOf`, constantes), `RunScene.startChallenge` /
+  `updateChallenge` / `addDarkness` ; 3 portes et bonus d'éclats dans `clearRoom`.
 - Pièges : placement et trappe `src/core/arena/traps.ts` (`trapCounts`, `planTraps`, `stepSpike`) ; affichage et dégâts
   `RunScene.placeTraps` / `updateTraps` / `trapHitEnemy`.
 - Obstacles : dispositions et contournement dans `src/core/arena/obstacles.ts` (`LAYOUTS`, `planObstacles`,

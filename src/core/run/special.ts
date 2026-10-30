@@ -16,6 +16,26 @@ export interface SpecialRooms {
   event: number | null;
   /** Salle-épreuve de Vesper (chronométrée). */
   trial: number | null;
+  /** Salle spéciale (survie, sombre ou champion), s'il reste une place. */
+  challenge: number | null;
+}
+
+export type ChallengeId = 'survival' | 'dark' | 'champion';
+export const CHALLENGE_IDS: readonly ChallengeId[] = ['survival', 'dark', 'champion'];
+
+/** Survie : tenir ce temps ; des ennemis arrivent par petits groupes. */
+export const SURVIVAL_MS = 25000;
+export const SURVIVAL_SPAWN_MS = 3500;
+export const SURVIVAL_MAX_ALIVE = 4;
+/** Champion : l'élite du biome, bien plus résistant. */
+export const CHAMPION_HP = 1.8;
+/** Éclats en bonus à la fin d'une salle sombre ou d'une arène du champion. */
+export const CHALLENGE_SHARDS = 20;
+
+/** Le type de salle spéciale du biome, fixé par la graine. */
+export function challengeOf(seed: number, biomeIndex: number): ChallengeId {
+  const rng = createRng((seed ^ Math.imul(biomeIndex + 29, 0x2c1b3c6d)) >>> 0);
+  return rng.pick(CHALLENGE_IDS);
 }
 
 /** Salles spéciales du biome, fixées par la graine de la run (les mêmes si on reprend la partie). */
@@ -26,5 +46,6 @@ export function specialRooms(seed: number, biomeIndex: number, biome: BiomeDef):
     pool.length === 0 ? null : (pool.splice(Math.floor(rng.next() * pool.length), 1)[0] ?? null);
   const trial = take();
   const event = take();
-  return { event, trial };
+  const challenge = take();
+  return { event, trial, challenge };
 }
