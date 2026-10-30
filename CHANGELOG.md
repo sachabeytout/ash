@@ -2,6 +2,13 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.22.1 — Nouveaux dialogues
+
+- **6 nouveaux dialogues dans la Cage**, qui relient les nouveautés à l'histoire : Thot met en garde contre les marques de l'Oiseleur et parle de ses Archives, Vesper se moque de ses Épreuves, Aelia parle de ses braises et de l'Étincelle du Phénix, Brokk de ses vieilles enclumes.
+- Ils arrivent au fil des runs (à partir de la 3e) et restent consultables dans Archives → Souvenirs.
+
+**Quoi tester** : lis-les quand ils arrivent. Le ton de chaque personnage te plaît-il toujours ?
+
 ## 0.22.0 — Réduire les flashs
 
 - **Nouvelle option « Réduire les flashs »** (Options, accessibilité) : quand tu es touché, l'écran rougit beaucoup moins, et un ennemi touché s'assombrit au lieu de flasher en blanc. Désactivée par défaut.

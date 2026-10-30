@@ -123,6 +123,43 @@ export const DIALOGUES: readonly DialogueDef[] = [
     priority: 62,
     lines: [line('vesper', 'story.reach_aviary.1')],
   },
+  // ---------- Ce que la ville cache (épreuves, archives, braises, enclumes, étincelles, marques) ----------
+  {
+    id: 'marks_thot',
+    condition: { minRuns: 3, reachedBiome: 1 },
+    priority: 36,
+    lines: [line('thot', 'story.marks_thot.1')],
+  },
+  {
+    id: 'trials_vesper',
+    condition: { minRuns: 4 },
+    priority: 35,
+    lines: [line('vesper', 'story.trials_vesper.1')],
+  },
+  {
+    id: 'archives_thot',
+    condition: { minRuns: 5 },
+    priority: 34,
+    lines: [line('thot', 'story.archives_thot.1')],
+  },
+  {
+    id: 'ember_aelia',
+    condition: { minRuns: 6 },
+    priority: 33,
+    lines: [line('aelia', 'story.ember_aelia.1'), line('aelia', 'story.ember_aelia.2')],
+  },
+  {
+    id: 'anvil_brokk',
+    condition: { minRuns: 7 },
+    priority: 32,
+    lines: [line('brokk', 'story.anvil_brokk.1')],
+  },
+  {
+    id: 'spark_aelia',
+    condition: { minRuns: 9 },
+    priority: 31,
+    lines: [line('aelia', 'story.spark_aelia.1'), line('thot', 'story.spark_aelia.2')],
+  },
   // ---------- Renaissances ----------
   {
     id: 'deaths_5',

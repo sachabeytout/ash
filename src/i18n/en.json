@@ -486,5 +486,13 @@
   "codex.memory.none": "No memories yet. Dialogues from the Cage appear here once heard.",
   "codex.memory.replay": "Replay",
   "affix.volatile": "Unstable blast",
-  "options.reduceFlashes": "Reduce flashes"
+  "options.reduceFlashes": "Reduce flashes",
+  "story.marks_thot.1": "Careful. The Fowler marks some of his servants: armored corners, chevrons, crowns of spikes. I have recorded them. And when a spiked one falls… step away.",
+  "story.trials_vesper.1": "Seen my trials? The Master says a prisoner in a hurry is a prisoner who makes mistakes. Prove him wrong, if you can.",
+  "story.archives_thot.1": "I have reopened my archives. Every creature you strike down, I record. Read them: knowledge cuts deeper than a blade.",
+  "story.ember_aelia.1": "I've scattered embers along your path, Ash. If you find one, feed it.",
+  "story.ember_aelia.2": "But not too much. I need you to come back whole.",
+  "story.anvil_brokk.1": "If you come across one of my old anvils, help yourself. Nobody has used them since the light went out.",
+  "story.spark_aelia.1": "Those sparks you gather… that's the Phoenix. What's left of him.",
+  "story.spark_aelia.2": "Or what's left of you. I have not yet decided which hypothesis to archive."
 }

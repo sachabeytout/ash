@@ -486,5 +486,13 @@
   "codex.memory.none": "Aucun souvenir pour l'instant. Les dialogues de la Cage s'affichent ici une fois entendus.",
   "codex.memory.replay": "Réécouter",
   "affix.volatile": "Explosion instable",
-  "options.reduceFlashes": "Réduire les flashs"
+  "options.reduceFlashes": "Réduire les flashs",
+  "story.marks_thot.1": "Prudence. L'Oiseleur marque certains de ses serviteurs : coins blindés, chevrons, couronnes de pointes. Je les ai consignés. Et quand un marqué de pointes tombe… éloigne-toi.",
+  "story.trials_vesper.1": "Tu as vu mes épreuves ? Le Maître dit qu'un prisonnier pressé est un prisonnier qui se trompe. Prouve-lui le contraire, si tu en es capable.",
+  "story.archives_thot.1": "J'ai rouvert mes archives. Chaque créature que tu abats, je la consigne. Lis-les : le savoir coupe mieux qu'une lame.",
+  "story.ember_aelia.1": "J'ai semé des braises sur ta route, Ash. Si tu en trouves une, nourris-la.",
+  "story.ember_aelia.2": "Mais pas trop. J'ai besoin que tu reviennes entier.",
+  "story.anvil_brokk.1": "Si tu tombes sur une de mes vieilles enclumes, sers-toi. Elles ne servent plus à personne depuis que la lumière s'est éteinte.",
+  "story.spark_aelia.1": "Ces étincelles que tu ramasses… c'est le Phénix. Ce qu'il reste de lui.",
+  "story.spark_aelia.2": "Ou ce qu'il reste de toi. Je n'ai pas encore décidé quelle hypothèse archiver."
 }
