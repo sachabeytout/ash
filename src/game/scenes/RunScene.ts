@@ -39,6 +39,8 @@ import {
   onRoomCleared,
   summarize,
   type RunState,
+  recordDamage,
+  recordKill,
 } from '../../core/run/state';
 import { chestLoot, openChest, trialRoom, trialTimeMs, type ChestLoot } from '../../core/run/trial';
 import { planWaves, type Wave } from '../../core/run/waves';
@@ -490,6 +492,7 @@ export class RunScene extends Phaser.Scene {
     const boss = this.boss;
     if (!boss?.alive) return;
     boss.kill();
+    recordKill(this.run);
     recordCodex(session.save.meta, `boss.${boss.def.id}`);
     this.run.xp += boss.def.reward.xp;
     this.run.weaponParts += boss.def.reward.weaponParts;
@@ -1440,6 +1443,7 @@ export class RunScene extends Phaser.Scene {
       return;
     }
     if (!(e instanceof Enemy)) return;
+    recordKill(this.run);
     recordCodex(session.save.meta, `enemy.${e.def.id}`);
     if (e.def.elite) {
       this.run.xp += e.def.elite.xp;
@@ -1601,6 +1605,7 @@ export class RunScene extends Phaser.Scene {
     const reduction = assistReduction(settings.assist, session.save.meta.assistDeaths);
     const { dealt, killed } = applyDamage(health, reducedDamage(amount, reduction));
     this.run.hp = health.hp;
+    recordDamage(this.run, dealt);
     this.run.superGauge = gainSuper(this.run.superGauge, 0, dealt);
     this.player.takeHit(this.sim, from);
     this.juice.hitstop(70);

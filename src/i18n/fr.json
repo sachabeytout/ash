@@ -462,5 +462,20 @@
   "codex.god.artemis": "La chasseresse de la lune. Ses flèches trouvent leur cible, même très loin.",
   "codex.god.skadi": "La déesse de l'hiver. Son froid ralentit, puis fige complètement.",
   "codex.god.thor": "Le tonnerre du Nord. Son marteau étourdit et repousse tout ce qui l'entoure.",
-  "codex.god.hel": "La reine des morts, à demi vivante. Elle maudit les ennemis et offre un dernier souffle à ceux qu'elle aime."
+  "codex.god.hel": "La reine des morts, à demi vivante. Elle maudit les ennemis et offre un dernier souffle à ceux qu'elle aime.",
+  "recap.title.death": "Retour aux cendres",
+  "recap.title.cleared": "Victoire !",
+  "recap.where.death": "Consumé dans {biome}, salle {room}, par : {killer}",
+  "recap.where.boss": "Consumé face à {killer}, au bout de {biome}",
+  "recap.where.cleared": "L'Oiseleur est tombé. La Lanterne brille encore au sommet de la tour.",
+  "recap.weapon": "Arme",
+  "recap.time": "Durée",
+  "recap.rooms": "Salles traversées",
+  "recap.kills": "Ennemis vaincus",
+  "recap.damage": "Dégâts reçus",
+  "recap.rewards": "Gains",
+  "recap.rewardsValue": "{xp} XP · {parts} pièces",
+  "recap.boons": "Dons de la run",
+  "recap.noBoons": "Aucun don cette fois.",
+  "recap.continue": "Continuer"
 }

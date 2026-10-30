@@ -48,6 +48,9 @@ export interface RunState {
   heat: HeatLevels;
   /** Biome dont l'évènement a déjà été accepté (-1 : aucun). Empêche de le refaire après une reprise. */
   eventTaken: number;
+  /** Statistiques pour le récapitulatif de fin de run. Ajoutées en v9. */
+  kills: number;
+  damageTaken: number;
 }
 
 export interface RunSummary {
@@ -59,6 +62,22 @@ export interface RunSummary {
   elapsedMs: number;
   xp: number;
   weaponParts: number;
+  /** Pour le récapitulatif (absents d'un résumé ancien ou d'un abandon depuis la Cage). */
+  weapon?: WeaponId;
+  boons?: OwnedBoon[];
+  rooms?: number;
+  kills?: number;
+  damageTaken?: number;
+}
+
+/** Note un ennemi vaincu (boss compris). */
+export function recordKill(run: RunState): void {
+  run.kills += 1;
+}
+
+/** Note des dégâts reçus. */
+export function recordDamage(run: RunState, amount: number): void {
+  run.damageTaken += Math.max(0, amount);
 }
 
 export function newRun(
@@ -94,6 +113,8 @@ export function newRun(
     lastBreathUsed: false,
     heat: { ...heat },
     eventTaken: -1,
+    kills: 0,
+    damageTaken: 0,
   };
 }
 
@@ -185,6 +206,11 @@ export function summarize(
     // Chaque salle traversée rapporte un peu d'XP ; les Mesures d'urgence multiplient les gains.
     xp: Math.round((run.xp + depth(run) * 2) * heatModifiers(run.heat).reward),
     weaponParts: Math.round(run.weaponParts * heatModifiers(run.heat).reward),
+    weapon: run.weapon,
+    boons: run.boons.map((b) => ({ ...b })),
+    rooms: depth(run),
+    kills: run.kills,
+    damageTaken: run.damageTaken,
     ...(killedBy ? { killedBy } : {}),
   };
 }

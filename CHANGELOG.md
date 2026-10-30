@@ -2,6 +2,18 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.18.0 — Récapitulatif de fin de run
+
+- **Au retour dans la Cage**, une fenêtre résume ta run :
+  - où et par quoi tu as été vaincu (ou ta victoire) ;
+  - ton arme, la durée et les salles traversées ;
+  - les ennemis vaincus, les dégâts reçus et les gains (XP, pièces d'arme) ;
+  - **la liste des dons** obtenus, avec l'icône de chaque dieu.
+- « Continuer » (ou Entrée, ou toucher l'écran) la ferme ; le dialogue de la Cage arrive ensuite.
+- Ta sauvegarde passe au nouveau format **sans rien perdre** (les compteurs de la run en cours partent de zéro).
+
+**Quoi tester** : après une mort, le récapitulatif t'aide-t-il à comprendre ce qui s'est passé ? Une info manque-t-elle ?
+
 ## 0.17.0 — Les Archives de Thot
 
 - **Nouveau bouton « Archives »** dans la Cage (sous Options, ou touche A) : le bestiaire de Thot.

@@ -34,6 +34,7 @@ import { settings } from '../../core/settings';
 import { applyPostFx, autoLowerQuality } from '../fx/postfx';
 import { CODEX, recordCodex } from '../../core/codex';
 import { CodexPanel } from '../ui/CodexPanel';
+import { RecapPanel } from '../ui/RecapPanel';
 import { newAutoQuality } from '../../core/perf';
 import { markScene } from './markScene';
 
@@ -282,7 +283,9 @@ export class HubScene extends Phaser.Scene {
     this.autoQuality = newAutoQuality();
     music.play('hub');
     markScene('hub');
-    this.time.delayedCall(650, () => this.playStory());
+    // Retour de run : d'abord le récapitulatif, puis l'éventuel dialogue.
+    if (this.summary?.boons) this.time.delayedCall(500, () => this.openRecap());
+    else this.time.delayedCall(650, () => this.playStory());
   }
 
   private autoQuality = newAutoQuality();
@@ -411,6 +414,18 @@ export class HubScene extends Phaser.Scene {
       markScene('hub');
       // La Lame de l'Aube vient d'être forgée : on redessine la Cage pour l'afficher.
       if (dialogue.id === `victory_${DAWNBLADE_VICTORIES}`) this.scene.restart({});
+    });
+  }
+
+  private openRecap(): void {
+    const summary = this.summary;
+    if (!summary || this.modal || this.starting) return;
+    this.modal = true;
+    markScene('recap');
+    new RecapPanel(this, summary, () => {
+      this.modal = false;
+      markScene('hub');
+      this.time.delayedCall(250, () => this.playStory());
     });
   }
 

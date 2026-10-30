@@ -67,6 +67,11 @@ const MIGRATIONS: Record<number, (save: Raw) => Raw> = {
     const meta = isObject(old.meta) ? old.meta : {};
     return { ...old, version: 8, meta: { ...meta, codex: {} } };
   },
+  // v8 → v9 : statistiques de la run en cours (comptées à partir de maintenant).
+  8: (old) => {
+    const run = isObject(old.run) ? { ...old.run, kills: 0, damageTaken: 0 } : old.run;
+    return { ...old, version: 9, run };
+  },
 };
 
 function isObject(v: unknown): v is Raw {
@@ -191,6 +196,8 @@ function sanitizeRun(raw: unknown): RunState | null {
     lastBreathUsed: raw.lastBreathUsed === true,
     heat: sanitizeHeat(raw.heat),
     eventTaken: Math.round(num(raw.eventTaken, -1, -1, BIOMES.length - 1)),
+    kills: Math.floor(num(raw.kills, 0, 0)),
+    damageTaken: Math.floor(num(raw.damageTaken, 0, 0)),
     perks: {
       damage: num(perks.damage, NO_PERKS.damage, 0),
       healPerRoom: num(perks.healPerRoom, NO_PERKS.healPerRoom, 0),

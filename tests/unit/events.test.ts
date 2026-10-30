@@ -9,7 +9,7 @@ import {
   takeEvent,
 } from '../../src/core/run/events';
 import { specialRooms } from '../../src/core/run/special';
-import { newRun, roomKind } from '../../src/core/run/state';
+import { newRun, recordDamage, recordKill, roomKind, summarize } from '../../src/core/run/state';
 import { migrate } from '../../src/core/save/migrations';
 import { BIOMES } from '../../src/data/biomes';
 
@@ -73,5 +73,31 @@ describe('salles d’évènement', () => {
     const save = migrate({ version: 6, meta: {}, settings: {}, run });
     expect(save.run?.eventTaken).toBe(-1);
     expect(save.run?.seed).toBe(9);
+  });
+});
+
+describe('statistiques de run (récapitulatif)', () => {
+  it('le résumé reprend l’arme, les dons, les salles, les ennemis et les dégâts', () => {
+    const run = newRun(3, 'katana', 50, 0, 'ra');
+    run.boons = [{ id: 'ra_attack', rarity: 'common' }];
+    recordKill(run);
+    recordKill(run);
+    recordDamage(run, 7);
+    recordDamage(run, -3);
+    const s = summarize(run, 'death', 'x');
+    expect(s.weapon).toBe('katana');
+    expect(s.boons).toEqual(run.boons);
+    expect(s.kills).toBe(2);
+    expect(s.damageTaken).toBe(7);
+    expect(s.rooms).toBeGreaterThan(0);
+  });
+
+  it('une run v8 en cours passe en v9 avec des compteurs à zéro', () => {
+    const run = newRun(9, 'katana', 50, 0, 'ra') as unknown as Record<string, unknown>;
+    delete run.kills;
+    delete run.damageTaken;
+    const save = migrate({ version: 8, meta: {}, settings: {}, run });
+    expect(save.run?.kills).toBe(0);
+    expect(save.run?.damageTaken).toBe(0);
   });
 });

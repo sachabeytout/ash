@@ -462,5 +462,20 @@
   "codex.god.artemis": "Huntress of the moon. Her arrows find their mark, even very far away.",
   "codex.god.skadi": "Goddess of winter. Her cold slows, then freezes solid.",
   "codex.god.thor": "Thunder of the North. His hammer stuns and pushes back everything around him.",
-  "codex.god.hel": "Queen of the dead, half alive. She curses enemies and grants a last breath to those she loves."
+  "codex.god.hel": "Queen of the dead, half alive. She curses enemies and grants a last breath to those she loves.",
+  "recap.title.death": "Back to ashes",
+  "recap.title.cleared": "Victory!",
+  "recap.where.death": "Burned out in {biome}, room {room}, by: {killer}",
+  "recap.where.boss": "Burned out facing {killer}, at the end of {biome}",
+  "recap.where.cleared": "The Fowler has fallen. The Lantern still shines atop the tower.",
+  "recap.weapon": "Weapon",
+  "recap.time": "Time",
+  "recap.rooms": "Rooms crossed",
+  "recap.kills": "Enemies defeated",
+  "recap.damage": "Damage taken",
+  "recap.rewards": "Earned",
+  "recap.rewardsValue": "{xp} XP · {parts} parts",
+  "recap.boons": "Boons this run",
+  "recap.noBoons": "No boons this time.",
+  "recap.continue": "Continue"
 }
