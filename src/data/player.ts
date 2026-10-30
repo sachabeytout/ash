@@ -3,7 +3,7 @@ export const PLAYER = {
   maxHp: 50,
   radius: 6,
   /** Vitesse de déplacement (px/s) et inertie. */
-  speed: 125,
+  speed: 112,
   acceleration: 1600,
   deceleration: 2400,
   dash: {

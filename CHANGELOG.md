@@ -2,6 +2,13 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.2.1 — Réglages
+
+- Doubles lames un peu plus puissantes (environ +18 % de dégâts).
+- Ash se déplace un peu moins vite (−10 %).
+
+**Quoi tester** : les doubles lames tuent-elles assez vite maintenant ? La vitesse d'Ash te paraît-elle juste ?
+
 ## 0.2.0 — Premier combat jouable
 
 - **La Cage** : choisis ton arme (Katana ou Doubles lames) et évade-toi. Après chaque run, la Cage affiche où tu es mort, par quoi, et ce que tu as gagné.

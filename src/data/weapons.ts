@@ -78,7 +78,7 @@ export const WEAPONS: Record<WeaponId, WeaponDef> = {
     comboWindowMs: 200,
     combo: [
       {
-        damage: 6,
+        damage: 7,
         windupMs: 40,
         activeMs: 50,
         recoveryMs: 100,
@@ -90,7 +90,7 @@ export const WEAPONS: Record<WeaponId, WeaponDef> = {
         shake: 0,
       },
       {
-        damage: 6,
+        damage: 7,
         windupMs: 40,
         activeMs: 50,
         recoveryMs: 100,
@@ -102,7 +102,7 @@ export const WEAPONS: Record<WeaponId, WeaponDef> = {
         shake: 0,
       },
       {
-        damage: 6,
+        damage: 7,
         windupMs: 40,
         activeMs: 50,
         recoveryMs: 100,
@@ -114,7 +114,7 @@ export const WEAPONS: Record<WeaponId, WeaponDef> = {
         shake: 0,
       },
       {
-        damage: 14,
+        damage: 17,
         windupMs: 80,
         activeMs: 70,
         recoveryMs: 220,
@@ -128,7 +128,7 @@ export const WEAPONS: Record<WeaponId, WeaponDef> = {
     ],
     // Tourbillon : frappe tout autour d'Ash.
     power: {
-      damage: 18,
+      damage: 22,
       windupMs: 160,
       activeMs: 160,
       recoveryMs: 260,
