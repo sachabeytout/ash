@@ -2,6 +2,15 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.23.0 — Archives : armes et habitants de la Cage
+
+- **Deux nouveaux onglets dans les Archives** :
+  - **Armes** : une fiche par arme, ouverte dès que l'arme est disponible, avec son histoire et le nombre de runs jouées avec.
+  - **Cage** : une fiche pour Aelia, Thot, Vesper, Brokk et l'Oiseleur, ouverte dès qu'ils t'ont parlé, avec le nombre de dialogues entendus.
+- Les Archives comptent maintenant **41 fiches**.
+
+**Quoi tester** : regarde les fiches des personnages. Correspondent-elles à l'idée que tu t'en fais ?
+
 ## 0.22.1 — Nouveaux dialogues
 
 - **6 nouveaux dialogues dans la Cage**, qui relient les nouveautés à l'histoire : Thot met en garde contre les marques de l'Oiseleur et parle de ses Archives, Vesper se moque de ses Épreuves, Aelia parle de ses braises et de l'Étincelle du Phénix, Brokk de ses vieilles enclumes.

@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import {
   CODEX,
   CODEX_SECTIONS,
+  codexCount,
   codexProgress,
   isDiscovered,
   type CodexEntry,
@@ -15,7 +16,8 @@ import { t, type TextKey } from '../../i18n';
 import { sfx } from '../audio/sfx';
 import { drawGodIcon } from '../icons';
 import { COLORS, FONT_FAMILY } from '../theme';
-import { DIALOGUES, SPEAKERS, type DialogueDef } from '../../data/story';
+import { DIALOGUES, SPEAKERS, type DialogueDef, type Speaker } from '../../data/story';
+import { WEAPONS, type WeaponId } from '../../data/weapons';
 import { DialogueBox } from './DialogueBox';
 
 /** Couleur des Archives : le vert de Thot. */
@@ -35,7 +37,7 @@ export class CodexPanel {
   private readonly onKey = (e: KeyboardEvent) => {
     if (this.replaying) return;
     if (e.code === 'Escape' || e.code === 'KeyA') this.close();
-    const tab = ['Digit1', 'Digit2', 'Digit3', 'Digit4'].indexOf(e.code);
+    const tab = ['Digit1', 'Digit2', 'Digit3', 'Digit4', 'Digit5', 'Digit6'].indexOf(e.code);
     const section = TABS[tab];
     if (section) this.show(section);
   };
@@ -93,23 +95,24 @@ export class CodexPanel {
     ).setOrigin(1, 0);
 
     // Onglets.
+    const tabW = Math.min(96, (w - 28) / TABS.length - 6);
     TABS.forEach((section, i) => {
-      const tx = left + 14 + i * 104;
+      const tx = left + 14 + i * (tabW + 6);
       const active = section === this.section;
       const g = scene.add.graphics();
       this.root.add(g);
-      g.fillStyle(active ? 0x15302a : 0x07060d, 1).fillRoundedRect(tx, top + 48, 96, 24, 6);
-      g.lineStyle(1.5, CODEX_COLOR, active ? 1 : 0.35).strokeRoundedRect(tx, top + 48, 96, 24, 6);
+      g.fillStyle(active ? 0x15302a : 0x07060d, 1).fillRoundedRect(tx, top + 48, tabW, 24, 6);
+      g.lineStyle(1.5, CODEX_COLOR, active ? 1 : 0.35).strokeRoundedRect(tx, top + 48, tabW, 24, 6);
       this.text(
-        tx + 48,
+        tx + tabW / 2,
         top + 60,
         t(`codex.tab.${section}` as TextKey),
-        11,
+        10,
         active ? COLORS.text : COLORS.textDim,
         active,
       ).setOrigin(0.5);
       const zone = scene.add
-        .zone(tx + 48, top + 60, 96, 28)
+        .zone(tx + tabW / 2, top + 60, tabW, 28)
         .setInteractive({ useHandCursor: true });
       zone.on('pointerup', () => {
         sfx.tap();
@@ -152,7 +155,7 @@ export class CodexPanel {
       this.text(
         dx + 12,
         top + 124,
-        t(`codex.count.${entry.section}` as TextKey, { count: this.meta.codex[entry.key] ?? 0 }),
+        t(`codex.count.${entry.section}` as TextKey, { count: codexCount(this.meta, entry.key) }),
         10,
         '#7fffc0',
       );
@@ -287,6 +290,8 @@ export class CodexPanel {
   private name(entry: CodexEntry): string {
     if (entry.section === 'enemy') return t(ENEMIES[entry.id as EnemyId].nameKey as TextKey);
     if (entry.section === 'boss') return t(BOSSES[entry.id as BossId].nameKey as TextKey);
+    if (entry.section === 'weapon') return t(WEAPONS[entry.id as WeaponId].nameKey as TextKey);
+    if (entry.section === 'npc') return t(`codex.npcName.${entry.id}` as TextKey);
     return t(GODS[entry.id as GodId].nameKey as TextKey);
   }
 
@@ -305,6 +310,18 @@ export class CodexPanel {
     if (entry.section === 'boss') {
       g.fillStyle(0xb8a8ff, 1).fillTriangle(x, y - size, x + size, y, x, y + size);
       g.fillTriangle(x, y - size, x - size, y, x, y + size);
+      return;
+    }
+    if (entry.section === 'weapon') {
+      // Lame stylisée en diagonale.
+      g.lineStyle(Math.max(1.5, size / 3), 0xffe08a, 1);
+      g.lineBetween(x - size * 0.8, y + size * 0.8, x + size * 0.8, y - size * 0.8);
+      g.lineBetween(x - size * 0.6, y + size * 0.2, x - size * 0.2, y + size * 0.6);
+      return;
+    }
+    if (entry.section === 'npc') {
+      g.fillStyle(SPEAKERS[entry.id as Speaker].color, 1).fillCircle(x, y, size * 0.75);
+      g.fillStyle(0x07060d, 1).fillCircle(x, y, size * 0.3);
       return;
     }
     g.fillStyle(ENEMIES[entry.id as EnemyId].color, 1).fillCircle(x, y, size * 0.8);

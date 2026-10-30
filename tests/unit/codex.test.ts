@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { CODEX, codexProgress, isDiscovered, recordCodex } from '../../src/core/codex';
+import { CODEX, codexCount, codexProgress, isDiscovered, recordCodex } from '../../src/core/codex';
 import { migrate } from '../../src/core/save/migrations';
 import { defaultMeta } from '../../src/core/save/schema';
+import { STARTING_WEAPONS } from '../../src/data/forge';
 import fr from '../../src/i18n/fr.json';
 import en from '../../src/i18n/en.json';
 
@@ -28,7 +29,11 @@ describe('Archives de Thot', () => {
     recordCodex(meta, 'enemy.nobody');
     expect(meta.codex['enemy.prowler']).toBe(2);
     expect(meta.codex).not.toHaveProperty('enemy.nobody');
-    expect(codexProgress(meta)).toEqual({ found: 1, total: CODEX.length });
+    // Les armes de départ sont connues d'office : 1 ennemi + 2 armes.
+    expect(codexProgress(meta)).toEqual({
+      found: 1 + STARTING_WEAPONS.length,
+      total: CODEX.length,
+    });
   });
 
   it('une sauvegarde v7 passe en v8 sans perte, avec des archives vides', () => {
@@ -37,6 +42,17 @@ describe('Archives de Thot', () => {
     const save = migrate({ version: 7, meta, settings: {}, run: null });
     expect(save.meta.xp).toBe(42);
     expect(save.meta.codex).toEqual({});
+  });
+
+  it('armes : fiche ouverte dès que l’arme est disponible ; habitants : dès qu’ils ont parlé', () => {
+    const meta = defaultMeta();
+    expect(isDiscovered(meta, 'weapon.katana')).toBe(true);
+    expect(isDiscovered(meta, 'weapon.dawnblade')).toBe(false);
+    expect(isDiscovered(meta, 'npc.aelia')).toBe(false);
+    meta.seenDialogues.push('intro_aelia');
+    expect(isDiscovered(meta, 'npc.aelia')).toBe(true);
+    expect(codexCount(meta, 'npc.aelia')).toBe(1);
+    expect(isDiscovered(meta, 'npc.brokk')).toBe(false);
   });
 
   it('les archives abîmées sont nettoyées', () => {

@@ -536,6 +536,7 @@ export class HubScene extends Phaser.Scene {
     this.starting = true;
     sfx.tap();
     const seed = randomSeed();
+    recordCodex(session.save.meta, `weapon.${weapon}`);
     const bonus = runBonuses(session.save.meta);
     const run = newRun(
       seed,
