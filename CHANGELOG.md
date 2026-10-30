@@ -2,6 +2,29 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.5.0 — Le Givre-Serveur
+
+- **Deuxième biome : le Givre-Serveur**, un datacenter gelé (sol givré, flocons, néons froids, nouvelle musique). Après avoir battu Ammit, la run **continue** au lieu de s'arrêter. Le nom du biome est affiché en haut de l'écran.
+- **Ratatosk, le Coursier** : un écureuil mécanique qui t'attend entre les deux biomes. Il échange tes **éclats** contre :
+  - un soin (+25 PV) ;
+  - un Cœur de braise (+10 PV max) ;
+  - une Pierre runique (+10 % de dégâts) ;
+  - la Faveur d'un dieu (un don au choix).
+  - Les élites rapportent maintenant +10 éclats, les boss +30.
+- **Nouveaux ennemis** :
+  - **Loup-relais** : rapide, chasse en meute.
+  - **Givreur** : tire 3 éclats de glace en éventail.
+  - **Gardien runique** : fait apparaître des cercles sous tes pieds, qui explosent. Sors des cercles !
+- **Nouvel élite : l'Einherjar.** Un bouclier (arc blanc) le protège de face : il bloque presque tous tes coups. Frappe-le **de dos**, par exemple juste après sa charge.
+- **Nouveau boss : Fenrir-Ω, le Loup enchaîné.** Ses attaques, toujours annoncées en rouge :
+  - **Morsure** et **charge** ;
+  - **Bond** : un cercle marque où il va retomber ;
+  - **Pluie de glace** : des cercles avec un flocon, dont un sous toi.
+  - À la moitié de sa vie, il **brise une chaîne** et appelle sa meute.
+- La Cage indique dans quel biome tu es mort, et où en est ta run en cours.
+
+**Quoi tester** : essaie d'aller le plus loin possible. Le marchand est-il utile, et ses prix sont-ils justes ? L'Einherjar est-il clair (on comprend qu'il faut le frapper de dos) ? Fenrir est-il juste ? La run est-elle trop longue ?
+
 ## 0.4.0 — La Dévoreuse
 
 - **Boss : Ammit, la Dévoreuse.** Après la salle 10, une porte marquée d'un œil mène à la gardienne des Bas-Fonds. Ses 4 attaques sont toujours annoncées :

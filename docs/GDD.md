@@ -142,6 +142,14 @@ Gardienne des Bas-Fonds : crinière sombre, gueule de crocodile. Elle pèse les 
 
 Phase 2 à 50 % : tempo +20 %, double onde, invocations. Élite du biome 1 : **le Traqueur** (charge en ligne droite).
 
+### Le Givre-Serveur (biome 2, 0.5.0)
+
+Ennemis : **Loup-relais** (meute rapide), **Givreur** (3 éclats en éventail), **Gardien runique** (cercles qui explosent).
+Élite : **l'Einherjar** (bouclier frontal, on le prend à revers). Marchand avant le biome : **Ratatosk, le Coursier**.
+
+**Fenrir-Ω, le Loup enchaîné** : morsure, charge, **bond** (cercle d'atterrissage figé avant le saut), **pluie de glace**
+(cercles à flocon, dont un sous Ash). Phase 2 : il brise une chaîne et appelle deux Loups-relais.
+
 ## 5. Systèmes nommés 🟡
 
 | Système                     | Nom                                                        |

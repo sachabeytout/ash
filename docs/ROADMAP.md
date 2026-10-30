@@ -2,8 +2,9 @@
 
 ## Prochaine étape
 
-M1 est terminé : on attend les retours de l'utilisateur sur la 0.4.0 (boss, élite, musique, options) avant de détailler M2.
-Pistes M2 proposées : dialogues dans la Cage (Aelia, Thot, Vesper), forge de Brokk (pièces d'arme), mode assistance « Bénédiction du Phénix », biome 2.
+M2.1 (biome 2) est livré en 0.5.0. Retours attendus sur la 0.4.0 et la 0.5.0 (boss, élite, marchand, longueur de run).
+Pistes suivantes : dialogues dans la Cage (Aelia, Thot, Vesper), forge de Brokk (pièces d'arme), mode assistance
+« Bénédiction du Phénix », biome 3 (l'Olympe Corporatif, boss Talos).
 Retour sur le lore v0.2 toujours attendu (« quand le fond aura avancé »).
 
 ## M0 — Fondations
@@ -50,6 +51,18 @@ Retour sur le lore v0.2 toujours attendu (« quand le fond aura avancé »).
 - [x] Boss 1 : Ammit, la Dévoreuse
 - [x] Musique (3 morceaux) ; préréglages de qualité ; menu options et pause
 
-## M2+
+## M2 — Le monde s'agrandit
 
-À détailler après les retours sur M1.
+### M2.1 — Le Givre-Serveur (0.5.0) ✅
+
+- [x] Biomes enchaînés (après le boss : marchand, puis biome suivant) ; décor et musique par biome
+- [x] Marchand Ratatosk (soin, cœur, pierre runique, faveur d'un dieu) ; éclats des élites et des boss
+- [x] 3 ennemis (Loup-relais, Givreur, Gardien runique) + élite Einherjar (bouclier frontal)
+- [x] Boss 2 : Fenrir-Ω (bond, pluie de glace, chaînes, meute)
+
+### Ensuite (à choisir avec l'utilisateur)
+
+- [ ] Dialogues dans la Cage (Aelia, Thot, Vesper, Brokk)
+- [ ] Forge de Brokk (améliorations d'armes avec les pièces d'arme)
+- [ ] Mode assistance « Bénédiction du Phénix »
+- [ ] Biome 3 : l'Olympe Corporatif (boss Talos), biome 4 : la Volière (l'Oiseleur)

@@ -51,6 +51,11 @@ Format : date — décision — raison — validée par l'utilisateur (oui / non
 | 2026-10-30 | Qualité graphique par défaut : **Haute** (Basse/Moyenne réduisent les particules) | Le jeu tourne bien sur iPhone récent ; réglable dans Options | à signaler |
 | 2026-10-30 | Pause automatique quand l'app passe en arrière-plan | Conforme au brief | oui (brief) |
 | 2026-10-30 | Mise en ligne en avançant `main` jusqu'à la branche de travail une fois les tests verts | Accord de l'utilisateur pour la 0.3.0 | oui |
+| 2026-10-30 | Après Ammit, la run continue (marchand puis Givre-Serveur) ; la run est gagnée après le dernier boss disponible | Demande « commence le deuxième biome » ; structure du brief (biomes enchaînés, marchand entre biomes) | oui (brief) |
+| 2026-10-30 | Marchand : **Ratatosk**, écureuil messager de la mythologie nordique (interprétation originale) | Il voyage entre les mondes : logique entre deux biomes | à signaler |
+| 2026-10-30 | Prix du marchand : soin 30, cœur 45, pierre 40, faveur 60 éclats ; +10 éclats par élite, +30 par boss | Donner enfin un usage aux éclats ; à régler selon les retours | à signaler |
+| 2026-10-30 | Einherjar : bouclier frontal qui bloque 85 % des dégâts (pas les effets des dons déjà posés, ni la brûlure) | Mécanique nouvelle et lisible (arc blanc) : le contourner | à signaler |
+| 2026-10-30 | Fenrir-Ω : 1100 PV, bond / pluie de glace / morsure / charge, meute en phase 2 | Boss plus mobile qu'Ammit, toujours télégraphié | à signaler |
 
 ## Réponses de l'utilisateur (30/10/2026)
 

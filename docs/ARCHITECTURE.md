@@ -1,9 +1,9 @@
 # Architecture (carte du projet)
 
-> Statut 0.4.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
+> Statut 0.5.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
 > combat/attack+health+status+superGauge, boons/boons, run/waves+rewards+state, save/schema+migrations+codec+store),
-> `data/` (player, weapons, enemies, biomes, gods, boons, status, skills, bosses, music), `game/` (scenes Title, Hub,
-> Run, Ui, Boon, Pause ; entities Player, Enemy, Boss, Hittable ; input Controls, TouchControls ; fx/Juice+Lightning ;
+> `data/` (player, weapons, enemies, biomes, gods, boons, status, skills, bosses, music, shop), `game/` (scenes Title, Hub,
+> Run, Ui, Boon, Pause, Shop ; entities Player, Enemy, Boss, Hittable ; input Controls, TouchControls ; fx/Juice+Lightning ;
 > ui/button+ThothPanel+OptionsPanel ; dom/saveDialog ; debug/cheats ; session ; icons ; audio/sfx+music ; textures ;
 > physics), `platform/` (pwa, device).
 > Prévu : telemetry, events, data/validate. Mettre à jour à chaque session.
@@ -33,6 +33,14 @@ par-dessus). Mort ou sortie → `hub` avec un `RunSummary`.
 - Pause : `src/game/scenes/PauseScene.ts` (ouverte par `RunScene.openPause`). Options : `src/game/ui/OptionsPanel.ts`,
   réglages dans `src/core/settings.ts` (qualité → `QUALITY_PARTICLES`).
 - Musique : motifs dans `src/data/music.ts`, séquenceur dans `src/game/audio/music.ts`.
+
+### Biomes, marchand (0.5.0)
+
+- Biomes : `src/data/biomes.ts` (salles, ennemis, élite, boss, musique, décor `theme`). Numéro de salle : 0 = marchand,
+  1…N = combats, N + 1 = boss (`roomKind` dans `src/core/run/state.ts`) ; `afterBoss` passe au biome suivant.
+- Boss : `BOSSES` dans `src/data/bosses.ts` (attaques optionnelles : bite, charge, quake, summon, leap, icefall).
+- Marchand : articles dans `src/data/shop.ts`, achat dans `src/core/shop.ts`, écran `src/game/scenes/ShopScene.ts`.
+- Bouclier frontal (Einherjar) : `shield` dans `src/data/enemies.ts`, `Enemy.blocks` ; runes : attaque `runes`.
 
 ### Combat (où régler quoi)
 

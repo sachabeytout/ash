@@ -232,7 +232,13 @@ export class HubScene extends Phaser.Scene {
         cx,
         222,
         t('hub.runInProgress', {
-          room: run.room,
+          place:
+            run.room <= 0
+              ? t('hub.atMerchant')
+              : t('hub.roomOf', {
+                  biome: t(getBiome(run.biome).nameKey as TextKey),
+                  room: run.room,
+                }),
           weapon: t(WEAPONS[run.weapon].nameKey as TextKey),
         }),
         {

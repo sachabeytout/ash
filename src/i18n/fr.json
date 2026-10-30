@@ -88,7 +88,7 @@
   "boonChoice.new": "Nouveau pouvoir",
   "reward.boonOf": "Don de {god}",
   "hub.saveButton": "Sauvegarde",
-  "hub.runInProgress": "Run en cours : salle {room} · {weapon}",
+  "hub.runInProgress": "Run en cours : {place} · {weapon}",
   "hub.resume": "Reprendre",
   "hub.resumeSub": "{hp} / {maxHp} PV",
   "hub.abandon": "Abandonner la run",
@@ -191,5 +191,7 @@
   "boss.ammit.phase2": "Ammit se déchaîne !",
   "boss.ammit.defeated": "Ammit est vaincue !",
   "boss.fenrir.phase2": "Fenrir brise une chaîne !",
-  "boss.fenrir.defeated": "Fenrir-Ω est vaincu !"
+  "boss.fenrir.defeated": "Fenrir-Ω est vaincu !",
+  "hub.roomOf": "{biome}, salle {room}",
+  "hub.atMerchant": "chez le marchand"
 }
