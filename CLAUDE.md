@@ -6,7 +6,8 @@ Roguelite d'action en vue de dessus (inspiré de Hadès, 100 % original), PWA po
 
 1. Ce fichier.
 2. `docs/ARCHITECTURE.md` pour trouver les bons fichiers **avant** de lire du code.
-3. Selon la tâche : `docs/GDD.md` (design), `docs/DECISIONS.md` (ce qui est tranché), `docs/ROADMAP.md` (où on en est).
+3. Selon la tâche : `docs/GDD.md` (design), `docs/DECISIONS.md` (ce qui est tranché), `docs/ROADMAP.md` (où on en est),
+   `docs/QUESTIONS.md` (questions en attente de l'utilisateur).
 4. `docs/BRIEF.md` = source de vérité d'origine. **Ne jamais le modifier.**
 
 ## L'utilisateur
@@ -18,6 +19,7 @@ Roguelite d'action en vue de dessus (inspiré de Hadès, 100 % original), PWA po
 - Petits choix réversibles : décider, noter dans DECISIONS, signaler dans le résumé.
 - Il déteste la **frustration** et se sentir **bloqué** (BRIEF §6.9) : critère central.
 - Veut une **notification** (PushNotification) à chaque étape terminée.
+- Toutes les questions qui attendent sa réponse vont dans `docs/QUESTIONS.md` (tenir à jour ; en attendant, appliquer l'option recommandée). Il y répond quand il a le temps : continuer à avancer sans attendre.
 
 ## Stack
 
