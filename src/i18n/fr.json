@@ -614,5 +614,10 @@
   "codex.enemy.mender": "Un infirmier de rue qui recolle les blessés du Consortium… avec du ruban adhésif. Un anneau vert annonce chaque soin : abats-le en premier.",
   "codex.enemy.warder": "Il distribue des boucliers comme d'autres distribuent des prospectus. Un cercle bleu clair entoure ses protégés : frappe-les jusqu'à le briser, ou va droit sur lui.",
   "codex.enemy.leaper": "Un acrobate monté sur ressorts. Le cercle rouge montre où il retombera : sors-en, et frappe-le pendant qu'il se relève.",
-  "codex.enemy.diffuser": "Un arroseur de projectiles : huit tirs d'un coup, dans toutes les directions. Glisse-toi entre deux lignes de visée."
+  "codex.enemy.diffuser": "Un arroseur de projectiles : huit tirs d'un coup, dans toutes les directions. Glisse-toi entre deux lignes de visée.",
+  "boss.ammit.variant": "Ammit l'Affamée",
+  "boss.fenrir.variant": "Fenrir déchaîné",
+  "boss.talos.variant": "Talos en surchauffe",
+  "boss.oiseleur.variant": "L'Oiseleur au Serment brisé",
+  "boss.variantSub": "Une version plus dangereuse… et plus généreuse"
 }

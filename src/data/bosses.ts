@@ -23,6 +23,8 @@ export interface BossDef {
   weights: Record<1 | 2, Partial<Record<BossAttackId, number>>>;
   /** Texture du boss. */
   texture: string;
+  /** Variante : teinte du sprite (sinon couleurs d'origine). */
+  tint?: number;
   /** Enchaîné (Fenrir) : des chaînes le relient aux murs ; il en brise une en phase 2. */
   chained?: boolean;
   bite?: {

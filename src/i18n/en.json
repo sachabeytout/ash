@@ -614,5 +614,10 @@
   "codex.enemy.mender": "A street medic patching up the Consortium's wounded… with duct tape. A green ring announces each heal: take him out first.",
   "codex.enemy.warder": "He hands out shields like others hand out flyers. A light blue circle surrounds his protégés: hit them until it breaks, or go straight for him.",
   "codex.enemy.leaper": "An acrobat on springs. The red circle shows where he'll land: get out, then hit him while he recovers.",
-  "codex.enemy.diffuser": "A projectile sprinkler: eight shots at once, in every direction. Slip between two aim lines."
+  "codex.enemy.diffuser": "A projectile sprinkler: eight shots at once, in every direction. Slip between two aim lines.",
+  "boss.ammit.variant": "Ammit the Ravenous",
+  "boss.fenrir.variant": "Fenrir Unchained",
+  "boss.talos.variant": "Talos Overheated",
+  "boss.oiseleur.variant": "The Fowler, Oathbreaker",
+  "boss.variantSub": "A deadlier version… and a more generous one"
 }

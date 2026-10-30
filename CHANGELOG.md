@@ -2,6 +2,17 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.35.0 — Variantes de boss
+
+- **Chaque boss a une version renforcée**, débloquée dès que tu l'as battu une fois. Ensuite, elle apparaît **au hasard, une fois sur deux** :
+  - **Ammit l'Affamée** : elle bondit et fait pleuvoir des ossements ; elle appelle plus de Rôdeurs.
+  - **Fenrir déchaîné** : plus de chaînes ; son souffle gelé balaie l'arène et le sol tremble.
+  - **Talos en surchauffe** : il bondit malgré son poids et frappe au corps à corps.
+  - **L'Oiseleur au Serment brisé** : il frappe de près et appelle des corbeaux.
+- Une variante a **15 % de vie en plus**, une **teinte différente** et son **nom** s'affiche à l'arrivée. Elle rapporte **plus d'XP et une pièce d'arme de plus**.
+
+**Quoi tester** : quand tu croises une variante, la reconnais-tu tout de suite ? Est-elle trop dure ?
+
 ## 0.34.0 — Ennemis de soutien et nouveaux ennemis
 
 - **2 ennemis de soutien** (ils restent à distance et n'attaquent pas : abats-les en premier !) :

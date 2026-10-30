@@ -69,7 +69,6 @@ import {
   type EventId,
 } from '../../core/run/events';
 import { BIOMES, getBiome, type BiomeDef } from '../../data/biomes';
-import { BOSSES } from '../../data/bosses';
 import { DASH_AURA_RADIUS, DASH_BOLT_RANGE, getBoon } from '../../data/boons';
 import { GOD_IDS, GODS } from '../../data/gods';
 import { ENEMIES, type EnemyDef } from '../../data/enemies';
@@ -96,6 +95,7 @@ import { Controls } from '../input/Controls';
 import { UiScene, type Indicator } from './UiScene';
 import { finishRun } from '../../core/meta';
 import { recordCodex } from '../../core/codex';
+import { bossFor } from '../../core/bossVariant';
 import { REVIVE_HP } from '../../data/skills';
 import { rollAffix, volatileDamage } from '../../core/affixes';
 import { AFFIX_BOUNTY, VOLATILE_BLAST } from '../../data/affixes';
@@ -503,7 +503,12 @@ export class RunScene extends Phaser.Scene {
 
   private startBoss(): void {
     const intro = 1900;
-    const def = BOSSES[getBiome(this.run.biome).boss];
+    const def = bossFor(
+      session.save.meta,
+      getBiome(this.run.biome).boss,
+      this.run.seed,
+      this.run.biome,
+    );
     const boss = new Boss(
       this,
       def,
@@ -529,7 +534,10 @@ export class RunScene extends Phaser.Scene {
     };
     this.boss = boss;
     this.time.delayedCall(400, () =>
-      this.ui.showBanner(t(def.nameKey as TextKey), t(def.titleKey as TextKey)),
+      this.ui.showBanner(
+        t(def.nameKey as TextKey),
+        def.tint !== undefined ? t('boss.variantSub') : t(def.titleKey as TextKey),
+      ),
     );
   }
 

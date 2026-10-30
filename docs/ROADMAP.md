@@ -89,4 +89,5 @@ Retour sur le lore v0.2 toujours attendu (« quand le fond aura avancé »).
 - [x] **M5.3 (0.32.0)** : pièges (trappes à pics, explosifs) — demandé par l'utilisateur
 - [x] **M6.1 (0.33.0)** : les habitants de la Cage parlent (22 répliques avec humour)
 - [x] **M6.2 (0.34.0)** : ennemis de soutien (Rebouteux, Porte-bouclier) + Sauteur et Diffuseur
+- [x] **M6.3 (0.35.0)** : variantes de boss (débloquées par la 1re victoire, puis 1 fois sur 2)
 - [ ] **M3** : finitions — coffres et évènements, préréglages de qualité, équilibrage avec la télémétrie, accessibilité

@@ -258,6 +258,8 @@ export class Boss implements Hittable {
     }
     this.sprite.setFlipX(Math.cos(this.facing) < 0);
     if (now < this.flashUntil) hitFlash(this.sprite);
+    else if (this.def.tint !== undefined)
+      this.sprite.setTint(this.def.tint).setTintMode(Phaser.TintModes.MULTIPLY);
     else this.sprite.clearTint().setTintMode(Phaser.TintModes.MULTIPLY);
     this.mark.setPosition(this.x, this.y - def.radius - 6);
     this.drawStatus(now, frozen);
