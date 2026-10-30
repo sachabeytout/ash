@@ -55,6 +55,7 @@ const TEXTURE: Record<ProjectileSpec['look'], string> = {
   bolt: 'p_bolt',
   disc: 'p_disc',
   chain: 'p_chain',
+  arrow: 'p_arrow',
 };
 
 /**

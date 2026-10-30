@@ -5,6 +5,7 @@ import {
   getBoon,
   slotOf,
   type BoonDef,
+  type BoonSlot,
   type BoonEffect,
   type Rarity,
   type Trigger,
@@ -111,6 +112,18 @@ export function rollOffer(
 }
 
 /** Prend un don : il remplace celui qui occupait la même action. */
+/**
+ * Dieu du don posé sur une action (attaque, dash…) : sa couleur habille cette action
+ * (ex. la traînée de l'attaque prend la couleur du dieu de l'attaque).
+ */
+export function slotGod(owned: readonly OwnedBoon[], slot: BoonSlot): GodId | undefined {
+  for (const o of owned) {
+    const def = getBoon(o.id);
+    if (def && slotOf(def.effect) === slot) return def.gods[0];
+  }
+  return undefined;
+}
+
 export function takeBoon(owned: readonly OwnedBoon[], offer: BoonOffer): OwnedBoon[] {
   const rest = owned.filter((o) => o.id !== offer.replaces && o.id !== offer.id);
   return [...rest, { id: offer.id, rarity: offer.rarity }];

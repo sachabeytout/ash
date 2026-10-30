@@ -163,7 +163,8 @@ export class CodexPanel {
       const icon = scene.add.graphics();
       this.drawIcon(icon, entry, dx + 22, top + 106, 9);
       this.root.add(icon);
-      this.text(dx + 40, top + 98, this.name(entry), 13, COLORS.text, true);
+      const nameColor = entry.section === 'god' ? GODS[entry.id as GodId].text : COLORS.text;
+      this.text(dx + 40, top + 98, this.name(entry), 13, nameColor, true);
       this.text(
         dx + 12,
         top + 124,

@@ -56,10 +56,17 @@ export class BoonScene extends Phaser.Scene {
     this.openedAt = this.time.now;
     const { width, height } = this.scale;
     const god = GODS[this.data_.god];
-    const godColor = `#${god.color.toString(16).padStart(6, '0')}`;
 
     const veil = this.add.rectangle(0, 0, width, height, 0x07060d, 0.82).setOrigin(0);
     const upgrade = this.data_.upgrade === true;
+    // Halo à la couleur du dieu derrière le titre : on sait d'un coup d'œil qui offre.
+    if (this.textures.exists('glow'))
+      this.add
+        .image(width / 2, 40, 'glow')
+        .setTint(upgrade ? SPARK_COLOR : god.color)
+        .setAlpha(0.35)
+        .setScale(4, 1.6)
+        .setBlendMode('ADD');
     const titleIcon = this.add.graphics();
     if (upgrade) {
       // Flamme du Phénix.
@@ -76,7 +83,7 @@ export class BoonScene extends Phaser.Scene {
         fontFamily: FONT_FAMILY,
         fontSize: '16px',
         fontStyle: 'bold',
-        color: upgrade ? '#ffc46b' : godColor,
+        color: upgrade ? '#ffc46b' : god.text,
         stroke: '#07060d',
         strokeThickness: 3,
       })
@@ -110,7 +117,7 @@ export class BoonScene extends Phaser.Scene {
             fontFamily: FONT_FAMILY,
             fontSize: '10px',
             fontStyle: 'italic',
-            color: godColor,
+            color: god.text,
             align: 'center',
             wordWrap: { width: Math.min(560, width - 40) },
           },
@@ -180,6 +187,19 @@ export class BoonScene extends Phaser.Scene {
     const g = this.add.graphics();
     const draw = (focused: boolean) => {
       g.clear().fillStyle(0x0d0a18, 0.96).fillRoundedRect(x, y, w, h, 8);
+      // Bandeau du haut aux couleurs du dieu (les duos partagent le bandeau en deux).
+      const band = 38;
+      gods.forEach((god, i) => {
+        const bw = w / gods.length;
+        g.fillStyle(god.color, focused ? 0.3 : 0.18);
+        g.fillRoundedRect(x + i * bw, y, bw, band, {
+          tl: i === 0 ? 8 : 0,
+          tr: i === gods.length - 1 ? 8 : 0,
+          bl: 0,
+          br: 0,
+        });
+      });
+      g.lineStyle(1, color, 0.5).lineBetween(x + 6, y + band, x + w - 6, y + band);
       g.lineStyle(focused ? 3 : 1.5, color, focused ? 1 : 0.65).strokeRoundedRect(x, y, w, h, 8);
       gods.forEach((god, i) =>
         drawGodIcon(g, god, x + w / 2 + (i - (gods.length - 1) / 2) * 26, y + 22, 9),

@@ -7,8 +7,13 @@ export interface GodDef {
   nameKey: string;
   /** Titre court affiché sous le nom (« Soleil d'Égypte »…). */
   titleKey: string;
-  /** Couleur du dieu (jamais le rouge-magenta réservé aux dangers), toujours doublée d'une icône. */
+  /**
+   * Couleur du dieu, reprise par tout ce qui lui appartient (cartes, effets, états, flèches…).
+   * Jamais le rouge-magenta réservé aux dangers, et toujours doublée d'une icône ou d'une forme.
+   */
   color: number;
+  /** Variante claire de la couleur, pour les textes (chiffres de dégâts) sur fond sombre. */
+  text: string;
   /** Forme de l'icône (lisible sans les couleurs). */
   icon: 'sun' | 'bolt' | 'flake' | 'jackal' | 'cat' | 'shield' | 'moon' | 'hammer' | 'veil';
   pantheon: Pantheon;
@@ -19,7 +24,8 @@ export const GODS: Record<GodId, GodDef> = {
     id: 'ra',
     nameKey: 'god.ra',
     titleKey: 'god.ra.title',
-    color: 0xffc23a,
+    color: 0xff4a14,
+    text: '#ff8a5c',
     icon: 'sun',
     pantheon: 'egypt',
   },
@@ -27,7 +33,8 @@ export const GODS: Record<GodId, GodDef> = {
     id: 'zeus',
     nameKey: 'god.zeus',
     titleKey: 'god.zeus.title',
-    color: 0xc9a8ff,
+    color: 0xffe03a,
+    text: '#fff07a',
     icon: 'bolt',
     pantheon: 'greece',
   },
@@ -36,6 +43,7 @@ export const GODS: Record<GodId, GodDef> = {
     nameKey: 'god.skadi',
     titleKey: 'god.skadi.title',
     color: 0x8ff0ff,
+    text: '#c8f8ff',
     icon: 'flake',
     pantheon: 'norse',
   },
@@ -43,7 +51,8 @@ export const GODS: Record<GodId, GodDef> = {
     id: 'anubis',
     nameKey: 'god.anubis',
     titleKey: 'god.anubis.title',
-    color: 0x4fd1a0,
+    color: 0x3ddc84,
+    text: '#8cf0b8',
     icon: 'jackal',
     pantheon: 'egypt',
   },
@@ -51,7 +60,8 @@ export const GODS: Record<GodId, GodDef> = {
     id: 'bastet',
     nameKey: 'god.bastet',
     titleKey: 'god.bastet.title',
-    color: 0xb6e35a,
+    color: 0xc6ff3a,
+    text: '#e2ff8a',
     icon: 'cat',
     pantheon: 'egypt',
   },
@@ -59,7 +69,8 @@ export const GODS: Record<GodId, GodDef> = {
     id: 'athena',
     nameKey: 'god.athena',
     titleKey: 'god.athena.title',
-    color: 0xdfe4ee,
+    color: 0xd89a50,
+    text: '#f0c890',
     icon: 'shield',
     pantheon: 'greece',
   },
@@ -67,7 +78,8 @@ export const GODS: Record<GodId, GodDef> = {
     id: 'artemis',
     nameKey: 'god.artemis',
     titleKey: 'god.artemis.title',
-    color: 0x9db8ff,
+    color: 0xc8d8ff,
+    text: '#e8eeff',
     icon: 'moon',
     pantheon: 'greece',
   },
@@ -75,7 +87,8 @@ export const GODS: Record<GodId, GodDef> = {
     id: 'thor',
     nameKey: 'god.thor',
     titleKey: 'god.thor.title',
-    color: 0xf0a860,
+    color: 0x3f7bff,
+    text: '#8cb0ff',
     icon: 'hammer',
     pantheon: 'norse',
   },
@@ -83,7 +96,8 @@ export const GODS: Record<GodId, GodDef> = {
     id: 'hel',
     nameKey: 'god.hel',
     titleKey: 'god.hel.title',
-    color: 0x9a8fb5,
+    color: 0x8a4dff,
+    text: '#c0a0ff',
     icon: 'veil',
     pantheon: 'norse',
   },

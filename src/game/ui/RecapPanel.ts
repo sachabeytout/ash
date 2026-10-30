@@ -105,7 +105,7 @@ export class RecapPanel {
       const y = by + 22 + (i % perCol) * 18;
       const god = GODS[def.gods[0] ?? 'ra'];
       drawGodIcon(icons, god, x + 6, y + 6, 5);
-      this.text(x + 18, y, t(def.nameKey as TextKey), 10, COLORS.text);
+      this.text(x + 18, y, t(def.nameKey as TextKey), 10, god.text);
     });
 
     const close = this.text(cx, top + h - 18, t('recap.continue'), 12, COLORS.text, true).setOrigin(

@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { GODS } from '../data/gods';
 
 /** Dessine un sprite pixel à partir de lignes de caractères (un caractère = un pixel). */
 function pixelTexture(
@@ -335,6 +336,14 @@ export function ensureGameTextures(scene: Phaser.Scene): void {
   shapeTexture(scene, 'p_bolt', 12, 4, (g) => {
     g.fillStyle(0xff9f6a).fillRect(0, 1, 9, 2);
     g.fillStyle(0xfff2d0).fillTriangle(8, 0, 12, 2, 8, 4);
+  });
+  // Flèche d'Artémis : argent de lune, avec empennage (forme distincte du carreau).
+  shapeTexture(scene, 'p_arrow', 14, 6, (g) => {
+    g.fillStyle(GODS.artemis.color).fillRect(2, 2, 9, 2);
+    g.fillStyle(0xffffff).fillTriangle(10, 0, 14, 3, 10, 6);
+    g.fillStyle(GODS.artemis.color, 0.7)
+      .fillTriangle(0, 0, 3, 3, 0, 3)
+      .fillTriangle(0, 6, 3, 3, 0, 3);
   });
   shapeTexture(scene, 'p_disc', 13, 13, (g) => {
     g.fillStyle(0xffe08a).fillCircle(6.5, 6.5, 6.5);

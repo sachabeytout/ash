@@ -20,6 +20,7 @@ import { hitsArc, type Vec2 } from '../../core/geometry';
 import type { Rng } from '../../core/rng';
 import type { BossAttackId, BossDef } from '../../data/bosses';
 import type { EnemyId } from '../../data/enemies';
+import { GODS } from '../../data/gods';
 import { bodyOf } from '../physics';
 import { DANGER } from './Enemy';
 import type { Hittable } from './Hittable';
@@ -647,12 +648,12 @@ export class Boss implements Hittable {
     const r = this.def.radius;
     if (frozen) g.lineStyle(2, 0xd8fbff, 0.9).strokeCircle(this.x, this.y, r + 4);
     if (now < this.status.chillUntil && this.status.chill > 0) {
-      g.fillStyle(0x8ff0ff, 1);
+      g.fillStyle(GODS.skadi.color, 1);
       for (let i = 0; i < this.status.chill; i++)
         g.fillRect(this.x - r + i * 5, this.y + r + 4, 3, 3);
     }
     if (isBurning(this.status, now)) {
-      g.fillStyle(0xffa53a, 0.9);
+      g.fillStyle(GODS.ra.color, 0.9);
       for (const ox of [-r * 0.6, 0, r * 0.6]) {
         const bx = this.x + ox;
         const by = this.y - r - 1;

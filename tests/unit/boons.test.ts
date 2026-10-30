@@ -6,6 +6,7 @@ import {
   mainValue,
   rollOffer,
   rollUpgrades,
+  slotGod,
   takeBoon,
   upgradableBoons,
   type OwnedBoon,
@@ -390,5 +391,49 @@ describe('noms des dons', () => {
       const names = BOONS.map((b) => dict[b.nameKey]);
       expect(new Set(names).size).toBe(names.length);
     }
+  });
+});
+
+describe('couleurs des dieux', () => {
+  const DANGER = 0xff2a6d;
+  const rgb = (c: number) => ({ r: (c >> 16) & 0xff, g: (c >> 8) & 0xff, b: c & 0xff });
+  const hue = ({ r, g, b }: { r: number; g: number; b: number }): number => {
+    const max = Math.max(r, g, b);
+    const d = max - Math.min(r, g, b);
+    if (d === 0) return 0;
+    const h = max === r ? ((g - b) / d) % 6 : max === g ? (b - r) / d + 2 : (r - g) / d + 4;
+    return (h * 60 + 360) % 360;
+  };
+
+  it('chaque dieu a sa propre couleur, d’une teinte bien distincte du rouge-magenta des dangers', () => {
+    const colors = GOD_IDS.map((id) => GODS[id].color);
+    expect(new Set(colors).size).toBe(GOD_IDS.length);
+    const danger = hue(rgb(DANGER));
+    for (const c of colors) {
+      const h = hue(rgb(c));
+      const gap = Math.min(Math.abs(h - danger), 360 - Math.abs(h - danger));
+      expect(gap).toBeGreaterThanOrEqual(25);
+    }
+  });
+
+  it('la couleur de texte de chaque dieu est claire (lisible sur fond sombre)', () => {
+    for (const id of GOD_IDS) {
+      const c = parseInt(GODS[id].text.slice(1), 16);
+      const { r, g, b } = rgb(c);
+      expect(0.2126 * r + 0.7152 * g + 0.0722 * b).toBeGreaterThan(140);
+    }
+  });
+
+  it("le dieu de l'attaque est celui du don posé sur l'attaque", () => {
+    const attack = BOONS.find((b) => slotOf(b.effect) === 'attack' && b.gods.length === 1);
+    const dash = BOONS.find((b) => slotOf(b.effect) === 'dash' && b.gods[0] !== attack?.gods[0]);
+    if (!attack || !dash) throw new Error('dons manquants');
+    expect(slotGod([], 'attack')).toBeUndefined();
+    const owned = [
+      { id: dash.id, rarity: 'common' as const },
+      { id: attack.id, rarity: 'common' as const },
+    ];
+    expect(slotGod(owned, 'attack')).toBe(attack.gods[0]);
+    expect(slotGod(owned, 'dash')).toBe(dash.gods[0]);
   });
 });

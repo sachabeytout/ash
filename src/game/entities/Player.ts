@@ -60,6 +60,8 @@ export class Player {
   /** Bonus des dons (Bastet) : vitesse de course, recharge du dash. */
   speedMul = 1;
   dashCooldownMul = 1;
+  /** Couleur du dieu de l'attaque (null : couleur de l'arme). */
+  boonColor: number | null = null;
   /** Le Super est-il prêt ? (la scène gère la jauge) */
   canSuper: () => boolean = () => false;
   onSuper: () => void = () => undefined;
@@ -383,7 +385,7 @@ export class Player {
   private drawSlash(step: AttackStep, power: boolean, colorOverride: number | null): void {
     this.onSwing(power || step.shake > 0);
     const g = this.slash.clear().setAlpha(1).setPosition(this.x, this.y);
-    const color = colorOverride ?? this.weapon.color;
+    const color = colorOverride ?? this.boonColor ?? this.weapon.color;
     if (step.arcDeg >= 360) {
       g.fillStyle(color, 0.18).fillCircle(0, 0, step.range);
       g.lineStyle(4, color, 0.9).strokeCircle(0, 0, step.range * 0.85);

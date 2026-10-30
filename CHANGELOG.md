@@ -2,6 +2,19 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.41.0 — Une couleur pour chaque dieu
+
+- **Chaque dieu a sa couleur**, et tout ce qui lui appartient la reprend :
+  - **Râ** : rouge-orangé (le feu) · **Zeus** : jaune (la foudre) · **Skadi** : cyan glacé · **Anubis** : vert émeraude · **Bastet** : vert citron · **Athéna** : bronze · **Artémis** : argent de lune · **Thor** : bleu orage · **Hel** : violet.
+- **Cartes de dons** : bandeau en haut aux couleurs du dieu (partagé en deux pour un duo), halo coloré derrière le titre, réplique du dieu dans sa couleur.
+- **Ton attaque prend la couleur du dieu qui la bénit** (ex. traînée rouge-orangé avec un don de Râ sur l'attaque).
+- **États des ennemis** : flammes rouge-orangé (brûlure), étoiles bleues (étourdi), plume verte (jugé), voile violet (maudit), et nouveau **petit bouclier bronze fendu** quand un ennemi est affaibli par Athéna.
+- **Chiffres de dégâts** colorés selon le dieu (brûlure, foudre, onde de Thor, critique de Bastet, flèches).
+- **Flèches d'Artémis** : nouvelle flèche argentée avec empennage.
+- Le rouge de Râ reste bien différent du rouge-magenta des dangers (et toujours avec une forme de flamme ou de soleil).
+
+**Quoi tester** : reconnais-tu le dieu d'un don à sa couleur, sans lire ? Une couleur te déplaît, ou deux dieux se ressemblent trop ?
+
 ## 0.40.0 — Un décor pour chaque monde
 
 - **Chaque monde a maintenant son propre décor** (discret, sous les personnages ; les dangers restent les seuls éléments rouges) :

@@ -3,7 +3,7 @@
 Liste tenue à jour par Claude. Réponds quand tu veux, même en vrac (« 3 : oui, 7 : plutôt la B »).
 En attendant ta réponse, Claude applique **ce qui est indiqué en gras** (toujours modifiable ensuite).
 
-Dernière mise à jour : 30/10/2026 (version 0.40.0).
+Dernière mise à jour : 30/10/2026 (version 0.41.0).
 
 ## A. Ressenti de jeu
 
@@ -32,6 +32,7 @@ Dernière mise à jour : 30/10/2026 (version 0.40.0).
     11 terdecies. Les ennemis marqués (Blindé, Rapide, Instable) : trop fréquents ? L'explosion de l'Instable est-elle juste ? → **8 à 20 % selon le biome**
     11 quaterdecies. La compétence « Renaissance » (se relever une fois par run) : bonne idée, ou rend-elle le jeu trop facile ? → **250 puis 450 XP, 2 niveaux**
     11 quindecies. Les répliques des habitants de la Cage : le ton (humour) te plaît-il ? → **fait en 0.33.0**
+    11 sexdecies. Les couleurs des dieux (Râ rouge-orangé, Zeus jaune, Thor bleu, Hel violet, Athéna bronze, Artémis argent…) : une te déplaît ? Deux se ressemblent trop ? → **palette de la 0.41.0**
 
 ## B. Histoire (lore v0.2, dans `docs/GDD.md`)
 

@@ -4,6 +4,7 @@ import {
   damageMultiplier,
   rollOffer,
   rollUpgrades,
+  slotGod,
   upgradableBoons,
   type BoonOffer,
   type CombatProfile,
@@ -176,7 +177,7 @@ const ARROW = {
   range: 260,
   pierce: 0,
   knockback: 20,
-  look: 'bolt',
+  look: 'arrow',
 } as const;
 const ARROW_STEP: AttackStep = {
   damage: 0,
@@ -193,13 +194,16 @@ const ARROW_STEP: AttackStep = {
 
 /** Couleurs des effets des dons (côté joueur : jamais le rouge-magenta des dangers). */
 const FX = {
-  burn: 0xffa53a,
+  burn: GODS.ra.color,
   zap: GODS.zeus.color,
   ice: GODS.skadi.color,
-  burnText: '#ffb35a',
-  zapText: '#e2d2ff',
+  thunder: GODS.thor.color,
+  burnText: GODS.ra.text,
+  zapText: GODS.zeus.text,
+  thunderText: GODS.thor.text,
+  critText: GODS.bastet.text,
   heal: '#9dffb0',
-  arrowText: '#cfe0ff',
+  arrowText: GODS.artemis.text,
 } as const;
 
 /** Portes sans récompense : sortie de la run, boss, biome suivant / reprise après le marchand. */
@@ -1323,7 +1327,7 @@ export class RunScene extends Phaser.Scene {
   /** Étourdit (Thor) ; sur un boss, ce n'est qu'un court sursaut. */
   private stun(e: Hittable, durationMs: number): void {
     applyStun(e.status, this.sim, e === this.boss ? Math.min(durationMs, 400) : durationMs);
-    this.juice.burst(e.x, e.y - e.radius, 0xf0a860, 6);
+    this.juice.burst(e.x, e.y - e.radius, FX.thunder, 6);
   }
 
   /** Les dons du profil qui changent Ash lui-même (Bastet : vitesse, dash). */
@@ -1333,6 +1337,9 @@ export class RunScene extends Phaser.Scene {
       0.3,
       1 - (this.profile.on.dash.dashCooldown ?? 0) - this.run.perks.dashCooldown,
     );
+    // La traînée de l'attaque prend la couleur du dieu qui la bénit.
+    const god = slotGod(this.run.boons, 'attack');
+    this.player.boonColor = god ? GODS[god].color : null;
   }
 
   /** État de la cible pour les bonus de dégâts des dons. */
@@ -1435,12 +1442,12 @@ export class RunScene extends Phaser.Scene {
     if (fx.arrows) this.fireArrows(fx.arrows, -1);
     if (fx.shockwave) {
       const wave = fx.shockwave;
-      this.lightning.ring(at, wave.radius, 0xf0a860);
+      this.lightning.ring(at, wave.radius, FX.thunder);
       this.juice.shake(0.003);
       for (const e of this.targets) {
         if (!e.alive) continue;
         if (Math.hypot(e.x - at.x, e.y - at.y) > wave.radius + e.radius) continue;
-        this.damageEnemy(e, wave.damage, '#ffd8b0');
+        this.damageEnemy(e, wave.damage, FX.thunderText);
         if (e.alive) e.hit(this.sim, at, wave.knockback);
       }
     }
@@ -1453,7 +1460,11 @@ export class RunScene extends Phaser.Scene {
             ? GODS.anubis.color
             : fx.curse
               ? GODS.hel.color
-              : 0xffffff;
+              : fx.stun
+                ? FX.thunder
+                : fx.weaken
+                  ? GODS.athena.color
+                  : 0xffffff;
       this.lightning.ring(at, DASH_AURA_RADIUS, color);
       for (const e of this.targets) {
         if (!e.alive) continue;
@@ -1870,7 +1881,7 @@ export class RunScene extends Phaser.Scene {
     this.juice.hitstop(killed || crit ? hit.hitstopMs + 30 : hit.hitstopMs);
     this.juice.shake(crit ? Math.max(hit.shake, 0.003) : hit.shake);
     this.juice.burst(e.x, e.y, crit ? GODS.bastet.color : 0xffe9d6, hit.heavy || crit ? 10 : 6);
-    this.juice.damageNumber(e.x, e.y - e.radius, dealt, crit ? '#e8ff9a' : undefined);
+    this.juice.damageNumber(e.x, e.y - e.radius, dealt, crit ? FX.critText : undefined);
     // Jugement d'Anubis : exécution des ennemis (hors boss) sous le seuil de vie.
     let dead = killed;
     if (!dead && fx.execute && e !== this.boss && e.health.hp / e.health.maxHp <= fx.execute) {

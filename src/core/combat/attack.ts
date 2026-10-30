@@ -32,7 +32,7 @@ export interface ProjectileSpec {
   /** Nombre d'ennemis traversés en plus du premier. */
   pierce: number;
   knockback: number;
-  look: 'orb' | 'bolt' | 'disc' | 'chain';
+  look: 'orb' | 'bolt' | 'disc' | 'chain' | 'arrow';
   /** Plusieurs projectiles en éventail (360 = tout autour). */
   count?: number;
   spreadDeg?: number;

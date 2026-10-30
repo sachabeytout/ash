@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { hitFlash } from '../fx/hitFlash';
 import { AFFIXES, type AffixId } from '../../data/affixes';
+import { GODS } from '../../data/gods';
 import { steerAround, type Rect } from '../../core/arena/obstacles';
 import type { Health } from '../../core/combat/health';
 import {
@@ -397,19 +398,19 @@ export class Enemy {
       g.fillTriangle(this.x + 2, cy, this.x + 4, cy - 5, this.x + 6, cy);
     }
     if (frozen) {
-      g.fillStyle(0x8ff0ff, 0.28).lineStyle(1.5, 0xd8fbff, 0.95);
+      g.fillStyle(GODS.skadi.color, 0.28).lineStyle(1.5, 0xd8fbff, 0.95);
       this.hex.forEach((p, i) => {
         const a = Math.PI / 6 + (i * Math.PI) / 3;
         p.set(this.x + Math.cos(a) * (r + 4), this.y + Math.sin(a) * (r + 4));
       });
       g.fillPoints(this.hex, true).strokePoints(this.hex, true);
     } else if (now < s.chillUntil && s.chill > 0) {
-      g.fillStyle(0x8ff0ff, 1);
+      g.fillStyle(GODS.skadi.color, 1);
       for (let i = 0; i < s.chill; i++) g.fillRect(this.x - r + i * 4, this.y + r + 3, 2, 2);
     }
     if (stunned) {
       // Étoiles qui tournent au-dessus de la tête (Thor).
-      g.fillStyle(0xf0a860, 1);
+      g.fillStyle(GODS.thor.color, 1);
       for (let i = 0; i < 3; i++) {
         const a = now / 200 + (i * Math.PI * 2) / 3;
         const sx = this.x + Math.cos(a) * (r + 2);
@@ -426,19 +427,27 @@ export class Enemy {
     }
     if (isCursed(s, now)) {
       // Malédiction : petit voile sombre sous l'ennemi.
-      g.lineStyle(1.5, 0x9a8fb5, 0.9).strokeEllipse(this.x, this.y + r + 2, r * 2 + 4, 5);
+      g.lineStyle(1.5, GODS.hel.color, 0.9).strokeEllipse(this.x, this.y + r + 2, r * 2 + 4, 5);
     }
     if (now < s.judgedUntil) {
       // Jugé : plume de Maât (trait vertical) au-dessus.
-      g.lineStyle(2, 0x4fd1a0, 0.95).lineBetween(
+      g.lineStyle(2, GODS.anubis.color, 0.95).lineBetween(
         this.x + r + 3,
         this.y - r - 6,
         this.x + r + 3,
         this.y - r + 2,
       );
     }
+    if (now < s.weakenUntil) {
+      // Affaibli (Athéna) : petit bouclier fendu à gauche de la tête.
+      const wx = this.x - r - 4;
+      const wy = this.y - r - 2;
+      g.lineStyle(1.5, GODS.athena.color, 0.95);
+      g.strokeTriangle(wx - 3, wy - 3, wx + 3, wy - 3, wx, wy + 3);
+      g.lineBetween(wx, wy - 3, wx, wy + 1);
+    }
     if (isBurning(s, now)) {
-      g.fillStyle(0xffa53a, 0.9);
+      g.fillStyle(GODS.ra.color, 0.9);
       const flick = Math.sin(now / 60) * 1.5;
       for (const ox of [-r * 0.6, 0, r * 0.6]) {
         const bx = this.x + ox;
