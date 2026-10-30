@@ -3,7 +3,7 @@
 Liste tenue à jour par Claude. Réponds quand tu veux, même en vrac (« 3 : oui, 7 : plutôt la B »).
 En attendant ta réponse, Claude applique **ce qui est indiqué en gras** (toujours modifiable ensuite).
 
-Dernière mise à jour : 30/10/2026 (version 0.10.0).
+Dernière mise à jour : 30/10/2026 (version 0.11.0).
 
 ## A. Ressenti de jeu
 
@@ -26,6 +26,7 @@ Dernière mise à jour : 30/10/2026 (version 0.10.0).
 13. Aelia devient **la Lanterne** qui éclaire la ville et perd ses souvenirs chaque nuit : ça te va ?
 14. Les étapes de l'histoire sur les 10 victoires (tableau « Arc narratif » du GDD) : ça te va ?
 15. La Lame de l'Aube (arme légendaire, 5e victoire) : **attaque puissante = parade puis riposte**. D'accord ?
+    15 bis. Les dialogues de la Cage (Aelia, Thot, Vesper, Brokk) : le ton te plaît-il ? Trop longs, trop courts ? Un personnage à changer ?
 
 ## C. Petites décisions prises par Claude (dis seulement si tu n'es pas d'accord)
 

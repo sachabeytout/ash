@@ -1,4 +1,5 @@
 import { FORGE, STARTING_WEAPONS, UNLOCK_COST, type ForgeLevel } from '../data/forge';
+import { DAWNBLADE_VICTORIES } from '../data/story';
 import type { WeaponId } from '../data/weapons';
 import type { MetaState } from './save/schema';
 
@@ -35,6 +36,8 @@ export function upgradeWeapon(meta: MetaState, weapon: WeaponId): boolean {
 }
 
 export function isUnlocked(meta: MetaState, weapon: WeaponId): boolean {
+  // La Lame de l'Aube est forgée par Brokk à la 5e victoire (histoire), pas achetée.
+  if (weapon === 'dawnblade') return meta.clears >= DAWNBLADE_VICTORIES;
   return STARTING_WEAPONS.includes(weapon) || meta.unlocked.includes(weapon);
 }
 

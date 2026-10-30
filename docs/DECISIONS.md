@@ -67,6 +67,9 @@ Format : date — décision — raison — validée par l'utilisateur (oui / non
 | 2026-10-30 | 6 nouveaux dieux (4 dons chacun), 3 duos, 3 amplifications ; panthéon du biome ×3 | Liste des dieux du GDD | oui (GDD) |
 | 2026-10-30 | Exécution d'Anubis et étourdissement long : jamais sur les boss (étourdissement plafonné à 0,4 s) | Les boss doivent rester des combats | à signaler |
 | 2026-10-30 | « Dernier souffle » de Hel : une fois par run (sauvegarde v4) | Anti-frustration, sans rendre invincible | à signaler |
+| 2026-10-30 | Histoire écrite sur le lore v0.2 (en attente de validation) : dialogues de la Cage + arc des 10 victoires | L'utilisateur lira le lore plus tard ; tout reste modifiable (textes dans `src/i18n/`) | en attente |
+| 2026-10-30 | Un seul dialogue par retour dans la Cage, jamais répété ; les étapes de victoire passent dans l'ordre | Ne pas ralentir l'enchaînement des runs | à signaler |
+| 2026-10-30 | Lame de l'Aube : garde de 0,36 s, riposte 70 dégâts autour ; débloquée à la 5e victoire | GDD (parade-riposte, 5e victoire) | à signaler |
 | 2026-10-30 | Fenrir-Ω : 1100 PV, bond / pluie de glace / morsure / charge, meute en phase 2 | Boss plus mobile qu'Ammit, toujours télégraphié | à signaler |
 
 ## Réponses de l'utilisateur (30/10/2026)

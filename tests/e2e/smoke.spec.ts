@@ -15,7 +15,11 @@ test('écran titre → cage → don → combat → reprise après fermeture', as
 
   await page.locator('#game canvas').click();
   await expect(page.locator('body')).toHaveAttribute('data-scene', 'hub');
-  await page.waitForTimeout(800);
+  // Première visite : Aelia parle à travers les braises.
+  await page.waitForTimeout(1200);
+  await shot('dialogue');
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(400);
   await shot('cage');
 
   // L'arbre de Thot s'ouvre et se ferme.

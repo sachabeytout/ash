@@ -18,6 +18,8 @@ export interface AttackStep {
   projectile?: ProjectileSpec;
   /** Zone au sol qui explose après un délai (bâton à pierre). */
   zone?: ZoneSpec;
+  /** Garde (Lame de l'Aube) : un coup reçu pendant le coup actif est annulé et déclenche la riposte. */
+  parry?: { damage: number; range: number; arcDeg: number; knockback: number };
 }
 
 /** Projectile d'Ash (bâton, arbalète, disque, grappin). */

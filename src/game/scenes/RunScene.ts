@@ -67,6 +67,7 @@ import { buyItem } from '../../core/shop';
 import { assistReduction, reducedDamage } from '../../core/assist';
 import { NO_WEAPON_BONUS, weaponBonuses, type WeaponBonuses } from '../../core/forge';
 import { SHARD_BOUNTY, type ShopItemId } from '../../data/shop';
+import { TRUE_ENDING_VICTORIES } from '../../data/story';
 import { QUALITY_PARTICLES, settings } from '../../core/settings';
 import { cheatsEnabled } from '../debug/cheats';
 import { session } from '../session';
@@ -171,6 +172,8 @@ export class RunScene extends Phaser.Scene {
   private discCharged = false;
   /** Égide d'Athéna (coups bloqués restants dans la salle) et bouclier en PV. */
   private aegisLeft = 0;
+  /** Identifiants des ripostes (négatifs : distincts des coups normaux). */
+  private parryId = 0;
   private barrier = 0;
   private kind: RoomKind = 'combat';
   private shopOpen = false;
@@ -1056,6 +1059,35 @@ export class RunScene extends Phaser.Scene {
     sfx.zap();
   }
 
+  /** Lame de l'Aube : parade réussie, le coup est annulé et Ash riposte autour de lui. */
+  private parry(from: Vec2): void {
+    const riposte = WEAPONS[this.run.weapon].power.parry;
+    this.player.parried(this.sim);
+    sfx.block();
+    sfx.super();
+    this.juice.hitstop(120);
+    this.juice.shake(0.008, 200);
+    this.lightning.ring(this.player, 30, 0xfff0c0);
+    this.juice.burst(this.player.x, this.player.y, 0xfff0c0, 24);
+    if (!riposte) return;
+    const facing = Math.atan2(from.y - this.player.y, from.x - this.player.x);
+    const id = --this.parryId;
+    for (const e of this.targets) {
+      if (!e.alive) continue;
+      if (!hitsArc(this.player, facing, riposte.range, riposte.arcDeg, e, e.radius)) continue;
+      this.weaponHit(e, {
+        damage: riposte.damage,
+        kind: 'power',
+        knockback: riposte.knockback,
+        hitstopMs: 60,
+        shake: 0.006,
+        heavy: true,
+        id,
+        from: this.player,
+      });
+    }
+  }
+
   private killEnemy(e: Hittable): void {
     if (e === this.boss) {
       this.defeatBoss();
@@ -1189,6 +1221,10 @@ export class RunScene extends Phaser.Scene {
 
   private hurtPlayer(amount: number, from: Vec2, sourceNameKey: string): void {
     if (this.leaving) return;
+    if (this.player.isParrying(this.sim)) {
+      this.parry(from);
+      return;
+    }
     // Athéna : un ennemi affaibli frappe moins fort ; l'égide bloque ; le bouclier absorbe.
     if (from instanceof Enemy)
       amount = Math.max(1, Math.round(amount * weakenFactor(from.status, this.sim)));
@@ -1351,8 +1387,10 @@ export class RunScene extends Phaser.Scene {
     session.commit();
     this.time.delayedCall(outcome === 'death' ? 700 : 200, () => {
       this.cameras.main.fadeOut(700, 7, 6, 13);
+      // 10e victoire : la vraie fin avant de revenir dans la Cage.
+      const ending = outcome === 'cleared' && session.save.meta.clears === TRUE_ENDING_VICTORIES;
       this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () =>
-        this.scene.start('hub', { summary }),
+        this.scene.start(ending ? 'ending' : 'hub', { summary }),
       );
     });
   }

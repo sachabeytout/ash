@@ -43,6 +43,11 @@ const MIGRATIONS: Record<number, (save: Raw) => Raw> = {
     const run = isObject(old.run) ? { ...old.run, lastBreathUsed: false } : old.run;
     return { ...old, version: 4, run };
   },
+  // v4 → v5 : dialogues de la Cage. Les anciens joueurs n'entendent pas l'introduction (ils ont déjà joué).
+  4: (old) => {
+    const meta = isObject(old.meta) ? old.meta : {};
+    return { ...old, version: 5, meta: { ...meta, seenDialogues: [] } };
+  },
 };
 
 function isObject(v: unknown): v is Raw {
@@ -102,6 +107,9 @@ function sanitizeMeta(raw: unknown): MetaState {
             m.unlocked.filter((id): id is WeaponId => typeof id === 'string' && id in WEAPONS),
           ),
         ]
+      : [],
+    seenDialogues: Array.isArray(m.seenDialogues)
+      ? [...new Set(m.seenDialogues.filter((id): id is string => typeof id === 'string'))]
       : [],
   };
 }

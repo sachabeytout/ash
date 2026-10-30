@@ -1,6 +1,7 @@
 import type { AttackStep } from '../core/combat/attack';
 
-export type WeaponId = 'katana' | 'twinBlades' | 'staff' | 'crossbow' | 'disc' | 'chain';
+export type WeaponId =
+  'katana' | 'twinBlades' | 'staff' | 'crossbow' | 'disc' | 'chain' | 'dawnblade';
 
 /** Ordre d'affichage dans la Cage (touches 1 à 6). */
 export const WEAPON_ORDER: readonly WeaponId[] = [
@@ -10,6 +11,7 @@ export const WEAPON_ORDER: readonly WeaponId[] = [
   'crossbow',
   'disc',
   'chain',
+  'dawnblade',
 ];
 
 export interface WeaponDef {
@@ -393,6 +395,80 @@ export const WEAPONS: Record<WeaponId, WeaponDef> = {
       WHIRL,
       WHIRL,
       { ...WHIRL, damage: 28, range: 76, knockback: 220, recoveryMs: 260, shake: 0.006 },
+    ],
+  },
+  // Lame de l'Aube (légendaire, 5e victoire) : épée longue, lente et lourde ; la puissante est une garde.
+  dawnblade: {
+    id: 'dawnblade',
+    nameKey: 'weapon.dawnblade',
+    color: 0xfff0c0,
+    comboWindowMs: 300,
+    combo: [
+      {
+        damage: 20,
+        windupMs: 150,
+        activeMs: 90,
+        recoveryMs: 280,
+        range: 44,
+        arcDeg: 170,
+        lunge: 10,
+        knockback: 160,
+        hitstopMs: 70,
+        shake: 0.003,
+      },
+      {
+        damage: 20,
+        windupMs: 150,
+        activeMs: 90,
+        recoveryMs: 280,
+        range: 44,
+        arcDeg: 170,
+        lunge: 10,
+        knockback: 160,
+        hitstopMs: 70,
+        shake: 0.003,
+      },
+      {
+        damage: 36,
+        windupMs: 220,
+        activeMs: 110,
+        recoveryMs: 360,
+        range: 50,
+        arcDeg: 200,
+        lunge: 18,
+        knockback: 260,
+        hitstopMs: 100,
+        shake: 0.006,
+      },
+    ],
+    // Garde : pendant 0,36 s, un coup reçu est annulé et Ash riposte (dégâts énormes autour de lui).
+    power: {
+      damage: 0,
+      windupMs: 40,
+      activeMs: 360,
+      recoveryMs: 260,
+      range: 0,
+      arcDeg: 0,
+      lunge: 0,
+      knockback: 0,
+      hitstopMs: 0,
+      shake: 0,
+      parry: { damage: 70, range: 64, arcDeg: 240, knockback: 280 },
+    },
+    superNameKey: 'super.dawnblade',
+    super: [
+      {
+        damage: 90,
+        windupMs: 200,
+        activeMs: 160,
+        recoveryMs: 400,
+        range: 96,
+        arcDeg: 360,
+        lunge: 0,
+        knockback: 300,
+        hitstopMs: 140,
+        shake: 0.01,
+      },
     ],
   },
 };

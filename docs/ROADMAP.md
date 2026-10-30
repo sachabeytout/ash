@@ -2,7 +2,7 @@
 
 ## Prochaine étape
 
-M2.7 : l'histoire (dialogues dans la Cage, arc des 10 victoires, Lame de l'Aube, vraie fin). Les questions en attente sont dans `docs/QUESTIONS.md`.
+M2.8 : Mesures d'urgence, salles variées, télémétrie et menu de debug caché. Les questions en attente sont dans `docs/QUESTIONS.md`.
 Retour sur le lore v0.2 toujours attendu (« quand le fond aura avancé »).
 
 ## M0 — Fondations
@@ -65,5 +65,5 @@ Retour sur le lore v0.2 toujours attendu (« quand le fond aura avancé »).
 - [x] **M2.4 (0.8.0)** : biome 4, la Volière (7 salles, boss l'Oiseleur) → vraie victoire
 - [x] **M2.5 (0.9.0)** : armes 3 à 6 (bâton à pierre, arbalète, Disque d'Hélios, Gleipnir)
 - [x] **M2.6 (0.10.0)** : les 6 autres dieux (Anubis, Bastet, Athéna, Artémis, Thor, Hel), nouveaux dons et duos
-- [ ] **M2.7** : histoire (dialogues dans la Cage, arc des 10 victoires, Lame de l'Aube, vraie fin)
+- [x] **M2.7 (0.11.0)** : histoire (dialogues dans la Cage, arc des 10 victoires, Lame de l'Aube, vraie fin)
 - [ ] **M2.8** : Mesures d'urgence, salles variées (fontaines, coffres, évènements), télémétrie + menu de debug caché

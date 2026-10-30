@@ -1,6 +1,6 @@
 # Architecture (carte du projet)
 
-> Statut 0.10.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
+> Statut 0.11.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
 > combat/attack+health+status+superGauge, boons/boons, run/waves+rewards+state, save/schema+migrations+codec+store),
 > `data/` (player, weapons, enemies, biomes, gods, boons, status, skills, bosses, music, shop), `game/` (scenes Title, Hub,
 > Run, Ui, Boon, Pause, Shop ; entities Player, Enemy, Boss, Hittable ; input Controls, TouchControls ; fx/Juice+Lightning ;
@@ -52,6 +52,10 @@ par-dessus). Mort ou sortie → `hub` avec un `RunSummary`.
   `buildProfile` ; états étourdi / jugé / affaibli / maudit dans `src/core/combat/status.ts` ; appliqués dans
   `RunScene` (`applyHitEffects`, `weaponHit`, `dashEffects`, `killEnemy`, `hurtPlayer`). Panthéon favorisé par biome :
   `BiomeDef.pantheon` → `rollGod`. Sauvegarde v4 (`lastBreathUsed`).
+- Histoire : dialogues dans `src/data/story.ts` (conditions, priorités), choix dans `src/core/story.ts`
+  (`nextDialogue`, `markSeen`, sauvegarde v5 `seenDialogues`), affichage `src/game/ui/DialogueBox.ts` (Cage).
+  Vraie fin : `src/game/scenes/EndingScene.ts` (10e victoire). Lame de l'Aube : `dawnblade` (garde = `AttackStep.parry`,
+  `Player.isParrying` → `RunScene.parry`), débloquée à 5 victoires (`isUnlocked`).
 - Bouclier frontal (Einherjar) : `shield` dans `src/data/enemies.ts`, `Enemy.blocks` ; runes : attaque `runes`.
 
 ### Combat (où régler quoi)

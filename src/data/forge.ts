@@ -36,6 +36,7 @@ export const FORGE: Record<WeaponId, readonly ForgeLevel[]> = {
   crossbow: STANDARD,
   disc: STANDARD,
   chain: STANDARD,
+  dawnblade: STANDARD,
 };
 
 /** Armes de départ ; les autres se débloquent chez Brokk contre des pièces d'arme. */

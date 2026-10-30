@@ -20,7 +20,10 @@ import { ensureGameTextures } from '../textures';
 import { COLORS, FONT_FAMILY, GAME_HEIGHT, GAME_WIDTH } from '../theme';
 import { makeButton } from '../ui/button';
 import { OptionsPanel } from '../ui/OptionsPanel';
+import { DialogueBox } from '../ui/DialogueBox';
 import { ForgePanel } from '../ui/ForgePanel';
+import { markSeen, nextDialogue } from '../../core/story';
+import { DAWNBLADE_VICTORIES } from '../../data/story';
 import { ThothPanel } from '../ui/ThothPanel';
 import { assistReduction } from '../../core/assist';
 import { forgeLevel, isUnlocked } from '../../core/forge';
@@ -184,6 +187,20 @@ export class HubScene extends Phaser.Scene {
 
     this.input.keyboard?.on('keydown', (e: KeyboardEvent) => {
       if (this.modal) return;
+      if (cheatsEnabled && e.code === 'KeyV') {
+        // Victoire factice : fait avancer l'histoire d'une étape.
+        session.save.meta.clears += 1;
+        session.save.meta.runs += 1;
+        session.commit();
+        this.scene.restart({
+          summary: { outcome: 'cleared', biome: 3, room: 8, elapsedMs: 0, xp: 0, weaponParts: 0 },
+        });
+        return;
+      }
+      if (cheatsEnabled && e.code === 'KeyZ') {
+        this.scene.start('ending', {});
+        return;
+      }
       if (cheatsEnabled && e.code === 'KeyU') {
         session.save.meta.unlocked = [...WEAPON_ORDER];
         session.commit();
@@ -210,7 +227,7 @@ export class HubScene extends Phaser.Scene {
         return;
       }
       if (e.code === 'Enter' || e.code === 'Space') this.start('katana');
-      const digit = Number(/^Digit([1-6])$/.exec(e.code)?.[1] ?? 0);
+      const digit = Number(/^Digit([1-7])$/.exec(e.code)?.[1] ?? 0);
       const id = WEAPON_ORDER[digit - 1];
       if (id && isUnlocked(session.save.meta, id)) this.start(id);
     });
@@ -218,6 +235,7 @@ export class HubScene extends Phaser.Scene {
     this.cameras.main.fadeIn(500, 7, 6, 13);
     music.play('hub');
     markScene('hub');
+    this.time.delayedCall(650, () => this.playStory());
   }
 
   override update(): void {
@@ -243,20 +261,25 @@ export class HubScene extends Phaser.Scene {
         strokeThickness: 3,
       })
       .setOrigin(0.5);
-    // 6 armes sur 2 rangées ; une arme verrouillée renvoie vers la forge de Brokk.
+    // 7 armes sur 2 rangées (4 + 3) ; une arme verrouillée renvoie vers la forge de Brokk.
     WEAPON_ORDER.forEach((id, i) => {
       const unlocked = isUnlocked(session.save.meta, id);
+      const row = i < 4 ? 0 : 1;
+      const col = row === 0 ? i - 1.5 : i - 4 - 1;
+      const cost = UNLOCK_COST[id];
       makeButton(this, {
-        x: cx + ((i % 3) - 1) * 164,
-        y: 248 + Math.floor(i / 3) * 50,
-        w: 156,
+        x: cx + col * 128,
+        y: 248 + row * 50,
+        w: 122,
         h: 42,
         label: t(WEAPONS[id].nameKey as TextKey),
         sub: unlocked
           ? t('hub.escape', { key: i + 1 })
-          : t('hub.locked', { cost: UNLOCK_COST[id] ?? 0 }),
+          : cost !== undefined
+            ? t('hub.locked', { cost })
+            : t('hub.lockedDawn'),
         color: unlocked ? WEAPONS[id].color : 0x3a3550,
-        fontSize: 13,
+        fontSize: 11,
         onTap: () => (unlocked ? this.start(id) : this.openForge()),
       });
     });
@@ -317,6 +340,25 @@ export class HubScene extends Phaser.Scene {
         }
         this.abandon();
       },
+    });
+  }
+
+  /** En revenant dans la Cage : un personnage parle (une réplique nouvelle à la fois). */
+  private playStory(): void {
+    if (this.modal || this.starting) return;
+    const meta = session.save.meta;
+    const last = this.summary
+      ? { ...this.summary, atBoss: this.summary.room > getBiome(this.summary.biome).rooms }
+      : undefined;
+    const dialogue = nextDialogue(meta, last);
+    if (!dialogue) return;
+    this.modal = true;
+    new DialogueBox(this, dialogue, () => {
+      markSeen(meta, dialogue.id);
+      session.commit();
+      this.modal = false;
+      // La Lame de l'Aube vient d'être forgée : on redessine la Cage pour l'afficher.
+      if (dialogue.id === `victory_${DAWNBLADE_VICTORIES}`) this.scene.restart({});
     });
   }
 

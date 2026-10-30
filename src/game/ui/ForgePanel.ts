@@ -44,7 +44,7 @@ export class ForgePanel {
     const cx = cam.midPoint.x;
     const cy = cam.midPoint.y;
     const w = Math.min(600, cam.width - 24);
-    const h = 318;
+    const h = 332;
     const left = cx - w / 2;
     const top = cy - h / 2;
     const veil = scene.add
@@ -67,7 +67,7 @@ export class ForgePanel {
     ).setOrigin(1, 0);
 
     WEAPON_ORDER.forEach((id, i) => {
-      const y = top + 52 + i * 38;
+      const y = top + 50 + i * 36;
       const unlocked = isUnlocked(this.meta, id);
       const level = forgeLevel(this.meta, id);
       const max = FORGE[id].length;
@@ -94,11 +94,15 @@ export class ForgePanel {
         unlocked ? COLORS.text : COLORS.textDim,
       ).setWordWrapWidth(w - 150 - 150);
 
-      const cost = !unlocked ? (UNLOCK_COST[id] ?? 0) : (next?.cost ?? 0);
-      const possible = !unlocked || next !== undefined;
+      const unlockCost = UNLOCK_COST[id];
+      const cost = !unlocked ? (unlockCost ?? 0) : (next?.cost ?? 0);
+      // La Lame de l'Aube ne s'achète pas : Brokk la forge à la 5e victoire.
+      const possible = unlocked ? next !== undefined : unlockCost !== undefined;
       const affordable = possible && this.meta.weaponParts >= cost;
       const label = !unlocked
-        ? t('forge.unlock', { cost })
+        ? unlockCost === undefined
+          ? t('hub.lockedDawn')
+          : t('forge.unlock', { cost })
         : next
           ? t('forge.short', { cost })
           : t('forge.maxed');

@@ -96,6 +96,25 @@ export class Player {
     return this.state.kind === 'dash' && now - this.state.startedAt < PLAYER.dash.iframesMs;
   }
 
+  /** Garde levée (Lame de l'Aube) : un coup reçu maintenant est paré. */
+  isParrying(now: number): boolean {
+    if (this.state.kind !== 'attack' || !this.state.step.parry) return false;
+    return phaseAt(this.state.step, now - this.state.startedAt) === 'active';
+  }
+
+  /** Parade réussie : Ash est brièvement invincible, la garde se termine. */
+  parried(now: number): void {
+    this.invulnerableUntil = now + 450;
+    this.state = { kind: 'free' };
+    this.scene.tweens.add({
+      targets: this.sprite,
+      scaleX: 1.25,
+      scaleY: 1.25,
+      duration: 90,
+      yoyo: true,
+    });
+  }
+
   /** Le coup actuellement « actif » (qui peut toucher), s'il y en a un. */
   activeSwing(now: number): ActiveSwing | null {
     if (this.state.kind !== 'attack') return null;
@@ -319,6 +338,8 @@ export class Player {
         if (step.projectile || step.zone) {
           this.onSwing(st.power);
           this.onFire(step, this.facing, kind, st.id);
+        } else if (step.parry) {
+          this.drawGuard();
         } else {
           this.drawSlash(step, st.power, st.superIndex !== null ? 0xffe08a : null);
         }
@@ -341,6 +362,16 @@ export class Player {
     } else if (moving) {
       this.facing = Math.atan2(m.y, m.x);
     }
+  }
+
+  /** Garde : arc doré devant Ash pendant toute la fenêtre de parade. */
+  private drawGuard(): void {
+    const g = this.slash.clear().setAlpha(1).setPosition(this.x, this.y);
+    g.lineStyle(3, 0xfff0c0, 0.95).beginPath();
+    g.arc(0, 0, 14, this.facing - 1.1, this.facing + 1.1, false);
+    g.strokePath();
+    g.lineStyle(1.5, 0xffffff, 0.9).strokeCircle(0, 0, 10);
+    this.scene.tweens.add({ targets: g, alpha: 0, duration: 380 });
   }
 
   private drawSlash(step: AttackStep, power: boolean, colorOverride: number | null): void {

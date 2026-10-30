@@ -2,6 +2,21 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.11.0 — L'histoire
+
+- **Les habitants de la Cage parlent.** En revenant dans la Cage, un personnage te dit quelque chose de nouveau (une réplique à la fois, jamais deux fois la même). Ce qu'il dit dépend de ce qui vient de se passer : ta mort face à un boss, un nouveau biome atteint, le nombre de tes renaissances…
+  - **Aelia**, ta femme, te parle à travers les braises.
+  - **Thot** est un dieu-archiviste réduit à une IA fêlée.
+  - **Vesper** est le corbeau mécanique de l'Oiseleur.
+  - **Brokk** est le forgeron.
+  - Touche l'écran ou appuie sur Entrée pour continuer ; « Passer » pour fermer.
+- **L'arc des 10 victoires** : chaque victoire révèle une étape de l'histoire (le Serment des dieux, le secret de la cage, la prophétie, l'origine d'Ash…).
+- **La Lame de l'Aube**, l'arme légendaire, est forgée par Brokk à ta **5e victoire**. Lourde et lente, son attaque puissante est une **garde** : si un coup te touche pendant la garde (arc doré), il est annulé et tu **ripostes** très fort tout autour.
+- **La vraie fin** à la 10e victoire.
+- Ta sauvegarde passe au nouveau format **sans rien perdre**.
+
+**Quoi tester** : lis les dialogues en revenant dans la Cage. Le ton te plaît-il ? Les textes sont-ils trop longs ?
+
 ## 0.10.0 — Neuf dieux
 
 - **6 nouveaux dieux**, chacun avec 4 dons :
