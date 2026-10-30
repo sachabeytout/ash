@@ -2,6 +2,17 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.24.0 — Quatre nouveaux duos
+
+- **4 nouveaux duos** (dons spéciaux qui combinent deux dieux ; ils apparaissent quand tu as déjà un don de chacun des deux) :
+  - **Égide orageuse** (Athéna + Zeus) : quand ton Égide bloque un coup, la foudre frappe l'ennemi le plus proche et rebondit 3 fois.
+  - **Soleil noir** (Râ + Hel) : les explosions de malédiction enflamment les ennemis touchés.
+  - **Griffes du tonnerre** (Bastet + Thor) : tes coups critiques étourdissent.
+  - **Embaumement** (Râ + Anubis) : un ennemi qui meurt en brûlant te rend des PV.
+- Athéna a enfin son duo. Il y a maintenant **8 duos**.
+
+**Quoi tester** : essaie de combiner ces dieux dans une run. Un duo te paraît-il trop fort ?
+
 ## 0.23.0 — Archives : armes et habitants de la Cage
 
 - **Deux nouveaux onglets dans les Archives** :

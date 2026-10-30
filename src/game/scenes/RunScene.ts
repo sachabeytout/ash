@@ -1462,6 +1462,8 @@ export class RunScene extends Phaser.Scene {
     if (hit.kind !== 'super')
       this.run.superGauge = gainSuper(this.run.superGauge, dealt * (1 + this.forge.superGain));
     sfx.hit(hit.heavy || crit);
+    // Duo « Griffes du tonnerre » : un critique étourdit.
+    if (crit && !dead && this.profile.critStun) this.stun(e, this.profile.critStun);
     if (dead) this.killEnemy(e);
     else this.applyHitEffects(e, fx);
     if (fx.chain && firstHit) this.chainLightning(e, fx.chain);
@@ -1541,6 +1543,8 @@ export class RunScene extends Phaser.Scene {
     this.juice.burst(e.x, e.y, e.def.color, 16);
     sfx.kill();
     if (this.profile.healOnKill) this.healPlayer(this.profile.healOnKill);
+    // Duo « Embaumement » : un ennemi qui brûle soigne en mourant.
+    if (this.profile.embalm && isBurning(e.status, this.sim)) this.healPlayer(this.profile.embalm);
     const cursed = isCursed(e.status, this.sim);
     const curse = { damage: e.status.curseDamage, radius: e.status.curseRadius, x: e.x, y: e.y };
     e.deactivate();
@@ -1556,6 +1560,9 @@ export class RunScene extends Phaser.Scene {
       if (!other.alive) continue;
       if (Math.hypot(other.x - c.x, other.y - c.y) > c.radius + other.radius) continue;
       this.damageEnemy(other, c.damage, '#d8d0f0');
+      // Duo « Soleil noir » : l'explosion enflamme.
+      const sun = this.profile.blackSun;
+      if (sun && other.alive) applyBurn(other.status, this.sim, sun.dps, sun.durationMs);
       // Duo « Jugement dernier » : l'explosion exécute les ennemis affaiblis (hors boss).
       const day = this.profile.judgementDay;
       if (
@@ -1674,6 +1681,14 @@ export class RunScene extends Phaser.Scene {
       this.lightning.ring(this.player, 22, GODS.athena.color);
       this.juice.burst(this.player.x, this.player.y, GODS.athena.color, 12);
       sfx.block();
+      // Duo « Égide orageuse » : la foudre part de l'ennemi le plus proche et rebondit.
+      const storm = this.profile.aegisStorm;
+      const near = storm ? this.nearestEnemy(this.player, 160) : undefined;
+      if (near) {
+        this.damageEnemy(near, storm, '#c8b8ff');
+        this.chainLightning(near, { damage: storm, bounces: 3, range: 90 });
+        sfx.zap();
+      }
       return;
     }
     if (this.barrier > 0) {

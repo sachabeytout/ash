@@ -164,7 +164,14 @@ export function mainValue(effect: BoonEffect, rarity: Rarity): number {
     case 'lastBreath':
       return Math.round(effect.hp * p);
     case 'stormStun':
+    case 'critStun':
       return effect.durationMs;
+    case 'aegisStorm':
+      return Math.round(effect.damage * p);
+    case 'blackSun':
+      return Math.round(effect.dps * p);
+    case 'embalm':
+      return Math.round(effect.amount * p);
   }
 }
 
@@ -212,6 +219,14 @@ export interface CombatProfile {
   stormStun: number;
   /** Les explosions de malédiction exécutent sous ce seuil (duo). */
   judgementDay: number;
+  /** Foudre en chaîne quand l'égide bloque (dégâts, duo). */
+  aegisStorm: number;
+  /** Les explosions de malédiction enflamment (duo). */
+  blackSun?: { dps: number; durationMs: number };
+  /** Les critiques étourdissent (ms, duo). */
+  critStun: number;
+  /** Soin quand un ennemi qui brûle meurt (duo). */
+  embalm: number;
 }
 
 export function buildProfile(owned: readonly OwnedBoon[]): CombatProfile {
@@ -229,6 +244,9 @@ export function buildProfile(owned: readonly OwnedBoon[]): CombatProfile {
     lastBreath: 0,
     stormStun: 0,
     judgementDay: 0,
+    aegisStorm: 0,
+    critStun: 0,
+    embalm: 0,
   };
   let burnDurationBonus = 0;
   let stunDurationBonus = 0;
@@ -330,6 +348,18 @@ export function buildProfile(owned: readonly OwnedBoon[]): CombatProfile {
         break;
       case 'nightHunt':
         profile.critAll += v / 100;
+        break;
+      case 'aegisStorm':
+        profile.aegisStorm = v;
+        break;
+      case 'blackSun':
+        profile.blackSun = { dps: v, durationMs: e.durationMs };
+        break;
+      case 'critStun':
+        profile.critStun = v;
+        break;
+      case 'embalm':
+        profile.embalm = v;
         break;
       case 'stunDuration':
         stunDurationBonus += v / 100;

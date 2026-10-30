@@ -515,5 +515,13 @@
   "codex.npc.thot": "Le dieu-archiviste, réduit à une IA fêlée qui hante les terminaux de la Cage. Il note tout, doute de tout, et t'aide à sa façon.",
   "codex.npc.vesper": "Le corbeau mécanique de l'Oiseleur. Il surveille la Cage, se moque de toi… et semble parfois t'aider plus qu'il ne le devrait.",
   "codex.npc.brokk": "Le forgeron, chassé de son atelier quand la lumière s'est éteinte. Il forge et améliore tes armes contre des pièces récupérées en chemin.",
-  "codex.npc.oiseleur": "Le dieu des filets, des cages et des serments, plus ancien que les trois panthéons. Il a capturé l'Aube pour que plus rien ne meure."
+  "codex.npc.oiseleur": "Le dieu des filets, des cages et des serments, plus ancien que les trois panthéons. Il a capturé l'Aube pour que plus rien ne meure.",
+  "boon.duo_aegis_storm": "Égide orageuse",
+  "boon.duo_aegis_storm.desc": "Quand ton Égide bloque un coup, la foudre frappe l'ennemi le plus proche et rebondit 3 fois : {value} dégâts.",
+  "boon.duo_black_sun": "Soleil noir",
+  "boon.duo_black_sun.desc": "Les explosions de malédiction enflamment les ennemis touchés : {value} dégâts par seconde.",
+  "boon.duo_thunder_claws": "Griffes du tonnerre",
+  "boon.duo_thunder_claws.desc": "Tes coups critiques étourdissent l'ennemi ({value} ms).",
+  "boon.duo_embalm": "Embaumement",
+  "boon.duo_embalm.desc": "Un ennemi qui meurt en brûlant te rend {value} PV."
 }

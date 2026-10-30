@@ -115,7 +115,7 @@ L'Oiseleur le laisse s'évader, encore et encore.
 | Thor    | nordique | Étourdissement, recul violent            |     |
 | Hel     | nordique | Vol de vie, malédiction                  |     |
 
-Duo M1 : Râ + Skadi = **Choc thermique** (un ennemi gelé qui brûle explose).
+Duos : Râ + Skadi = **Choc thermique** ; Zeus + Thor = **Tempête d'Asgard** ; Anubis + Hel = **Jugement dernier** ; Bastet + Artémis = **Chasse nocturne** ; Athéna + Zeus = **Égide orageuse** ; Râ + Hel = **Soleil noir** ; Bastet + Thor = **Griffes du tonnerre** ; Râ + Anubis = **Embaumement** (0.24.0).
 Amplification M1 : **Soleil de midi** (la brûlure de Râ dure 50 % plus longtemps).
 
 ### Dons des 6 autres dieux (0.10.0)

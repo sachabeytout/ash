@@ -303,3 +303,53 @@ describe('Étincelle du Phénix', () => {
     }
   });
 });
+
+describe('nouveaux duos (0.24.0)', () => {
+  it('chaque duo n’est proposé qu’avec un don de chacun de ses deux dieux', () => {
+    const duos: [string, OwnedBoon[], 'ra' | 'athena' | 'bastet'][] = [
+      [
+        'duo_aegis_storm',
+        [
+          { id: 'athena_aegis', rarity: 'common' },
+          { id: 'zeus_attack', rarity: 'common' },
+        ],
+        'athena',
+      ],
+      [
+        'duo_black_sun',
+        [
+          { id: 'ra_attack', rarity: 'common' },
+          { id: 'hel_attack', rarity: 'common' },
+        ],
+        'ra',
+      ],
+      [
+        'duo_embalm',
+        [
+          { id: 'ra_attack', rarity: 'common' },
+          { id: 'anubis_attack', rarity: 'common' },
+        ],
+        'ra',
+      ],
+    ];
+    for (const [id, owned, god] of duos) {
+      const def = getBoon(id);
+      if (!def) throw new Error(id);
+      expect(isEligible(def, owned, god)).toBe(true);
+      expect(isEligible(def, owned.slice(0, 1), god)).toBe(false);
+    }
+  });
+
+  it('les duos remplissent le profil de combat', () => {
+    const p = buildProfile([
+      { id: 'duo_aegis_storm', rarity: 'duo' },
+      { id: 'duo_black_sun', rarity: 'duo' },
+      { id: 'duo_thunder_claws', rarity: 'duo' },
+      { id: 'duo_embalm', rarity: 'duo' },
+    ]);
+    expect(p.aegisStorm).toBeGreaterThan(0);
+    expect(p.blackSun?.dps).toBeGreaterThan(0);
+    expect(p.critStun).toBe(450);
+    expect(p.embalm).toBeGreaterThan(0);
+  });
+});

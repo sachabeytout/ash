@@ -515,5 +515,13 @@
   "codex.npc.thot": "The archivist god, reduced to a cracked AI haunting the Cage's terminals. He records everything, doubts everything, and helps you in his own way.",
   "codex.npc.vesper": "The Fowler's mechanical raven. He watches the Cage, mocks you… and sometimes seems to help you more than he should.",
   "codex.npc.brokk": "The smith, driven from his workshop when the light went out. He forges and upgrades your weapons for parts gathered along the way.",
-  "codex.npc.oiseleur": "The god of nets, cages and oaths, older than the three pantheons. He caught the Dawn so that nothing would ever die again."
+  "codex.npc.oiseleur": "The god of nets, cages and oaths, older than the three pantheons. He caught the Dawn so that nothing would ever die again.",
+  "boon.duo_aegis_storm": "Storm Aegis",
+  "boon.duo_aegis_storm.desc": "When your Aegis blocks a hit, lightning strikes the nearest enemy and bounces 3 times: {value} damage.",
+  "boon.duo_black_sun": "Black Sun",
+  "boon.duo_black_sun.desc": "Curse explosions set the enemies they hit on fire: {value} damage per second.",
+  "boon.duo_thunder_claws": "Thunder Claws",
+  "boon.duo_thunder_claws.desc": "Your critical hits stun the enemy ({value} ms).",
+  "boon.duo_embalm": "Embalming",
+  "boon.duo_embalm.desc": "An enemy that dies while burning restores {value} HP."
 }

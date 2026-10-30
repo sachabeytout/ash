@@ -65,6 +65,14 @@ export type BoonEffect =
   | { type: 'lastBreath'; hp: number }
   // ---------- Duos et amplifications ----------
   | { type: 'stormStun'; durationMs: number }
+  /** Duo Athéna + Zeus : quand l'égide bloque un coup, la foudre frappe en chaîne. */
+  | { type: 'aegisStorm'; damage: number }
+  /** Duo Râ + Hel : les explosions de malédiction enflamment les ennemis touchés. */
+  | { type: 'blackSun'; dps: number; durationMs: number }
+  /** Duo Bastet + Thor : les coups critiques étourdissent. */
+  | { type: 'critStun'; durationMs: number }
+  /** Duo Râ + Anubis : un ennemi qui brûle soigne Ash en mourant. */
+  | { type: 'embalm'; amount: number }
   | { type: 'judgementDay'; threshold: number }
   | { type: 'nightHunt'; chance: number }
   | { type: 'aegisCharge'; charges: number }
@@ -452,6 +460,38 @@ export const BOONS: readonly BoonDef[] = [
     nameKey: 'boon.duo_hunt',
     descKey: 'boon.duo_hunt.desc',
     effect: { type: 'nightHunt', chance: 10 },
+  },
+  {
+    id: 'duo_aegis_storm',
+    gods: ['athena', 'zeus'],
+    kind: 'duo',
+    nameKey: 'boon.duo_aegis_storm',
+    descKey: 'boon.duo_aegis_storm.desc',
+    effect: { type: 'aegisStorm', damage: 24 },
+  },
+  {
+    id: 'duo_black_sun',
+    gods: ['ra', 'hel'],
+    kind: 'duo',
+    nameKey: 'boon.duo_black_sun',
+    descKey: 'boon.duo_black_sun.desc',
+    effect: { type: 'blackSun', dps: 6, durationMs: 3000 },
+  },
+  {
+    id: 'duo_thunder_claws',
+    gods: ['bastet', 'thor'],
+    kind: 'duo',
+    nameKey: 'boon.duo_thunder_claws',
+    descKey: 'boon.duo_thunder_claws.desc',
+    effect: { type: 'critStun', durationMs: 450 },
+  },
+  {
+    id: 'duo_embalm',
+    gods: ['ra', 'anubis'],
+    kind: 'duo',
+    nameKey: 'boon.duo_embalm',
+    descKey: 'boon.duo_embalm.desc',
+    effect: { type: 'embalm', amount: 3 },
   },
   // ---------- Amplifications ----------
   {
