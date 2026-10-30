@@ -8,6 +8,7 @@ import { t, type TextKey } from '../../i18n';
 import { DANGER } from '../entities/Enemy';
 import type { Controls } from '../input/Controls';
 import { sfx } from '../audio/sfx';
+import { telemetry } from '../telemetry';
 import { drawGodIcon } from '../icons';
 import { TouchControls } from '../input/TouchControls';
 import { FONT_FAMILY } from '../theme';
@@ -40,6 +41,7 @@ export class UiScene extends Phaser.Scene {
   private indicators: Phaser.GameObjects.Graphics[] = [];
   private pauseButton!: Phaser.GameObjects.Container;
   private bossBar!: Phaser.GameObjects.Graphics;
+  private fps!: Phaser.GameObjects.Text;
   private banner!: Phaser.GameObjects.Text;
   private bannerSub!: Phaser.GameObjects.Text;
 
@@ -61,6 +63,7 @@ export class UiScene extends Phaser.Scene {
     };
     this.hpBar = this.add.graphics();
     this.bossBar = this.add.graphics();
+    this.fps = this.add.text(12, 72, '', { ...style, fontSize: '10px' }).setVisible(false);
     this.banner = this.add
       .text(0, 0, '', { ...style, fontSize: '22px', fontStyle: 'bold', strokeThickness: 4 })
       .setOrigin(0.5)
@@ -148,6 +151,8 @@ export class UiScene extends Phaser.Scene {
     );
     this.shards.setText(t('hud.shards', { count: run.shards }));
     this.showBoons(run);
+    this.fps.setVisible(telemetry.showFps);
+    if (telemetry.showFps) this.fps.setText(`${Math.round(this.game.loop.actualFps)} FPS`);
   }
 
   /** Dons obtenus : une petite icône de dieu par don (redessinée seulement quand la liste change). */

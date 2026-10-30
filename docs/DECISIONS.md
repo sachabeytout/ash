@@ -71,6 +71,10 @@ Format : date — décision — raison — validée par l'utilisateur (oui / non
 | 2026-10-30 | Un seul dialogue par retour dans la Cage, jamais répété ; les étapes de victoire passent dans l'ordre | Ne pas ralentir l'enchaînement des runs | à signaler |
 | 2026-10-30 | Lame de l'Aube : garde de 0,36 s, riposte 70 dégâts autour ; débloquée à la 5e victoire | GDD (parade-riposte, 5e victoire) | à signaler |
 | 2026-10-30 | Fenrir-Ω : 1100 PV, bond / pluie de glace / morsure / charge, meute en phase 2 | Boss plus mobile qu'Ammit, toujours télégraphié | à signaler |
+| 2026-10-30 | Mesures d'urgence : 6 réglages (PV +25 %, vagues +25 %, vitesse +20 %, dégâts +15 %, prix +40 %, sans répit), +10 % de récompense par point ; débloquées après 1 victoire | GDD (chaleur facultative) ; jamais imposées, remise à zéro libre | à signaler |
+| 2026-10-30 | Fontaine : une salle calme par biome, soigne 30 % des PV | Respiration au milieu du biome (anti-frustration) | à signaler |
+| 2026-10-30 | Télémétrie 100 % locale (300 salles max), visible seulement dans un menu caché | Aider l'équilibrage sans rien envoyer en ligne | à signaler |
+| 2026-10-30 | Sauvegarde v6 (migration 5 → 6 : Mesures d'urgence) | Sans perte | oui (règle) |
 
 ## Réponses de l'utilisateur (30/10/2026)
 

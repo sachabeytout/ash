@@ -2,6 +2,17 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.12.0 — Mesures d'urgence et fontaines
+
+- **Mesures d'urgence** (après ta 1re victoire, bouton « Mesures » dans la Cage) : tu peux rendre les runs plus difficiles, comme tu veux, en échange de **plus d'XP et de pièces d'arme** (+10 % par point).
+  - **Couvre-feu** : ennemis plus résistants. **Patrouilles** : plus d'ennemis par salle. **Surveillance** : ennemis plus rapides. **Surcadence** : ennemis qui frappent plus fort. **Rationnement** : marchand plus cher. **Sans répit** : plus aucun soin entre les salles ni aux fontaines.
+  - Tout se règle point par point et peut être remis à zéro quand tu veux. Rien n'est imposé.
+- **Fontaines** : une salle calme par biome (vers le milieu). Approche-toi de la fontaine pour récupérer **30 % de ta vie**, puis continue.
+- **Menu caché** pour m'aider à équilibrer le jeu : il note en local (sur ton appareil seulement) la durée des salles, les dégâts reçus et ce qui t'a tué. Rien n'est envoyé sur Internet.
+- Ta sauvegarde passe au nouveau format **sans rien perdre**.
+
+**Quoi tester** : après une victoire, active une ou deux Mesures et fais une run. La récompense vaut-elle la difficulté ? La fontaine arrive-t-elle au bon moment ?
+
 ## 0.11.0 — L'histoire
 
 - **Les habitants de la Cage parlent.** En revenant dans la Cage, un personnage te dit quelque chose de nouveau (une réplique à la fois, jamais deux fois la même). Ce qu'il dit dépend de ce qui vient de se passer : ta mort face à un boss, un nouveau biome atteint, le nombre de tes renaissances…

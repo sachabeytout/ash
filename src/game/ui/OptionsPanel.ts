@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { settings } from '../../core/settings';
 import { detectLocale, setLocale, t, type TextKey } from '../../i18n';
 import { sfx } from '../audio/sfx';
+import { DebugPanel } from './DebugPanel';
 import { session } from '../session';
 import { COLORS, FONT_FAMILY } from '../theme';
 
@@ -44,6 +45,8 @@ const ACCENT = 0xffb02e;
 /** Fenêtre d'options (Cage et pause) : chaque changement est appliqué et enregistré tout de suite. */
 export class OptionsPanel {
   private readonly root: Phaser.GameObjects.Container;
+  private titleTaps = 0;
+  private lastTitleTap = 0;
   private readonly onKey = (e: KeyboardEvent) => {
     if (e.code === 'Escape') this.close();
   };
@@ -75,7 +78,17 @@ export class OptionsPanel {
     frame.fillStyle(0x0d0a18, 0.98).fillRoundedRect(left, top, w, h, 10);
     frame.lineStyle(2, ACCENT, 0.8).strokeRoundedRect(left, top, w, h, 10);
     this.root.add([veil, frame]);
-    this.text(left + 14, top + 10, t('options.title'), 15, '#ffb02e', true);
+    // Menu de debug caché : 5 touches rapides sur le titre.
+    const title = this.text(left + 14, top + 10, t('options.title'), 15, '#ffb02e', true);
+    title.setInteractive().on('pointerup', () => {
+      const now = this.scene.time.now;
+      this.titleTaps = now - this.lastTitleTap < 600 ? this.titleTaps + 1 : 1;
+      this.lastTitleTap = now;
+      if (this.titleTaps >= 5) {
+        this.titleTaps = 0;
+        new DebugPanel(this.scene, () => undefined);
+      }
+    });
 
     // Deux colonnes de réglages.
     const colW = (w - 28) / 2;

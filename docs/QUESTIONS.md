@@ -3,7 +3,7 @@
 Liste tenue à jour par Claude. Réponds quand tu veux, même en vrac (« 3 : oui, 7 : plutôt la B »).
 En attendant ta réponse, Claude applique **ce qui est indiqué en gras** (toujours modifiable ensuite).
 
-Dernière mise à jour : 30/10/2026 (version 0.11.0).
+Dernière mise à jour : 30/10/2026 (version 0.12.0).
 
 ## A. Ressenti de jeu
 
@@ -19,6 +19,8 @@ Dernière mise à jour : 30/10/2026 (version 0.11.0).
 10. Une victoire rapporte beaucoup d'XP et de pièces d'arme : la progression est-elle trop rapide une fois la première victoire obtenue ?
 11. Les boss (Talos, l'Oiseleur) : un boss te paraît-il injuste ou illisible ?
     11 bis. Les nouvelles armes : laquelle préfères-tu ? Le prix de déblocage (3 à 5 pièces) est-il juste ?
+    11 ter. Les Mesures d'urgence : la récompense (+10 % par point) vaut-elle la difficulté ? → **+10 % par point**
+    11 quater. La fontaine (30 % de vie, une par biome) : trop généreuse, pas assez ? → **30 %, une par biome**
 
 ## B. Histoire (lore v0.2, dans `docs/GDD.md`)
 

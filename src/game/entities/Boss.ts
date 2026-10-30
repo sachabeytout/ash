@@ -97,8 +97,10 @@ export class Boss implements Hittable {
     now: number,
     introMs: number,
     arena: Phaser.Geom.Rectangle,
+    hpMul = 1,
   ) {
-    this.health = { hp: def.maxHp, maxHp: def.maxHp };
+    const maxHp = Math.round(def.maxHp * hpMul);
+    this.health = { hp: maxHp, maxHp };
     this.chains = scene.add.graphics().setDepth(4);
     this.telegraph = scene.add.graphics().setDepth(5);
     this.rings = scene.add.graphics().setDepth(6);

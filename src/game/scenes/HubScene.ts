@@ -22,6 +22,9 @@ import { makeButton } from '../ui/button';
 import { OptionsPanel } from '../ui/OptionsPanel';
 import { DialogueBox } from '../ui/DialogueBox';
 import { ForgePanel } from '../ui/ForgePanel';
+import { HeatPanel } from '../ui/HeatPanel';
+import { heatTotal } from '../../core/heat';
+import { HEAT_UNLOCK_VICTORIES } from '../../data/heat';
 import { markSeen, nextDialogue } from '../../core/story';
 import { DAWNBLADE_VICTORIES } from '../../data/story';
 import { ThothPanel } from '../ui/ThothPanel';
@@ -161,6 +164,20 @@ export class HubScene extends Phaser.Scene {
       fontSize: 12,
       onTap: () => this.openForge(),
     });
+    // Mesures d'urgence : après la 1re victoire.
+    if (meta.clears >= HEAT_UNLOCK_VICTORIES) {
+      const heat = heatTotal(meta.heat);
+      makeButton(this, {
+        x: GAME_WIDTH - 64,
+        y: 62,
+        w: 108,
+        h: 30,
+        label: heat > 0 ? t('hub.heatButtonOn', { heat }) : t('hub.heatButton'),
+        color: 0xffa040,
+        fontSize: 11,
+        onTap: () => this.openHeat(),
+      });
+    }
     makeButton(this, {
       x: GAME_WIDTH - 180,
       y: 26,
@@ -220,6 +237,10 @@ export class HubScene extends Phaser.Scene {
       }
       if (e.code === 'KeyF') {
         this.openForge();
+        return;
+      }
+      if (e.code === 'KeyM') {
+        this.openHeat();
         return;
       }
       if (session.save.run) {
@@ -362,6 +383,21 @@ export class HubScene extends Phaser.Scene {
     });
   }
 
+  private openHeat(): void {
+    if (this.modal || this.starting || session.save.meta.clears < HEAT_UNLOCK_VICTORIES) return;
+    this.modal = true;
+    sfx.tap();
+    new HeatPanel(
+      this,
+      session.save.meta.heat,
+      () => session.commit(),
+      () => {
+        this.modal = false;
+        this.scene.restart({});
+      },
+    );
+  }
+
   private openForge(): void {
     if (this.modal || this.starting) return;
     this.modal = true;
@@ -455,6 +491,7 @@ export class HubScene extends Phaser.Scene {
       bonus.perks,
       bonus.superStart,
       forgeLevel(session.save.meta, weapon),
+      session.save.meta.clears >= HEAT_UNLOCK_VICTORIES ? session.save.meta.heat : {},
     );
     this.go(run);
   }

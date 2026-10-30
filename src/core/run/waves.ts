@@ -13,6 +13,7 @@ export function planWaves(
   room: number,
   threatOf: (id: EnemyId) => number,
   rng: Rng,
+  budgetMul = 1,
 ): Wave[] {
   const available = biome.roster.filter((r) => room >= r.fromRoom).map((r) => r.enemy);
   if (available.length === 0) return [];
@@ -21,7 +22,7 @@ export function planWaves(
     Math.floor((room - 1) / 4) + rng.int(0, 1),
   );
   const waveCount = biome.wavesPerRoom.min + extraWaves;
-  const budget = biome.waveBudget.base + biome.waveBudget.perRoom * (room - 1);
+  const budget = (biome.waveBudget.base + biome.waveBudget.perRoom * (room - 1)) * budgetMul;
 
   const waves: Wave[] = [];
   for (let w = 0; w < waveCount; w++) {

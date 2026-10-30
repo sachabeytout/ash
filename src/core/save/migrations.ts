@@ -1,4 +1,6 @@
 import { BIOMES } from '../../data/biomes';
+import { HEAT } from '../../data/heat';
+import type { HeatLevels } from '../heat';
 import { WEAPONS, type WeaponId } from '../../data/weapons';
 import { GOD_IDS } from '../../data/gods';
 import { getBoon } from '../../data/boons';
@@ -47,6 +49,12 @@ const MIGRATIONS: Record<number, (save: Raw) => Raw> = {
   4: (old) => {
     const meta = isObject(old.meta) ? old.meta : {};
     return { ...old, version: 5, meta: { ...meta, seenDialogues: [] } };
+  },
+  // v5 → v6 : Mesures d'urgence (aucune active ; la run en cours n'en a pas).
+  5: (old) => {
+    const meta = isObject(old.meta) ? old.meta : {};
+    const run = isObject(old.run) ? { ...old.run, heat: {} } : old.run;
+    return { ...old, version: 6, meta: { ...meta, heat: {} }, run };
   },
 };
 
@@ -111,7 +119,17 @@ function sanitizeMeta(raw: unknown): MetaState {
     seenDialogues: Array.isArray(m.seenDialogues)
       ? [...new Set(m.seenDialogues.filter((id): id is string => typeof id === 'string'))]
       : [],
+    heat: sanitizeHeat(m.heat),
   };
+}
+
+function sanitizeHeat(raw: unknown): HeatLevels {
+  const levels: HeatLevels = {};
+  if (!isObject(raw)) return levels;
+  for (const h of HEAT) {
+    if (h.id in raw) levels[h.id] = num(raw[h.id], 0, 0, h.maxLevel);
+  }
+  return levels;
 }
 
 function sanitizeForge(raw: unknown): MetaState['forge'] {
@@ -159,6 +177,7 @@ function sanitizeRun(raw: unknown): RunState | null {
     superGauge: num(raw.superGauge, 0, 0, 1),
     weaponLevel: num(raw.weaponLevel, 0, 0, 20),
     lastBreathUsed: raw.lastBreathUsed === true,
+    heat: sanitizeHeat(raw.heat),
     perks: {
       damage: num(perks.damage, NO_PERKS.damage, 0),
       healPerRoom: num(perks.healPerRoom, NO_PERKS.healPerRoom, 0),

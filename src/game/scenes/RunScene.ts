@@ -31,6 +31,7 @@ import { rollDoors, type DoorReward, type RewardKind } from '../../core/run/rewa
 import {
   afterBoss,
   applyReward,
+  drinkFountain,
   chooseBoon,
   roomKind,
   type RoomKind,
@@ -64,6 +65,7 @@ import { Controls } from '../input/Controls';
 import { UiScene, type Indicator } from './UiScene';
 import { finishRun } from '../../core/meta';
 import { buyItem } from '../../core/shop';
+import { heatModifiers, type HeatModifiers } from '../../core/heat';
 import { assistReduction, reducedDamage } from '../../core/assist';
 import { NO_WEAPON_BONUS, weaponBonuses, type WeaponBonuses } from '../../core/forge';
 import { SHARD_BOUNTY, type ShopItemId } from '../../data/shop';
@@ -71,6 +73,7 @@ import { TRUE_ENDING_VICTORIES } from '../../data/story';
 import { QUALITY_PARTICLES, settings } from '../../core/settings';
 import { cheatsEnabled } from '../debug/cheats';
 import { session } from '../session';
+import { telemetry } from '../telemetry';
 import { bodyOf } from '../physics';
 import { ensureGameTextures } from '../textures';
 import { FONT_FAMILY } from '../theme';
@@ -176,6 +179,17 @@ export class RunScene extends Phaser.Scene {
   private parryId = 0;
   private barrier = 0;
   private kind: RoomKind = 'combat';
+  /** Télémétrie : temps et PV au début de la salle. */
+  private roomStart = { elapsed: 0, hp: 0 };
+  /** Mesures d'urgence de la run. */
+  private heat: HeatModifiers = heatModifiers({});
+  private fountain: {
+    x: number;
+    y: number;
+    used: boolean;
+    g: Phaser.GameObjects.Graphics;
+    glow: Phaser.GameObjects.Image;
+  } | null = null;
   private shopOpen = false;
   private shopSold = new Set<ShopItemId>();
   private shots: Shot[] = [];
@@ -225,6 +239,9 @@ export class RunScene extends Phaser.Scene {
     this.rng = createRng((this.run.seed + this.run.room * 7919) >>> 0);
 
     this.kind = roomKind(this.run, biome);
+    this.heat = heatModifiers(this.run.heat);
+    this.fountain = null;
+    this.roomStart = { elapsed: this.run.elapsedMs, hp: this.run.hp };
     this.drawArena();
     this.physics.world.setBounds(ARENA.x, ARENA.y, ARENA.width, ARENA.height);
 
@@ -300,9 +317,16 @@ export class RunScene extends Phaser.Scene {
     this.setupCamera();
     this.waves =
       this.kind === 'combat'
-        ? planWaves(biome, this.run.room, (id) => ENEMIES[id].threat, this.rng)
+        ? planWaves(
+            biome,
+            this.run.room,
+            (id) => ENEMIES[id].threat,
+            this.rng,
+            this.heat.waveBudget,
+          )
         : [];
     if (this.kind === 'boss') this.startBoss();
+    if (this.kind === 'fountain') this.startFountain();
     if (this.kind === 'shop') this.startShop();
     this.nextWaveAt = 700;
     // Entrée dans un nouveau biome : on annonce son nom.
@@ -331,6 +355,11 @@ export class RunScene extends Phaser.Scene {
         this.offerBoon();
       }
       if (e.code === 'KeyG') this.run.superGauge = 1;
+      if (e.code === 'KeyI') {
+        this.run.room += 1;
+        this.leaving = true;
+        this.scene.restart({ run: this.run });
+      }
       if (e.code === 'KeyM') this.run.shards += 100;
       if (e.code === 'KeyL') this.spawnWave([getBiome(this.run.biome).elite]);
       if (e.code === 'KeyY') this.spawnWave(getBiome(this.run.biome).roster.map((r) => r.enemy));
@@ -367,6 +396,7 @@ export class RunScene extends Phaser.Scene {
       this.sim,
       intro,
       ARENA,
+      this.heat.enemyHp,
     );
     boss.onTelegraph = () => sfx.telegraph();
     boss.onQuake = () => {
@@ -418,6 +448,40 @@ export class RunScene extends Phaser.Scene {
     this.ui.showBanner(t(boss.def.defeatedKey as TextKey), '');
   }
 
+  // ---------- Fontaine ----------
+
+  /** Salle calme : une fontaine soigne une fois, les portes sont déjà ouvertes. */
+  private startFountain(): void {
+    const x = ARENA.centerX;
+    const y = ARENA.centerY;
+    const dry = this.heat.noRest;
+    const g = this.add.graphics().setDepth(3);
+    g.fillStyle(0x0d1a22, 1).fillCircle(x, y, 22);
+    g.lineStyle(3, 0x9dffb0, dry ? 0.25 : 0.9).strokeCircle(x, y, 22);
+    g.fillStyle(0x9dffb0, dry ? 0.1 : 0.45).fillCircle(x, y, 14);
+    const glow = this.add
+      .image(x, y, 'glow')
+      .setTint(0x9dffb0)
+      .setAlpha(dry ? 0.1 : 0.6)
+      .setScale(1.6)
+      .setBlendMode('ADD');
+    this.fountain = { x, y, used: dry, g, glow };
+    this.time.delayedCall(600, () => this.clearRoom());
+  }
+
+  private updateFountain(): void {
+    const f = this.fountain;
+    if (!f || f.used || this.leaving) return;
+    if (Math.hypot(this.player.x - f.x, this.player.y - f.y) > 26) return;
+    f.used = true;
+    const healed = drinkFountain(this.run);
+    if (healed > 0) this.juice.damageNumber(this.player.x, this.player.y - 12, healed, FX.heal);
+    this.juice.burst(f.x, f.y, 0x9dffb0, 20);
+    sfx.boonTaken();
+    f.glow.setAlpha(0.15);
+    f.g.setAlpha(0.4);
+  }
+
   // ---------- Marchand ----------
 
   private startShop(): void {
@@ -432,8 +496,9 @@ export class RunScene extends Phaser.Scene {
     const data: ShopSceneData = {
       run: this.run,
       sold: this.shopSold,
+      priceMul: this.heat.shopPrice,
       onBuy: (item) => {
-        if (!buyItem(this.run, item, rng)) return false;
+        if (!buyItem(this.run, item, rng, this.heat.shopPrice)) return false;
         if (this.run.pendingBoon) {
           this.choosing = true;
           this.time.delayedCall(150, () => this.offerBoon());
@@ -761,6 +826,7 @@ export class RunScene extends Phaser.Scene {
     this.updateShots();
     this.updateWaves();
     this.checkDoors();
+    this.updateFountain();
     this.ui.showRun(this.run);
     this.updateIndicators();
   }
@@ -875,7 +941,7 @@ export class RunScene extends Phaser.Scene {
       if (this.boss && !this.boss.alive) this.clearRoom();
       return;
     }
-    if (this.kind === 'shop') return;
+    if (this.kind === 'shop' || this.kind === 'fountain') return;
     if (this.waveIndex < this.waves.length) {
       if (this.nextWaveAt === 0) this.nextWaveAt = this.sim + 500;
       if (this.sim >= this.nextWaveAt) {
@@ -942,7 +1008,7 @@ export class RunScene extends Phaser.Scene {
       this.pending.splice(i, 1);
       const slot = this.enemies.find((e) => !e.alive);
       if (!slot) continue;
-      slot.activate(s.def, s.x, s.y, this.sim);
+      slot.activate(s.def, s.x, s.y, this.sim, this.heat.enemyHp, this.heat.enemySpeed);
       this.juice.burst(s.x, s.y, s.def.color, 10);
     }
   }
@@ -1225,6 +1291,8 @@ export class RunScene extends Phaser.Scene {
       this.parry(from);
       return;
     }
+    // Mesure « Surveillance » : les ennemis frappent plus fort.
+    amount = Math.round(amount * this.heat.enemyDamage);
     // Athéna : un ennemi affaibli frappe moins fort ; l'égide bloque ; le bouclier absorbe.
     if (from instanceof Enemy)
       amount = Math.max(1, Math.round(amount * weakenFactor(from.status, this.sim)));
@@ -1283,11 +1351,19 @@ export class RunScene extends Phaser.Scene {
 
   private clearRoom(): void {
     this.roomCleared = true;
+    if (this.kind === 'combat' || this.kind === 'boss') {
+      telemetry.room({
+        biome: this.run.biome,
+        room: this.run.room,
+        ms: this.run.elapsedMs - this.roomStart.elapsed,
+        hpLost: this.roomStart.hp - this.run.hp,
+      });
+    }
     sfx.clear();
     const healed = onRoomCleared(this.run);
     if (healed > 0) this.juice.damageNumber(this.player.x, this.player.y - 12, healed, FX.heal);
     const biome = getBiome(this.run.biome);
-    if (this.kind !== 'combat') {
+    if (this.kind === 'boss' || this.kind === 'shop') {
       // Après le boss : biome suivant s'il existe ; après le marchand : salle 1.
       const last = this.kind === 'boss' && this.run.biome + 1 >= BIOMES.length;
       this.addDoor(last ? 'exit' : 'next', ARENA.centerX);
@@ -1382,6 +1458,7 @@ export class RunScene extends Phaser.Scene {
 
   private endRun(outcome: 'death' | 'cleared', killedBy?: string): void {
     const summary = summarize(this.run, outcome, killedBy);
+    telemetry.runEnd(outcome === 'death' ? killedBy : undefined);
     // La progression est créditée tout de suite : rien n'est perdu si l'app se ferme pendant le fondu.
     finishRun(session.save, summary);
     session.commit();

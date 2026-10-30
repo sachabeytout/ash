@@ -1,12 +1,13 @@
 # Architecture (carte du projet)
 
-> Statut 0.11.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
+> Statut 0.12.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
 > combat/attack+health+status+superGauge, boons/boons, run/waves+rewards+state, save/schema+migrations+codec+store),
 > `data/` (player, weapons, enemies, biomes, gods, boons, status, skills, bosses, music, shop), `game/` (scenes Title, Hub,
 > Run, Ui, Boon, Pause, Shop ; entities Player, Enemy, Boss, Hittable ; input Controls, TouchControls ; fx/Juice+Lightning ;
 > ui/button+ThothPanel+OptionsPanel ; dom/saveDialog ; debug/cheats ; session ; icons ; audio/sfx+music ; textures ;
 > physics), `platform/` (pwa, device).
-> Prévu : telemetry, events, data/validate. Mettre à jour à chaque session.
+>
+> - heat, telemetry (core et game), ui/HeatPanel+DebugPanel. Prévu : events, data/validate. Mettre à jour à chaque session.
 
 ### Scènes
 
@@ -56,6 +57,13 @@ par-dessus). Mort ou sortie → `hub` avec un `RunSummary`.
   (`nextDialogue`, `markSeen`, sauvegarde v5 `seenDialogues`), affichage `src/game/ui/DialogueBox.ts` (Cage).
   Vraie fin : `src/game/scenes/EndingScene.ts` (10e victoire). Lame de l'Aube : `dawnblade` (garde = `AttackStep.parry`,
   `Player.isParrying` → `RunScene.parry`), débloquée à 5 victoires (`isUnlocked`).
+- Mesures d'urgence : valeurs dans `src/data/heat.ts`, calculs `src/core/heat.ts` (`heatModifiers`), fenêtre
+  `src/game/ui/HeatPanel.ts` (Cage) ; appliquées dans `RunScene` (PV/vitesse des ennemis, dégâts reçus, budget des
+  vagues, prix du marchand) et `summarize` (récompense). Sauvegarde v6 (`meta.heat`, `run.heat`).
+- Fontaines : `BiomeDef.fountainRooms` → `roomKind` = `fountain` ; `drinkFountain` (`src/core/run/state.ts`),
+  `RunScene.startFountain`.
+- Télémétrie locale : logique `src/core/telemetry.ts`, stockage `src/game/telemetry.ts` (`ash.telemetry`) ; menu caché
+  `src/game/ui/DebugPanel.ts` (5 appuis sur le titre des Options), compteur FPS dans `UiScene`.
 - Bouclier frontal (Einherjar) : `shield` dans `src/data/enemies.ts`, `Enemy.blocks` ; runes : attaque `runes`.
 
 ### Combat (où régler quoi)

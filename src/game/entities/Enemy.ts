@@ -37,6 +37,8 @@ export class Enemy {
   private telegraphOverride: number | null = null;
   def!: EnemyDef;
   status: StatusState = newStatus();
+  /** Mesure « Surcadençage » : ennemis plus rapides. */
+  private speedMul = 1;
   uid = 0;
   health: Health = { hp: 1, maxHp: 1 };
   state: EnemyState = 'dead';
@@ -84,10 +86,12 @@ export class Enemy {
     return this.def.radius;
   }
 
-  activate(def: EnemyDef, x: number, y: number, now: number): void {
+  activate(def: EnemyDef, x: number, y: number, now: number, hpMul = 1, speedMul = 1): void {
     this.def = def;
     this.uid = ++enemyCounter;
-    this.health = { hp: def.maxHp, maxHp: def.maxHp };
+    const maxHp = Math.round(def.maxHp * hpMul);
+    this.health = { hp: maxHp, maxHp };
+    this.speedMul = speedMul;
     this.status = newStatus();
     this.state = 'chase';
     this.stateAt = now;
@@ -148,7 +152,7 @@ export class Enemy {
     const elapsed = now - this.stateAt;
     const frozen = isFrozen(this.status, now);
     const stunned = isStunned(this.status, now);
-    const slow = stunned ? 0 : speedFactor(this.status, now);
+    const slow = stunned ? 0 : speedFactor(this.status, now) * this.speedMul;
 
     // Gelé : l'ennemi ne bouge plus et son horloge s'arrête (il reprend où il en était).
     if (frozen || stunned) this.stateAt += dt;

@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import type { RunState } from '../../core/run/state';
-import { canAfford } from '../../core/shop';
+import { canAfford, price } from '../../core/shop';
 import { SHOP_ITEMS, type ShopItemDef, type ShopItemId } from '../../data/shop';
 import { t, type TextKey } from '../../i18n';
 import { sfx } from '../audio/sfx';
@@ -10,6 +10,8 @@ import { markScene } from './markScene';
 export interface ShopSceneData {
   run: RunState;
   sold: Set<ShopItemId>;
+  /** Mesure « Rationnement » : prix multipliés. */
+  priceMul: number;
   /** Renvoie vrai si l'achat a eu lieu. */
   onBuy: (item: ShopItemDef) => boolean;
   onLeave: () => void;
@@ -104,7 +106,8 @@ export class ShopScene extends Phaser.Scene {
 
   private card(item: ShopItemDef, x: number, y: number, w: number, h: number, i: number): void {
     const sold = this.data_.sold.has(item.id);
-    const affordable = !sold && canAfford(this.data_.run, item);
+    const cost = price(item, this.data_.priceMul);
+    const affordable = !sold && canAfford(this.data_.run, item, this.data_.priceMul);
     const g = this.add.graphics();
     g.fillStyle(0x0d0a18, 0.96).fillRoundedRect(x, y, w, h, 8);
     g.lineStyle(1.5, ACCENT, sold ? 0.25 : affordable ? 0.9 : 0.45).strokeRoundedRect(
@@ -133,8 +136,8 @@ export class ShopScene extends Phaser.Scene {
     const label = sold
       ? t('shop.sold')
       : affordable
-        ? t('shop.buy', { cost: item.cost })
-        : t('shop.tooPoor', { cost: item.cost });
+        ? t('shop.buy', { cost })
+        : t('shop.tooPoor', { cost });
     const by = y + h - 22;
     g.fillStyle(0x07060d, 1).fillRoundedRect(x + 8, by - 13, w - 16, 26, 6);
     g.lineStyle(1.5, affordable ? ACCENT : 0x3a3550, 1).strokeRoundedRect(

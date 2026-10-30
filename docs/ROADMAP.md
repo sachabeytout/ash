@@ -2,7 +2,7 @@
 
 ## Prochaine étape
 
-M2.8 : Mesures d'urgence, salles variées, télémétrie et menu de debug caché. Les questions en attente sont dans `docs/QUESTIONS.md`.
+M3 : finitions et équilibrage (coffres et évènements dans les salles, préréglages de qualité, réglages fins). Les questions en attente sont dans `docs/QUESTIONS.md`.
 Retour sur le lore v0.2 toujours attendu (« quand le fond aura avancé »).
 
 ## M0 — Fondations
@@ -66,4 +66,5 @@ Retour sur le lore v0.2 toujours attendu (« quand le fond aura avancé »).
 - [x] **M2.5 (0.9.0)** : armes 3 à 6 (bâton à pierre, arbalète, Disque d'Hélios, Gleipnir)
 - [x] **M2.6 (0.10.0)** : les 6 autres dieux (Anubis, Bastet, Athéna, Artémis, Thor, Hel), nouveaux dons et duos
 - [x] **M2.7 (0.11.0)** : histoire (dialogues dans la Cage, arc des 10 victoires, Lame de l'Aube, vraie fin)
-- [ ] **M2.8** : Mesures d'urgence, salles variées (fontaines, coffres, évènements), télémétrie + menu de debug caché
+- [x] **M2.8 (0.12.0)** : Mesures d'urgence (6 réglages, récompense +10 %/point), fontaines, télémétrie locale + menu de debug caché
+- [ ] **M3** : finitions — coffres et évènements, préréglages de qualité, équilibrage avec la télémétrie, accessibilité

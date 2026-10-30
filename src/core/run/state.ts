@@ -3,6 +3,7 @@ import { getBoon } from '../../data/boons';
 import type { GodId } from '../../data/gods';
 import type { WeaponId } from '../../data/weapons';
 import { mainValue, takeBoon, type BoonOffer, type OwnedBoon } from '../boons/boons';
+import { heatModifiers, type HeatLevels } from '../heat';
 import type { RewardKind } from './rewards';
 
 /** Bonus permanents (arbre de Thot) figés au début de la run. */
@@ -42,6 +43,8 @@ export interface RunState {
   weaponLevel: number;
   /** « Dernier souffle » de Hel déjà utilisé pendant cette run. */
   lastBreathUsed: boolean;
+  /** Mesures d'urgence actives pour cette run (figées au départ). */
+  heat: HeatLevels;
 }
 
 export interface RunSummary {
@@ -64,6 +67,7 @@ export function newRun(
   perks: RunPerks = NO_PERKS,
   superGauge = 0,
   weaponLevel = 0,
+  heat: HeatLevels = {},
 ): RunState {
   return {
     seed,
@@ -85,6 +89,7 @@ export function newRun(
     perks,
     weaponLevel,
     lastBreathUsed: false,
+    heat: { ...heat },
   };
 }
 
@@ -123,17 +128,29 @@ export function chooseBoon(run: RunState, offer: BoonOffer): void {
 
 /** Salle terminée : les braises de Thot soignent un peu. */
 export function onRoomCleared(run: RunState): number {
+  if (heatModifiers(run.heat).noRest) return 0; // Mesure « Sans répit »
   const healed = Math.max(0, Math.min(run.maxHp - run.hp, run.perks.healPerRoom));
   run.hp += healed;
   return healed;
 }
 
-export type RoomKind = 'shop' | 'combat' | 'boss';
+export type RoomKind = 'shop' | 'combat' | 'fountain' | 'boss';
 
-/** Salle 0 = marchand (entre deux biomes), salles 1…N = combats, N + 1 = boss. */
+/** Salle 0 = marchand, 1…N = combats (certaines sont des fontaines), N + 1 = boss. */
 export function roomKind(run: RunState, biome: BiomeDef): RoomKind {
   if (run.room <= 0) return 'shop';
-  return run.room > biome.rooms ? 'boss' : 'combat';
+  if (run.room > biome.rooms) return 'boss';
+  return biome.fountainRooms.includes(run.room) ? 'fountain' : 'combat';
+}
+
+/** Fontaine : soigne une part de la vie max (rien avec « Sans répit »). */
+export const FOUNTAIN_HEAL = 0.3;
+
+export function drinkFountain(run: RunState): number {
+  if (heatModifiers(run.heat).noRest) return 0;
+  const healed = Math.max(0, Math.min(run.maxHp - run.hp, Math.round(run.maxHp * FOUNTAIN_HEAL)));
+  run.hp += healed;
+  return healed;
 }
 
 /** Salles traversées depuis le début de la run (biomes précédents : salles + boss). */
@@ -160,9 +177,9 @@ export function summarize(
     biome: run.biome,
     room: run.room,
     elapsedMs: run.elapsedMs,
-    // Chaque salle traversée rapporte un peu d'XP, y compris dans les biomes précédents.
-    xp: run.xp + depth(run) * 2,
-    weaponParts: run.weaponParts,
+    // Chaque salle traversée rapporte un peu d'XP ; les Mesures d'urgence multiplient les gains.
+    xp: Math.round((run.xp + depth(run) * 2) * heatModifiers(run.heat).reward),
+    weaponParts: Math.round(run.weaponParts * heatModifiers(run.heat).reward),
     ...(killedBy ? { killedBy } : {}),
   };
 }

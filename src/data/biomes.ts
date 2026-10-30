@@ -15,6 +15,8 @@ export interface BiomeDef {
   wavesPerRoom: { min: number; max: number };
   /** Salles où un élite ouvre la première vague. */
   eliteRooms: readonly number[];
+  /** Salles calmes avec une fontaine qui soigne (pas d'ennemis). */
+  fountainRooms: readonly number[];
   elite: EnemyId;
   boss: BossId;
   /** Panthéon dont les dieux apparaissent plus souvent (aucun = tous à égalité). */
@@ -51,6 +53,7 @@ export const BIOMES: readonly BiomeDef[] = [
     waveBudget: { base: 2, perRoom: 0.45 },
     wavesPerRoom: { min: 1, max: 3 },
     eliteRooms: [5, 8],
+    fountainRooms: [6],
     elite: 'stalker',
     boss: 'ammit',
     music: 'lowtown',
@@ -75,6 +78,7 @@ export const BIOMES: readonly BiomeDef[] = [
     waveBudget: { base: 3, perRoom: 0.5 },
     wavesPerRoom: { min: 2, max: 3 },
     eliteRooms: [4, 8],
+    fountainRooms: [6],
     elite: 'einherjar',
     boss: 'fenrir',
     pantheon: 'norse',
@@ -100,6 +104,7 @@ export const BIOMES: readonly BiomeDef[] = [
     waveBudget: { base: 3.5, perRoom: 0.55 },
     wavesPerRoom: { min: 2, max: 3 },
     eliteRooms: [4, 8],
+    fountainRooms: [6],
     elite: 'minotaur',
     boss: 'talos',
     pantheon: 'greece',
@@ -125,6 +130,7 @@ export const BIOMES: readonly BiomeDef[] = [
     waveBudget: { base: 4, perRoom: 0.7 },
     wavesPerRoom: { min: 2, max: 3 },
     eliteRooms: [4],
+    fountainRooms: [5],
     elite: 'herald',
     boss: 'oiseleur',
     music: 'aviary',

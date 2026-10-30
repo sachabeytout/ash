@@ -1,9 +1,10 @@
 import { DEFAULT_SETTINGS, type Settings } from '../settings';
 import type { WeaponId } from '../../data/weapons';
+import type { HeatLevels } from '../heat';
 import type { RunState } from '../run/state';
 
 /** Version actuelle du format. Tout changement de format = nouvelle version + migration (voir migrations.ts). */
-export const SAVE_VERSION = 5;
+export const SAVE_VERSION = 6;
 
 /** Progression permanente (conservée entre les runs). */
 export interface MetaState {
@@ -25,6 +26,8 @@ export interface MetaState {
   unlocked: WeaponId[];
   /** Dialogues de la Cage déjà entendus. Ajouté en v5. */
   seenDialogues: string[];
+  /** Mesures d'urgence choisies (niveau par mesure). Ajouté en v6. */
+  heat: HeatLevels;
 }
 
 export interface SaveData {
@@ -49,6 +52,7 @@ export function defaultMeta(): MetaState {
     assistDeaths: 0,
     unlocked: [],
     seenDialogues: [],
+    heat: {},
   };
 }
 
