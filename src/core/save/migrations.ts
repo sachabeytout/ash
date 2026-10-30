@@ -28,6 +28,11 @@ const MIGRATIONS: Record<number, (save: Raw) => Raw> = {
     settings: {},
     savedAt: 0,
   }),
+  // v1 → v2 : forge de Brokk et Bénédiction du Phénix (rien n'est perdu, tout part de zéro).
+  1: (old) => {
+    const meta = isObject(old.meta) ? old.meta : {};
+    return { ...old, version: 2, meta: { ...meta, forge: {}, assistDeaths: 0 } };
+  },
 };
 
 function isObject(v: unknown): v is Raw {
@@ -79,7 +84,18 @@ function sanitizeMeta(raw: unknown): MetaState {
     deaths: num(m.deaths, 0, 0),
     clears: num(m.clears, 0, 0),
     skills,
+    forge: sanitizeForge(m.forge),
+    assistDeaths: num(m.assistDeaths, 0, 0),
   };
+}
+
+function sanitizeForge(raw: unknown): MetaState['forge'] {
+  const forge: MetaState['forge'] = {};
+  if (!isObject(raw)) return forge;
+  for (const id of Object.keys(WEAPONS) as (keyof typeof WEAPONS)[]) {
+    if (id in raw) forge[id] = num(raw[id], 0, 0, 20);
+  }
+  return forge;
 }
 
 function sanitizeRun(raw: unknown): RunState | null {
@@ -116,6 +132,7 @@ function sanitizeRun(raw: unknown): RunState | null {
         ? (pending as RunState['pendingBoon'])
         : null,
     superGauge: num(raw.superGauge, 0, 0, 1),
+    weaponLevel: num(raw.weaponLevel, 0, 0, 20),
     perks: {
       damage: num(perks.damage, NO_PERKS.damage, 0),
       healPerRoom: num(perks.healPerRoom, NO_PERKS.healPerRoom, 0),
@@ -141,5 +158,6 @@ function sanitizeSettings(raw: unknown): Settings {
     // Ajoutés en 0.4.0 : absents des anciennes sauvegardes → valeurs par défaut (pas de perte).
     quality: s.quality === 'low' || s.quality === 'medium' ? s.quality : 'high',
     language: s.language === 'fr' || s.language === 'en' ? s.language : 'auto',
+    assist: bool(s.assist, d.assist),
   };
 }

@@ -2,6 +2,20 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.6.0 — La forge de Brokk
+
+- **Forge de Brokk** (bouton dans la Cage, ou touche F) : dépense tes **pièces d'arme** pour améliorer chaque arme pour toujours. 5 niveaux par arme :
+  1. +8 % de dégâts ;
+  2. +20 % de dégâts sur l'attaque puissante ;
+  3. jauge de Super 25 % plus rapide ;
+  4. encore +8 % de dégâts ;
+  5. +30 % de dégâts du Super.
+- **Bénédiction du Phénix** (dans les Options) : un mode d'assistance, sans jugement. Tu reçois 20 % de dégâts en moins, puis 2 % de moins à chaque mort tant qu'il est activé (jusqu'à 80 %). Tu peux l'activer ou l'enlever quand tu veux.
+- La Cage affiche ton nombre de **victoires**, et la réduction de la Bénédiction si elle est active.
+- Ta sauvegarde passe au nouveau format **sans rien perdre** (vérifié par les tests).
+
+**Quoi tester** : forge une amélioration pour ton arme préférée et regarde si tu sens la différence. Essaie la Bénédiction du Phénix si un passage te bloque.
+
 ## 0.5.1 — Une musique par biome
 
 - Chaque biome a son propre thème : les Bas-Fonds et le Givre-Serveur.

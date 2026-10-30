@@ -1,8 +1,9 @@
 import { DEFAULT_SETTINGS, type Settings } from '../settings';
+import type { WeaponId } from '../../data/weapons';
 import type { RunState } from '../run/state';
 
 /** Version actuelle du format. Tout changement de format = nouvelle version + migration (voir migrations.ts). */
-export const SAVE_VERSION = 1;
+export const SAVE_VERSION = 2;
 
 /** Progression permanente (conservée entre les runs). */
 export interface MetaState {
@@ -16,6 +17,10 @@ export interface MetaState {
   clears: number;
   /** Niveau de chaque compétence de l'arbre de Thot. */
   skills: Record<string, number>;
+  /** Niveau de forge de chaque arme (Brokk). Ajouté en v2. */
+  forge: Partial<Record<WeaponId, number>>;
+  /** Morts survenues avec la Bénédiction du Phénix activée (elle se renforce). Ajouté en v2. */
+  assistDeaths: number;
 }
 
 export interface SaveData {
@@ -28,7 +33,17 @@ export interface SaveData {
 }
 
 export function defaultMeta(): MetaState {
-  return { xp: 0, totalXp: 0, weaponParts: 0, runs: 0, deaths: 0, clears: 0, skills: {} };
+  return {
+    xp: 0,
+    totalXp: 0,
+    weaponParts: 0,
+    runs: 0,
+    deaths: 0,
+    clears: 0,
+    skills: {},
+    forge: {},
+    assistDeaths: 0,
+  };
 }
 
 export function defaultSave(): SaveData {

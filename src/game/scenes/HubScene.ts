@@ -19,7 +19,11 @@ import { ensureGameTextures } from '../textures';
 import { COLORS, FONT_FAMILY, GAME_HEIGHT, GAME_WIDTH } from '../theme';
 import { makeButton } from '../ui/button';
 import { OptionsPanel } from '../ui/OptionsPanel';
+import { ForgePanel } from '../ui/ForgePanel';
 import { ThothPanel } from '../ui/ThothPanel';
+import { assistReduction } from '../../core/assist';
+import { forgeLevel } from '../../core/forge';
+import { settings } from '../../core/settings';
 import { markScene } from './markScene';
 
 /** La Cage (hub) : résumé de la dernière run, reprise, choix de l'arme, sauvegarde. */
@@ -113,8 +117,11 @@ export class HubScene extends Phaser.Scene {
         xp: meta.xp,
         parts: meta.weaponParts,
         rebirths: t('hub.rebirths', { count: meta.deaths }),
+        victories: t('hub.victories', { count: meta.clears }),
       }),
     );
+    const assist = assistReduction(settings.assist, meta.assistDeaths);
+    if (assist > 0) lines.push(t('hub.assistActive', { value: Math.round(assist * 100) }));
     this.add
       .text(cx, 84, lines.join('\n'), {
         ...style,
@@ -134,6 +141,16 @@ export class HubScene extends Phaser.Scene {
       color: 0x7fffc0,
       fontSize: 12,
       onTap: () => this.openThoth(),
+    });
+    makeButton(this, {
+      x: 64,
+      y: 62,
+      w: 108,
+      h: 30,
+      label: t('hub.forgeButton'),
+      color: 0xffe08a,
+      fontSize: 12,
+      onTap: () => this.openForge(),
     });
     makeButton(this, {
       x: GAME_WIDTH - 180,
@@ -169,6 +186,10 @@ export class HubScene extends Phaser.Scene {
       }
       if (e.code === 'KeyT') {
         this.openThoth();
+        return;
+      }
+      if (e.code === 'KeyF') {
+        this.openForge();
         return;
       }
       if (session.save.run) {
@@ -280,6 +301,21 @@ export class HubScene extends Phaser.Scene {
     });
   }
 
+  private openForge(): void {
+    if (this.modal || this.starting) return;
+    this.modal = true;
+    sfx.tap();
+    new ForgePanel(
+      this,
+      session.save.meta,
+      () => session.commit(),
+      () => {
+        this.modal = false;
+        this.scene.restart({});
+      },
+    );
+  }
+
   private openThoth(): void {
     if (this.modal || this.starting) return;
     this.modal = true;
@@ -357,6 +393,7 @@ export class HubScene extends Phaser.Scene {
       GOD_IDS[seed % GOD_IDS.length] ?? 'ra',
       bonus.perks,
       bonus.superStart,
+      forgeLevel(session.save.meta, weapon),
     );
     this.go(run);
   }

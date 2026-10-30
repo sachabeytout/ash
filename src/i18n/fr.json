@@ -9,7 +9,7 @@
   "hub.escape": "S'évader ({key})",
   "hub.lastDeath": "Consumé dans {biome}, salle {room} — par : {killer}",
   "hub.lastStats": "Durée {minutes} min {seconds} s · +{xp} XP · +{parts} pièces d'arme",
-  "hub.totals": "Total : {xp} XP · {parts} pièces d'arme · {rebirths}",
+  "hub.totals": "Total : {xp} XP · {parts} pièces d'arme · {rebirths} · {victories}",
   "hub.rebirths": {
     "zero": "aucune renaissance",
     "one": "{count} renaissance",
@@ -193,5 +193,25 @@
   "boss.fenrir.phase2": "Fenrir brise une chaîne !",
   "boss.fenrir.defeated": "Fenrir-Ω est vaincu !",
   "hub.roomOf": "{biome}, salle {room}",
-  "hub.atMerchant": "chez le marchand"
+  "hub.atMerchant": "chez le marchand",
+  "forge.damage": "+{value} % de dégâts",
+  "forge.powerDamage": "+{value} % de dégâts de l'attaque puissante",
+  "forge.superGain": "La jauge de Super se remplit {value} % plus vite",
+  "forge.superDamage": "+{value} % de dégâts du Super",
+  "forge.title": "Forge de Brokk",
+  "forge.intro": "« Donne-moi des pièces, je te rends une lame. Le métal se souvient, comme toi. »",
+  "forge.parts": "{count} pièces d'arme",
+  "forge.level": "Niveau {level}/{max}",
+  "forge.next": "Prochain : {effect}",
+  "forge.maxed": "Arme au maximum",
+  "forge.buy": "Forger · {cost} pièce(s)",
+  "forge.close": "Fermer",
+  "hub.forgeButton": "Forge de Brokk",
+  "options.assist": "Bénédiction du Phénix (assistance)",
+  "hub.assistActive": "Bénédiction du Phénix : −{value} % de dégâts reçus",
+  "hub.victories": {
+    "zero": "aucune victoire",
+    "one": "{count} victoire",
+    "other": "{count} victoires"
+  }
 }

@@ -48,6 +48,8 @@ import { Controls } from '../input/Controls';
 import { UiScene, type Indicator } from './UiScene';
 import { finishRun } from '../../core/meta';
 import { buyItem } from '../../core/shop';
+import { assistReduction, reducedDamage } from '../../core/assist';
+import { NO_WEAPON_BONUS, weaponBonuses, type WeaponBonuses } from '../../core/forge';
 import { SHARD_BOUNTY, type ShopItemId } from '../../data/shop';
 import { QUALITY_PARTICLES, settings } from '../../core/settings';
 import { cheatsEnabled } from '../debug/cheats';
@@ -136,6 +138,8 @@ export class RunScene extends Phaser.Scene {
   /** Un dieu propose un don : le combat attend. */
   private choosing = false;
   private lastChainSwing = -1;
+  /** Bonus de la forge de Brokk pour l'arme de la run. */
+  private forge: WeaponBonuses = NO_WEAPON_BONUS;
   private readonly indicatorBuf: Indicator[] = Array.from({ length: POOL_SIZE + 8 }, () => ({
     x: 0,
     y: 0,
@@ -176,6 +180,7 @@ export class RunScene extends Phaser.Scene {
     this.juice = new Juice(this);
     this.lightning = new Lightning(this);
     this.profile = buildProfile(this.run.boons);
+    this.forge = weaponBonuses(this.run.weapon, this.run.weaponLevel);
     this.controls = new Controls(this, () => this.sim);
     this.controls.onPause = () => this.openPause();
     this.scene.launch('ui', { controls: this.controls });
@@ -366,6 +371,13 @@ export class RunScene extends Phaser.Scene {
     };
     this.scene.launch('shop', data);
     this.scene.bringToTop('shop');
+  }
+
+  /** Dégâts d'un coup d'arme : bonus de run (modificateurs, Thot) + forge selon le type de coup. */
+  private weaponMultiplier(kind: 'attack' | 'power' | 'super'): number {
+    const f = this.forge;
+    const extra = kind === 'power' ? f.powerDamage : kind === 'super' ? f.superDamage : 0;
+    return 1 + this.run.damageBonus + f.damage + extra;
   }
 
   // ---------- Pause ----------
@@ -791,7 +803,7 @@ export class RunScene extends Phaser.Scene {
       const shieldFactor = blocked ? (e.def.shield?.blocked ?? 1) : 1;
       const { dealt, killed } = applyDamage(
         e.health,
-        step.damage * (1 + this.run.damageBonus) * mult * shieldFactor,
+        step.damage * this.weaponMultiplier(swing.kind) * mult * shieldFactor,
       );
       if (blocked) {
         e.hit(this.sim, this.player, step.knockback * 0.3);
@@ -806,7 +818,8 @@ export class RunScene extends Phaser.Scene {
       this.juice.shake(step.shake);
       this.juice.burst(e.x, e.y, 0xffe9d6, swing.heavy ? 10 : 6);
       this.juice.damageNumber(e.x, e.y - e.radius, dealt);
-      if (swing.kind !== 'super') this.run.superGauge = gainSuper(this.run.superGauge, dealt);
+      if (swing.kind !== 'super')
+        this.run.superGauge = gainSuper(this.run.superGauge, dealt * (1 + this.forge.superGain));
       sfx.hit(swing.heavy);
       if (killed) this.killEnemy(e);
       else this.applyHitEffects(e, fx);
@@ -907,7 +920,9 @@ export class RunScene extends Phaser.Scene {
   private hurtPlayer(amount: number, from: Vec2, sourceNameKey: string): void {
     if (this.leaving) return;
     const health = { hp: this.run.hp, maxHp: this.run.maxHp };
-    const { dealt, killed } = applyDamage(health, amount);
+    // Bénédiction du Phénix : dégâts reçus réduits (option, sans jugement).
+    const reduction = assistReduction(settings.assist, session.save.meta.assistDeaths);
+    const { dealt, killed } = applyDamage(health, reducedDamage(amount, reduction));
     this.run.hp = health.hp;
     this.run.superGauge = gainSuper(this.run.superGauge, 0, dealt);
     this.player.takeHit(this.sim, from);

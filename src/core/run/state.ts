@@ -38,6 +38,8 @@ export interface RunState {
   /** Jauge de Super, de 0 à 1. */
   superGauge: number;
   perks: RunPerks;
+  /** Niveau de forge de l'arme, figé au début de la run. */
+  weaponLevel: number;
 }
 
 export interface RunSummary {
@@ -59,6 +61,7 @@ export function newRun(
   firstGod: GodId,
   perks: RunPerks = NO_PERKS,
   superGauge = 0,
+  weaponLevel = 0,
 ): RunState {
   return {
     seed,
@@ -78,6 +81,7 @@ export function newRun(
     pendingBoon: firstGod,
     superGauge,
     perks,
+    weaponLevel,
   };
 }
 

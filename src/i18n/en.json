@@ -9,7 +9,7 @@
   "hub.escape": "Escape ({key})",
   "hub.lastDeath": "Burned out in {biome}, room {room} — by: {killer}",
   "hub.lastStats": "Time {minutes} min {seconds} s · +{xp} XP · +{parts} weapon parts",
-  "hub.totals": "Total: {xp} XP · {parts} weapon parts · {rebirths}",
+  "hub.totals": "Total: {xp} XP · {parts} weapon parts · {rebirths} · {victories}",
   "hub.rebirths": {
     "zero": "no rebirths",
     "one": "{count} rebirth",
@@ -193,5 +193,25 @@
   "boss.fenrir.phase2": "Fenrir breaks a chain!",
   "boss.fenrir.defeated": "Fenrir-Ω is defeated!",
   "hub.roomOf": "{biome}, room {room}",
-  "hub.atMerchant": "at the merchant"
+  "hub.atMerchant": "at the merchant",
+  "forge.damage": "+{value}% damage",
+  "forge.powerDamage": "+{value}% power attack damage",
+  "forge.superGain": "Super gauge fills {value}% faster",
+  "forge.superDamage": "+{value}% Super damage",
+  "forge.title": "Brokk's Forge",
+  "forge.intro": "“Give me parts, I'll give you a blade. Metal remembers, just like you.”",
+  "forge.parts": "{count} weapon parts",
+  "forge.level": "Level {level}/{max}",
+  "forge.next": "Next: {effect}",
+  "forge.maxed": "Weapon maxed out",
+  "forge.buy": "Forge · {cost} part(s)",
+  "forge.close": "Close",
+  "hub.forgeButton": "Brokk's Forge",
+  "options.assist": "Phoenix's Blessing (assist)",
+  "hub.assistActive": "Phoenix's Blessing: −{value}% damage taken",
+  "hub.victories": {
+    "zero": "no victory",
+    "one": "{count} victory",
+    "other": "{count} victories"
+  }
 }

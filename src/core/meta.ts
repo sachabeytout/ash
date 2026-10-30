@@ -9,8 +9,10 @@ export function finishRun(save: SaveData, summary: RunSummary): void {
   meta.totalXp += summary.xp;
   meta.weaponParts += summary.weaponParts;
   meta.runs += 1;
-  if (summary.outcome === 'death') meta.deaths += 1;
-  else meta.clears += 1;
+  if (summary.outcome === 'death') {
+    meta.deaths += 1;
+    if (save.settings.assist) meta.assistDeaths += 1;
+  } else meta.clears += 1;
   save.run = null;
 }
 

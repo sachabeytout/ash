@@ -1,6 +1,6 @@
 # Architecture (carte du projet)
 
-> Statut 0.5.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
+> Statut 0.6.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
 > combat/attack+health+status+superGauge, boons/boons, run/waves+rewards+state, save/schema+migrations+codec+store),
 > `data/` (player, weapons, enemies, biomes, gods, boons, status, skills, bosses, music, shop), `game/` (scenes Title, Hub,
 > Run, Ui, Boon, Pause, Shop ; entities Player, Enemy, Boss, Hittable ; input Controls, TouchControls ; fx/Juice+Lightning ;
@@ -40,6 +40,10 @@ par-dessus). Mort ou sortie → `hub` avec un `RunSummary`.
   1…N = combats, N + 1 = boss (`roomKind` dans `src/core/run/state.ts`) ; `afterBoss` passe au biome suivant.
 - Boss : `BOSSES` dans `src/data/bosses.ts` (attaques optionnelles : bite, charge, quake, summon, leap, icefall).
 - Marchand : articles dans `src/data/shop.ts`, achat dans `src/core/shop.ts`, écran `src/game/scenes/ShopScene.ts`.
+- Forge de Brokk : paliers dans `src/data/forge.ts`, logique `src/core/forge.ts`, fenêtre `src/game/ui/ForgePanel.ts` ;
+  le niveau est figé dans la run (`weaponLevel`) et appliqué par `RunScene.weaponMultiplier`.
+- Bénédiction du Phénix : `src/core/assist.ts` (réglage `assist`, compteur `meta.assistDeaths`).
+- Sauvegarde **v2** (forge, assistance) : migration 1 → 2 dans `src/core/save/migrations.ts`.
 - Bouclier frontal (Einherjar) : `shield` dans `src/data/enemies.ts`, `Enemy.blocks` ; runes : attaque `runes`.
 
 ### Combat (où régler quoi)

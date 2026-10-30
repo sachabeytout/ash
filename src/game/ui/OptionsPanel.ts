@@ -7,7 +7,10 @@ import { COLORS, FONT_FAMILY } from '../theme';
 
 type Row =
   | { kind: 'step'; key: 'masterVolume' | 'sfxVolume' | 'musicVolume' | 'touchButtonScale' }
-  | { kind: 'toggle'; key: 'screenShake' | 'vibration' | 'aimAssist' | 'damageNumbers' }
+  | {
+      kind: 'toggle';
+      key: 'screenShake' | 'vibration' | 'aimAssist' | 'damageNumbers' | 'assist';
+    }
   | { kind: 'choice'; key: 'joystick' | 'quality' | 'language'; values: readonly string[] };
 
 const ROWS: readonly Row[] = [
@@ -22,6 +25,7 @@ const ROWS: readonly Row[] = [
   { kind: 'toggle', key: 'damageNumbers' },
   { kind: 'choice', key: 'joystick', values: ['floating', 'fixed'] },
   { kind: 'step', key: 'touchButtonScale' },
+  { kind: 'toggle', key: 'assist' },
 ];
 
 /** Bornes et pas des réglages chiffrés. */

@@ -15,6 +15,8 @@ export interface Settings {
   /** Préréglage graphique : moins d'effets sur les petits téléphones. */
   quality: Quality;
   language: LanguageSetting;
+  /** Bénédiction du Phénix (mode assistance). */
+  assist: boolean;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -29,6 +31,7 @@ export const DEFAULT_SETTINGS: Settings = {
   touchButtonScale: 1,
   quality: 'high',
   language: 'auto',
+  assist: false,
 };
 
 /** Part des particules gardées selon la qualité. */

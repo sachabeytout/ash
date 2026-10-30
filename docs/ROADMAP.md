@@ -2,9 +2,7 @@
 
 ## Prochaine étape
 
-M2.1 (biome 2) est livré en 0.5.0. Retours attendus sur la 0.4.0 et la 0.5.0 (boss, élite, marchand, longueur de run).
-Pistes suivantes : dialogues dans la Cage (Aelia, Thot, Vesper), forge de Brokk (pièces d'arme), mode assistance
-« Bénédiction du Phénix », biome 3 (l'Olympe Corporatif, boss Talos).
+M2.3 : biome 3, l'Olympe Corporatif (boss Talos). Les questions en attente sont dans `docs/QUESTIONS.md`.
 Retour sur le lore v0.2 toujours attendu (« quand le fond aura avancé »).
 
 ## M0 — Fondations
@@ -60,9 +58,12 @@ Retour sur le lore v0.2 toujours attendu (« quand le fond aura avancé »).
 - [x] 3 ennemis (Loup-relais, Givreur, Gardien runique) + élite Einherjar (bouclier frontal)
 - [x] Boss 2 : Fenrir-Ω (bond, pluie de glace, chaînes, meute)
 
-### Ensuite (à choisir avec l'utilisateur)
+### Plan vers le jeu complet (l'utilisateur répond aux questions dans `docs/QUESTIONS.md` quand il peut)
 
-- [ ] Dialogues dans la Cage (Aelia, Thot, Vesper, Brokk)
-- [ ] Forge de Brokk (améliorations d'armes avec les pièces d'arme)
-- [ ] Mode assistance « Bénédiction du Phénix »
-- [ ] Biome 3 : l'Olympe Corporatif (boss Talos), biome 4 : la Volière (l'Oiseleur)
+- [x] **M2.2 (0.6.0)** : forge de Brokk (améliorations d'armes), Bénédiction du Phénix (mode assistance), victoires
+- [ ] **M2.3 (0.7.0)** : biome 3, l'Olympe Corporatif (ennemis, élite, boss Talos)
+- [ ] **M2.4 (0.8.0)** : biome 4, la Volière (7 salles, boss l'Oiseleur) → vraie victoire
+- [ ] **M2.5 (0.9.0)** : armes 3 à 6 (bâton à pierre, arbalète, Disque d'Hélios, Gleipnir)
+- [ ] **M2.6 (0.10.0)** : les 6 autres dieux (Anubis, Bastet, Athéna, Artémis, Thor, Hel), nouveaux dons et duos
+- [ ] **M2.7** : histoire (dialogues dans la Cage, arc des 10 victoires, Lame de l'Aube, vraie fin)
+- [ ] **M2.8** : Mesures d'urgence, salles variées (fontaines, coffres, évènements), télémétrie + menu de debug caché

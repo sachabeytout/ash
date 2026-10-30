@@ -55,6 +55,9 @@ Format : date — décision — raison — validée par l'utilisateur (oui / non
 | 2026-10-30 | Marchand : **Ratatosk**, écureuil messager de la mythologie nordique (interprétation originale) | Il voyage entre les mondes : logique entre deux biomes | à signaler |
 | 2026-10-30 | Prix du marchand : soin 30, cœur 45, pierre 40, faveur 60 éclats ; +10 éclats par élite, +30 par boss | Donner enfin un usage aux éclats ; à régler selon les retours | à signaler |
 | 2026-10-30 | Einherjar : bouclier frontal qui bloque 85 % des dégâts (pas les effets des dons déjà posés, ni la brûlure) | Mécanique nouvelle et lisible (arc blanc) : le contourner | à signaler |
+| 2026-10-30 | Forge de Brokk : 5 niveaux par arme (dégâts, puissante, Super), coûts 1 à 5 pièces | Donner un usage aux pièces d'arme (progression permanente) | à signaler |
+| 2026-10-30 | Bénédiction du Phénix : −20 % de dégâts reçus, −2 % de plus par mort, plafond 80 % ; désactivable à tout moment | Mode assistance du brief, sans jugement | à signaler |
+| 2026-10-30 | Sauvegarde v2 (migration 1 → 2) | Ajout forge + assistance, sans perte | oui (règle) |
 | 2026-10-30 | Fenrir-Ω : 1100 PV, bond / pluie de glace / morsure / charge, meute en phase 2 | Boss plus mobile qu'Ammit, toujours télégraphié | à signaler |
 
 ## Réponses de l'utilisateur (30/10/2026)
