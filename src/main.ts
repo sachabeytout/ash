@@ -8,7 +8,9 @@ import {
   resetPageViewport,
 } from './platform/device';
 import { requestPersistentStorage, setupPwa } from './platform/pwa';
+import { session } from './game/session';
 
+session.load();
 setLocale(detectLocale(navigator.languages));
 const rotateText = document.getElementById('rotate-text');
 if (rotateText) rotateText.textContent = t('device.rotate');
@@ -24,5 +26,8 @@ onViewportChange(() => {
   game.scale.refresh();
 });
 
-// Phaser met déjà la boucle en pause quand l'onglet est caché ; la sauvegarde viendra s'y brancher en M1.
-onAppHidden(() => game.events.emit('app-hidden'));
+// Phaser met déjà la boucle en pause quand l'onglet est caché ; on enregistre par sécurité.
+onAppHidden(() => {
+  session.commit();
+  game.events.emit('app-hidden');
+});

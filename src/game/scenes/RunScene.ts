@@ -37,7 +37,9 @@ import { drawGodIcon } from '../icons';
 import type { BoonSceneData } from './BoonScene';
 import { Controls } from '../input/Controls';
 import { UiScene } from './UiScene';
+import { finishRun } from '../../core/meta';
 import { cheatsEnabled } from '../debug/cheats';
+import { session } from '../session';
 import { bodyOf } from '../physics';
 import { ensureGameTextures } from '../textures';
 import { FONT_FAMILY } from '../theme';
@@ -180,6 +182,8 @@ export class RunScene extends Phaser.Scene {
 
     this.cameras.main.fadeIn(350, 7, 6, 13);
     markScene('run');
+    // Sauvegarde à chaque entrée de salle : fermer l'app à tout moment, reprendre ici.
+    session.snapshotRun(this.run);
     if (this.run.pendingBoon) {
       this.choosing = true;
       this.time.delayedCall(380, () => this.offerBoon());
@@ -225,6 +229,7 @@ export class RunScene extends Phaser.Scene {
 
   private onBoonPicked(offer: BoonOffer): void {
     chooseBoon(this.run, offer);
+    session.snapshotRun(this.run);
     this.profile = buildProfile(this.run.boons);
     this.choosing = false;
     this.nextWaveAt = this.sim + 600;
@@ -732,6 +737,9 @@ export class RunScene extends Phaser.Scene {
 
   private endRun(outcome: 'death' | 'cleared', killedBy?: string): void {
     const summary = summarize(this.run, outcome, killedBy);
+    // La progression est créditée tout de suite : rien n'est perdu si l'app se ferme pendant le fondu.
+    finishRun(session.save, summary);
+    session.commit();
     this.time.delayedCall(outcome === 'death' ? 700 : 200, () => {
       this.cameras.main.fadeOut(700, 7, 6, 13);
       this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () =>

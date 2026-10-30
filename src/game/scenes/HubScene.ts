@@ -1,28 +1,28 @@
 import Phaser from 'phaser';
+import { finishRun } from '../../core/meta';
 import { randomSeed } from '../../core/rng';
-import { newRun, type RunSummary } from '../../core/run/state';
+import { newRun, summarize, type RunSummary } from '../../core/run/state';
+import { exportCode, importCode } from '../../core/save/codec';
+import { NewerSaveError } from '../../core/save/migrations';
 import { GOD_IDS } from '../../data/gods';
 import { PLAYER } from '../../data/player';
 import { WEAPONS, type WeaponId } from '../../data/weapons';
 import { t, type TextKey } from '../../i18n';
 import { sfx } from '../audio/sfx';
 import { addEmbers, drawCage, ensureTextures } from '../backdrop';
+import { openSaveDialog } from '../dom/saveDialog';
+import { session } from '../session';
 import { ensureGameTextures } from '../textures';
 import { COLORS, FONT_FAMILY, GAME_HEIGHT, GAME_WIDTH } from '../theme';
+import { makeButton } from '../ui/button';
 import { markScene } from './markScene';
 
-/** Progression conservée entre les runs (en mémoire pour l'instant ; sauvegarde à venir). */
-interface Meta {
-  xp: number;
-  weaponParts: number;
-  deaths: number;
-  clears: number;
-}
-
-/** La Cage (hub) : résumé de la dernière run, choix de l'arme, départ. */
+/** La Cage (hub) : résumé de la dernière run, reprise, choix de l'arme, sauvegarde. */
 export class HubScene extends Phaser.Scene {
   private summary: RunSummary | undefined;
   private starting = false;
+  /** Une fenêtre (sauvegarde, Thot) est ouverte : la Cage ignore les touches. */
+  private modal = false;
 
   constructor() {
     super('hub');
@@ -31,13 +31,14 @@ export class HubScene extends Phaser.Scene {
   init(data: { summary?: RunSummary }): void {
     this.summary = data.summary;
     this.starting = false;
+    this.modal = false;
   }
 
   create(): void {
     ensureTextures(this);
     ensureGameTextures(this);
     const cx = GAME_WIDTH / 2;
-    const meta = this.updateMeta();
+    const meta = session.save.meta;
 
     this.cameras.main.centerOn(GAME_WIDTH / 2, GAME_HEIGHT / 2);
     const recenter = () => this.cameras.main.centerOn(GAME_WIDTH / 2, GAME_HEIGHT / 2);
@@ -115,11 +116,26 @@ export class HubScene extends Phaser.Scene {
       })
       .setOrigin(0.5, 0);
 
-    this.add.text(cx, 222, t('hub.chooseWeapon'), { ...style, fontSize: '12px' }).setOrigin(0.5);
-    const ids: WeaponId[] = ['katana', 'twinBlades'];
-    ids.forEach((id, i) => this.makeButton(cx + (i === 0 ? -95 : 95), 262, id, i + 1));
+    makeButton(this, {
+      x: GAME_WIDTH - 64,
+      y: 26,
+      w: 108,
+      h: 30,
+      label: t('hub.saveButton'),
+      color: 0x6b4cff,
+      fontSize: 12,
+      onTap: () => this.openSave(),
+    });
+
+    if (session.save.run) this.showResume();
+    else this.showWeapons();
 
     this.input.keyboard?.on('keydown', (e: KeyboardEvent) => {
+      if (this.modal) return;
+      if (session.save.run) {
+        if (e.code === 'Enter' || e.code === 'Space' || e.code === 'Digit1') this.resume();
+        return;
+      }
       if (e.code === 'Digit1' || e.code === 'Enter' || e.code === 'Space') this.start('katana');
       if (e.code === 'Digit2') this.start('twinBlades');
     });
@@ -129,54 +145,131 @@ export class HubScene extends Phaser.Scene {
   }
 
   override update(): void {
+    if (this.modal) return;
     const pad = navigator.getGamepads?.().find((p) => p?.connected);
-    if (pad?.buttons[0]?.pressed) this.start('katana');
-    if (pad?.buttons[2]?.pressed) this.start('twinBlades');
-  }
-
-  private updateMeta(): Meta {
-    const meta: Meta = this.registry.get('meta') ?? { xp: 0, weaponParts: 0, deaths: 0, clears: 0 };
-    if (this.summary) {
-      meta.xp += this.summary.xp;
-      meta.weaponParts += this.summary.weaponParts;
-      if (this.summary.outcome === 'death') meta.deaths += 1;
-      else meta.clears += 1;
+    if (!pad) return;
+    if (session.save.run) {
+      if (pad.buttons[0]?.pressed) this.resume();
+      return;
     }
-    this.registry.set('meta', meta);
-    return meta;
+    if (pad.buttons[0]?.pressed) this.start('katana');
+    if (pad.buttons[2]?.pressed) this.start('twinBlades');
   }
 
-  private makeButton(x: number, y: number, id: WeaponId, shortcut: number): void {
-    const w = 160;
-    const h = 46;
-    const color = WEAPONS[id].color;
-    const g = this.add.graphics();
-    const draw = (hover: boolean) => {
-      g.clear()
-        .fillStyle(0x07060d, 0.9)
-        .fillRoundedRect(x - w / 2, y - h / 2, w, h, 8);
-      g.lineStyle(2, color, hover ? 1 : 0.7).strokeRoundedRect(x - w / 2, y - h / 2, w, h, 8);
-    };
-    draw(false);
+  private showWeapons(): void {
+    const cx = GAME_WIDTH / 2;
     this.add
-      .text(x, y - 7, t(WEAPONS[id].nameKey as TextKey), {
+      .text(cx, 222, t('hub.chooseWeapon'), {
         fontFamily: FONT_FAMILY,
-        fontSize: '14px',
-        fontStyle: 'bold',
+        fontSize: '12px',
         color: COLORS.text,
+        stroke: '#07060d',
+        strokeThickness: 3,
       })
       .setOrigin(0.5);
+    const ids: WeaponId[] = ['katana', 'twinBlades'];
+    ids.forEach((id, i) =>
+      makeButton(this, {
+        x: cx + (i === 0 ? -95 : 95),
+        y: 262,
+        w: 160,
+        h: 46,
+        label: t(WEAPONS[id].nameKey as TextKey),
+        sub: t('hub.escape', { key: i + 1 }),
+        color: WEAPONS[id].color,
+        onTap: () => this.start(id),
+      }),
+    );
+  }
+
+  /** Une run est sauvegardée : on la reprend (ou on l'abandonne, avec confirmation). */
+  private showResume(): void {
+    const run = session.save.run;
+    if (!run) return;
+    const cx = GAME_WIDTH / 2;
     this.add
-      .text(x, y + 11, t('hub.escape', { key: shortcut }), {
-        fontFamily: FONT_FAMILY,
-        fontSize: '10px',
-        color: COLORS.textDim,
-      })
+      .text(
+        cx,
+        222,
+        t('hub.runInProgress', {
+          room: run.room,
+          weapon: t(WEAPONS[run.weapon].nameKey as TextKey),
+        }),
+        {
+          fontFamily: FONT_FAMILY,
+          fontSize: '12px',
+          color: COLORS.text,
+          stroke: '#07060d',
+          strokeThickness: 3,
+        },
+      )
       .setOrigin(0.5);
-    const zone = this.add.zone(x, y, w, h).setInteractive({ useHandCursor: true });
-    zone.on('pointerover', () => draw(true));
-    zone.on('pointerout', () => draw(false));
-    zone.on('pointerup', () => this.start(id));
+    makeButton(this, {
+      x: cx,
+      y: 262,
+      w: 200,
+      h: 46,
+      label: t('hub.resume'),
+      sub: t('hub.resumeSub', { hp: run.hp, maxHp: run.maxHp }),
+      color: 0xffb02e,
+      onTap: () => this.resume(),
+    });
+    let confirming = false;
+    const abandon = makeButton(this, {
+      x: cx,
+      y: 314,
+      w: 200,
+      h: 30,
+      label: t('hub.abandon'),
+      color: 0x6b4cff,
+      fontSize: 11,
+      onTap: () => {
+        if (!confirming) {
+          confirming = true;
+          abandon.setLabel(t('hub.abandonConfirm'));
+          return;
+        }
+        this.abandon();
+      },
+    });
+  }
+
+  private openSave(): void {
+    if (this.modal || this.starting) return;
+    this.modal = true;
+    sfx.tap();
+    openSaveDialog({
+      exportCode: exportCode(session.save),
+      onImport: (text) => {
+        try {
+          session.replace(importCode(text));
+          return null;
+        } catch (err) {
+          return err instanceof NewerSaveError ? t('save.errorNewer') : t('save.errorInvalid');
+        }
+      },
+      onClose: () => {
+        this.modal = false;
+        this.scene.restart({});
+      },
+    });
+  }
+
+  private resume(): void {
+    const run = session.save.run;
+    if (this.starting || !run) return;
+    this.starting = true;
+    sfx.tap();
+    this.go(structuredClone(run));
+  }
+
+  private abandon(): void {
+    const run = session.save.run;
+    if (!run) return;
+    const summary = summarize(run, 'death', t('hub.abandoned'));
+    finishRun(session.save, summary);
+    session.commit();
+    this.scene.restart({ summary });
   }
 
   private start(weapon: WeaponId): void {
@@ -191,6 +284,10 @@ export class HubScene extends Phaser.Scene {
       Date.now(),
       GOD_IDS[seed % GOD_IDS.length] ?? 'ra',
     );
+    this.go(run);
+  }
+
+  private go(run: NonNullable<typeof session.save.run>): void {
     this.cameras.main.fadeOut(400, 7, 6, 13);
     this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () =>
       this.scene.start('run', { run }),
