@@ -1,7 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { heatModifiers, heatTotal, setHeat, type HeatLevels } from '../../src/core/heat';
 import { HEAT } from '../../src/data/heat';
-import { drinkFountain, newRun, onRoomCleared, summarize } from '../../src/core/run/state';
+import {
+  NO_PERKS,
+  drinkFountain,
+  newRun,
+  onRoomCleared,
+  summarize,
+} from '../../src/core/run/state';
 import { price } from '../../src/core/shop';
 import { migrate } from '../../src/core/save/migrations';
 import { SHOP_ITEMS } from '../../src/data/shop';
@@ -57,7 +63,7 @@ describe('Mesures d’urgence en jeu', () => {
   });
 
   it('« Sans répit » : pas de fontaine ni de soin de Thot', () => {
-    const run = newRun(1, 'katana', 50, 0, 'ra', { damage: 0, healPerRoom: 5, rareBonus: 0 });
+    const run = newRun(1, 'katana', 50, 0, 'ra', { ...NO_PERKS, healPerRoom: 5 });
     run.hp = 20;
     expect(drinkFountain(run)).toBe(15);
     expect(onRoomCleared(run)).toBe(5);

@@ -11,9 +11,8 @@ const THOTH = 0x7fffc0;
 /** Valeur affichée d'un effet (PV, %, PV par salle…). */
 function displayValue(skill: SkillDef, level: number): number {
   const total = skill.perLevel * level;
-  return skill.effect === 'maxHp' || skill.effect === 'healPerRoom'
-    ? Math.round(total)
-    : Math.round(total * 100);
+  const flat: readonly string[] = ['maxHp', 'healPerRoom', 'startShards', 'revive'];
+  return flat.includes(skill.effect) ? Math.round(total) : Math.round(total * 100);
 }
 
 /** Fenêtre de l'arbre de Thot : une ligne par compétence, niveau, effet, bouton d'achat. */
@@ -83,51 +82,55 @@ export class ThothPanel {
       true,
     ).setOrigin(1, 0);
 
-    const rowTop = top + 52;
-    const rowH = 50;
+    // Deux colonnes de compétences : nom, niveau, effet, bouton d'achat.
+    const rowTop = top + 50;
+    const perCol = Math.ceil(SKILLS.length / 2);
+    const colW = (w - 28) / 2;
+    const rowH = Math.min(66, 268 / perCol);
     SKILLS.forEach((skill, i) => {
-      const y = rowTop + i * rowH;
+      const x = left + 14 + Math.floor(i / perCol) * colW;
+      const y = rowTop + (i % perCol) * rowH;
       const level = skillLevel(this.meta, skill);
       const max = skill.costs.length;
       const cost = nextCost(this.meta, skill);
-      text(left + 14, y + 4, t(skill.nameKey as TextKey), 12, COLORS.text, true);
+      text(x, y + 2, t(skill.nameKey as TextKey), 11, COLORS.text, true);
       const pips = scene.add.graphics();
       for (let p = 0; p < max; p++) {
-        const px = left + 18 + p * 12;
-        pips.lineStyle(1.5, THOTH, 1).strokeRect(px - 4, y + 23, 8, 8);
-        if (p < level) pips.fillStyle(THOTH, 1).fillRect(px - 2.5, y + 24.5, 5, 5);
+        const px = x + 4 + p * 11;
+        pips.lineStyle(1.5, THOTH, 1).strokeRect(px - 4, y + 18, 8, 8);
+        if (p < level) pips.fillStyle(THOTH, 1).fillRect(px - 2.5, y + 19.5, 5, 5);
       }
       this.root.add(pips);
       const shown = Math.max(1, level);
       text(
-        left + 150,
-        y + 4,
+        x + 44,
+        y + 17,
         `${t(skill.descKey as TextKey, { value: displayValue(skill, shown) })}${
           level === 0 ? '' : ` (${t('thoth.level', { level, max })})`
         }`,
-        10,
+        9,
         level > 0 ? COLORS.text : COLORS.textDim,
-      ).setWordWrapWidth(w - 150 - 140);
+      ).setWordWrapWidth(colW - 44 - 104);
 
-      const bx = left + w - 72;
-      const by = y + 17;
+      const bx = x + colW - 58;
+      const by = y + 14;
       const affordable = cost !== null && this.meta.xp >= cost;
       const btn = scene.add.graphics();
-      btn.fillStyle(0x07060d, 1).fillRoundedRect(bx - 60, by - 15, 120, 30, 6);
+      btn.fillStyle(0x07060d, 1).fillRoundedRect(bx - 48, by - 13, 96, 26, 6);
       btn
         .lineStyle(2, affordable ? THOTH : 0x3a3550, 1)
-        .strokeRoundedRect(bx - 60, by - 15, 120, 30, 6);
+        .strokeRoundedRect(bx - 48, by - 13, 96, 26, 6);
       this.root.add(btn);
       text(
         bx,
         by,
-        cost === null ? t('thoth.maxed') : t('thoth.buy', { cost }),
-        11,
+        cost === null ? t('thoth.maxed') : t('thoth.buyShort', { cost }),
+        10,
         affordable ? COLORS.text : COLORS.textDim,
         affordable,
       ).setOrigin(0.5);
       if (affordable) {
-        const zone = scene.add.zone(bx, by, 120, 30).setInteractive({ useHandCursor: true });
+        const zone = scene.add.zone(bx, by, 96, 30).setInteractive({ useHandCursor: true });
         zone.on('pointerup', () => {
           if (!buySkill(this.meta, skill)) return;
           sfx.boonTaken();

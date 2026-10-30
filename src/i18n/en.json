@@ -541,5 +541,13 @@
   "event.shrine.desc": "An old Thoth terminal. It can archive your fight, but it feeds on a little of your life.",
   "event.shrine.accept": "Plug in (−{hp} HP, +{xp} XP)",
   "event.shrine.done": "Fight archived",
-  "event.shrine.doneSub": "+{xp} XP"
+  "event.shrine.doneSub": "+{xp} XP",
+  "skill.thoth_purse": "Ratatosk's Purse",
+  "skill.thoth_purse.desc": "Start each run with {value} shards.",
+  "skill.thoth_ibis": "Ibis Step",
+  "skill.thoth_ibis.desc": "Your dash recharges {value}% faster.",
+  "skill.thoth_rebirth": "Rebirth",
+  "skill.thoth_rebirth.desc": "{value} time(s) per run, a lethal blow brings you back with 40% of your HP.",
+  "revive.sub": "Ash rises from his ashes",
+  "thoth.buyShort": "{cost} XP"
 }

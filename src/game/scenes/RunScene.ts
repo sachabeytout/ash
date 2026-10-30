@@ -83,6 +83,7 @@ import { Controls } from '../input/Controls';
 import { UiScene, type Indicator } from './UiScene';
 import { finishRun } from '../../core/meta';
 import { recordCodex } from '../../core/codex';
+import { REVIVE_HP } from '../../data/skills';
 import { rollAffix, volatileDamage } from '../../core/affixes';
 import { AFFIX_BOUNTY, VOLATILE_BLAST } from '../../data/affixes';
 import { buyItem } from '../../core/shop';
@@ -922,7 +923,10 @@ export class RunScene extends Phaser.Scene {
   /** Les dons du profil qui changent Ash lui-même (Bastet : vitesse, dash). */
   private applyProfile(): void {
     this.player.speedMul = 1 + this.profile.speed;
-    this.player.dashCooldownMul = Math.max(0.3, 1 - (this.profile.on.dash.dashCooldown ?? 0));
+    this.player.dashCooldownMul = Math.max(
+      0.3,
+      1 - (this.profile.on.dash.dashCooldown ?? 0) - this.run.perks.dashCooldown,
+    );
   }
 
   /** État de la cible pour les bonus de dégâts des dons. */
@@ -1725,6 +1729,18 @@ export class RunScene extends Phaser.Scene {
       this.run.hp = Math.min(this.run.maxHp, this.profile.lastBreath);
       this.ui.showBanner(t('boon.hel_last'), '');
       this.juice.burst(this.player.x, this.player.y, GODS.hel.color, 30);
+      return;
+    }
+    if (killed && this.run.revivesUsed < this.run.perks.revives) {
+      // Thot : « Renaissance », Ash se relève des cendres.
+      this.run.revivesUsed += 1;
+      this.run.hp = Math.max(1, Math.round(this.run.maxHp * REVIVE_HP));
+      this.player.revive(this.sim, 1500);
+      for (const s of this.shots) if (s.sprite.active) this.removeShot(s);
+      this.ui.showBanner(t('skill.thoth_rebirth'), t('revive.sub'));
+      this.juice.burst(this.player.x, this.player.y, 0xff7a2a, 40);
+      this.lightning.ring(this.player, 50, 0xffb02e);
+      sfx.super();
       return;
     }
     if (killed) {

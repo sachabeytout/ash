@@ -77,6 +77,17 @@ const MIGRATIONS: Record<number, (save: Raw) => Raw> = {
     const run = isObject(old.run) ? { ...old.run, pendingSpark: false } : old.run;
     return { ...old, version: 10, run };
   },
+  // v10 → v11 : nouvelles compétences de Thot (la run en cours n'en profite pas encore).
+  10: (old) => {
+    if (!isObject(old.run)) return { ...old, version: 11 };
+    const perks = isObject(old.run.perks) ? old.run.perks : {};
+    const run = {
+      ...old.run,
+      revivesUsed: 0,
+      perks: { ...perks, startShards: 0, dashCooldown: 0, revives: 0 },
+    };
+    return { ...old, version: 11, run };
+  },
 };
 
 function isObject(v: unknown): v is Raw {
@@ -200,6 +211,7 @@ function sanitizeRun(raw: unknown): RunState | null {
     superGauge: num(raw.superGauge, 0, 0, 1),
     weaponLevel: num(raw.weaponLevel, 0, 0, 20),
     lastBreathUsed: raw.lastBreathUsed === true,
+    revivesUsed: Math.floor(num(raw.revivesUsed, 0, 0, 9)),
     heat: sanitizeHeat(raw.heat),
     eventTaken: Math.round(num(raw.eventTaken, -1, -1, BIOMES.length - 1)),
     kills: Math.floor(num(raw.kills, 0, 0)),
@@ -208,6 +220,9 @@ function sanitizeRun(raw: unknown): RunState | null {
       damage: num(perks.damage, NO_PERKS.damage, 0),
       healPerRoom: num(perks.healPerRoom, NO_PERKS.healPerRoom, 0),
       rareBonus: num(perks.rareBonus, NO_PERKS.rareBonus, 0),
+      startShards: num(perks.startShards, NO_PERKS.startShards, 0),
+      dashCooldown: num(perks.dashCooldown, NO_PERKS.dashCooldown, 0, 0.5),
+      revives: Math.floor(num(perks.revives, NO_PERKS.revives, 0, 3)),
     },
   };
 }

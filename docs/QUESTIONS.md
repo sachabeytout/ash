@@ -3,7 +3,7 @@
 Liste tenue à jour par Claude. Réponds quand tu veux, même en vrac (« 3 : oui, 7 : plutôt la B »).
 En attendant ta réponse, Claude applique **ce qui est indiqué en gras** (toujours modifiable ensuite).
 
-Dernière mise à jour : 30/10/2026 (version 0.26.0).
+Dernière mise à jour : 30/10/2026 (version 0.27.0).
 
 ## A. Ressenti de jeu
 
@@ -30,6 +30,7 @@ Dernière mise à jour : 30/10/2026 (version 0.26.0).
     11 undecies. Le récapitulatif de fin de run : une info te manque-t-elle (ex. dégâts infligés, meilleur coup) ? → **version actuelle**
     11 duodecies. L'Étincelle du Phénix (améliorer un don) : sort-elle assez souvent ? Trop souvent ? → **aussi rare que les pièces d'arme**
     11 terdecies. Les ennemis marqués (Blindé, Rapide, Instable) : trop fréquents ? L'explosion de l'Instable est-elle juste ? → **8 à 20 % selon le biome**
+    11 quaterdecies. La compétence « Renaissance » (se relever une fois par run) : bonne idée, ou rend-elle le jeu trop facile ? → **250 puis 450 XP, 2 niveaux**
 
 ## B. Histoire (lore v0.2, dans `docs/GDD.md`)
 

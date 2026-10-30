@@ -15,9 +15,22 @@ export interface RunPerks {
   healPerRoom: number;
   /** Chances de rareté en plus pour les dons. */
   rareBonus: number;
+  /** Éclats au début de la run. Ajouté en v11. */
+  startShards: number;
+  /** Recharge du dash plus rapide (0,1 = −10 %). Ajouté en v11. */
+  dashCooldown: number;
+  /** Renaissances par run (Thot). Ajouté en v11. */
+  revives: number;
 }
 
-export const NO_PERKS: RunPerks = { damage: 0, healPerRoom: 0, rareBonus: 0 };
+export const NO_PERKS: RunPerks = {
+  damage: 0,
+  healPerRoom: 0,
+  rareBonus: 0,
+  startShards: 0,
+  dashCooldown: 0,
+  revives: 0,
+};
 
 /** État d'une run en cours (sérialisable : c'est ce qui est sauvegardé à chaque entrée de salle). */
 export interface RunState {
@@ -50,6 +63,8 @@ export interface RunState {
   heat: HeatLevels;
   /** Biome dont l'évènement a déjà été accepté (-1 : aucun). Empêche de le refaire après une reprise. */
   eventTaken: number;
+  /** Renaissances de Thot déjà utilisées pendant cette run. Ajouté en v11. */
+  revivesUsed: number;
   /** Statistiques pour le récapitulatif de fin de run. Ajoutées en v9. */
   kills: number;
   damageTaken: number;
@@ -101,7 +116,7 @@ export function newRun(
     hp: maxHp,
     maxHp,
     damageBonus: perks.damage,
-    shards: 0,
+    shards: perks.startShards,
     xp: 0,
     weaponParts: 0,
     startedAt: now,
@@ -118,6 +133,7 @@ export function newRun(
     eventTaken: -1,
     kills: 0,
     damageTaken: 0,
+    revivesUsed: 0,
   };
 }
 

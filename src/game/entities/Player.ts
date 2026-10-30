@@ -102,6 +102,12 @@ export class Player {
     return phaseAt(this.state.step, now - this.state.startedAt) === 'active';
   }
 
+  /** Renaissance (Thot) : Ash se relève, invincible un moment. */
+  revive(now: number, durationMs: number): void {
+    this.invulnerableUntil = now + durationMs;
+    this.state = { kind: 'free' };
+  }
+
   /** Parade réussie : Ash est brièvement invincible, la garde se termine. */
   parried(now: number): void {
     this.invulnerableUntil = now + 450;

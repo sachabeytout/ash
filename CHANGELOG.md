@@ -2,6 +2,16 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.27.0 — Trois nouvelles compétences de Thot
+
+- **L'arbre de Thot passe de 5 à 8 compétences** (fenêtre réorganisée en deux colonnes) :
+  - **Bourse de Ratatosk** (3 niveaux) : commence chaque run avec 15 / 30 / 45 éclats.
+  - **Pas de l'ibis** (2 niveaux) : ton dash revient 10 % / 20 % plus vite.
+  - **Renaissance** (2 niveaux, 250 puis 450 XP) : une ou deux fois par run, un coup mortel te relève avec 40 % de tes PV, avec un court moment d'invincibilité.
+- Ta sauvegarde passe au nouveau format **sans rien perdre**.
+
+**Quoi tester** : quelle compétence achètes-tu en premier ? La Renaissance rend-elle le jeu trop facile ?
+
 ## 0.26.0 — Deux nouveaux évènements
 
 - **2 nouveaux évènements de salle** (il y en a maintenant 5) :

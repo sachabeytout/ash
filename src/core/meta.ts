@@ -54,6 +54,9 @@ export function runBonuses(meta: MetaState): {
       damage: skillTotal(meta, 'damage'),
       healPerRoom: skillTotal(meta, 'healPerRoom'),
       rareBonus: skillTotal(meta, 'rareBonus'),
+      startShards: skillTotal(meta, 'startShards'),
+      dashCooldown: skillTotal(meta, 'dashCooldown'),
+      revives: skillTotal(meta, 'revive'),
     },
     superStart: Math.min(1, skillTotal(meta, 'superStart')),
   };

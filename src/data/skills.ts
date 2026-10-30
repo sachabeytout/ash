@@ -1,5 +1,13 @@
 /** Arbre de Thot : compétences permanentes achetées avec l'XP (une mort fait toujours progresser). */
-export type SkillEffect = 'maxHp' | 'damage' | 'healPerRoom' | 'rareBonus' | 'superStart';
+export type SkillEffect =
+  | 'maxHp'
+  | 'damage'
+  | 'healPerRoom'
+  | 'rareBonus'
+  | 'superStart'
+  | 'startShards'
+  | 'dashCooldown'
+  | 'revive';
 
 export interface SkillDef {
   id: string;
@@ -54,4 +62,31 @@ export const SKILLS: readonly SkillDef[] = [
     perLevel: 0.25,
     costs: [45, 90],
   },
+  {
+    id: 'thoth_purse',
+    nameKey: 'skill.thoth_purse',
+    descKey: 'skill.thoth_purse.desc',
+    effect: 'startShards',
+    perLevel: 15,
+    costs: [40, 80, 120],
+  },
+  {
+    id: 'thoth_ibis',
+    nameKey: 'skill.thoth_ibis',
+    descKey: 'skill.thoth_ibis.desc',
+    effect: 'dashCooldown',
+    perLevel: 0.1,
+    costs: [70, 140],
+  },
+  {
+    id: 'thoth_rebirth',
+    nameKey: 'skill.thoth_rebirth',
+    descKey: 'skill.thoth_rebirth.desc',
+    effect: 'revive',
+    perLevel: 1,
+    costs: [250, 450],
+  },
 ];
+
+/** Renaissance : part des PV max retrouvés en se relevant. */
+export const REVIVE_HP = 0.4;

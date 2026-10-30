@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { buySkill, nextCost, runBonuses, skillLevel } from '../../src/core/meta';
 import { defaultMeta } from '../../src/core/save/schema';
+import { newRun } from '../../src/core/run/state';
+import { migrate } from '../../src/core/save/migrations';
 import { SKILLS } from '../../src/data/skills';
 import { allDictionaries } from '../../src/i18n';
 
@@ -49,5 +51,29 @@ describe('arbre de Thot', () => {
     expect(b.perks.damage).toBeCloseTo(0.05);
     expect(b.perks.healPerRoom).toBe(3);
     expect(b.superStart).toBeCloseTo(0.5);
+  });
+});
+
+describe('nouvelles compétences de Thot (0.27.0)', () => {
+  it('bourse, pas de l’ibis et renaissance passent dans la run', () => {
+    const meta = defaultMeta();
+    meta.skills = { thoth_purse: 2, thoth_ibis: 1, thoth_rebirth: 1 };
+    const { perks } = runBonuses(meta);
+    expect(perks.startShards).toBe(30);
+    expect(perks.dashCooldown).toBeCloseTo(0.1);
+    expect(perks.revives).toBe(1);
+    const run = newRun(1, 'katana', 50, 0, 'ra', perks);
+    expect(run.shards).toBe(30);
+    expect(run.revivesUsed).toBe(0);
+  });
+
+  it('une run v10 passe en v11 sans renaissance ni bonus nouveaux', () => {
+    const run = newRun(9, 'katana', 50, 0, 'ra') as unknown as Record<string, unknown>;
+    delete run.revivesUsed;
+    run.perks = { damage: 0.05, healPerRoom: 0, rareBonus: 0 };
+    const save = migrate({ version: 10, meta: {}, settings: {}, run });
+    expect(save.run?.revivesUsed).toBe(0);
+    expect(save.run?.perks.damage).toBe(0.05);
+    expect(save.run?.perks.revives).toBe(0);
   });
 });

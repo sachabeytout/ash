@@ -541,5 +541,13 @@
   "event.shrine.desc": "Un vieux terminal de Thot. Il peut archiver ton combat, mais il se nourrit d'un peu de ta vie.",
   "event.shrine.accept": "Se brancher (−{hp} PV, +{xp} XP)",
   "event.shrine.done": "Combat archivé",
-  "event.shrine.doneSub": "+{xp} XP"
+  "event.shrine.doneSub": "+{xp} XP",
+  "skill.thoth_purse": "Bourse de Ratatosk",
+  "skill.thoth_purse.desc": "Commence chaque run avec {value} éclats.",
+  "skill.thoth_ibis": "Pas de l'ibis",
+  "skill.thoth_ibis.desc": "Ton dash revient {value} % plus vite.",
+  "skill.thoth_rebirth": "Renaissance",
+  "skill.thoth_rebirth.desc": "{value} fois par run, un coup mortel te relève avec 40 % de tes PV.",
+  "revive.sub": "Ash se relève de ses cendres",
+  "thoth.buyShort": "{cost} XP"
 }
