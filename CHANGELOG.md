@@ -2,6 +2,13 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.31.1 — Une fontaine chez Ratatosk
+
+- **Une fontaine dans chaque Comptoir de Ratatosk** (à droite en arrivant) : elle rend **30 % de ta vie** entre chaque monde. (Avec la Mesure « Sans répit », elle reste à sec, comme les autres fontaines.)
+- Le nom **« Ratatosk » est maintenant écrit sur son comptoir**.
+
+**Quoi tester** : passe à la fontaine avant de repartir. Le soin te paraît-il suffisant ?
+
 ## 0.31.0 — Le Comptoir de Ratatosk
 
 - **Entre chaque monde, le marchand a maintenant son propre lieu : le Comptoir de Ratatosk.** Il a son décor (plancher de bois chaud, lanternes, caisses) et **sa propre musique**, joyeuse et un peu malicieuse.

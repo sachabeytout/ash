@@ -545,8 +545,12 @@ export class RunScene extends Phaser.Scene {
 
   /** Salle calme : une fontaine soigne une fois, les portes sont déjà ouvertes. */
   private startFountain(): void {
-    const x = ARENA.centerX;
-    const y = ARENA.centerY;
+    this.placeFountain(ARENA.centerX, ARENA.centerY);
+    this.time.delayedCall(600, () => this.clearRoom());
+  }
+
+  /** Fontaine (salle de fontaine, et Comptoir de Ratatosk entre les mondes) : soigne une fois. */
+  private placeFountain(x: number, y: number): void {
     const dry = this.heat.noRest;
     const g = this.add.graphics().setDepth(3);
     g.fillStyle(0x0d1a22, 1).fillCircle(x, y, 22);
@@ -559,7 +563,6 @@ export class RunScene extends Phaser.Scene {
       .setScale(1.6)
       .setBlendMode('ADD');
     this.fountain = { x, y, used: dry, g, glow };
-    this.time.delayedCall(600, () => this.clearRoom());
   }
 
   private updateFountain(): void {
@@ -803,6 +806,8 @@ export class RunScene extends Phaser.Scene {
       .setDepth(20)
       .setAlpha(0);
     this.merchant = { x, y: y + 30, armed: true, bubble };
+    // Une fontaine entre chaque monde, de l'autre côté de l'étal.
+    this.placeFountain(ARENA.centerX + 130, y + 10);
     this.time.delayedCall(400, () => this.ui.showBanner(t('merchant.title'), t('merchant.sub')));
     // Le lieu est sûr : la porte vers le monde suivant est ouverte tout de suite.
     this.time.delayedCall(600, () => this.clearRoom());
@@ -826,14 +831,13 @@ export class RunScene extends Phaser.Scene {
     g.fillStyle(0xc0c8d8, 1).fillTriangle(x + 6, y, x + 11, y - 8, x + 16, y);
     g.fillStyle(0xffe08a, 1).fillCircle(x + 27, y - 3, 3);
     this.add
-      .text(x, y + 24, t('merchant.name'), {
+      .text(x, y + 12, t('merchant.name'), {
         fontFamily: FONT_FAMILY,
         fontSize: '9px',
+        fontStyle: 'bold',
         color: '#ffc46b',
-        stroke: '#07060d',
-        strokeThickness: 3,
       })
-      .setOrigin(0.5, 0)
+      .setOrigin(0.5)
       .setDepth(5);
     // Lanternes et caisses, pour l'ambiance (pas d'obstacle).
     for (const [lx, ly] of [

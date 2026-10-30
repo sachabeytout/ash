@@ -76,6 +76,7 @@ Format : date — décision — raison — validée par l'utilisateur (oui / non
 | 2026-10-30 | Télémétrie 100 % locale (300 salles max), visible seulement dans un menu caché | Aider l'équilibrage sans rien envoyer en ligne | à signaler |
 | 2026-10-30 | Sauvegarde v6 (migration 5 → 6 : Mesures d'urgence) | Sans perte | oui (règle) |
 | 2026-10-30 | Son sur iPhone : le jeu respecte le bouton silencieux (session audio « ambient ») ; l'audio est relancé au retour dans l'app et au toucher suivant, recréé s'il reste bloqué ; audio de Phaser désactivé (tout est synthétisé) | Retour : la musique ne revenait pas après le mode silencieux | à signaler |
+| 2026-10-30 | Fontaine dans chaque Comptoir de Ratatosk (30 % des PV, à sec avec « Sans répit ») | Demande de l'utilisateur (30/10) | oui (demandé) |
 | 2026-10-30 | Le marchand a son propre lieu entre les mondes (Comptoir de Ratatosk : décor, musique, PNJ qui parle) ; la boutique s'ouvre en s'approchant de l'étal, la porte est ouverte dès l'arrivée | Demande de l'utilisateur (30/10) | oui (demandé) |
 | 2026-10-30 | La Cage devient un niveau 0 à parcourir (stations + porte) au lieu d'un menu à boutons ; toucher pour marcher sur téléphone ; arme mémorisée (sauvegarde v13) ; raccourcis 1-7 conservés | Demande de l'utilisateur (30/10) | oui (demandé) |
 | 2026-10-30 | Thot : Bourse (15 éclats/niveau, 40-80-120 XP), Pas de l'ibis (−10 %/niveau, 70-140), Renaissance (1 par niveau, 40 % PV, invincible 1,5 s, 250-450) ; sauvegarde v11 | Progression plus longue ; aide anti-frustration choisie par le joueur | à signaler |
