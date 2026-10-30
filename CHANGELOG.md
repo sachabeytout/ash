@@ -2,6 +2,23 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.7.0 — L'Olympe Corporatif
+
+- **Troisième biome : l'Olympe Corporatif**, des tours de verre et de marbre (sol aux veines dorées, nouvelle musique et sa version boss). On y arrive après Fenrir-Ω, en passant chez Ratatosk.
+- **Nouveaux ennemis** :
+  - **Hoplite-Sécurité** : un coup de lance long et étroit ; esquive sur le côté.
+  - **Harpie-drone** : elle pique en ligne droite.
+  - **Oracle** : une ligne fine vise ta position, puis un rayon part sur toute la ligne.
+- **Nouvel élite : le Minotaure-Ω.** Il enchaîne **3 charges**, chacune annoncée par sa bande rouge.
+- **Nouveau boss : Talos, le géant de bronze.** Ses attaques :
+  - **balayage** : un rayon part de ses yeux et balaie un arc annoncé ; le trait épais montre d'où il part ;
+  - **ondes de choc** et **pluie de débris** (cercles marqués d'une croix) ;
+  - **charge** ;
+  - en phase 2, il appelle des Hoplites.
+- La Cage indique quand tu es tombé face à un boss.
+
+**Quoi tester** : va jusqu'à l'Olympe. Le balayage de Talos est-il lisible ? Le Minotaure est-il trop dur avec ses 3 charges ?
+
 ## 0.6.0 — La forge de Brokk
 
 - **Forge de Brokk** (bouton dans la Cage, ou touche F) : dépense tes **pièces d'arme** pour améliorer chaque arme pour toujours. 5 niveaux par arme :

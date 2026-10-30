@@ -184,6 +184,56 @@ export function ensureGameTextures(scene: Phaser.Scene): void {
     g.fillStyle(0xd8f0ff).fillTriangle(6, 6, 12, 0, 14, 8).fillTriangle(6, 38, 12, 44, 14, 36);
   });
 
+  // Olympe Corporatif. Hoplite-Sécurité : casque à crête, lance pointée vers la droite.
+  shapeTexture(scene, 'hoplite', 22, 16, (g) => {
+    g.fillStyle(0x1a1610).fillCircle(8, 8, 8);
+    g.fillStyle(0xe8d9a8).fillCircle(8, 8, 6.5);
+    g.fillStyle(0x9a8450).fillRect(2, 2, 12, 3);
+    g.fillStyle(0x1a1610).fillRect(5, 7, 6, 2);
+    g.fillStyle(0xc8c8d0).fillRect(12, 7, 9, 2);
+    g.fillStyle(0xf2f2f8).fillTriangle(19, 5, 22, 8, 19, 11);
+  });
+  // Harpie-drone : ailes de verre en V, œil central.
+  shapeTexture(scene, 'harpy', 18, 14, (g) => {
+    g.fillStyle(0x0d1820).fillTriangle(0, 0, 9, 9, 0, 14).fillTriangle(18, 0, 9, 9, 18, 14);
+    g.fillStyle(0x9fe0ff).fillTriangle(1, 2, 8, 8, 1, 12).fillTriangle(17, 2, 10, 8, 17, 12);
+    g.fillStyle(0xf2fbff).fillCircle(9, 8, 2.5);
+  });
+  // Oracle : visage voilé dans un cercle de lumière, œil-lentille.
+  shapeTexture(scene, 'oracle', 16, 16, (g) => {
+    g.fillStyle(0x140f24).fillCircle(8, 8, 8);
+    g.fillStyle(0xc8b8ff).fillCircle(8, 8, 6.5);
+    g.fillStyle(0x6a58b8).fillRect(3, 9, 10, 4);
+    g.fillStyle(0xffffff).fillCircle(8, 6, 2);
+  });
+  // Minotaure-Ω (élite) : tête de taureau, cornes dorées.
+  shapeTexture(scene, 'minotaur', 26, 24, (g) => {
+    g.fillStyle(0x1a120c).fillCircle(13, 13, 11);
+    g.fillStyle(0xd8b48a).fillCircle(13, 13, 9);
+    g.fillStyle(0xffe08a).fillTriangle(2, 10, 0, 0, 7, 6).fillTriangle(24, 10, 26, 0, 19, 6);
+    g.fillStyle(0x8a6a48).fillRoundedRect(8, 15, 10, 6, 2);
+    g.fillStyle(0x1a120c).fillRect(10, 17, 2, 2).fillRect(14, 17, 2, 2);
+    g.fillStyle(0xf6f2ff).fillRect(8, 10, 3, 2).fillRect(15, 10, 3, 2);
+  });
+  // Talos : colosse de bronze, visière lumineuse (les yeux tournés vers la droite).
+  shapeTexture(scene, 'talos', 56, 52, (g) => {
+    g.fillStyle(0x16100a).fillRoundedRect(4, 2, 46, 48, 10);
+    g.fillStyle(0xb8864a).fillRoundedRect(6, 4, 42, 44, 9);
+    g.fillStyle(0x8a5e30).fillRect(10, 30, 34, 6).fillRect(24, 8, 6, 40);
+    g.fillStyle(0x16100a).fillRect(30, 14, 18, 8);
+    g.fillStyle(0xffe08a).fillRect(32, 16, 14, 4);
+    g.fillStyle(0xd8a868).fillCircle(10, 10, 4).fillCircle(10, 42, 4);
+    g.fillStyle(0xffe08a).fillRect(50, 17, 6, 2);
+  });
+  // Sol de l'Olympe : marbre sombre, veines dorées, joints de verre.
+  shapeTexture(scene, 'floorMarble', 32, 32, (g) => {
+    g.fillStyle(0x15120c).fillRect(0, 0, 32, 32);
+    g.fillStyle(0x1c1810).fillRect(1, 1, 30, 30);
+    g.fillStyle(0x3a3320).fillRect(0, 0, 32, 1).fillRect(0, 0, 1, 32);
+    g.fillStyle(0x6a5a30).fillRect(4, 10, 9, 1).fillRect(12, 11, 6, 1).fillRect(20, 23, 8, 1);
+    g.fillStyle(0xffe08a).fillRect(0, 0, 2, 2);
+  });
+
   // Projectile ennemi : losange magenta à cœur blanc (forme + couleur).
   shapeTexture(scene, 'shot', 9, 9, (g) => {
     g.fillStyle(0xff2a6d).fillTriangle(4.5, 0, 9, 4.5, 4.5, 9).fillTriangle(4.5, 0, 0, 4.5, 4.5, 9);

@@ -63,6 +63,10 @@ export class Boss implements Hittable {
   private zoneCount = 0;
   private leapFrom: Vec2 = { x: 0, y: 0 };
   private landingImpact = false;
+  /** Balayage : angle de départ, sens, et angle actuel du rayon. */
+  private sweepFrom = 0;
+  private sweepDir = 1;
+  private sweepAngle = 0;
   health: Health;
   status: StatusState = newStatus();
   lastSwingId = -1;
@@ -207,6 +211,9 @@ export class Boss implements Hittable {
             const speed = reach / (active / 1000);
             vx = Math.cos(this.facing) * speed;
             vy = Math.sin(this.facing) * speed;
+          } else if (this.attack === 'sweep' && def.sweep) {
+            const arc = (def.sweep.arcDeg * Math.PI) / 180;
+            this.sweepAngle = this.sweepFrom + this.sweepDir * arc * Math.min(1, elapsed / active);
           } else if (this.attack === 'leap') {
             const to = this.zones[0] ?? target;
             const t = Math.min(1, elapsed / active);
@@ -266,6 +273,13 @@ export class Boss implements Hittable {
           damage = def.charge.damage;
       } else if (this.attack === 'icefall' && def.icefall) {
         if (this.inZone(player, def.icefall.radius + playerRadius)) damage = def.icefall.damage;
+      } else if (this.attack === 'sweep' && def.sweep) {
+        const ux = Math.cos(this.sweepAngle);
+        const uy = Math.sin(this.sweepAngle);
+        const along = (player.x - this.x) * ux + (player.y - this.y) * uy;
+        const across = Math.abs(-(player.x - this.x) * uy + (player.y - this.y) * ux);
+        if (along > 0 && along < def.sweep.range && across < def.sweep.thickness / 2 + playerRadius)
+          damage = def.sweep.damage;
       }
       if (damage > 0) {
         this.attackLanded = true;
@@ -314,6 +328,7 @@ export class Boss implements Hittable {
       summon: def.summon?.telegraphMs,
       leap: def.leap?.telegraphMs,
       icefall: def.icefall?.telegraphMs,
+      sweep: def.sweep?.telegraphMs,
     }[this.attack];
     return tempo(def, this.phase, base ?? 800);
   }
@@ -325,6 +340,7 @@ export class Boss implements Hittable {
       charge: def.charge?.activeMs,
       leap: def.leap?.activeMs,
       icefall: def.icefall?.activeMs,
+      sweep: def.sweep?.activeMs,
       quake: 0,
       summon: 0,
     }[this.attack];
@@ -340,6 +356,7 @@ export class Boss implements Hittable {
       icefall: def.icefall?.recoveryMs,
       quake: def.quake?.recoveryMs,
       summon: def.summon?.recoveryMs,
+      sweep: def.sweep?.recoveryMs,
     }[this.attack];
     return ms ?? 700;
   }
@@ -375,6 +392,11 @@ export class Boss implements Hittable {
       this.setZone(0, target);
       this.zoneCount = 1;
     }
+    if (this.attack === 'sweep' && this.def.sweep) {
+      // L'arc est centré sur Ash ; le sens est annoncé par le trait plein au bord de départ.
+      this.sweepDir = this.rng.next() < 0.5 ? -1 : 1;
+      this.sweepFrom = angle - (this.sweepDir * (this.def.sweep.arcDeg * Math.PI)) / 360;
+    }
     this.setState('telegraph', now);
     this.mark.setVisible(true);
     this.onTelegraph();
@@ -386,6 +408,11 @@ export class Boss implements Hittable {
     this.telegraph.clear();
     this.mark.setVisible(false);
     switch (this.attack) {
+      case 'sweep':
+        this.attackLanded = false;
+        this.sweepAngle = this.sweepFrom;
+        this.setState('attack', now);
+        break;
       case 'bite':
       case 'charge':
       case 'icefall':
@@ -498,6 +525,25 @@ export class Boss implements Hittable {
         g.lineStyle(2, 0x9ab4ff, 0.9).strokeCircle(this.x, this.y, pulse);
         break;
       }
+      case 'sweep': {
+        if (!def.sweep) break;
+        const arc = (def.sweep.arcDeg * Math.PI) / 180;
+        const a0 = Math.min(this.sweepFrom, this.sweepFrom + this.sweepDir * arc);
+        const a1 = Math.max(this.sweepFrom, this.sweepFrom + this.sweepDir * arc);
+        g.beginPath().slice(this.x, this.y, def.sweep.range, a0, a1).strokePath();
+        g.fillStyle(DANGER, 0.08 + 0.2 * progress)
+          .beginPath()
+          .slice(this.x, this.y, def.sweep.range * progress, a0, a1)
+          .fillPath();
+        // Bord de départ en trait épais : c'est de là que le rayon part.
+        g.lineStyle(4, DANGER, 0.9).lineBetween(
+          this.x,
+          this.y,
+          this.x + Math.cos(this.sweepFrom) * def.sweep.range,
+          this.y + Math.sin(this.sweepFrom) * def.sweep.range,
+        );
+        break;
+      }
       case 'leap':
       case 'icefall': {
         const r = this.attack === 'leap' ? (def.leap?.radius ?? 40) : (def.icefall?.radius ?? 20);
@@ -506,7 +552,11 @@ export class Boss implements Hittable {
           const z = this.zones[i];
           if (!z) continue;
           g.strokeCircle(z.x, z.y, r).fillCircle(z.x, z.y, r * progress);
-          if (this.attack === 'icefall') {
+          if (this.attack === 'icefall' && def.icefall?.glyph === 'cross') {
+            // Croix de débris (Talos).
+            g.lineBetween(z.x - r * 0.45, z.y - r * 0.45, z.x + r * 0.45, z.y + r * 0.45);
+            g.lineBetween(z.x - r * 0.45, z.y + r * 0.45, z.x + r * 0.45, z.y - r * 0.45);
+          } else if (this.attack === 'icefall') {
             // Flocon dans le cercle : on reconnaît la pluie de glace sans la couleur.
             for (let k = 0; k < 3; k++) {
               const a = (k * Math.PI) / 3;
@@ -565,6 +615,11 @@ export class Boss implements Hittable {
         const z = this.zones[i];
         if (z) g.fillCircle(z.x, z.y, def.icefall.radius);
       }
+    } else if (this.attack === 'sweep' && def.sweep) {
+      const ex = this.x + Math.cos(this.sweepAngle) * def.sweep.range;
+      const ey = this.y + Math.sin(this.sweepAngle) * def.sweep.range;
+      g.lineStyle(def.sweep.thickness, DANGER, 0.75).lineBetween(this.x, this.y, ex, ey);
+      g.lineStyle(2, 0xffffff, 0.9).lineBetween(this.x, this.y, ex, ey);
     } else if (this.attack === 'leap' && def.leap) {
       const z = this.zones[0];
       // L'ombre d'atterrissage reste visible pendant tout le saut.

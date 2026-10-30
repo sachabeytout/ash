@@ -213,5 +213,15 @@
     "zero": "no victory",
     "one": "{count} victory",
     "other": "{count} victories"
-  }
+  },
+  "biome.olympus": "Corporate Olympus",
+  "enemy.hoplite": "Security Hoplite",
+  "enemy.harpy": "Harpy Drone",
+  "enemy.oracle": "Oracle",
+  "enemy.minotaur": "Minotaur-Ω",
+  "boss.talos": "Talos",
+  "boss.talos.title": "The Bronze Giant of Olympus",
+  "boss.talos.phase2": "Talos overheats!",
+  "boss.talos.defeated": "Talos collapses!",
+  "hub.lastDeathBoss": "Burned out facing {killer}, at the end of {biome}"
 }

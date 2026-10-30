@@ -213,5 +213,15 @@
     "zero": "aucune victoire",
     "one": "{count} victoire",
     "other": "{count} victoires"
-  }
+  },
+  "biome.olympus": "L'Olympe Corporatif",
+  "enemy.hoplite": "Hoplite-Sécurité",
+  "enemy.harpy": "Harpie-drone",
+  "enemy.oracle": "Oracle",
+  "enemy.minotaur": "Minotaure-Ω",
+  "boss.talos": "Talos",
+  "boss.talos.title": "Le Géant de bronze de l'Olympe",
+  "boss.talos.phase2": "Talos surchauffe !",
+  "boss.talos.defeated": "Talos s'effondre !",
+  "hub.lastDeathBoss": "Consumé face à {killer}, au bout de {biome}"
 }

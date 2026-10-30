@@ -1,7 +1,7 @@
 import type { EnemyId } from './enemies';
 
-export type BossAttackId = 'bite' | 'charge' | 'quake' | 'summon' | 'leap' | 'icefall';
-export type BossId = 'ammit' | 'fenrir';
+export type BossAttackId = 'bite' | 'charge' | 'quake' | 'summon' | 'leap' | 'icefall' | 'sweep';
+export type BossId = 'ammit' | 'fenrir' | 'talos';
 
 export interface BossDef {
   id: BossId;
@@ -69,6 +69,18 @@ export interface BossDef {
     count: number;
     radius: number;
     spread: number;
+    /** Dessin dans les cercles : flocon (glace) ou croix (débris). */
+    glyph?: 'flake' | 'cross';
+  };
+  /** Balayage : un rayon part des yeux et balaie un arc annoncé (on passe derrière, ou on le traverse en dash). */
+  sweep?: {
+    telegraphMs: number;
+    activeMs: number;
+    recoveryMs: number;
+    damage: number;
+    range: number;
+    arcDeg: number;
+    thickness: number;
   };
   /** Récompenses de la victoire (en plus de la sortie). */
   reward: { xp: number; weaponParts: number };
@@ -171,4 +183,61 @@ export const FENRIR: BossDef = {
   reward: { xp: 70, weaponParts: 3 },
 };
 
-export const BOSSES: Record<BossId, BossDef> = { ammit: AMMIT, fenrir: FENRIR };
+/** Talos : le géant de bronze de l'Olympe Corporatif. Lent, massif ; son rayon balaie l'arène. */
+export const TALOS: BossDef = {
+  id: 'talos',
+  texture: 'talos',
+  nameKey: 'boss.talos',
+  titleKey: 'boss.talos.title',
+  phase2Key: 'boss.talos.phase2',
+  defeatedKey: 'boss.talos.defeated',
+  maxHp: 1400,
+  radius: 22,
+  speed: 34,
+  phase2At: 0.5,
+  phase2Tempo: 0.8,
+  idleMs: { min: 600, max: 950 },
+  weights: {
+    1: { sweep: 3, quake: 2, icefall: 2, charge: 1 },
+    2: { sweep: 3, quake: 2, icefall: 2, charge: 1, summon: 1 },
+  },
+  charge: {
+    telegraphMs: 1000,
+    activeMs: 450,
+    recoveryMs: 1000,
+    damage: 18,
+    distance: 220,
+    width: 40,
+  },
+  quake: {
+    telegraphMs: 1000,
+    recoveryMs: 750,
+    damage: 13,
+    ringSpeed: 160,
+    ringMax: 230,
+    thickness: 14,
+  },
+  summon: { telegraphMs: 900, recoveryMs: 700, enemy: 'hoplite', count: 2 },
+  icefall: {
+    telegraphMs: 1000,
+    activeMs: 150,
+    recoveryMs: 700,
+    damage: 13,
+    count: 5,
+    radius: 22,
+    spread: 80,
+    glyph: 'cross',
+  },
+  sweep: {
+    telegraphMs: 1000,
+    activeMs: 900,
+    recoveryMs: 800,
+    damage: 15,
+    range: 190,
+    arcDeg: 150,
+    thickness: 12,
+  },
+  reward: { xp: 90, weaponParts: 4 },
+};
+
+export const BOSSES: Record<BossId, BossDef> = { ammit: AMMIT, fenrir: FENRIR, talos: TALOS };

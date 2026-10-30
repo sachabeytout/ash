@@ -3,7 +3,8 @@
  * Motifs sur 16 pas par mesure ; un caractère = un pas ('.' = silence).
  */
 /** Chaque biome a son thème, et une version « boss » du même thème (même tonalité, mêmes accords, plus intense). */
-export type TrackId = 'hub' | 'lowtown' | 'lowtownBoss' | 'frost' | 'frostBoss';
+export type TrackId =
+  'hub' | 'lowtown' | 'lowtownBoss' | 'frost' | 'frostBoss' | 'olympus' | 'olympusBoss';
 
 export interface TrackDef {
   bpm: number;
@@ -79,6 +80,32 @@ export const TRACKS: Record<TrackId, TrackDef> = {
     hat: 'x.xxx.xxx.xxx.xx',
     pad: true,
     mix: { bass: 0.6, arp: 0.22, kick: 0.7, hat: 0.14, pad: 0.16 },
+  },
+  // L'Olympe Corporatif : marche solennelle, accords de quinte, cloches d'ascenseur.
+  olympus: {
+    bpm: 116,
+    rootHz: 146.83, // ré
+    progression: [0, 5, 3, -2],
+    chord: [0, 7, 10, 15, 19],
+    bass: 'x...x.x.x...x.x.',
+    arp: '0.4.2.4.1.4.3.4.',
+    kick: 'x.......x...x...',
+    hat: '....x.......x...',
+    pad: true,
+    mix: { bass: 0.5, arp: 0.2, kick: 0.6, hat: 0.16, pad: 0.24 },
+  },
+  // Talos : le thème de l'Olympe, plus rapide, martelé comme une forge.
+  olympusBoss: {
+    bpm: 138,
+    rootHz: 146.83,
+    progression: [0, 5, 3, -2],
+    chord: [0, 7, 10, 15, 19],
+    bass: 'x.xxx.xxx.xxx.xx',
+    arp: '0424142434240424',
+    kick: 'x..xx..xx..xx..x',
+    hat: '..x...x...x...x.',
+    pad: true,
+    mix: { bass: 0.58, arp: 0.2, kick: 0.7, hat: 0.14, pad: 0.18 },
   },
   // Fenrir-Ω : le thème du Givre-Serveur, plus rapide, arpège continu.
   frostBoss: {

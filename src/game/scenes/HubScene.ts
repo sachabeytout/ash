@@ -96,11 +96,16 @@ export class HubScene extends Phaser.Scene {
       const seconds = Math.floor((this.summary.elapsedMs % 60000) / 1000);
       lines.push(
         this.summary.outcome === 'death'
-          ? t('hub.lastDeath', {
-              biome: t(getBiome(this.summary.biome).nameKey as TextKey),
-              room: this.summary.room,
-              killer: this.summary.killedBy ?? '?',
-            })
+          ? this.summary.room > getBiome(this.summary.biome).rooms
+            ? t('hub.lastDeathBoss', {
+                biome: t(getBiome(this.summary.biome).nameKey as TextKey),
+                killer: this.summary.killedBy ?? '?',
+              })
+            : t('hub.lastDeath', {
+                biome: t(getBiome(this.summary.biome).nameKey as TextKey),
+                room: this.summary.room,
+                killer: this.summary.killedBy ?? '?',
+              })
           : t('hub.lastClearAll'),
         t('hub.lastStats', {
           minutes,

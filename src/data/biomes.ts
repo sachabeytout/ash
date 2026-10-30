@@ -25,7 +25,7 @@ export interface BiomeDef {
 
 export interface BiomeTheme {
   /** Texture du sol. */
-  floor: 'floor' | 'floorIce';
+  floor: 'floor' | 'floorIce' | 'floorMarble';
   wall: number;
   wallGlow: number;
   neons: readonly [number, number];
@@ -80,6 +80,30 @@ export const BIOMES: readonly BiomeDef[] = [
       wallGlow: 0x8ff0ff,
       neons: [0x8ff0ff, 0x9ab4ff],
       snow: true,
+    },
+  },
+  {
+    id: 'olympus',
+    nameKey: 'biome.olympus',
+    rooms: 10,
+    roster: [
+      { enemy: 'harpy', fromRoom: 1 },
+      { enemy: 'hoplite', fromRoom: 1 },
+      { enemy: 'oracle', fromRoom: 3 },
+    ],
+    waveBudget: { base: 3.5, perRoom: 0.55 },
+    wavesPerRoom: { min: 2, max: 3 },
+    eliteRooms: [4, 8],
+    elite: 'minotaur',
+    boss: 'talos',
+    music: 'olympus',
+    bossMusic: 'olympusBoss',
+    theme: {
+      floor: 'floorMarble',
+      wall: 0x3a3320,
+      wallGlow: 0xffe08a,
+      neons: [0xffe08a, 0x9fe0ff],
+      snow: false,
     },
   },
 ];

@@ -30,6 +30,9 @@ export class Enemy {
   private readonly hex = Array.from({ length: 6 }, () => new Phaser.Math.Vector2());
   private readonly band = Array.from({ length: 4 }, () => new Phaser.Math.Vector2());
   private readonly runeSpots: Vec2[] = [0, 1, 2].map(() => ({ x: 0, y: 0 }));
+  /** Charges restantes dans l'enchaînement (Minotaure) et durée du télégraphe suivant. */
+  private chainLeft = 1;
+  private telegraphOverride: number | null = null;
   def!: EnemyDef;
   status: StatusState = newStatus();
   uid = 0;
@@ -181,14 +184,15 @@ export class Enemy {
           break;
         }
         case 'telegraph': {
-          // Le tireur suit encore sa cible pendant la première moitié, puis la visée se fige : on peut esquiver.
-          if (
-            (def.attack.kind === 'shot' || def.attack.kind === 'charge') &&
-            elapsed < def.telegraphMs * 0.5
-          )
-            this.facing = toTarget;
-          this.drawTelegraph(Math.min(1, elapsed / def.telegraphMs));
-          if (elapsed >= def.telegraphMs) {
+          // Les tireurs et chargeurs suivent leur cible la première moitié, puis la visée se fige : on peut esquiver.
+          const tele = this.telegraphOverride ?? def.telegraphMs;
+          const aims =
+            def.attack.kind === 'shot' ||
+            def.attack.kind === 'charge' ||
+            def.attack.kind === 'beam';
+          if (aims && elapsed < tele * 0.5) this.facing = toTarget;
+          this.drawTelegraph(Math.min(1, elapsed / tele));
+          if (elapsed >= tele) {
             this.telegraph.clear();
             this.mark.setVisible(false);
             if (def.attack.kind === 'shot') {
@@ -219,10 +223,24 @@ export class Enemy {
             vx = Math.cos(this.facing) * speed;
             vy = Math.sin(this.facing) * speed;
             this.drawStrike();
+          } else if (def.attack.kind === 'beam') {
+            this.drawStrike();
           }
           if (elapsed >= def.activeMs) {
             this.telegraph.clear();
-            this.setState('recover', now);
+            this.chainLeft--;
+            if (def.attack.kind === 'charge' && this.chainLeft > 0) {
+              // Charge suivante : réannoncée par un télégraphe plus court (jamais moins de 0,5 s).
+              this.telegraphOverride = Math.max(
+                500,
+                def.attack.repeatTelegraphMs ?? def.telegraphMs,
+              );
+              this.setState('telegraph', now);
+              this.mark.setVisible(true);
+              this.onTelegraph();
+            } else {
+              this.setState('recover', now);
+            }
           }
           break;
         }
@@ -301,6 +319,8 @@ export class Enemy {
 
   private startTelegraph(now: number, angle: number): void {
     this.facing = angle;
+    this.telegraphOverride = null;
+    this.chainLeft = this.def.attack.kind === 'charge' ? (this.def.attack.repeat ?? 1) : 1;
     this.setState('telegraph', now);
     this.mark.setVisible(true);
     this.onTelegraph();
@@ -333,6 +353,17 @@ export class Enemy {
         0.12 + 0.3 * progress,
         progress,
       );
+    } else if (def.attack.kind === 'beam') {
+      // Ligne de visée fine qui s'épaissit : le rayon partira exactement là.
+      const len = def.attack.length;
+      g.lineStyle(1 + progress * 2, DANGER, 0.35 + 0.5 * progress);
+      g.lineBetween(
+        this.x,
+        this.y,
+        this.x + Math.cos(this.facing) * len,
+        this.y + Math.sin(this.facing) * len,
+      );
+      g.strokeCircle(this.x, this.y, def.radius + 4 - progress * 3);
     } else if (def.attack.kind === 'runes') {
       // Cercles runiques : contour, puis remplissage jusqu'à l'explosion.
       const r = def.attack.radius;
@@ -364,6 +395,18 @@ export class Enemy {
       spot.x = target.x + Math.cos(a) * d;
       spot.y = target.y + Math.sin(a) * d;
     });
+  }
+
+  /** Ash est-il sur le rayon ? (distance au segment) */
+  beamHits(target: Vec2, targetRadius: number): boolean {
+    if (this.def.attack.kind !== 'beam') return false;
+    const len = this.def.attack.length;
+    const ux = Math.cos(this.facing);
+    const uy = Math.sin(this.facing);
+    const along = Math.max(0, Math.min(len, (target.x - this.x) * ux + (target.y - this.y) * uy));
+    const px = this.x + ux * along;
+    const py = this.y + uy * along;
+    return Math.hypot(target.x - px, target.y - py) < this.def.attack.width / 2 + targetRadius;
   }
 
   /** Ash est-il dans une rune qui explose ? */
@@ -411,6 +454,15 @@ export class Enemy {
   }
 
   private drawStrike(): void {
+    if (this.def.attack.kind === 'beam') {
+      const g = this.telegraph.clear();
+      const len = this.def.attack.length;
+      const ex = this.x + Math.cos(this.facing) * len;
+      const ey = this.y + Math.sin(this.facing) * len;
+      g.lineStyle(this.def.attack.width, DANGER, 0.75).lineBetween(this.x, this.y, ex, ey);
+      g.lineStyle(2, 0xffffff, 0.9).lineBetween(this.x, this.y, ex, ey);
+      return;
+    }
     if (this.def.attack.kind === 'runes') {
       const g = this.telegraph.clear();
       g.fillStyle(DANGER, 0.7);

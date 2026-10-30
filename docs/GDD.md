@@ -184,6 +184,14 @@ Ennemis : **Loup-relais** (meute rapide), **Givreur** (3 éclats en éventail), 
 
 Voir `src/data/` (sources de vérité). À ajuster avec la télémétrie et les retours de test.
 
+### L'Olympe Corporatif (biome 3, 0.7.0)
+
+Ennemis : **Hoplite-Sécurité** (estoc long et étroit), **Harpie-drone** (piqué en charge courte), **Oracle** (rayon annoncé
+par une ligne). Élite : **Minotaure-Ω** (3 charges enchaînées, chacune réannoncée).
+
+**Talos, le Géant de bronze** : **balayage** (rayon qui balaie un arc annoncé, bord de départ en trait épais), onde de choc,
+pluie de débris (cercles à croix), charge ; phase 2 : invoque des Hoplites.
+
 ## 9. Musique
 
 Synthétisée en code (`src/data/music.ts`). Un thème par biome + **une version boss du même thème** (même tonalité et mêmes

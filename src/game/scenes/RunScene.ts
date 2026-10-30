@@ -847,6 +847,14 @@ export class RunScene extends Phaser.Scene {
 
   private resolveEnemyAttacks(alive: readonly Enemy[]): void {
     for (const e of alive) {
+      if (e.state === 'attack' && !e.attackLanded && e.def.attack.kind === 'beam') {
+        if (this.player.isInvulnerable(this.sim)) continue;
+        if (e.beamHits(this.player, PLAYER.radius)) {
+          e.attackLanded = true;
+          this.hurtPlayer(e.def.damage, e, e.def.nameKey);
+        }
+        continue;
+      }
       if (e.state === 'attack' && !e.attackLanded && e.def.attack.kind === 'runes') {
         if (this.player.isInvulnerable(this.sim)) continue;
         if (e.runeHits(this.player, PLAYER.radius)) {

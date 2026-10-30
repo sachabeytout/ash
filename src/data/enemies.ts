@@ -6,7 +6,11 @@ export type EnemyId =
   | 'wolfbot'
   | 'frostcaster'
   | 'runewarden'
-  | 'einherjar';
+  | 'einherjar'
+  | 'hoplite'
+  | 'harpy'
+  | 'oracle'
+  | 'minotaur';
 
 /** Attaque au corps à corps : télégraphe (zone qui se remplit) puis coup. */
 interface MeleeAttack {
@@ -45,6 +49,17 @@ interface ChargeAttack {
   distance: number;
   /** Largeur de la bande dangereuse (px). */
   width: number;
+  /** Charges enchaînées (le Minotaure), chacune réannoncée par un télégraphe plus court. */
+  repeat?: number;
+  repeatTelegraphMs?: number;
+}
+
+/** Rayon : une ligne fine vise Ash, se fige, puis un rayon épais part sur toute la ligne. */
+interface BeamAttack {
+  kind: 'beam';
+  preferredDistance: number;
+  length: number;
+  width: number;
 }
 
 export interface EnemyDef {
@@ -63,7 +78,7 @@ export interface EnemyDef {
   poise: number;
   /** Couleur du corps (froide) ; les attaques ennemies sont toujours rouge-magenta. */
   color: number;
-  attack: MeleeAttack | ShotAttack | ChargeAttack | RunesAttack;
+  attack: MeleeAttack | ShotAttack | ChargeAttack | RunesAttack | BeamAttack;
   /** Coût dans le « budget » d'une vague. */
   threat: number;
   /** Élite : plus coriace, marqué d'une couronne, rapporte de l'XP. */
@@ -217,5 +232,83 @@ export const ENEMIES: Record<EnemyId, EnemyDef> = {
     threat: 4,
     elite: { xp: 15 },
     shield: { arcDeg: 120, blocked: 0.15 },
+  },
+
+  // ---------- Olympe Corporatif ----------
+  // Hoplite-Sécurité : estoc de lance long et étroit (on l'esquive sur le côté).
+  hoplite: {
+    id: 'hoplite',
+    nameKey: 'enemy.hoplite',
+    maxHp: 60,
+    radius: 8,
+    speed: 60,
+    damage: 11,
+    telegraphMs: 650,
+    activeMs: 140,
+    recoveryMs: 700,
+    cooldownMs: 700,
+    poise: 0.3,
+    color: 0xe8d9a8,
+    attack: { kind: 'melee', triggerRange: 64, range: 62, arcDeg: 30, lunge: 30 },
+    threat: 2,
+  },
+  // Harpie-drone : pique en ligne droite sur une courte distance.
+  harpy: {
+    id: 'harpy',
+    nameKey: 'enemy.harpy',
+    maxHp: 34,
+    radius: 7,
+    speed: 88,
+    damage: 8,
+    telegraphMs: 600,
+    activeMs: 200,
+    recoveryMs: 750,
+    cooldownMs: 800,
+    poise: 0,
+    color: 0x9fe0ff,
+    attack: { kind: 'charge', triggerRange: 120, distance: 120, width: 14 },
+    threat: 1,
+  },
+  // Oracle : rayon laser annoncé par une ligne fine.
+  oracle: {
+    id: 'oracle',
+    nameKey: 'enemy.oracle',
+    maxHp: 40,
+    radius: 7,
+    speed: 44,
+    damage: 10,
+    telegraphMs: 950,
+    activeMs: 260,
+    recoveryMs: 700,
+    cooldownMs: 1700,
+    poise: 0,
+    color: 0xc8b8ff,
+    attack: { kind: 'beam', preferredDistance: 130, length: 260, width: 12 },
+    threat: 2,
+  },
+  // Élite : le Minotaure-Ω enchaîne trois charges ; chacune est réannoncée.
+  minotaur: {
+    id: 'minotaur',
+    nameKey: 'enemy.minotaur',
+    maxHp: 260,
+    radius: 11,
+    speed: 50,
+    damage: 15,
+    telegraphMs: 850,
+    activeMs: 300,
+    recoveryMs: 1200,
+    cooldownMs: 800,
+    poise: 0.85,
+    color: 0xd8b48a,
+    attack: {
+      kind: 'charge',
+      triggerRange: 150,
+      distance: 170,
+      width: 24,
+      repeat: 3,
+      repeatTelegraphMs: 550,
+    },
+    threat: 4,
+    elite: { xp: 20 },
   },
 };
