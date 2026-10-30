@@ -117,6 +117,21 @@ export function ensureGameTextures(scene: Phaser.Scene): void {
     g.fillStyle(0xf6f2ff).fillCircle(11, 9, 2.2);
   });
 
+  // Ammit : crinière sombre, corps violet, gueule de crocodile tournée vers la droite (retournée selon la visée).
+  shapeTexture(scene, 'ammit', 48, 44, (g) => {
+    g.fillStyle(0x0f0b1c).fillCircle(20, 22, 20);
+    g.fillStyle(0x2d6b78).fillCircle(20, 22, 18);
+    g.fillStyle(0x7a68d8).fillCircle(20, 22, 14);
+    g.fillStyle(0x4f40a8).fillRect(28, 15, 20, 14);
+    g.fillStyle(0x0f0b1c).fillRect(30, 21, 18, 2);
+    g.fillStyle(0xf2ecff);
+    for (let x = 31; x < 47; x += 4)
+      g.fillTriangle(x, 15, x + 2, 15, x + 1, 19).fillTriangle(x, 29, x + 2, 29, x + 1, 25);
+    g.fillStyle(0xf6f2ff).fillCircle(26, 16, 2.4).fillCircle(26, 28, 2.4);
+    g.fillStyle(0x0f0b1c).fillCircle(26.6, 16, 1).fillCircle(26.6, 28, 1);
+    g.fillStyle(0x5a9fae).fillTriangle(4, 8, 10, 2, 12, 10).fillTriangle(4, 36, 10, 42, 12, 34);
+  });
+
   // Projectile ennemi : losange magenta à cœur blanc (forme + couleur).
   shapeTexture(scene, 'shot', 9, 9, (g) => {
     g.fillStyle(0xff2a6d).fillTriangle(4.5, 0, 9, 4.5, 4.5, 9).fillTriangle(4.5, 0, 0, 4.5, 4.5, 9);

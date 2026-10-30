@@ -161,5 +161,12 @@
   "options.joystick.floating": "Floating (where your thumb lands)",
   "options.joystick.fixed": "Fixed",
   "options.touchButtonScale": "Button size",
-  "enemy.stalker": "Stalker"
+  "enemy.stalker": "Stalker",
+  "boss.ammit": "Ammit, the Devourer",
+  "boss.ammit.title": "Warden of the Lowtown",
+  "boss.phase2": "Ammit is enraged!",
+  "reward.boss": "Warden",
+  "hud.boss": "Warden of the Lowtown",
+  "hub.lastClearBoss": "Ammit is defeated! What comes next (the Frost Server) is coming soon.",
+  "boss.defeated": "Ammit is defeated!"
 }

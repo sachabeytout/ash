@@ -38,6 +38,9 @@ export class UiScene extends Phaser.Scene {
   private superWasReady = false;
   private indicators: Phaser.GameObjects.Graphics[] = [];
   private pauseButton!: Phaser.GameObjects.Container;
+  private bossBar!: Phaser.GameObjects.Graphics;
+  private banner!: Phaser.GameObjects.Text;
+  private bannerSub!: Phaser.GameObjects.Text;
 
   constructor() {
     super('ui');
@@ -56,6 +59,15 @@ export class UiScene extends Phaser.Scene {
       strokeThickness: 3,
     };
     this.hpBar = this.add.graphics();
+    this.bossBar = this.add.graphics();
+    this.banner = this.add
+      .text(0, 0, '', { ...style, fontSize: '22px', fontStyle: 'bold', strokeThickness: 4 })
+      .setOrigin(0.5)
+      .setAlpha(0);
+    this.bannerSub = this.add
+      .text(0, 0, '', { ...style, fontSize: '12px', color: '#c8bde6' })
+      .setOrigin(0.5)
+      .setAlpha(0);
     this.boonIcons = this.add.graphics();
     this.boonKey = '';
     this.hpText = this.add.text(0, 0, '', style);
@@ -95,6 +107,8 @@ export class UiScene extends Phaser.Scene {
     const { width, height } = this.scale;
     this.hpText.setPosition(12, 29);
     this.room.setPosition(width / 2, 8);
+    this.banner.setPosition(width / 2, height * 0.32);
+    this.bannerSub.setPosition(width / 2, height * 0.32 + 22);
     this.shards.setPosition(width - 44, 8);
     this.pauseButton.setPosition(width - 20, 20);
     this.hurtOverlay.setSize(width, height);
@@ -118,7 +132,10 @@ export class UiScene extends Phaser.Scene {
     if (ready && !this.superWasReady) sfx.superReady();
     this.superWasReady = ready;
     this.touch.setSuperGauge(run.superGauge);
-    this.room.setText(t('hud.room', { room: run.room, total: getBiome(run.biome).rooms }));
+    const rooms = getBiome(run.biome).rooms;
+    this.room.setText(
+      run.room > rooms ? t('hud.boss') : t('hud.room', { room: run.room, total: rooms }),
+    );
     this.shards.setText(t('hud.shards', { count: run.shards }));
     this.showBoons(run);
   }
@@ -157,6 +174,30 @@ export class UiScene extends Phaser.Scene {
         .setAlpha(ind.spawn ? 0.45 : pulse)
         .setScale(ind.spawn ? 0.8 : 1);
     });
+  }
+
+  /** Barre de vie du boss, en haut au centre (marques à 50 % = changement de phase). */
+  showBoss(ratio: number, phase: number): void {
+    const { width } = this.scale;
+    const w = Math.min(260, width * 0.4);
+    const x = width / 2 - w / 2;
+    const g = this.bossBar.clear();
+    if (ratio <= 0) return;
+    g.fillStyle(0x07060d, 0.85).fillRect(x - 2, 24, w + 4, 9);
+    g.fillStyle(0x2a2048, 1).fillRect(x, 26, w, 5);
+    g.fillStyle(phase === 2 ? 0xe08cff : 0xb8a8ff, 1).fillRect(x, 26, Math.round(w * ratio), 5);
+    g.fillStyle(0xffe9d6, 0.9).fillRect(x + w / 2 - 0.5, 24, 1, 9);
+  }
+
+  /** Grand titre temporaire (arrivée du boss, phase 2, victoire). */
+  showBanner(title: string, sub: string): void {
+    this.banner.setText(title);
+    this.bannerSub.setText(sub);
+    for (const obj of [this.banner, this.bannerSub]) {
+      this.tweens.killTweensOf(obj);
+      obj.setAlpha(0);
+      this.tweens.add({ targets: obj, alpha: 1, duration: 250, hold: 1600, yoyo: true });
+    }
   }
 
   flashHurt(): void {

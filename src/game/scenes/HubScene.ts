@@ -91,7 +91,7 @@ export class HubScene extends Phaser.Scene {
       lines.push(
         this.summary.outcome === 'death'
           ? t('hub.lastDeath', { room: this.summary.room, killer: this.summary.killedBy ?? '?' })
-          : t('hub.lastClear'),
+          : t('hub.lastClearBoss'),
         t('hub.lastStats', {
           minutes,
           seconds,

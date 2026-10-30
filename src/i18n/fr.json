@@ -161,5 +161,12 @@
   "options.joystick.floating": "Flottant (où tu poses le pouce)",
   "options.joystick.fixed": "Fixe",
   "options.touchButtonScale": "Taille des boutons",
-  "enemy.stalker": "Traqueur"
+  "enemy.stalker": "Traqueur",
+  "boss.ammit": "Ammit, la Dévoreuse",
+  "boss.ammit.title": "Gardienne des Bas-Fonds",
+  "boss.phase2": "Ammit se déchaîne !",
+  "reward.boss": "Gardienne",
+  "hud.boss": "Gardienne des Bas-Fonds",
+  "hub.lastClearBoss": "Ammit est vaincue ! La suite (le Givre-Serveur) arrive bientôt.",
+  "boss.defeated": "Ammit est vaincue !"
 }

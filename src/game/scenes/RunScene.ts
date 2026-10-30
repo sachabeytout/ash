@@ -22,6 +22,7 @@ import {
 } from '../../core/run/state';
 import { planWaves, type Wave } from '../../core/run/waves';
 import { getBiome } from '../../data/biomes';
+import { AMMIT } from '../../data/bosses';
 import { DASH_AURA_RADIUS, DASH_BOLT_RANGE, getBoon } from '../../data/boons';
 import { GOD_IDS, GODS } from '../../data/gods';
 import { ENEMIES, type EnemyDef } from '../../data/enemies';
@@ -29,7 +30,9 @@ import { PLAYER } from '../../data/player';
 import { WEAPONS } from '../../data/weapons';
 import { t, type TextKey } from '../../i18n';
 import { sfx } from '../audio/sfx';
+import { Boss } from '../entities/Boss';
 import { DANGER, Enemy } from '../entities/Enemy';
+import type { Hittable } from '../entities/Hittable';
 import { Player } from '../entities/Player';
 import { Juice } from '../fx/Juice';
 import { Lightning } from '../fx/Lightning';
@@ -69,7 +72,7 @@ interface Shot {
 }
 
 interface Door {
-  reward: DoorReward | 'exit';
+  reward: DoorReward | 'exit' | 'boss';
   x: number;
   y: number;
   parts: Phaser.GameObjects.GameObject[];
@@ -85,13 +88,14 @@ const FX = {
   heal: '#9dffb0',
 } as const;
 
-const REWARD_STYLE: Record<RewardKind | 'exit', { color: number; label: TextKey }> = {
+const REWARD_STYLE: Record<RewardKind | 'exit' | 'boss', { color: number; label: TextKey }> = {
   boon: { color: 0xffb02e, label: 'reward.boon' },
   shards: { color: 0x7fe7ff, label: 'reward.shards' },
   weaponMod: { color: 0xc0c8d8, label: 'reward.weaponMod' },
   xp: { color: 0xb08cff, label: 'reward.xp' },
   weaponParts: { color: 0xffe08a, label: 'reward.weaponParts' },
   exit: { color: 0xffffff, label: 'reward.exit' },
+  boss: { color: 0xb8a8ff, label: 'reward.boss' },
 };
 
 /** Une salle de combat : vagues d'ennemis, puis choix entre deux portes. */
@@ -103,6 +107,9 @@ export class RunScene extends Phaser.Scene {
   private controls!: Controls;
   private juice!: Juice;
   private enemies: Enemy[] = [];
+  /** Tout ce qu'Ash peut toucher cette frame (ennemis vivants + boss), tableau réutilisé. */
+  private readonly targets: Hittable[] = [];
+  private boss: Boss | null = null;
   private shots: Shot[] = [];
   private pending: PendingSpawn[] = [];
   private waves: Wave[] = [];
@@ -138,6 +145,8 @@ export class RunScene extends Phaser.Scene {
     this.roomCleared = false;
     this.leaving = false;
     this.choosing = false;
+    this.boss = null;
+    this.targets.length = 0;
   }
 
   create(): void {
@@ -191,7 +200,12 @@ export class RunScene extends Phaser.Scene {
     );
 
     this.setupCamera();
-    this.waves = planWaves(biome, this.run.room, (id) => ENEMIES[id].threat, this.rng);
+    if (this.isBossRoom) {
+      this.waves = [];
+      this.startBoss();
+    } else {
+      this.waves = planWaves(biome, this.run.room, (id) => ENEMIES[id].threat, this.rng);
+    }
     this.nextWaveAt = 700;
 
     this.cameras.main.fadeIn(350, 7, 6, 13);
@@ -215,13 +229,85 @@ export class RunScene extends Phaser.Scene {
       }
       if (e.code === 'KeyG') this.run.superGauge = 1;
       if (e.code === 'KeyL') this.spawnWave(['stalker']);
+      if (e.code === 'KeyO') {
+        this.run.room = getBiome(this.run.biome).rooms + 1;
+        this.leaving = true;
+        this.scene.restart({ run: this.run });
+      }
       if (e.code === 'KeyN') {
         this.pending.forEach((p) => p.marker.destroy());
         this.pending = [];
         this.waveIndex = this.waves.length;
         this.enemies.filter((en) => en.alive).forEach((en) => this.killEnemy(en));
+        if (this.boss?.alive) this.defeatBoss();
       }
     });
+  }
+
+  // ---------- Boss ----------
+
+  private get isBossRoom(): boolean {
+    return this.run.room > getBiome(this.run.biome).rooms;
+  }
+
+  private startBoss(): void {
+    const intro = 1900;
+    const boss = new Boss(
+      this,
+      AMMIT,
+      ARENA.centerX,
+      ARENA.top + 70,
+      createRng((this.run.seed ^ 0xa3317) >>> 0),
+      this.sim,
+      intro,
+    );
+    boss.onTelegraph = () => sfx.telegraph();
+    boss.onQuake = () => {
+      sfx.explode();
+      this.juice.shake(0.005, 200);
+    };
+    boss.onSummon = (enemy, count) => this.spawnWave(Array<typeof enemy>(count).fill(enemy));
+    boss.onPhase2 = () => {
+      this.ui.showBanner(t('boss.phase2'), '');
+      this.juice.burst(boss.x, boss.y, 0xb8a8ff, 30);
+      this.juice.shake(0.006, 260);
+      sfx.super();
+    };
+    this.boss = boss;
+    this.time.delayedCall(400, () =>
+      this.ui.showBanner(t(AMMIT.nameKey as TextKey), t(AMMIT.titleKey as TextKey)),
+    );
+  }
+
+  private updateBoss(dt: number): void {
+    const boss = this.boss;
+    if (!boss) return;
+    boss.update(this.sim, dt, this.player, this.isOnScreen(boss));
+    if (!this.leaving && !this.player.isInvulnerable(this.sim)) {
+      const dmg = boss.hazardDamage(this.player, PLAYER.radius);
+      if (dmg > 0) this.hurtPlayer(dmg, boss, boss.def.nameKey);
+    }
+    this.ui.showBoss(boss.alive ? boss.health.hp / boss.health.maxHp : 0, boss.phase);
+  }
+
+  /** Victoire : la Dévoreuse s'effondre, les invocations disparaissent, la sortie s'ouvre. */
+  private defeatBoss(): void {
+    const boss = this.boss;
+    if (!boss?.alive) return;
+    boss.kill();
+    this.run.xp += boss.def.reward.xp;
+    this.run.weaponParts += boss.def.reward.weaponParts;
+    this.juice.hitstop(220);
+    this.juice.shake(0.01, 400);
+    this.juice.burst(boss.x, boss.y, 0xb8a8ff, 40);
+    this.juice.burst(boss.x, boss.y, 0xffe08a, 30);
+    sfx.explode();
+    sfx.kill();
+    this.tweens.add({ targets: boss.sprite, alpha: 0, scale: 1.4, duration: 900 });
+    this.pending.forEach((p) => p.marker.destroy());
+    this.pending = [];
+    this.enemies.filter((en) => en.alive).forEach((en) => this.killEnemy(en));
+    this.ui.showBanner(t('boss.defeated'), '');
   }
 
   // ---------- Pause ----------
@@ -276,7 +362,7 @@ export class RunScene extends Phaser.Scene {
   }
 
   /** Effets appliqués à un ennemi touché par une action (attaque, puissante, dash). */
-  private applyHitEffects(e: Enemy, fx: HitEffects): void {
+  private applyHitEffects(e: Hittable, fx: HitEffects): void {
     if (!e.alive) return;
     if (fx.burn) {
       applyBurn(e.status, this.sim, fx.burn.dps, fx.burn.durationMs);
@@ -291,7 +377,7 @@ export class RunScene extends Phaser.Scene {
   }
 
   /** Duo Râ + Skadi : un ennemi gelé qui brûle explose (une fois par gel). */
-  private checkThermalShock(e: Enemy): void {
+  private checkThermalShock(e: Hittable): void {
     const shock = this.profile.thermalShock;
     if (!shock || !e.alive || e.status.shocked) return;
     if (!isFrozen(e.status, this.sim) || !isBurning(e.status, this.sim)) return;
@@ -302,7 +388,7 @@ export class RunScene extends Phaser.Scene {
     this.juice.burst(at.x, at.y, FX.burn, 18);
     this.juice.shake(0.004);
     sfx.explode();
-    for (const other of this.enemies) {
+    for (const other of this.targets) {
       if (!other.alive) continue;
       if (Math.hypot(other.x - at.x, other.y - at.y) > shock.radius + other.radius) continue;
       this.damageEnemy(other, shock.damage, '#ffffff');
@@ -310,13 +396,13 @@ export class RunScene extends Phaser.Scene {
   }
 
   /** Éclair en chaîne : saute d'ennemi en ennemi à partir de la cible touchée. */
-  private chainLightning(from: Enemy, chain: NonNullable<HitEffects['chain']>): void {
-    const hit = new Set<Enemy>([from]);
+  private chainLightning(from: Hittable, chain: NonNullable<HitEffects['chain']>): void {
+    const hit = new Set<Hittable>([from]);
     let current = { x: from.x, y: from.y };
     for (let i = 0; i < chain.bounces; i++) {
-      let next: Enemy | undefined;
+      let next: Hittable | undefined;
       let best = chain.range;
-      for (const e of this.enemies) {
+      for (const e of this.targets) {
         if (!e.alive || hit.has(e)) continue;
         const d = Math.hypot(e.x - current.x, e.y - current.y);
         if (d < best) {
@@ -337,7 +423,7 @@ export class RunScene extends Phaser.Scene {
   private lightningBolt(at: { x: number; y: number }, damage: number, radius: number): void {
     this.lightning.bolt(at, radius, FX.zap);
     sfx.zap();
-    for (const e of this.enemies) {
+    for (const e of this.targets) {
       if (!e.alive) continue;
       if (Math.hypot(e.x - at.x, e.y - at.y) > radius + e.radius) continue;
       this.damageEnemy(e, damage, FX.zapText);
@@ -349,7 +435,7 @@ export class RunScene extends Phaser.Scene {
     const at = { x: this.player.x, y: this.player.y };
     if (fx.burn || fx.chill) {
       this.lightning.ring(at, DASH_AURA_RADIUS, fx.burn ? FX.burn : FX.ice);
-      for (const e of this.enemies) {
+      for (const e of this.targets) {
         if (!e.alive) continue;
         if (Math.hypot(e.x - at.x, e.y - at.y) > DASH_AURA_RADIUS + e.radius) continue;
         this.applyHitEffects(e, fx);
@@ -361,10 +447,10 @@ export class RunScene extends Phaser.Scene {
     }
   }
 
-  private nearestEnemy(at: { x: number; y: number }, range: number): Enemy | undefined {
-    let best: Enemy | undefined;
+  private nearestEnemy(at: { x: number; y: number }, range: number): Hittable | undefined {
+    let best: Hittable | undefined;
     let bestDist = range;
-    for (const e of this.enemies) {
+    for (const e of this.targets) {
       if (!e.alive || !this.isOnScreen(e)) continue;
       const d = Math.hypot(e.x - at.x, e.y - at.y);
       if (d < bestDist) {
@@ -376,7 +462,7 @@ export class RunScene extends Phaser.Scene {
   }
 
   /** Dégâts venus d'un don (foudre, explosion) : bonus selon l'état de la cible, mort éventuelle. */
-  private damageEnemy(e: Enemy, base: number, color: string): void {
+  private damageEnemy(e: Hittable, base: number, color: string): void {
     if (!e.alive) return;
     const mult = damageMultiplier(this.profile, {
       burning: isBurning(e.status, this.sim),
@@ -390,7 +476,7 @@ export class RunScene extends Phaser.Scene {
 
   /** La brûlure fait ses dégâts par paquets. */
   private updateBurns(): void {
-    for (const e of this.enemies) {
+    for (const e of this.targets) {
       if (!e.alive) continue;
       const dmg = tickBurn(e.status, this.sim);
       if (dmg <= 0) continue;
@@ -417,11 +503,15 @@ export class RunScene extends Phaser.Scene {
 
     this.controls.update();
     const alive = this.enemies.filter((e) => e.alive);
-    if (!this.leaving) this.player.update(this.sim, dt, this.controls, alive);
+    this.targets.length = 0;
+    this.targets.push(...alive);
+    if (this.boss?.alive) this.targets.push(this.boss);
+    if (!this.leaving) this.player.update(this.sim, dt, this.controls, this.targets);
 
     this.updateSpawns();
     for (const e of alive) e.update(this.sim, dt, this.player, this.isOnScreen(e));
-    this.resolvePlayerAttack(alive);
+    this.updateBoss(dt);
+    this.resolvePlayerAttack(this.targets);
     this.updateBurns();
     this.resolveEnemyAttacks(alive);
     this.updateShots();
@@ -477,7 +567,7 @@ export class RunScene extends Phaser.Scene {
   }
 
   /** Un ennemi n'attaque que s'il est visible à l'écran : jamais de coup venu de nulle part. */
-  private isOnScreen(e: Enemy): boolean {
+  private isOnScreen(e: Vec2): boolean {
     const view = this.cameras.main.worldView;
     const inset = 10;
     return (
@@ -505,7 +595,7 @@ export class RunScene extends Phaser.Scene {
       slot.spawn = spawn;
       n++;
     };
-    for (const e of this.enemies) if (e.alive) push(e, false);
+    for (const e of this.targets) if (e.alive) push(e, false);
     for (const s of this.pending) push(s, true);
     this.ui.showIndicators(this.indicatorBuf, n);
   }
@@ -516,6 +606,10 @@ export class RunScene extends Phaser.Scene {
     if (this.roomCleared || this.leaving) return;
     const anyAlive = this.enemies.some((e) => e.alive) || this.pending.length > 0;
     if (anyAlive) return;
+    if (this.isBossRoom) {
+      if (this.boss && !this.boss.alive) this.clearRoom();
+      return;
+    }
     if (this.waveIndex < this.waves.length) {
       if (this.nextWaveAt === 0) this.nextWaveAt = this.sim + 500;
       if (this.sim >= this.nextWaveAt) {
@@ -589,7 +683,7 @@ export class RunScene extends Phaser.Scene {
 
   // ---------- Combat ----------
 
-  private resolvePlayerAttack(alive: readonly Enemy[]): void {
+  private resolvePlayerAttack(alive: readonly Hittable[]): void {
     const swing = this.player.activeSwing(this.sim);
     if (!swing) return;
     const { step } = swing;
@@ -624,7 +718,12 @@ export class RunScene extends Phaser.Scene {
     }
   }
 
-  private killEnemy(e: Enemy): void {
+  private killEnemy(e: Hittable): void {
+    if (e === this.boss) {
+      this.defeatBoss();
+      return;
+    }
+    if (!(e instanceof Enemy)) return;
     if (e.def.elite) {
       this.run.xp += e.def.elite.xp;
       this.juice.damageNumber(e.x, e.y - e.radius - 8, e.def.elite.xp, '#b08cff');
@@ -642,7 +741,7 @@ export class RunScene extends Phaser.Scene {
         const reach = e.def.attack.width / 2 + PLAYER.radius;
         if (Math.hypot(this.player.x - e.x, this.player.y - e.y) < reach) {
           e.attackLanded = true;
-          this.hurtPlayer(e.def.damage, e, e.def);
+          this.hurtPlayer(e.def.damage, e, e.def.nameKey);
         }
         continue;
       }
@@ -652,7 +751,7 @@ export class RunScene extends Phaser.Scene {
         hitsArc(e, e.facing, e.def.attack.range, e.def.attack.arcDeg, this.player, PLAYER.radius)
       ) {
         e.attackLanded = true;
-        this.hurtPlayer(e.def.damage, e, e.def);
+        this.hurtPlayer(e.def.damage, e, e.def.nameKey);
       }
     }
   }
@@ -687,7 +786,7 @@ export class RunScene extends Phaser.Scene {
         Math.hypot(sp.x - this.player.x, sp.y - this.player.y) < hitRadius &&
         !this.player.isInvulnerable(this.sim)
       ) {
-        this.hurtPlayer(s.damage, sp, s.source);
+        this.hurtPlayer(s.damage, sp, s.source.nameKey);
         this.removeShot(s);
       }
     }
@@ -699,7 +798,7 @@ export class RunScene extends Phaser.Scene {
     bodyOf(s.sprite).enable = false;
   }
 
-  private hurtPlayer(amount: number, from: Vec2, source: EnemyDef): void {
+  private hurtPlayer(amount: number, from: Vec2, sourceNameKey: string): void {
     if (this.leaving) return;
     const health = { hp: this.run.hp, maxHp: this.run.maxHp };
     const { dealt, killed } = applyDamage(health, amount);
@@ -713,7 +812,7 @@ export class RunScene extends Phaser.Scene {
     sfx.hurt();
     this.ui.flashHurt();
     if (killed) {
-      this.die(t(source.nameKey as TextKey));
+      this.die(t(sourceNameKey as TextKey));
       return;
     }
     const riposte = this.profile.retaliate;
@@ -731,8 +830,12 @@ export class RunScene extends Phaser.Scene {
     const healed = onRoomCleared(this.run);
     if (healed > 0) this.juice.damageNumber(this.player.x, this.player.y - 12, healed, FX.heal);
     const biome = getBiome(this.run.biome);
-    if (this.run.room >= biome.rooms) {
+    if (this.isBossRoom) {
       this.addDoor('exit', ARENA.centerX);
+      return;
+    }
+    if (this.run.room >= biome.rooms) {
+      this.addDoor('boss', ARENA.centerX);
       return;
     }
     const [a, b] = rollDoors(this.rng, 2);
@@ -740,10 +843,10 @@ export class RunScene extends Phaser.Scene {
     if (b) this.addDoor(b, ARENA.centerX + 120);
   }
 
-  private addDoor(reward: DoorReward | 'exit', x: number): void {
+  private addDoor(reward: DoorReward | 'exit' | 'boss', x: number): void {
     const y = ARENA.top + 16;
-    const kind = reward === 'exit' ? 'exit' : reward.kind;
-    const god = reward !== 'exit' && reward.god ? GODS[reward.god] : undefined;
+    const kind = typeof reward === 'string' ? reward : reward.kind;
+    const god = typeof reward !== 'string' && reward.god ? GODS[reward.god] : undefined;
     const color = god?.color ?? REWARD_STYLE[kind].color;
     const label = god
       ? t('reward.boonOf', { god: t(god.nameKey as TextKey) })
@@ -790,7 +893,7 @@ export class RunScene extends Phaser.Scene {
         this.endRun('cleared');
         return;
       }
-      applyReward(this.run, d.reward.kind, d.reward.god);
+      if (d.reward !== 'boss') applyReward(this.run, d.reward.kind, d.reward.god);
       this.run.room += 1;
       this.cameras.main.fadeOut(300, 7, 6, 13);
       this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () =>
@@ -839,7 +942,7 @@ function getBoonGod(offer: BoonOffer) {
 /** Icône de récompense : chaque type a une forme différente (pas seulement une couleur). */
 function drawRewardIcon(
   g: Phaser.GameObjects.Graphics,
-  kind: RewardKind | 'exit',
+  kind: RewardKind | 'exit' | 'boss',
   x: number,
   y: number,
   color: number,
@@ -876,6 +979,9 @@ function drawRewardIcon(
     }
     case 'exit':
       g.fillTriangle(x - 6, y + 6, x, y - 8, x + 6, y + 6);
+      break;
+    case 'boss': // œil (forme propre à la porte du boss)
+      g.strokeEllipse(x, y, 20, 11).fillCircle(x, y, 3.5);
       break;
   }
 }
