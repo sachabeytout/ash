@@ -43,9 +43,12 @@ import { Lightning } from '../fx/Lightning';
 import { drawGodIcon } from '../icons';
 import type { BoonSceneData } from './BoonScene';
 import type { PauseSceneData } from './PauseScene';
+import type { ShopSceneData } from './ShopScene';
 import { Controls } from '../input/Controls';
 import { UiScene, type Indicator } from './UiScene';
 import { finishRun } from '../../core/meta';
+import { buyItem } from '../../core/shop';
+import { SHARD_BOUNTY, type ShopItemId } from '../../data/shop';
 import { QUALITY_PARTICLES, settings } from '../../core/settings';
 import { cheatsEnabled } from '../debug/cheats';
 import { session } from '../session';
@@ -120,6 +123,8 @@ export class RunScene extends Phaser.Scene {
   private readonly targets: Hittable[] = [];
   private boss: Boss | null = null;
   private kind: RoomKind = 'combat';
+  private shopOpen = false;
+  private shopSold = new Set<ShopItemId>();
   private shots: Shot[] = [];
   private pending: PendingSpawn[] = [];
   private waves: Wave[] = [];
@@ -244,6 +249,7 @@ export class RunScene extends Phaser.Scene {
         this.offerBoon();
       }
       if (e.code === 'KeyG') this.run.superGauge = 1;
+      if (e.code === 'KeyM') this.run.shards += 100;
       if (e.code === 'KeyL') this.spawnWave(['stalker']);
       if (e.code === 'KeyO') {
         this.run.room = getBiome(this.run.biome).rooms + 1;
@@ -314,6 +320,7 @@ export class RunScene extends Phaser.Scene {
     boss.kill();
     this.run.xp += boss.def.reward.xp;
     this.run.weaponParts += boss.def.reward.weaponParts;
+    this.run.shards += SHARD_BOUNTY.boss;
     this.juice.hitstop(220);
     this.juice.shake(0.01, 400);
     this.juice.burst(boss.x, boss.y, 0xb8a8ff, 40);
@@ -330,14 +337,45 @@ export class RunScene extends Phaser.Scene {
   // ---------- Marchand ----------
 
   private startShop(): void {
-    // Le marchand arrive à l'étape suivante ; pour l'instant la salle s'ouvre directement.
-    this.time.delayedCall(600, () => this.clearRoom());
+    this.shopSold = new Set();
+    this.shopOpen = true;
+    this.time.delayedCall(500, () => this.openShop());
+  }
+
+  private openShop(): void {
+    if (!this.shopOpen || this.choosing) return;
+    const rng = createRng((this.run.seed ^ Math.imul(this.run.biome + 1, 97531)) >>> 0);
+    const data: ShopSceneData = {
+      run: this.run,
+      sold: this.shopSold,
+      onBuy: (item) => {
+        if (!buyItem(this.run, item, rng)) return false;
+        if (this.run.pendingBoon) {
+          this.choosing = true;
+          this.time.delayedCall(150, () => this.offerBoon());
+        }
+        return true;
+      },
+      onLeave: () => {
+        this.shopOpen = false;
+        markScene('run');
+        this.clearRoom();
+      },
+    };
+    this.scene.launch('shop', data);
+    this.scene.bringToTop('shop');
   }
 
   // ---------- Pause ----------
 
   openPause(): void {
-    if (this.leaving || this.scene.isPaused() || this.scene.isActive('boon')) return;
+    if (
+      this.leaving ||
+      this.scene.isPaused() ||
+      this.scene.isActive('boon') ||
+      this.scene.isActive('shop')
+    )
+      return;
     this.scene.pause();
     this.scene.pause('ui');
     const data: PauseSceneData = {
@@ -383,6 +421,8 @@ export class RunScene extends Phaser.Scene {
     this.choosing = false;
     this.nextWaveAt = this.sim + 600;
     this.juice.burst(this.player.x, this.player.y, GODS[getBoonGod(offer)].color, 24);
+    if (this.shopOpen) this.time.delayedCall(250, () => this.openShop());
+    else markScene('run');
   }
 
   /** Effets appliqués à un ennemi touché par une action (attaque, puissante, dash). */
@@ -770,6 +810,7 @@ export class RunScene extends Phaser.Scene {
     if (!(e instanceof Enemy)) return;
     if (e.def.elite) {
       this.run.xp += e.def.elite.xp;
+      this.run.shards += SHARD_BOUNTY.elite;
       this.juice.damageNumber(e.x, e.y - e.radius - 8, e.def.elite.xp, '#b08cff');
       this.juice.shake(0.005, 160);
     }

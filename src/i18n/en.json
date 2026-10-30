@@ -168,5 +168,20 @@
   "reward.next": "Continue",
   "biome.frostserver": "The Frost Server",
   "hud.shop": "The merchant",
-  "hub.lastClearAll": "You crossed every biome! What comes next (Corporate Olympus) is coming soon."
+  "hub.lastClearAll": "You crossed every biome! What comes next (Corporate Olympus) is coming soon.",
+  "shop.title": "Ratatosk, the Courier",
+  "shop.greeting": "“Psst! Shards for something to survive up there. I travel between worlds, me.”",
+  "shop.heal": "Healing Ember",
+  "shop.heal.desc": "Restores {value} HP.",
+  "shop.heart": "Ember Heart",
+  "shop.heart.desc": "+{value} max HP (and as much health).",
+  "shop.whetstone": "Rune Stone",
+  "shop.whetstone.desc": "+{value}% damage for this run.",
+  "shop.favor": "A God's Favor",
+  "shop.favor.desc": "A god offers you a boon (choose 1 of 3).",
+  "shop.buy": "Buy · {cost} ◆",
+  "shop.sold": "Sold",
+  "shop.tooPoor": "{cost} ◆ (not enough)",
+  "shop.leave": "Continue",
+  "shop.shards": "◆ {count} shards"
 }

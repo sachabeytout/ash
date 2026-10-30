@@ -168,5 +168,20 @@
   "reward.next": "Continuer",
   "biome.frostserver": "Le Givre-Serveur",
   "hud.shop": "Le marchand",
-  "hub.lastClearAll": "Tu as traversé tous les biomes ! La suite (l'Olympe Corporatif) arrive bientôt."
+  "hub.lastClearAll": "Tu as traversé tous les biomes ! La suite (l'Olympe Corporatif) arrive bientôt.",
+  "shop.title": "Ratatosk, le Coursier",
+  "shop.greeting": "« Psst ! Des éclats contre de quoi survivre là-haut. Je passe entre les mondes, moi. »",
+  "shop.heal": "Braise de soin",
+  "shop.heal.desc": "Rend {value} PV.",
+  "shop.heart": "Cœur de braise",
+  "shop.heart.desc": "+{value} PV max (et autant de vie).",
+  "shop.whetstone": "Pierre runique",
+  "shop.whetstone.desc": "+{value} % de dégâts pour cette run.",
+  "shop.favor": "Faveur d'un dieu",
+  "shop.favor.desc": "Un dieu t'offre un don (choix 1 parmi 3).",
+  "shop.buy": "Acheter · {cost} ◆",
+  "shop.sold": "Vendu",
+  "shop.tooPoor": "{cost} ◆ (pas assez)",
+  "shop.leave": "Continuer",
+  "shop.shards": "◆ {count} éclats"
 }
