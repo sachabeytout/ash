@@ -2,6 +2,18 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.38.0 — L'introduction
+
+- **Une introduction au lancement** (une seule fois, environ 10 secondes) :
+  1. un tas de cendres dans le noir, quelques braises ;
+  2. les braises rougeoient, le feu prend ;
+  3. **Ash se lève du feu** ;
+  4. la **fumée monte et se rassemble pour former le logo « ASH »**, puis le sous-titre apparaît.
+- **Toucher l'écran (ou une touche) la passe**. Elle ne revient plus ensuite.
+- Tu la verras au prochain lancement, même si tu as déjà joué.
+
+**Quoi tester** : regarde-la jusqu'au bout une fois. Te plaît-elle ? Trop longue, trop courte ?
+
 ## 0.37.0 — Les dieux parlent
 
 - **Chaque dieu te parle quand il t'offre un don** : une réplique sous les cartes, avec sa personnalité (36 répliques, un peu d'humour). Par exemple :

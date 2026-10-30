@@ -5,6 +5,8 @@ import { unlockAudio } from '../audio/sfx';
 import { addEmbers, drawCage, ensureTextures } from '../backdrop';
 import { COLORS, FONT_FAMILY, GAME_HEIGHT, GAME_WIDTH } from '../theme';
 import { markScene } from './markScene';
+import { INTRO_ID } from './IntroScene';
+import { session } from '../session';
 
 /** Écran titre « Toucher pour commencer » : le premier toucher débloque l'audio (exigence iOS). */
 export class TitleScene extends Phaser.Scene {
@@ -79,8 +81,10 @@ export class TitleScene extends Phaser.Scene {
       unlockAudio();
       void tryLandscapeFullscreen();
       this.cameras.main.fadeOut(400, 7, 6, 13);
+      // Premier lancement : l'introduction (Ash naît des cendres), puis la Cage.
+      const firstTime = !session.save.meta.seenDialogues.includes(INTRO_ID);
       this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () =>
-        this.scene.start('hub'),
+        this.scene.start(firstTime ? 'intro' : 'hub'),
       );
     };
     this.input.once('pointerdown', start);

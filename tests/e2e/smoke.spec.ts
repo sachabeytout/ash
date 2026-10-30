@@ -14,7 +14,12 @@ test('écran titre → cage → don → combat → reprise après fermeture', as
   await shot('titre');
 
   await page.locator('#game canvas').click();
-  await expect(page.locator('body')).toHaveAttribute('data-scene', 'hub');
+  // Premier lancement : l'introduction (Ash naît des cendres), qu'on passe.
+  await expect(page.locator('body')).toHaveAttribute('data-scene', 'intro', { timeout: 10000 });
+  await page.waitForTimeout(1500);
+  await shot('intro');
+  await page.keyboard.press('Escape');
+  await expect(page.locator('body')).toHaveAttribute('data-scene', 'hub', { timeout: 10000 });
   // Première visite : Aelia parle à travers les braises.
   // (Le navigateur de test dessine lentement : on laisse le temps au dialogue d'apparaître.)
   await expect(page.locator('body')).toHaveAttribute('data-scene', 'dialogue', { timeout: 15000 });
