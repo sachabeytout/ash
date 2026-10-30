@@ -3,7 +3,7 @@
 Liste tenue à jour par Claude. Réponds quand tu veux, même en vrac (« 3 : oui, 7 : plutôt la B »).
 En attendant ta réponse, Claude applique **ce qui est indiqué en gras** (toujours modifiable ensuite).
 
-Dernière mise à jour : 30/10/2026 (version 0.15.0).
+Dernière mise à jour : 30/10/2026 (version 0.16.0).
 
 ## A. Ressenti de jeu
 
@@ -25,6 +25,7 @@ Dernière mise à jour : 30/10/2026 (version 0.15.0).
     11 sexies. En mode silencieux, veux-tu que le jeu reste muet (comme maintenant) ou que la musique joue quand même ? → **muet en mode silencieux**
     11 septies. Les obstacles dans les salles : t'aident-ils (abri contre les tirs) ou te gênent-ils ? En veux-tu plus, moins ? → **6 dispositions, pas dans la 1re salle**
     11 octies. Les salles d'évènement (braise, âme en cage, enclume) : lesquelles te plaisent ? Des idées d'autres évènements ? → **3 évènements, un par biome**
+    11 nonies. Le halo néon (qualité Haute) : te plaît-il ou trouves-tu l'image moins nette ? → **halo léger en Haute**
 
 ## B. Histoire (lore v0.2, dans `docs/GDD.md`)
 

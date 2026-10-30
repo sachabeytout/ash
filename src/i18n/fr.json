@@ -419,5 +419,7 @@
   "event.leave": "Partir",
   "event.blocked.taken": "Déjà fait",
   "event.blocked.hp": "Trop faible (plus de {hp} PV)",
-  "event.blocked.shards": "Il faut {shards} éclats"
+  "event.blocked.shards": "Il faut {shards} éclats",
+  "options.quality.auto": "Auto ({level})",
+  "options.quality.lowered": "Qualité baissée automatiquement : {level}"
 }

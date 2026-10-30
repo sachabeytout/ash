@@ -31,6 +31,8 @@ import { ThothPanel } from '../ui/ThothPanel';
 import { assistReduction } from '../../core/assist';
 import { forgeLevel, isUnlocked } from '../../core/forge';
 import { settings } from '../../core/settings';
+import { applyPostFx, autoLowerQuality } from '../fx/postfx';
+import { newAutoQuality } from '../../core/perf';
 import { markScene } from './markScene';
 
 /** La Cage (hub) : résumé de la dernière run, reprise, choix de l'arme, sauvegarde. */
@@ -254,12 +256,17 @@ export class HubScene extends Phaser.Scene {
     });
 
     this.cameras.main.fadeIn(500, 7, 6, 13);
+    applyPostFx(this.cameras.main, settings.quality);
+    this.autoQuality = newAutoQuality();
     music.play('hub');
     markScene('hub');
     this.time.delayedCall(650, () => this.playStory());
   }
 
-  override update(): void {
+  private autoQuality = newAutoQuality();
+
+  override update(_time: number, delta: number): void {
+    autoLowerQuality(this.autoQuality, delta, this.cameras.main);
     if (this.modal) return;
     const pad = navigator.getGamepads?.().find((p) => p?.connected);
     if (!pad) return;
@@ -374,10 +381,12 @@ export class HubScene extends Phaser.Scene {
     const dialogue = nextDialogue(meta, last);
     if (!dialogue) return;
     this.modal = true;
+    markScene('dialogue');
     new DialogueBox(this, dialogue, () => {
       markSeen(meta, dialogue.id);
       session.commit();
       this.modal = false;
+      markScene('hub');
       // La Lame de l'Aube vient d'être forgée : on redessine la Cage pour l'afficher.
       if (dialogue.id === `victory_${DAWNBLADE_VICTORIES}`) this.scene.restart({});
     });

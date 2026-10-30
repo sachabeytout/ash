@@ -70,4 +70,5 @@ Retour sur le lore v0.2 toujours attendu (« quand le fond aura avancé »).
 - [x] **M3.1 (0.13.0)** : Épreuves de Vesper (salle chronométrée, coffre ; échec sans pénalité)
 - [x] **M3.2 (0.14.0)** : obstacles dans les arènes (6 dispositions, couvert contre les tirs, contournement par les ennemis)
 - [x] **M3.3 (0.15.0)** : salles d'évènement (Braise d'Aelia, Âme en cage, Enclume de Brokk), sauvegarde v7
+- [x] **M3.4 (0.16.0)** : rendu néon (halo, vignettage selon la qualité) et qualité automatique
 - [ ] **M3** : finitions — coffres et évènements, préréglages de qualité, équilibrage avec la télémétrie, accessibilité

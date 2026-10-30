@@ -83,6 +83,8 @@ import { NO_WEAPON_BONUS, weaponBonuses, type WeaponBonuses } from '../../core/f
 import { SHARD_BOUNTY, type ShopItemId } from '../../data/shop';
 import { TRUE_ENDING_VICTORIES } from '../../data/story';
 import { QUALITY_PARTICLES, settings } from '../../core/settings';
+import { newAutoQuality } from '../../core/perf';
+import { applyPostFx, autoLowerQuality } from '../fx/postfx';
 import { cheatsEnabled } from '../debug/cheats';
 import { session } from '../session';
 import { telemetry } from '../telemetry';
@@ -235,6 +237,7 @@ export class RunScene extends Phaser.Scene {
     armed: boolean;
     parts: Phaser.GameObjects.GameObject[];
   } | null = null;
+  private autoQuality = newAutoQuality();
   private shopOpen = false;
   private shopSold = new Set<ShopItemId>();
   private shots: Shot[] = [];
@@ -289,6 +292,7 @@ export class RunScene extends Phaser.Scene {
     this.trial = null;
     this.chest = null;
     this.eventSpot = null;
+    this.autoQuality = newAutoQuality();
     this.roomStart = { elapsed: this.run.elapsedMs, hp: this.run.hp };
     this.drawArena();
     this.placeObstacles();
@@ -1012,6 +1016,7 @@ export class RunScene extends Phaser.Scene {
   }
 
   override update(_time: number, delta: number): void {
+    this.watchPerformance(delta);
     if (this.juice.frozen) {
       if (!this.physics.world.isPaused) this.physics.world.pause();
       return;
@@ -1155,6 +1160,13 @@ export class RunScene extends Phaser.Scene {
       ARENA.height + margin * 2,
     );
     cam.startFollow(this.player.sprite, true, 0.14, 0.14);
+    applyPostFx(cam, settings.quality);
+  }
+
+  /** Qualité automatique : si le jeu rame, on baisse d'un cran et on le dit discrètement. */
+  private watchPerformance(delta: number): void {
+    const next = autoLowerQuality(this.autoQuality, delta, this.cameras.main);
+    if (next) this.ui.toast(t('options.quality.lowered', { level: t(`options.quality.${next}`) }));
   }
 
   /** Un ennemi n'attaque que s'il est visible à l'écran : jamais de coup venu de nulle part. */

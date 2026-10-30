@@ -1,6 +1,6 @@
 # Architecture (carte du projet)
 
-> Statut 0.15.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
+> Statut 0.16.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
 > combat/attack+health+status+superGauge, boons/boons, run/waves+rewards+state, save/schema+migrations+codec+store),
 > `data/` (player, weapons, enemies, biomes, gods, boons, status, skills, bosses, music, shop), `game/` (scenes Title, Hub,
 > Run, Ui, Boon, Pause, Shop ; entities Player, Enemy, Boss, Hittable ; input Controls, TouchControls ; fx/Juice+Lightning ;
@@ -67,6 +67,9 @@ par-dessus). Mort ou sortie → `hub` avec un `RunSummary`.
 - Salles spéciales : `src/core/run/special.ts` (`specialRooms` : une épreuve + un évènement par biome). Évènements :
   `src/core/run/events.ts` (`eventOf`, `eventCost`, `takeEvent`, sauvegarde v7 `eventTaken`), fenêtre
   `src/game/scenes/EventScene.ts`, dessins `src/game/scenes/eventIcons.ts`, `RunScene.startEvent` / `openEvent`.
+- Rendu néon : `src/game/fx/postfx.ts` (`applyPostFx` : halo ParallelFilters + vignettage selon la qualité), appelé
+  par `RunScene.setupCamera`, `HubScene` et les Options. Qualité auto : `src/core/perf.ts` (`tickAutoQuality`),
+  `autoLowerQuality` (`postfx.ts`, Cage et run), message `UiScene.toast` ; réglage `autoQuality`.
 - Obstacles : dispositions et contournement dans `src/core/arena/obstacles.ts` (`LAYOUTS`, `planObstacles`,
   `steerAround`) ; zones libres `KEEP_OUT` et `RunScene.placeObstacles` / `addObstacleColliders` ; tirs arrêtés dans
   `RunScene.updateShots` et `PlayerShots` (`obstacles`).

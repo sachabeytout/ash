@@ -14,6 +14,8 @@ export interface Settings {
   touchButtonScale: number;
   /** Préréglage graphique : moins d'effets sur les petits téléphones. */
   quality: Quality;
+  /** Qualité automatique : baisse d'un cran si le jeu rame. */
+  autoQuality: boolean;
   language: LanguageSetting;
   /** Bénédiction du Phénix (mode assistance). */
   assist: boolean;
@@ -30,6 +32,7 @@ export const DEFAULT_SETTINGS: Settings = {
   joystick: 'floating',
   touchButtonScale: 1,
   quality: 'high',
+  autoQuality: true,
   language: 'auto',
   assist: false,
 };

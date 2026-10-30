@@ -419,5 +419,7 @@
   "event.leave": "Leave",
   "event.blocked.taken": "Already done",
   "event.blocked.hp": "Too weak (need over {hp} HP)",
-  "event.blocked.shards": "Needs {shards} shards"
+  "event.blocked.shards": "Needs {shards} shards",
+  "options.quality.auto": "Auto ({level})",
+  "options.quality.lowered": "Quality lowered automatically: {level}"
 }

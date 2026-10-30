@@ -2,6 +2,13 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.16.0 — Rendu néon et qualité automatique
+
+- **Rendu néon** : en qualité **Haute**, les lumières vives ont un léger **halo**, et les bords de l'écran sont un peu assombris pour mettre l'action au centre. En **Moyenne**, seulement les bords assombris. En **Basse**, aucun effet (le plus fluide).
+- **Qualité « Auto »** (réglage par défaut) : si le jeu rame, la qualité **baisse toute seule** d'un cran et un petit message te le dit. Elle ne remonte jamais seule ; tu peux la changer dans les Options (Auto → Basse → Moyenne → Haute).
+
+**Quoi tester** : le halo te plaît-il ou gêne-t-il la lecture ? As-tu vu le message « Qualité baissée automatiquement » ?
+
 ## 0.15.0 — Salles d'évènement
 
 - **Une salle d'évènement par biome**, sans combat. Approche-toi de l'objet au centre : un court texte s'affiche, et tu choisis **Accepter** ou **Partir** (partir ne coûte jamais rien).

@@ -44,6 +44,7 @@ export class UiScene extends Phaser.Scene {
   private fps!: Phaser.GameObjects.Text;
   private banner!: Phaser.GameObjects.Text;
   private trial!: Phaser.GameObjects.Text;
+  private toastText!: Phaser.GameObjects.Text;
   private trialKey = '';
   private bannerSub!: Phaser.GameObjects.Text;
 
@@ -79,6 +80,10 @@ export class UiScene extends Phaser.Scene {
       .setOrigin(0.5, 0)
       .setVisible(false);
     this.trialKey = '';
+    this.toastText = this.add
+      .text(0, 0, '', { ...style, fontSize: '10px', color: '#c8bde6' })
+      .setOrigin(0.5, 0)
+      .setAlpha(0);
     this.boonIcons = this.add.graphics();
     this.boonKey = '';
     this.hpText = this.add.text(0, 0, '', style);
@@ -119,6 +124,7 @@ export class UiScene extends Phaser.Scene {
     this.hpText.setPosition(12, 29);
     this.room.setPosition(width / 2, 8);
     this.trial.setPosition(width / 2, 24);
+    this.toastText.setPosition(width / 2, 42);
     this.banner.setPosition(width / 2, height * 0.32);
     this.bannerSub.setPosition(width / 2, height * 0.32 + 22);
     this.shards.setPosition(width - 44, 8);
@@ -239,6 +245,14 @@ export class UiScene extends Phaser.Scene {
       obj.setAlpha(0);
       this.tweens.add({ targets: obj, alpha: 1, duration: 250, hold: 1600, yoyo: true });
     }
+  }
+
+  /** Petit message discret sous le titre de la salle (quelques secondes). */
+  toast(text: string): void {
+    this.toastText.setText(text);
+    this.tweens.killTweensOf(this.toastText);
+    this.toastText.setAlpha(0);
+    this.tweens.add({ targets: this.toastText, alpha: 1, duration: 250, hold: 2600, yoyo: true });
   }
 
   flashHurt(): void {

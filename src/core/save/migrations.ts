@@ -208,6 +208,8 @@ function sanitizeSettings(raw: unknown): Settings {
     touchButtonScale: num(s.touchButtonScale, d.touchButtonScale, 0.7, 1.5),
     // Ajoutés en 0.4.0 : absents des anciennes sauvegardes → valeurs par défaut (pas de perte).
     quality: s.quality === 'low' || s.quality === 'medium' ? s.quality : 'high',
+    // Ajouté en 0.16.0 : activé par défaut (ne fait que baisser la qualité si le jeu rame).
+    autoQuality: bool(s.autoQuality, d.autoQuality),
     language: s.language === 'fr' || s.language === 'en' ? s.language : 'auto',
     assist: bool(s.assist, d.assist),
   };

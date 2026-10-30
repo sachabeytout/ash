@@ -16,9 +16,12 @@ test('écran titre → cage → don → combat → reprise après fermeture', as
   await page.locator('#game canvas').click();
   await expect(page.locator('body')).toHaveAttribute('data-scene', 'hub');
   // Première visite : Aelia parle à travers les braises.
-  await page.waitForTimeout(1200);
+  // (Le navigateur de test dessine lentement : on laisse le temps au dialogue d'apparaître.)
+  await expect(page.locator('body')).toHaveAttribute('data-scene', 'dialogue', { timeout: 15000 });
+  await page.waitForTimeout(400);
   await shot('dialogue');
   await page.keyboard.press('Escape');
+  await expect(page.locator('body')).toHaveAttribute('data-scene', 'hub');
   await page.waitForTimeout(400);
   await shot('cage');
 

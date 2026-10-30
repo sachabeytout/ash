@@ -4,6 +4,7 @@ import { detectLocale, setLocale, t, type TextKey } from '../../i18n';
 import { sfx } from '../audio/sfx';
 import { DebugPanel } from './DebugPanel';
 import { session } from '../session';
+import { applyPostFx } from '../fx/postfx';
 import { COLORS, FONT_FAMILY } from '../theme';
 
 type Row =
@@ -18,7 +19,7 @@ const ROWS: readonly Row[] = [
   { kind: 'step', key: 'masterVolume' },
   { kind: 'step', key: 'sfxVolume' },
   { kind: 'step', key: 'musicVolume' },
-  { kind: 'choice', key: 'quality', values: ['low', 'medium', 'high'] },
+  { kind: 'choice', key: 'quality', values: ['auto', 'low', 'medium', 'high'] },
   { kind: 'choice', key: 'language', values: ['auto', 'fr', 'en'] },
   { kind: 'toggle', key: 'screenShake' },
   { kind: 'toggle', key: 'vibration' },
@@ -132,6 +133,10 @@ export class OptionsPanel {
       );
       return;
     }
+    if (row.key === 'quality') {
+      this.qualityControl(x, y, width);
+      return;
+    }
     const current = String(settings[row.key]);
     const label = t(`options.${row.key}.${current}` as TextKey);
     this.root.add(
@@ -147,9 +152,33 @@ export class OptionsPanel {
     );
   }
 
+  /** Qualité : Auto → Basse → Moyenne → Haute → Auto. « Auto » repart de Haute et baisse si le jeu rame. */
+  private qualityControl(x: number, y: number, width: number): void {
+    const level = t(`options.quality.${settings.quality}`);
+    const label = settings.autoQuality ? t('options.quality.auto', { level }) : level;
+    this.root.add(
+      this.button(x + width / 2, y + 9, width, 22, label, () => {
+        if (settings.autoQuality) {
+          settings.autoQuality = false;
+          settings.quality = 'low';
+        } else if (settings.quality === 'high') {
+          settings.autoQuality = true;
+        } else {
+          settings.quality = settings.quality === 'low' ? 'medium' : 'high';
+        }
+        this.changed();
+      }),
+    );
+  }
+
   private changed(): void {
     sfx.tap();
     session.commit();
+    // Le rendu néon suit la qualité tout de suite (Cage ou run en pause derrière).
+    for (const key of ['hub', 'run']) {
+      const target = this.scene.scene.get(key);
+      if (target?.sys.settings.active) applyPostFx(target.cameras.main, settings.quality);
+    }
     this.build();
   }
 
