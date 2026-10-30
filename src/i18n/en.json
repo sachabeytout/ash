@@ -481,5 +481,8 @@
   "reward.spark": "Spark",
   "spark.title": "Phoenix Spark",
   "spark.subtitle": "One of your boons gains a rarity tier",
-  "spark.from": "{from} → {to}"
+  "spark.from": "{from} → {to}",
+  "codex.tab.memory": "Memories",
+  "codex.memory.none": "No memories yet. Dialogues from the Cage appear here once heard.",
+  "codex.memory.replay": "Replay"
 }

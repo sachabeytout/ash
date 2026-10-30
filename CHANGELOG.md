@@ -2,6 +2,15 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.20.0 — Souvenirs
+
+- **Nouvel onglet « Souvenirs »** dans les Archives de Thot (4e onglet, ou touche 4) : tous les dialogues déjà entendus dans la Cage, dans l'ordre.
+  - Touche un souvenir pour lire toutes ses répliques.
+  - Le bouton « Réécouter » le rejoue dans la boîte de dialogue habituelle.
+- Pratique pour suivre l'histoire, même si tu as passé un dialogue trop vite.
+
+**Quoi tester** : ouvre Archives → Souvenirs. Relire l'histoire comme ça te convient-il ?
+
 ## 0.19.0 — L'Étincelle du Phénix
 
 - **Nouvelle récompense de porte : l'Étincelle** (icône : flamme et flèche vers le haut).

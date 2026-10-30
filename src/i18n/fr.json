@@ -481,5 +481,8 @@
   "reward.spark": "Étincelle",
   "spark.title": "Étincelle du Phénix",
   "spark.subtitle": "Un de tes dons gagne un cran de rareté",
-  "spark.from": "{from} → {to}"
+  "spark.from": "{from} → {to}",
+  "codex.tab.memory": "Souvenirs",
+  "codex.memory.none": "Aucun souvenir pour l'instant. Les dialogues de la Cage s'affichent ici une fois entendus.",
+  "codex.memory.replay": "Réécouter"
 }

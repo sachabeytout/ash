@@ -74,4 +74,5 @@ Retour sur le lore v0.2 toujours attendu (« quand le fond aura avancé »).
 - [x] **M3.5 (0.17.0)** : Archives de Thot (29 fiches débloquées à la rencontre), sauvegarde v8
 - [x] **M3.6 (0.18.0)** : récapitulatif de fin de run (stats, dons), sauvegarde v9
 - [x] **M3.7 (0.19.0)** : Étincelle du Phénix (un don gagne un cran de rareté), sauvegarde v10
+- [x] **M3.8 (0.20.0)** : Souvenirs (relire et réécouter les dialogues de la Cage)
 - [ ] **M3** : finitions — coffres et évènements, préréglages de qualité, équilibrage avec la télémétrie, accessibilité
