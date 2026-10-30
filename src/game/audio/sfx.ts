@@ -10,16 +10,85 @@ const lastPlayed = new Map<string, number>();
 
 export function unlockAudio(): void {
   try {
-    ctx ??= new AudioContext();
-    if (ctx.state === 'suspended') void ctx.resume();
+    ctx ??= createContext();
+    if (ctx.state !== 'running') void ctx.resume().catch(() => undefined);
     if (!noiseBuffer) {
       noiseBuffer = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
       const data = noiseBuffer.getChannelData(0);
       for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
     }
+    watchAudio();
   } catch {
     ctx = null; // Pas d'audio disponible : le jeu continue en silence.
   }
+}
+
+/** Prévenus quand le contexte audio est recréé (la musique repart dessus). */
+const resetListeners: (() => void)[] = [];
+
+export function onAudioReset(listener: () => void): void {
+  resetListeners.push(listener);
+}
+
+function createContext(): AudioContext {
+  // iOS 17+ : « ambient » respecte le bouton silencieux et laisse jouer la musique de l'utilisateur.
+  const session = (navigator as Navigator & { audioSession?: { type: string } }).audioSession;
+  if (session) {
+    try {
+      session.type = 'ambient';
+    } catch {
+      // ignoré
+    }
+  }
+  return new AudioContext();
+}
+
+let watching = false;
+let lastReset = 0;
+/** Une recréation au plus toutes les 3 s (si iOS garde l'audio coupé, inutile d'insister). */
+const RESET_COOLDOWN_MS = 3000;
+
+/**
+ * iOS coupe l'audio (état « interrupted » ou « suspended ») quand on bascule le bouton
+ * silencieux, reçoit un appel ou quitte l'app, et ne le relance pas toujours seul. On le relance
+ * au retour dans l'app et au toucher suivant ; s'il reste bloqué, on recrée le contexte.
+ */
+function watchAudio(): void {
+  if (watching) return;
+  watching = true;
+  const revive = (fromGesture: boolean) => {
+    if (!ctx || document.visibilityState !== 'visible' || ctx.state === 'running') return;
+    const stuck = ctx;
+    void stuck.resume().catch(() => undefined);
+    if (!fromGesture) return;
+    setTimeout(() => {
+      if (ctx !== stuck || stuck.state === 'running') return;
+      if (performance.now() - lastReset < RESET_COOLDOWN_MS) return;
+      lastReset = performance.now();
+      resetContext();
+    }, 400);
+  };
+  for (const type of ['pointerdown', 'touchend', 'keydown'] as const)
+    window.addEventListener(type, () => revive(true), { capture: true, passive: true });
+  document.addEventListener('visibilitychange', () => revive(false));
+  window.addEventListener('focus', () => revive(false));
+  window.addEventListener('pageshow', () => revive(false));
+  // Contrôle régulier : l'état peut changer sans aucun évènement de la page.
+  setInterval(() => revive(false), 1000);
+}
+
+function resetContext(): void {
+  const old = ctx;
+  try {
+    ctx = createContext();
+  } catch {
+    return;
+  }
+  void old?.close().catch(() => undefined);
+  noiseBuffer = null;
+  lastPlayed.clear();
+  unlockAudio();
+  for (const listener of resetListeners) listener();
 }
 
 /** Contexte audio partagé avec la musique (null tant que l'audio n'est pas débloqué). */

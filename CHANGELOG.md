@@ -2,6 +2,13 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.13.1 — Correctif musique (iPhone)
+
+- **La musique revient** après être passé du mode silencieux au mode sonnerie (ou après un appel, ou en revenant dans l'app). Si le son ne revient pas tout seul, il revient au **premier toucher** sur l'écran.
+- En mode silencieux, le jeu reste muet (comme les autres jeux) et ne coupe plus la musique que tu écoutes peut-être à côté.
+
+**Quoi tester** : lance une run avec le son, bascule le bouton silencieux dans les deux sens, puis touche l'écran : la musique et les bruitages reviennent-ils ?
+
 ## 0.13.0 — Épreuves de Vesper
 
 - **Une salle-épreuve par biome** : Vesper, le corbeau mécanique, te met au défi. Un chrono doré apparaît sous le nom de la salle (il démarre à l'arrivée des premiers ennemis).

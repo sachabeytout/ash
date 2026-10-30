@@ -24,6 +24,8 @@ export function createGameConfig(parent: string): Phaser.Types.Core.GameConfig {
     },
     input: { activePointers: 3 }, // joystick + boutons en même temps
     // ?debug dans l'adresse affiche les zones de collision.
+    // Tous les sons sont synthétisés par `audio/` : le gestionnaire de Phaser ouvrirait un 2e contexte audio.
+    audio: { noAudio: true },
     physics: {
       default: 'arcade',
       arcade: { debug: new URLSearchParams(location.search).has('debug') },

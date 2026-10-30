@@ -3,7 +3,7 @@
 Liste tenue à jour par Claude. Réponds quand tu veux, même en vrac (« 3 : oui, 7 : plutôt la B »).
 En attendant ta réponse, Claude applique **ce qui est indiqué en gras** (toujours modifiable ensuite).
 
-Dernière mise à jour : 30/10/2026 (version 0.13.0).
+Dernière mise à jour : 30/10/2026 (version 0.13.1).
 
 ## A. Ressenti de jeu
 
@@ -22,6 +22,7 @@ Dernière mise à jour : 30/10/2026 (version 0.13.0).
     11 ter. Les Mesures d'urgence : la récompense (+10 % par point) vaut-elle la difficulté ? → **+10 % par point**
     11 quater. La fontaine (30 % de vie, une par biome) : trop généreuse, pas assez ? → **30 %, une par biome**
     11 quinquies. Les Épreuves de Vesper (salle chronométrée) : le temps accordé est-il juste ? En veux-tu plus d'une par biome ? → **une par biome**
+    11 sexies. En mode silencieux, veux-tu que le jeu reste muet (comme maintenant) ou que la musique joue quand même ? → **muet en mode silencieux**
 
 ## B. Histoire (lore v0.2, dans `docs/GDD.md`)
 

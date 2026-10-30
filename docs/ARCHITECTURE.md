@@ -1,6 +1,6 @@
 # Architecture (carte du projet)
 
-> Statut 0.13.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
+> Statut 0.13.1 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
 > combat/attack+health+status+superGauge, boons/boons, run/waves+rewards+state, save/schema+migrations+codec+store),
 > `data/` (player, weapons, enemies, biomes, gods, boons, status, skills, bosses, music, shop), `game/` (scenes Title, Hub,
 > Run, Ui, Boon, Pause, Shop ; entities Player, Enemy, Boss, Hittable ; input Controls, TouchControls ; fx/Juice+Lightning ;
@@ -34,6 +34,8 @@ par-dessus). Mort ou sortie → `hub` avec un `RunSummary`.
 - Pause : `src/game/scenes/PauseScene.ts` (ouverte par `RunScene.openPause`). Options : `src/game/ui/OptionsPanel.ts`,
   réglages dans `src/core/settings.ts` (qualité → `QUALITY_PARTICLES`).
 - Musique : motifs dans `src/data/music.ts`, séquenceur dans `src/game/audio/music.ts`.
+  Contexte audio unique (`src/game/audio/sfx.ts`) : relance après coupure iOS (`watchAudio`), recréation si bloqué
+  (`onAudioReset` → `music.restart`).
 
 ### Biomes, marchand (0.5.0)
 

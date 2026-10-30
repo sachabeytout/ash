@@ -1,6 +1,6 @@
 import { settings } from '../../core/settings';
 import { TRACKS, type TrackDef, type TrackId } from '../../data/music';
-import { audioContext, sharedNoise } from './sfx';
+import { audioContext, onAudioReset, sharedNoise } from './sfx';
 
 const LOOKAHEAD_S = 0.12;
 const TICK_MS = 25;
@@ -37,6 +37,13 @@ class MusicPlayer {
     this.timer ??= setInterval(() => this.tick(), TICK_MS);
   }
 
+  /** Le contexte audio a été recréé : on relance le même morceau dessus. */
+  restart(): void {
+    const id = this.playing?.id;
+    this.playing = null;
+    if (id) this.play(id);
+  }
+
   stop(): void {
     this.fadeOut();
     this.playing = null;
@@ -63,6 +70,8 @@ class MusicPlayer {
     const ctx = audioContext();
     const p = this.playing;
     if (!ctx || !p || ctx.state !== 'running') return;
+    // Après une coupure (bouton silencieux, appel…), on reprend au présent sans rattraper le retard.
+    if (p.nextTime < ctx.currentTime - 0.25) p.nextTime = ctx.currentTime + 0.05;
     // Le volume suit les options en direct.
     p.out.gain.setTargetAtTime(this.level(), ctx.currentTime, 0.1);
     const stepS = 60 / p.def.bpm / 4;
@@ -168,3 +177,4 @@ class MusicPlayer {
 }
 
 export const music = new MusicPlayer();
+onAudioReset(() => music.restart());
