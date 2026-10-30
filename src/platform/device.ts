@@ -22,6 +22,30 @@ export async function tryLandscapeFullscreen(): Promise<void> {
   }
 }
 
+/**
+ * Appelle `onChange` après une rotation ou un changement de taille d'écran.
+ * iOS donne parfois des dimensions « à moitié tournées » pendant l'animation de rotation :
+ * on rappelle donc plusieurs fois, jusqu'à ce que les mesures soient stables.
+ */
+export function onViewportChange(onChange: () => void): void {
+  let timers: ReturnType<typeof setTimeout>[] = [];
+  const schedule = () => {
+    timers.forEach(clearTimeout);
+    timers = [0, 100, 300, 700].map((ms) => setTimeout(onChange, ms));
+  };
+  window.addEventListener('resize', schedule);
+  window.addEventListener('orientationchange', schedule);
+  screen.orientation?.addEventListener?.('change', schedule);
+  window.visualViewport?.addEventListener('resize', schedule);
+}
+
+/** Annule tout zoom ou défilement que le navigateur aurait appliqué à la page. */
+export function resetPageViewport(): void {
+  window.scrollTo(0, 0);
+  document.documentElement.scrollTop = 0;
+  document.body.scrollTop = 0;
+}
+
 /** Appelle `onHide` quand l'app passe en arrière-plan (pause + sauvegarde). */
 export function onAppHidden(onHide: () => void): void {
   document.addEventListener('visibilitychange', () => {

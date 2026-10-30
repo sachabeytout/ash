@@ -2,6 +2,13 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.1.1 — Rotation corrigée
+
+- Tourner le téléphone ne fait plus déborder ni zoomer le jeu : il se recadre tout seul.
+- Tenu à la verticale, le jeu affiche « Tourne ton téléphone à l'horizontale pour jouer ».
+
+**Quoi tester** : ouvrir l'app, la tourner plusieurs fois (portrait → paysage → portrait → paysage). En paysage, la cage doit toujours tenir entière dans l'écran, sans zoom. L'écran titre doit afficher « version 0.1.1 ».
+
 ## 0.1.0 — Fondations (en ligne le 30/10/2026)
 
 Lien : https://sachabeytout.github.io/ash/

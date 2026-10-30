@@ -12,5 +12,6 @@
     "other": "{count} deaths"
   },
   "pwa.updateReady": "New version available — tap to reload",
-  "pwa.offlineReady": "The game now works offline"
+  "pwa.offlineReady": "The game now works offline",
+  "device.rotate": "Turn your phone sideways to play"
 }

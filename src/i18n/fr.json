@@ -12,5 +12,6 @@
     "other": "{count} morts"
   },
   "pwa.updateReady": "Nouvelle version disponible — toucher pour recharger",
-  "pwa.offlineReady": "Le jeu fonctionne maintenant hors ligne"
+  "pwa.offlineReady": "Le jeu fonctionne maintenant hors ligne",
+  "device.rotate": "Tourne ton téléphone à l'horizontale pour jouer"
 }
