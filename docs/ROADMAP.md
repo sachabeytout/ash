@@ -83,4 +83,5 @@ Retour sur le lore v0.2 toujours attendu (« quand le fond aura avancé »).
 - [x] **M4.3 (0.26.0)** : 2 évènements (Puits de Ratatosk, Autel de Thot)
 - [x] **M4.4 (0.27.0)** : 3 compétences de Thot (Bourse de Ratatosk, Pas de l'ibis, Renaissance), sauvegarde v11
 - [x] **M4.5 (0.28.0)** : Exploits (records dans les Archives), sauvegarde v12
+- [x] **0.28.1 → 0.29.0** : sons dédiés ; la Cage s'éveille (terminal, enclume, Vesper, braises)
 - [ ] **M3** : finitions — coffres et évènements, préréglages de qualité, équilibrage avec la télémétrie, accessibilité

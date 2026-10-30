@@ -2,6 +2,16 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.29.0 — La Cage s'éveille
+
+- **La Cage change avec ta progression** :
+  - le **terminal de Thot** apparaît après 2 runs (touche-le pour ouvrir l'arbre de Thot) ;
+  - l'**enclume de Brokk** apparaît dès qu'une arme est débloquée ou forgée (touche-la pour ouvrir la forge) ;
+  - **Vesper** se perche sur un barreau après ta première mort ;
+  - les **braises d'Aelia** brillent un peu plus fort à chaque victoire.
+
+**Quoi tester** : remarques-tu ces changements en revenant dans la Cage ?
+
 ## 0.28.1 — Nouveaux sons
 
 - **Sons dédiés** pour le coffre de Vesper (petit arpège), l'Étincelle du Phénix (flamme qui monte), la Renaissance (grondement puis accord) et les évènements acceptés (petite cloche).

@@ -31,6 +31,7 @@ import { ThothPanel } from '../ui/ThothPanel';
 import { assistReduction } from '../../core/assist';
 import { forgeLevel, isUnlocked } from '../../core/forge';
 import { settings } from '../../core/settings';
+import type { MetaState } from '../../core/save/schema';
 import { applyPostFx, autoLowerQuality } from '../fx/postfx';
 import { CODEX, recordCodex } from '../../core/codex';
 import { CodexPanel } from '../ui/CodexPanel';
@@ -93,6 +94,10 @@ export class HubScene extends Phaser.Scene {
       repeat: -1,
       ease: 'Sine.InOut',
     });
+
+    // Les braises d'Aelia brillent plus fort à chaque victoire.
+    glow.setScale(2.4 + Math.min(meta.clears, 10) * 0.08);
+    this.decorateCage(meta);
 
     const style = {
       fontFamily: FONT_FAMILY,
@@ -415,6 +420,79 @@ export class HubScene extends Phaser.Scene {
       // La Lame de l'Aube vient d'être forgée : on redessine la Cage pour l'afficher.
       if (dialogue.id === `victory_${DAWNBLADE_VICTORIES}`) this.scene.restart({});
     });
+  }
+
+  /**
+   * La Cage s'éveille avec la progression : le terminal de Thot (après 2 runs), l'enclume de
+   * Brokk (une arme débloquée ou forgée), Vesper perché (après la 1re mort). Toucher le terminal
+   * ou l'enclume ouvre leur fenêtre.
+   */
+  private decorateCage(meta: MetaState): void {
+    if (meta.runs >= 2) {
+      const x = 196;
+      const y = 178;
+      const g = this.add.graphics();
+      g.fillStyle(0x0d1a16, 1).fillRect(x - 14, y - 12, 28, 20);
+      g.lineStyle(1.5, 0x7fffc0, 0.9).strokeRect(x - 14, y - 12, 28, 20);
+      g.fillStyle(0x7fffc0, 0.85)
+        .fillRect(x - 10, y - 8, 14, 2)
+        .fillRect(x - 10, y - 4, 20, 2);
+      g.fillRect(x - 10, y, 9, 2);
+      g.fillStyle(0x3a4a44, 1)
+        .fillRect(x - 3, y + 8, 6, 6)
+        .fillRect(x - 9, y + 14, 18, 3);
+      const screen = this.add
+        .image(x, y - 2, 'glow')
+        .setTint(0x7fffc0)
+        .setAlpha(0.35)
+        .setScale(0.9)
+        .setBlendMode('ADD');
+      this.tweens.add({ targets: screen, alpha: 0.15, duration: 900, yoyo: true, repeat: -1 });
+      this.add
+        .zone(x, y, 40, 40)
+        .setInteractive({ useHandCursor: true })
+        .on('pointerup', () => this.openThoth());
+    }
+    const forged = Object.values(meta.forge).some((level) => (level ?? 0) > 0);
+    if (meta.unlocked.length > 0 || forged) {
+      const x = 444;
+      const y = 184;
+      const g = this.add.graphics();
+      g.fillStyle(0xc0c8d8, 1).fillRect(x - 14, y - 8, 24, 7);
+      g.fillTriangle(x + 10, y - 8, x + 18, y - 8, x + 10, y - 1);
+      g.fillRect(x - 5, y - 1, 10, 8).fillRect(x - 11, y + 7, 22, 5);
+      const sparks = this.add
+        .image(x, y - 10, 'glow')
+        .setTint(0xffa040)
+        .setAlpha(0)
+        .setScale(0.6)
+        .setBlendMode('ADD');
+      this.tweens.add({
+        targets: sparks,
+        alpha: 0.7,
+        duration: 140,
+        yoyo: true,
+        repeat: -1,
+        repeatDelay: 1600,
+      });
+      this.add
+        .zone(x, y, 44, 36)
+        .setInteractive({ useHandCursor: true })
+        .on('pointerup', () => this.openForge());
+    }
+    if (meta.deaths >= 1) {
+      // Vesper, perché sur un barreau : il observe Ash.
+      const x = 232;
+      const y = 72;
+      const g = this.add.graphics();
+      g.fillStyle(0x1a1626, 1).fillEllipse(x, y, 14, 10);
+      g.fillCircle(x + 6, y - 4, 4);
+      g.fillTriangle(x + 9, y - 5, x + 14, y - 3, x + 9, y - 2);
+      g.fillTriangle(x - 6, y, x - 13, y + 4, x - 6, y + 3);
+      g.fillStyle(0xb8a8ff, 1).fillCircle(x + 7, y - 5, 1.2);
+      g.lineStyle(1, 0x6a5a8a, 1).lineBetween(x - 14, y + 6, x + 14, y + 6);
+      this.tweens.add({ targets: g, y: -1.5, duration: 1300, yoyo: true, repeat: -1 });
+    }
   }
 
   private openRecap(): void {
