@@ -1,9 +1,12 @@
 import Phaser from 'phaser';
 import type { RunState } from '../../core/run/state';
 import { getBiome } from '../../data/biomes';
+import { getBoon } from '../../data/boons';
+import { GODS } from '../../data/gods';
 import { t } from '../../i18n';
 import { DANGER } from '../entities/Enemy';
 import type { Controls } from '../input/Controls';
+import { drawGodIcon } from '../icons';
 import { TouchControls } from '../input/TouchControls';
 import { FONT_FAMILY } from '../theme';
 
@@ -18,6 +21,8 @@ export class UiScene extends Phaser.Scene {
   private room!: Phaser.GameObjects.Text;
   private shards!: Phaser.GameObjects.Text;
   private hurtOverlay!: Phaser.GameObjects.Rectangle;
+  private boonIcons!: Phaser.GameObjects.Graphics;
+  private boonKey = '';
 
   constructor() {
     super('ui');
@@ -36,6 +41,8 @@ export class UiScene extends Phaser.Scene {
       strokeThickness: 3,
     };
     this.hpBar = this.add.graphics();
+    this.boonIcons = this.add.graphics();
+    this.boonKey = '';
     this.hpText = this.add.text(0, 0, '', style);
     this.room = this.add.text(0, 0, '', style).setOrigin(0.5, 0);
     this.shards = this.add.text(0, 0, '', style).setOrigin(1, 0);
@@ -73,6 +80,26 @@ export class UiScene extends Phaser.Scene {
     this.hpText.setText(`${hp} / ${maxHp}`);
     this.room.setText(t('hud.room', { room: run.room, total: getBiome(run.biome).rooms }));
     this.shards.setText(t('hud.shards', { count: run.shards }));
+    this.showBoons(run);
+  }
+
+  /** Dons obtenus : une petite icône de dieu par don (redessinée seulement quand la liste change). */
+  private showBoons(run: RunState): void {
+    const key = run.boons.map((b) => b.id).join(',');
+    if (key === this.boonKey) return;
+    this.boonKey = key;
+    const g = this.boonIcons.clear();
+    run.boons.forEach((owned, i) => {
+      const def = getBoon(owned.id);
+      if (!def) return;
+      const x = 18 + i * 18;
+      const y = 46;
+      g.fillStyle(0x07060d, 0.75).fillCircle(x, y, 8);
+      const gods = def.gods.map((id) => GODS[id]);
+      g.lineStyle(1, gods[0]?.color ?? 0xffffff, 0.8).strokeCircle(x, y, 8);
+      const main = gods[0];
+      if (main) drawGodIcon(g, main, x, y, 5);
+    });
   }
 
   flashHurt(): void {

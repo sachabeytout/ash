@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { randomSeed } from '../../core/rng';
 import { newRun, type RunSummary } from '../../core/run/state';
+import { GOD_IDS } from '../../data/gods';
 import { PLAYER } from '../../data/player';
 import { WEAPONS, type WeaponId } from '../../data/weapons';
 import { t, type TextKey } from '../../i18n';
@@ -182,7 +183,14 @@ export class HubScene extends Phaser.Scene {
     if (this.starting) return;
     this.starting = true;
     sfx.tap();
-    const run = newRun(randomSeed(), weapon, PLAYER.maxHp, Date.now());
+    const seed = randomSeed();
+    const run = newRun(
+      seed,
+      weapon,
+      PLAYER.maxHp,
+      Date.now(),
+      GOD_IDS[seed % GOD_IDS.length] ?? 'ra',
+    );
     this.cameras.main.fadeOut(400, 7, 6, 13);
     this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () =>
       this.scene.start('run', { run }),

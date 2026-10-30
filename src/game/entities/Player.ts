@@ -17,6 +17,8 @@ export interface ActiveSwing {
   /** Identifiant unique : un ennemi n'est touché qu'une fois par coup. */
   id: number;
   heavy: boolean;
+  /** Attaque puissante (sinon attaque simple) : décide quels dons s'appliquent. */
+  power: boolean;
 }
 
 type State =
@@ -90,6 +92,7 @@ export class Player {
       step: this.state.step,
       id: this.state.id,
       heavy: this.state.power || this.state.step.shake > 0,
+      power: this.state.power,
     };
   }
 

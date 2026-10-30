@@ -138,6 +138,35 @@ export const sfx = {
     tone('triangle', 392, 784, 0.4, 0.2);
     tone('sine', 523, 1046, 0.6, 0.15);
   },
+  boonOffer() {
+    if (!throttle('boonOffer', 300)) return;
+    tone('sine', 523, 784, 0.5, 0.18);
+    tone('triangle', 659, 1318, 0.7, 0.12);
+  },
+  boonTaken() {
+    if (!throttle('boonTaken', 200)) return;
+    tone('triangle', 392, 1568, 0.45, 0.25);
+    noise('highpass', 2000, 6000, 0.3, 0.15);
+  },
+  burn() {
+    if (!throttle('burn', 120)) return;
+    noise('lowpass', 900, 300, 0.12, 0.18);
+  },
+  zap() {
+    if (!throttle('zap', 60)) return;
+    noise('highpass', 5000, 1500, 0.12, 0.3);
+    tone('square', 1200, 400, 0.08, 0.12);
+  },
+  freeze() {
+    if (!throttle('freeze', 100)) return;
+    tone('sine', 1800, 2600, 0.2, 0.15);
+    noise('highpass', 4000, 8000, 0.15, 0.2);
+  },
+  explode() {
+    if (!throttle('explode', 80)) return;
+    tone('sawtooth', 140, 40, 0.35, 0.3);
+    noise('lowpass', 2500, 80, 0.4, 0.5);
+  },
   tap() {
     if (!throttle('tap', 60)) return;
     tone('sine', 660, 880, 0.06, 0.15);

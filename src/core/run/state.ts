@@ -1,7 +1,22 @@
+import { getBoon } from '../../data/boons';
+import type { GodId } from '../../data/gods';
 import type { WeaponId } from '../../data/weapons';
+import { mainValue, takeBoon, type BoonOffer, type OwnedBoon } from '../boons/boons';
 import type { RewardKind } from './rewards';
 
-/** État d'une run en cours (sérialisable : servira à la sauvegarde en cours de run). */
+/** Bonus permanents (arbre de Thot) figés au début de la run. */
+export interface RunPerks {
+  /** Bonus de dégâts (0,05 = +5 %). */
+  damage: number;
+  /** PV rendus à chaque salle terminée. */
+  healPerRoom: number;
+  /** Chances de rareté en plus pour les dons. */
+  rareBonus: number;
+}
+
+export const NO_PERKS: RunPerks = { damage: 0, healPerRoom: 0, rareBonus: 0 };
+
+/** État d'une run en cours (sérialisable : c'est ce qui est sauvegardé à chaque entrée de salle). */
 export interface RunState {
   seed: number;
   weapon: WeaponId;
@@ -16,6 +31,12 @@ export interface RunState {
   weaponParts: number;
   startedAt: number;
   elapsedMs: number;
+  boons: OwnedBoon[];
+  /** Un dieu attend qu'Ash choisisse son don (au début de la salle). */
+  pendingBoon: GodId | null;
+  /** Jauge de Super, de 0 à 1. */
+  superGauge: number;
+  perks: RunPerks;
 }
 
 export interface RunSummary {
@@ -27,7 +48,15 @@ export interface RunSummary {
   weaponParts: number;
 }
 
-export function newRun(seed: number, weapon: WeaponId, maxHp: number, now: number): RunState {
+export function newRun(
+  seed: number,
+  weapon: WeaponId,
+  maxHp: number,
+  now: number,
+  firstGod: GodId,
+  perks: RunPerks = NO_PERKS,
+  superGauge = 0,
+): RunState {
   return {
     seed,
     weapon,
@@ -35,21 +64,25 @@ export function newRun(seed: number, weapon: WeaponId, maxHp: number, now: numbe
     room: 1,
     hp: maxHp,
     maxHp,
-    damageBonus: 0,
+    damageBonus: perks.damage,
     shards: 0,
     xp: 0,
     weaponParts: 0,
     startedAt: now,
     elapsedMs: 0,
+    boons: [],
+    // Un premier don dès le départ : la run commence avec un pouvoir.
+    pendingBoon: firstGod,
+    superGauge,
+    perks,
   };
 }
 
-/** Applique la récompense d'une porte. Les dons arrivent dans la prochaine version : effet provisoire. */
-export function applyReward(run: RunState, reward: RewardKind): void {
+/** Applique la récompense d'une porte (le don, lui, se choisit au début de la salle suivante). */
+export function applyReward(run: RunState, reward: RewardKind, god?: GodId): void {
   switch (reward) {
     case 'boon':
-      run.maxHp += 5;
-      run.hp = Math.min(run.maxHp, run.hp + 10);
+      run.pendingBoon = god ?? 'ra';
       break;
     case 'shards':
       run.shards += 25;
@@ -64,6 +97,25 @@ export function applyReward(run: RunState, reward: RewardKind): void {
       run.weaponParts += 1;
       break;
   }
+}
+
+/** Ash choisit un don : il remplace celui de la même action ; un don de vie agrandit la barre de vie. */
+export function chooseBoon(run: RunState, offer: BoonOffer): void {
+  run.boons = takeBoon(run.boons, offer);
+  run.pendingBoon = null;
+  const def = getBoon(offer.id);
+  if (def?.effect.type === 'maxHp') {
+    const amount = mainValue(def.effect, offer.rarity);
+    run.maxHp += amount;
+    run.hp += amount;
+  }
+}
+
+/** Salle terminée : les braises de Thot soignent un peu. */
+export function onRoomCleared(run: RunState): number {
+  const healed = Math.max(0, Math.min(run.maxHp - run.hp, run.perks.healPerRoom));
+  run.hp += healed;
+  return healed;
 }
 
 /** Ce qui est conservé à la mort : tout l'XP et les pièces d'arme (une mort fait toujours progresser). */

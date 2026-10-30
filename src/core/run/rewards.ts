@@ -1,3 +1,4 @@
+import { GOD_IDS, type GodId } from '../../data/gods';
 import type { Rng } from '../rng';
 
 /** Les 5 récompenses possibles derrière une porte. */
@@ -28,4 +29,17 @@ export function rollDoorRewards(rng: Rng, count: number): RewardKind[] {
     result.push(pool.splice(index, 1)[0] as RewardKind);
   }
   return result;
+}
+
+export interface DoorReward {
+  kind: RewardKind;
+  /** Pour une porte de don : le dieu qui attend derrière. */
+  god?: GodId;
+}
+
+/** Portes de sortie d'une salle : récompenses différentes, un dieu tiré pour la porte de don. */
+export function rollDoors(rng: Rng, count: number): DoorReward[] {
+  return rollDoorRewards(rng, count).map((kind) =>
+    kind === 'boon' ? { kind, god: rng.pick(GOD_IDS) } : { kind },
+  );
 }

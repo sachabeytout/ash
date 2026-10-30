@@ -1,11 +1,28 @@
 import Phaser from 'phaser';
+import {
+  buildProfile,
+  damageMultiplier,
+  rollOffer,
+  type BoonOffer,
+  type CombatProfile,
+  type HitEffects,
+} from '../../core/boons/boons';
 import { applyDamage } from '../../core/combat/health';
+import { applyBurn, applyChill, isBurning, isFrozen, tickBurn } from '../../core/combat/status';
 import { hitsArc, type Vec2 } from '../../core/geometry';
 import { createRng, type Rng } from '../../core/rng';
-import { rollDoorRewards, type RewardKind } from '../../core/run/rewards';
-import { applyReward, summarize, type RunState } from '../../core/run/state';
+import { rollDoors, type DoorReward, type RewardKind } from '../../core/run/rewards';
+import {
+  applyReward,
+  chooseBoon,
+  onRoomCleared,
+  summarize,
+  type RunState,
+} from '../../core/run/state';
 import { planWaves, type Wave } from '../../core/run/waves';
 import { getBiome } from '../../data/biomes';
+import { DASH_AURA_RADIUS, DASH_BOLT_RANGE, getBoon } from '../../data/boons';
+import { GOD_IDS, GODS } from '../../data/gods';
 import { ENEMIES, type EnemyDef } from '../../data/enemies';
 import { PLAYER } from '../../data/player';
 import { WEAPONS } from '../../data/weapons';
@@ -14,8 +31,12 @@ import { sfx } from '../audio/sfx';
 import { DANGER, Enemy } from '../entities/Enemy';
 import { Player } from '../entities/Player';
 import { Juice } from '../fx/Juice';
+import { Lightning } from '../fx/Lightning';
+import { drawGodIcon } from '../icons';
+import type { BoonSceneData } from './BoonScene';
 import { Controls } from '../input/Controls';
 import { UiScene } from './UiScene';
+import { cheatsEnabled } from '../debug/cheats';
 import { bodyOf } from '../physics';
 import { ensureGameTextures } from '../textures';
 import { FONT_FAMILY } from '../theme';
@@ -44,11 +65,21 @@ interface Shot {
 }
 
 interface Door {
-  reward: RewardKind | 'exit';
+  reward: DoorReward | 'exit';
   x: number;
   y: number;
   parts: Phaser.GameObjects.GameObject[];
 }
+
+/** Couleurs des effets des dons (côté joueur : jamais le rouge-magenta des dangers). */
+const FX = {
+  burn: 0xffa53a,
+  zap: GODS.zeus.color,
+  ice: GODS.skadi.color,
+  burnText: '#ffb35a',
+  zapText: '#e2d2ff',
+  heal: '#9dffb0',
+} as const;
 
 const REWARD_STYLE: Record<RewardKind | 'exit', { color: number; label: TextKey }> = {
   boon: { color: 0xffb02e, label: 'reward.boon' },
@@ -76,6 +107,11 @@ export class RunScene extends Phaser.Scene {
   private doors: Door[] = [];
   private roomCleared = false;
   private leaving = false;
+  /** Un dieu propose un don : le combat attend. */
+  private choosing = false;
+  private lastChainSwing = -1;
+  private profile!: CombatProfile;
+  private lightning!: Lightning;
 
   constructor() {
     super('run');
@@ -91,6 +127,7 @@ export class RunScene extends Phaser.Scene {
     this.waveIndex = 0;
     this.roomCleared = false;
     this.leaving = false;
+    this.choosing = false;
   }
 
   create(): void {
@@ -102,6 +139,8 @@ export class RunScene extends Phaser.Scene {
     this.physics.world.setBounds(ARENA.x, ARENA.y, ARENA.width, ARENA.height);
 
     this.juice = new Juice(this);
+    this.lightning = new Lightning(this);
+    this.profile = buildProfile(this.run.boons);
     this.controls = new Controls(this, () => this.sim);
     this.scene.launch('ui', { controls: this.controls });
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.scene.stop('ui'));
@@ -111,6 +150,7 @@ export class RunScene extends Phaser.Scene {
     this.player.onDash = () => {
       sfx.dash();
       this.juice.burst(this.player.x, this.player.y, 0xff7a2a, 6);
+      this.dashEffects();
     };
 
     for (let i = 0; i < POOL_SIZE; i++) {
@@ -130,6 +170,179 @@ export class RunScene extends Phaser.Scene {
 
     this.cameras.main.fadeIn(350, 7, 6, 13);
     markScene('run');
+    if (this.run.pendingBoon) {
+      this.choosing = true;
+      this.time.delayedCall(380, () => this.offerBoon());
+    }
+    if (cheatsEnabled) this.setupCheats();
+  }
+
+  private setupCheats(): void {
+    this.input.keyboard?.on('keydown', (e: KeyboardEvent) => {
+      if (this.choosing || this.leaving) return;
+      if (e.code === 'KeyB') {
+        this.run.pendingBoon = GOD_IDS[Math.floor(Math.random() * GOD_IDS.length)] ?? 'ra';
+        this.choosing = true;
+        this.offerBoon();
+      }
+      if (e.code === 'KeyN') {
+        this.pending.forEach((p) => p.marker.destroy());
+        this.pending = [];
+        this.waveIndex = this.waves.length;
+        this.enemies.filter((en) => en.alive).forEach((en) => this.killEnemy(en));
+      }
+    });
+  }
+
+  // ---------- Dons ----------
+
+  private offerBoon(): void {
+    const god = this.run.pendingBoon;
+    if (!god) return;
+    // Même graine que la salle : fermer et rouvrir le jeu repropose les mêmes dons.
+    const rng = createRng((this.run.seed ^ Math.imul(this.run.room, 2654435761)) >>> 0);
+    const offers = rollOffer(rng, this.run.boons, god, 3, this.run.perks.rareBonus);
+    if (offers.length === 0) {
+      this.run.pendingBoon = null;
+      this.choosing = false;
+      return;
+    }
+    const data: BoonSceneData = { god, offers, onPick: (offer) => this.onBoonPicked(offer) };
+    this.scene.launch('boon', data);
+    this.scene.bringToTop('boon');
+  }
+
+  private onBoonPicked(offer: BoonOffer): void {
+    chooseBoon(this.run, offer);
+    this.profile = buildProfile(this.run.boons);
+    this.choosing = false;
+    this.nextWaveAt = this.sim + 600;
+    this.juice.burst(this.player.x, this.player.y, GODS[getBoonGod(offer)].color, 24);
+  }
+
+  /** Effets appliqués à un ennemi touché par une action (attaque, puissante, dash). */
+  private applyHitEffects(e: Enemy, fx: HitEffects): void {
+    if (!e.alive) return;
+    if (fx.burn) {
+      applyBurn(e.status, this.sim, fx.burn.dps, fx.burn.durationMs);
+      sfx.burn();
+    }
+    if (fx.chill && applyChill(e.status, this.sim, fx.chill)) {
+      e.freeze(this.sim);
+      sfx.freeze();
+      this.juice.burst(e.x, e.y, FX.ice, 10);
+    }
+    this.checkThermalShock(e);
+  }
+
+  /** Duo Râ + Skadi : un ennemi gelé qui brûle explose (une fois par gel). */
+  private checkThermalShock(e: Enemy): void {
+    const shock = this.profile.thermalShock;
+    if (!shock || !e.alive || e.status.shocked) return;
+    if (!isFrozen(e.status, this.sim) || !isBurning(e.status, this.sim)) return;
+    e.status.shocked = true;
+    const at = { x: e.x, y: e.y };
+    this.lightning.ring(at, shock.radius, FX.burn);
+    this.juice.burst(at.x, at.y, FX.ice, 18);
+    this.juice.burst(at.x, at.y, FX.burn, 18);
+    this.juice.shake(0.004);
+    sfx.explode();
+    for (const other of this.enemies) {
+      if (!other.alive) continue;
+      if (Math.hypot(other.x - at.x, other.y - at.y) > shock.radius + other.radius) continue;
+      this.damageEnemy(other, shock.damage, '#ffffff');
+    }
+  }
+
+  /** Éclair en chaîne : saute d'ennemi en ennemi à partir de la cible touchée. */
+  private chainLightning(from: Enemy, chain: NonNullable<HitEffects['chain']>): void {
+    const hit = new Set<Enemy>([from]);
+    let current = { x: from.x, y: from.y };
+    for (let i = 0; i < chain.bounces; i++) {
+      let next: Enemy | undefined;
+      let best = chain.range;
+      for (const e of this.enemies) {
+        if (!e.alive || hit.has(e)) continue;
+        const d = Math.hypot(e.x - current.x, e.y - current.y);
+        if (d < best) {
+          best = d;
+          next = e;
+        }
+      }
+      if (!next) break;
+      hit.add(next);
+      this.lightning.zap(current, next, FX.zap);
+      current = { x: next.x, y: next.y };
+      this.damageEnemy(next, chain.damage, FX.zapText);
+    }
+    if (hit.size > 1) sfx.zap();
+  }
+
+  /** La foudre tombe sur un point et touche tout autour. */
+  private lightningBolt(at: { x: number; y: number }, damage: number, radius: number): void {
+    this.lightning.bolt(at, radius, FX.zap);
+    sfx.zap();
+    for (const e of this.enemies) {
+      if (!e.alive) continue;
+      if (Math.hypot(e.x - at.x, e.y - at.y) > radius + e.radius) continue;
+      this.damageEnemy(e, damage, FX.zapText);
+    }
+  }
+
+  private dashEffects(): void {
+    const fx = this.profile.on.dash;
+    const at = { x: this.player.x, y: this.player.y };
+    if (fx.burn || fx.chill) {
+      this.lightning.ring(at, DASH_AURA_RADIUS, fx.burn ? FX.burn : FX.ice);
+      for (const e of this.enemies) {
+        if (!e.alive) continue;
+        if (Math.hypot(e.x - at.x, e.y - at.y) > DASH_AURA_RADIUS + e.radius) continue;
+        this.applyHitEffects(e, fx);
+      }
+    }
+    if (fx.bolt) {
+      const target = this.nearestEnemy(at, DASH_BOLT_RANGE);
+      if (target) this.lightningBolt(target, fx.bolt.damage, fx.bolt.radius);
+    }
+  }
+
+  private nearestEnemy(at: { x: number; y: number }, range: number): Enemy | undefined {
+    let best: Enemy | undefined;
+    let bestDist = range;
+    for (const e of this.enemies) {
+      if (!e.alive || !this.isOnScreen(e)) continue;
+      const d = Math.hypot(e.x - at.x, e.y - at.y);
+      if (d < bestDist) {
+        best = e;
+        bestDist = d;
+      }
+    }
+    return best;
+  }
+
+  /** Dégâts venus d'un don (foudre, explosion) : bonus selon l'état de la cible, mort éventuelle. */
+  private damageEnemy(e: Enemy, base: number, color: string): void {
+    if (!e.alive) return;
+    const mult = damageMultiplier(this.profile, {
+      burning: isBurning(e.status, this.sim),
+      chilled: isFrozen(e.status, this.sim) || this.sim < e.status.chillUntil,
+    });
+    const { dealt, killed } = applyDamage(e.health, base * mult);
+    e.hit(this.sim, this.player, 0);
+    this.juice.damageNumber(e.x, e.y - e.radius, dealt, color);
+    if (killed) this.killEnemy(e);
+  }
+
+  /** La brûlure fait ses dégâts par paquets. */
+  private updateBurns(): void {
+    for (const e of this.enemies) {
+      if (!e.alive) continue;
+      const dmg = tickBurn(e.status, this.sim);
+      if (dmg <= 0) continue;
+      const { dealt, killed } = applyDamage(e.health, dmg);
+      this.juice.damageNumber(e.x, e.y - e.radius, dealt, FX.burnText);
+      if (killed) this.killEnemy(e);
+    }
   }
 
   override update(_time: number, delta: number): void {
@@ -140,6 +353,10 @@ export class RunScene extends Phaser.Scene {
     if (this.physics.world.isPaused) this.physics.world.resume();
 
     const dt = Math.min(delta, 50);
+    if (this.choosing) {
+      this.ui.showRun(this.run);
+      return;
+    }
     this.sim += dt;
     if (!this.leaving) this.run.elapsedMs += dt;
 
@@ -150,6 +367,7 @@ export class RunScene extends Phaser.Scene {
     this.updateSpawns();
     for (const e of alive) e.update(this.sim, dt, this.player, this.isOnScreen(e));
     this.resolvePlayerAttack(alive);
+    this.updateBurns();
     this.resolveEnemyAttacks(alive);
     this.updateShots();
     this.updateWaves();
@@ -297,11 +515,23 @@ export class RunScene extends Phaser.Scene {
     const swing = this.player.activeSwing(this.sim);
     if (!swing) return;
     const { step } = swing;
+    const fx = this.profile.on[swing.power ? 'power' : 'attack'];
     for (const e of alive) {
       if (!e.alive || e.lastSwingId === swing.id) continue;
       if (!hitsArc(this.player, this.player.facing, step.range, step.arcDeg, e, e.radius)) continue;
+      // Un seul éclair en chaîne par coup, même si le coup touche plusieurs ennemis.
+      const firstHit = this.lastChainSwing !== swing.id;
+      this.lastChainSwing = swing.id;
       e.lastSwingId = swing.id;
-      const { dealt, killed } = applyDamage(e.health, step.damage * (1 + this.run.damageBonus));
+      const mult = damageMultiplier(this.profile, {
+        burning: isBurning(e.status, this.sim),
+        chilled: isFrozen(e.status, this.sim) || this.sim < e.status.chillUntil,
+      });
+      const at = { x: e.x, y: e.y };
+      const { dealt, killed } = applyDamage(
+        e.health,
+        step.damage * (1 + this.run.damageBonus) * mult,
+      );
       e.hit(this.sim, this.player, step.knockback);
       this.juice.hitstop(killed ? step.hitstopMs + 30 : step.hitstopMs);
       this.juice.shake(step.shake);
@@ -309,6 +539,9 @@ export class RunScene extends Phaser.Scene {
       this.juice.damageNumber(e.x, e.y - e.radius, dealt);
       sfx.hit(swing.heavy);
       if (killed) this.killEnemy(e);
+      else this.applyHitEffects(e, fx);
+      if (fx.chain && firstHit) this.chainLightning(e, fx.chain);
+      if (fx.bolt) this.lightningBolt(at, fx.bolt.damage, fx.bolt.radius);
     }
   }
 
@@ -385,7 +618,15 @@ export class RunScene extends Phaser.Scene {
     this.juice.damageNumber(this.player.x, this.player.y - 10, dealt, '#ff6f96');
     sfx.hurt();
     this.ui.flashHurt();
-    if (killed) this.die(t(source.nameKey as TextKey));
+    if (killed) {
+      this.die(t(source.nameKey as TextKey));
+      return;
+    }
+    const riposte = this.profile.retaliate;
+    if (riposte) {
+      const target = this.nearestEnemy(this.player, riposte.range);
+      if (target) this.lightningBolt(target, riposte.damage, 14);
+    }
   }
 
   // ---------- Fin de salle et portes ----------
@@ -393,24 +634,32 @@ export class RunScene extends Phaser.Scene {
   private clearRoom(): void {
     this.roomCleared = true;
     sfx.clear();
+    const healed = onRoomCleared(this.run);
+    if (healed > 0) this.juice.damageNumber(this.player.x, this.player.y - 12, healed, FX.heal);
     const biome = getBiome(this.run.biome);
     if (this.run.room >= biome.rooms) {
       this.addDoor('exit', ARENA.centerX);
       return;
     }
-    const [a, b] = rollDoorRewards(this.rng, 2);
+    const [a, b] = rollDoors(this.rng, 2);
     if (a) this.addDoor(a, ARENA.centerX - 120);
     if (b) this.addDoor(b, ARENA.centerX + 120);
   }
 
-  private addDoor(reward: RewardKind | 'exit', x: number): void {
+  private addDoor(reward: DoorReward | 'exit', x: number): void {
     const y = ARENA.top + 16;
-    const { color, label } = REWARD_STYLE[reward];
+    const kind = reward === 'exit' ? 'exit' : reward.kind;
+    const god = reward !== 'exit' && reward.god ? GODS[reward.god] : undefined;
+    const color = god?.color ?? REWARD_STYLE[kind].color;
+    const label = god
+      ? t('reward.boonOf', { god: t(god.nameKey as TextKey) })
+      : t(REWARD_STYLE[kind].label);
     const frame = this.add.graphics().setDepth(3);
     frame.fillStyle(0x07060d, 1).fillRoundedRect(x - 18, y - 22, 36, 34, 6);
     frame.lineStyle(2, color, 1).strokeRoundedRect(x - 18, y - 22, 36, 34, 6);
     const icon = this.add.graphics().setDepth(4);
-    drawRewardIcon(icon, reward, x, y - 5, color);
+    if (god) drawGodIcon(icon, god, x, y - 5, 8);
+    else drawRewardIcon(icon, kind, x, y - 5, color);
     const glow = this.add
       .image(x, y - 5, 'glow')
       .setTint(color)
@@ -418,7 +667,7 @@ export class RunScene extends Phaser.Scene {
       .setScale(1.2)
       .setBlendMode('ADD');
     const text = this.add
-      .text(x, y + 18, t(label), {
+      .text(x, y + 18, label, {
         fontFamily: FONT_FAMILY,
         fontSize: '10px',
         color: '#ffe9d6',
@@ -447,7 +696,7 @@ export class RunScene extends Phaser.Scene {
         this.endRun('cleared');
         return;
       }
-      applyReward(this.run, d.reward);
+      applyReward(this.run, d.reward.kind, d.reward.god);
       this.run.room += 1;
       this.cameras.main.fadeOut(300, 7, 6, 13);
       this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () =>
@@ -484,6 +733,10 @@ export class RunScene extends Phaser.Scene {
   private get ui(): UiScene {
     return this.scene.get('ui') as UiScene;
   }
+}
+
+function getBoonGod(offer: BoonOffer) {
+  return getBoon(offer.id)?.gods[0] ?? 'ra';
 }
 
 /** Icône de récompense : chaque type a une forme différente (pas seulement une couleur). */
