@@ -181,7 +181,7 @@ export class ShopScene extends Phaser.Scene {
 }
 
 /** Ratatosk : écureuil mécanique (queue en spirale, œil-lentille, sacoche). */
-function drawRatatosk(g: Phaser.GameObjects.Graphics, x: number, y: number): void {
+export function drawRatatosk(g: Phaser.GameObjects.Graphics, x: number, y: number): void {
   g.lineStyle(3, 0xc88b4a, 1).beginPath();
   g.arc(x + 8, y - 6, 10, Math.PI * 0.6, Math.PI * 2.1);
   g.strokePath();

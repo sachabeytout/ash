@@ -2,6 +2,16 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.31.0 — Le Comptoir de Ratatosk
+
+- **Entre chaque monde, le marchand a maintenant son propre lieu : le Comptoir de Ratatosk.** Il a son décor (plancher de bois chaud, lanternes, caisses) et **sa propre musique**, joyeuse et un peu malicieuse.
+- **Ratatosk est un personnage** :
+  - il se tient derrière son étal et **te lance une réplique** quand tu approches (5 répliques possibles) ;
+  - **approche-toi de l'étal** pour ouvrir la boutique ; tu peux revenir autant de fois que tu veux ;
+  - la **porte vers le monde suivant** est ouverte dès ton arrivée : tu pars quand tu veux.
+
+**Quoi tester** : le Comptoir te plaît-il ? Trouves-tu l'étal tout de suite en arrivant ?
+
 ## 0.30.0 — La Cage, niveau 0
 
 - **La Cage devient un lieu à parcourir** : Ash s'y déplace librement.

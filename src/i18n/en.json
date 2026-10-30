@@ -165,7 +165,7 @@
   "reward.boss": "Warden",
   "reward.next": "Continue",
   "biome.frostserver": "The Frost Server",
-  "hud.shop": "The merchant",
+  "hud.shop": "Ratatosk's Trading Post",
   "hub.lastClearAll": "Victory! The Fowler has fallen… but the Lantern stays sealed. Ash is reborn in the Cage.",
   "shop.title": "Ratatosk, the Courier",
   "shop.greeting": "“Psst! Shards for something to survive up there. I travel between worlds, me.”",
@@ -180,7 +180,7 @@
   "shop.buy": "Buy · {cost} ◆",
   "shop.sold": "Sold",
   "shop.tooPoor": "{cost} ◆ (not enough)",
-  "shop.leave": "Continue",
+  "shop.leave": "Close the stall",
   "shop.shards": "◆ {count} shards",
   "enemy.wolfbot": "Relay Wolf",
   "enemy.frostcaster": "Frostcaster",
@@ -574,5 +574,13 @@
   "rack.lockedDawn": "At victory {count}",
   "rack.equipped": "Equipped",
   "rack.choose": "Choose ({key})",
-  "rack.forgeLevel": "Forged · level {level}"
+  "rack.forgeLevel": "Forged · level {level}",
+  "merchant.title": "Ratatosk's Trading Post",
+  "merchant.sub": "A refuge between two worlds",
+  "merchant.name": "Ratatosk",
+  "merchant.greet.1": "Shards? I've got just what you need, friend!",
+  "merchant.greet.2": "I run between the worlds. News travels fast… so do prices.",
+  "merchant.greet.3": "The Master of the tower hates me trading with you. All the more reason!",
+  "merchant.greet.4": "Come closer, come closer! Everything's guaranteed… until the next room.",
+  "merchant.greet.5": "Still alive? Good news for business."
 }

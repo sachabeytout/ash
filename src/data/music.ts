@@ -5,6 +5,7 @@
 /** Chaque biome a son thème, et une version « boss » du même thème (même tonalité, mêmes accords, plus intense). */
 export type TrackId =
   | 'hub'
+  | 'merchant'
   | 'lowtown'
   | 'lowtownBoss'
   | 'frost'
@@ -49,6 +50,19 @@ export const TRACKS: Record<TrackId, TrackDef> = {
     hat: '................',
     pad: true,
     mix: { bass: 0.5, arp: 0.35, kick: 0, hat: 0, pad: 0.4 },
+  },
+  // Le Comptoir de Ratatosk : majeur, sautillant, un peu malicieux.
+  merchant: {
+    bpm: 104,
+    rootHz: 130.81, // do
+    progression: [0, 5, -3, 7],
+    chord: [0, 4, 7, 12, 16],
+    bass: 'x...x.x.x...x.x.',
+    arp: '0.2.1.3.2.4.3.1.',
+    kick: 'x.......x.......',
+    hat: '..x...x...x...xx',
+    pad: false,
+    mix: { bass: 0.45, arp: 0.3, kick: 0.35, hat: 0.1, pad: 0 },
   },
   // Les Bas-Fonds : pulsation régulière, basse qui avance.
   lowtown: {

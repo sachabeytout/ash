@@ -30,7 +30,7 @@ export interface BiomeDef {
 
 export interface BiomeTheme {
   /** Texture du sol. */
-  floor: 'floor' | 'floorIce' | 'floorMarble' | 'floorAviary';
+  floor: 'floor' | 'floorIce' | 'floorMarble' | 'floorAviary' | 'floorRoots';
   wall: number;
   wallGlow: number;
   neons: readonly [number, number];

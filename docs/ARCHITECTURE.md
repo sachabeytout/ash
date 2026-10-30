@@ -1,6 +1,6 @@
 # Architecture (carte du projet)
 
-> Statut 0.30.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
+> Statut 0.31.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
 > combat/attack+health+status+superGauge, boons/boons, run/waves+rewards+state, save/schema+migrations+codec+store),
 > `data/` (player, weapons, enemies, biomes, gods, boons, status, skills, bosses, music, shop), `game/` (scenes Title, Hub,
 > Run, Ui, Boon, Pause, Shop ; entities Player, Enemy, Boss, Hittable ; input Controls, TouchControls ; fx/Juice+Lightning ;
@@ -21,6 +21,8 @@ par-dessus). Mort ou sortie → `hub` avec un `RunSummary`.
 - Brûlure / givre / gel : `src/data/status.ts` + `src/core/combat/status.ts`.
 - Tirage des dons et profil de combat : `src/core/boons/boons.ts` ; effets en jeu : `RunScene` (section « Dons »).
 - Super : `super` dans `src/data/weapons.ts` ; remplissage de la jauge : `PLAYER.superGauge` (`src/data/player.ts`).
+- Comptoir de Ratatosk (salle 0 de chaque monde après le 1er) : thème et répliques `src/data/merchant.ts`, sol
+  `floorRoots` (`textures.ts`), musique `merchant` ; `RunScene.startShop` / `drawCounter` / `updateMerchant`.
 - Cage niveau 0 : `HubScene` (stations `buildStations`, déplacement `moveAsh` + `Controls`, toucher pour marcher,
   `nearStation` / Entrée / bouton A) ; râtelier `src/game/ui/WeaponPanel.ts`, arme mémorisée `meta.selectedWeapon`
   (`chosenWeapon` / `selectWeapon` dans `src/core/forge.ts`, sauvegarde v13).

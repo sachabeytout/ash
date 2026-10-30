@@ -274,6 +274,15 @@ export function ensureGameTextures(scene: Phaser.Scene): void {
     g.fillStyle(0x0c0914).fillRect(30, 21, 2, 2).fillRect(30, 26, 2, 2);
     g.fillStyle(0xd8b8ff).fillTriangle(38, 22, 44, 24, 38, 26);
   });
+  // Sol du Comptoir de Ratatosk : planches chaudes et racines.
+  shapeTexture(scene, 'floorRoots', 32, 32, (g) => {
+    g.fillStyle(0x1a120a).fillRect(0, 0, 32, 32);
+    g.fillStyle(0x241810).fillRect(0, 0, 32, 7).fillRect(0, 8, 32, 7);
+    g.fillStyle(0x2a1c12).fillRect(0, 16, 32, 7).fillRect(0, 24, 32, 7);
+    g.fillStyle(0x3a2818).fillRect(12, 0, 1, 7).fillRect(26, 8, 1, 7);
+    g.fillStyle(0x3a2818).fillRect(6, 16, 1, 7).fillRect(20, 24, 1, 7);
+    g.fillStyle(0xffc46b).fillRect(30, 30, 1, 1);
+  });
   // Plume (Volière).
   shapeTexture(scene, 'feather', 3, 7, (g) => {
     g.fillStyle(0xffffff).fillRect(1, 0, 1, 7).fillRect(0, 1, 3, 4);

@@ -85,4 +85,5 @@ Retour sur le lore v0.2 toujours attendu (« quand le fond aura avancé »).
 - [x] **M4.5 (0.28.0)** : Exploits (records dans les Archives), sauvegarde v12
 - [x] **0.28.1 → 0.29.0** : sons dédiés ; la Cage s'éveille (terminal, enclume, Vesper, braises)
 - [x] **M5.1 (0.30.0)** : la Cage niveau 0 (Ash s'y déplace ; stations : râtelier, Brokk, Thot, Archives, Aelia, Mesures, porte) — demandé par l'utilisateur
+- [x] **M5.2 (0.31.0)** : le Comptoir de Ratatosk (lieu à part entre les mondes, PNJ, musique) — demandé par l'utilisateur
 - [ ] **M3** : finitions — coffres et évènements, préréglages de qualité, équilibrage avec la télémétrie, accessibilité

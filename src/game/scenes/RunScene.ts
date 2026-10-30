@@ -76,7 +76,8 @@ import { Lightning } from '../fx/Lightning';
 import { drawGodIcon } from '../icons';
 import type { BoonSceneData } from './BoonScene';
 import type { PauseSceneData } from './PauseScene';
-import type { ShopSceneData } from './ShopScene';
+import { drawRatatosk, type ShopSceneData } from './ShopScene';
+import { MERCHANT_GREETINGS, MERCHANT_THEME } from '../../data/merchant';
 import type { EventSceneData } from './EventScene';
 import { drawEventIcon, EVENT_COLOR } from './eventIcons';
 import { Controls } from '../input/Controls';
@@ -252,6 +253,13 @@ export class RunScene extends Phaser.Scene {
   } | null = null;
   private autoQuality = newAutoQuality();
   private shopOpen = false;
+  /** Comptoir de Ratatosk : position de l'étal, bulle, et réarmement quand Ash s'éloigne. */
+  private merchant: {
+    x: number;
+    y: number;
+    armed: boolean;
+    bubble: Phaser.GameObjects.Text;
+  } | null = null;
   private shopSold = new Set<ShopItemId>();
   private shots: Shot[] = [];
   private pending: PendingSpawn[] = [];
@@ -306,6 +314,7 @@ export class RunScene extends Phaser.Scene {
     this.chest = null;
     this.eventSpot = null;
     this.blasts = [];
+    this.merchant = null;
     this.autoQuality = newAutoQuality();
     this.roomStart = { elapsed: this.run.elapsedMs, hp: this.run.hp };
     this.drawArena();
@@ -406,7 +415,9 @@ export class RunScene extends Phaser.Scene {
     }
 
     this.cameras.main.fadeIn(350, 7, 6, 13);
-    music.play(this.kind === 'boss' ? biome.bossMusic : this.kind === 'shop' ? 'hub' : biome.music);
+    music.play(
+      this.kind === 'boss' ? biome.bossMusic : this.kind === 'shop' ? 'merchant' : biome.music,
+    );
     markScene('run');
     // Sauvegarde à chaque entrée de salle : fermer l'app à tout moment, reprendre ici.
     session.snapshotRun(this.run);
@@ -766,10 +777,102 @@ export class RunScene extends Phaser.Scene {
 
   // ---------- Marchand ----------
 
+  /**
+   * Le Comptoir de Ratatosk : un lieu à part entre deux mondes. Ratatosk tient son étal ;
+   * Ash s'en approche pour commercer (autant de fois qu'il veut), puis sort par la porte.
+   */
   private startShop(): void {
     this.shopSold = new Set();
+    this.shopOpen = false;
+    // L'étal est visible dès l'arrivée (Ash entre en bas, au centre).
+    const x = ARENA.centerX - 130;
+    const y = ARENA.centerY + 26;
+    this.drawCounter(x, y);
+    const rng = createRng((this.run.seed ^ Math.imul(this.run.biome + 11, 0x2545f491)) >>> 0);
+    const bubble = this.add
+      .text(x + 46, y + 10, t(rng.pick(MERCHANT_GREETINGS)), {
+        fontFamily: FONT_FAMILY,
+        fontSize: '8px',
+        color: '#ffe9d6',
+        backgroundColor: '#1a120a',
+        padding: { x: 5, y: 3 },
+        align: 'center',
+        wordWrap: { width: 130 },
+      })
+      .setOrigin(0, 0.5)
+      .setDepth(20)
+      .setAlpha(0);
+    this.merchant = { x, y: y + 30, armed: true, bubble };
+    this.time.delayedCall(400, () => this.ui.showBanner(t('merchant.title'), t('merchant.sub')));
+    // Le lieu est sûr : la porte vers le monde suivant est ouverte tout de suite.
+    this.time.delayedCall(600, () => this.clearRoom());
+  }
+
+  /** Étal, lanternes et caisses du comptoir ; Ratatosk derrière. */
+  private drawCounter(x: number, y: number): void {
+    const back = this.add.graphics().setDepth(3);
+    // Ratatosk (dessin de la boutique, agrandi).
+    back.setPosition(x + 6, y - 6).setScale(1.3);
+    drawRatatosk(back, 0, 0);
+    const g = this.add.graphics().setDepth(4);
+    g.fillStyle(0x3a2412, 1).fillRect(x - 34, y + 4, 68, 16);
+    g.fillStyle(0x5a3a1c, 1).fillRect(x - 36, y, 72, 6);
+    g.lineStyle(1.5, 0xffc46b, 0.9).strokeRect(x - 36, y, 72, 20);
+    // Marchandises sur l'étal : fiole, cœur, pierre, étincelle (formes des articles).
+    g.fillStyle(0x7fe7ff, 1).fillRect(x - 26, y - 6, 5, 6);
+    g.fillStyle(0xff9f6a, 1)
+      .fillCircle(x - 9, y - 3, 3)
+      .fillCircle(x - 5, y - 3, 3);
+    g.fillStyle(0xc0c8d8, 1).fillTriangle(x + 6, y, x + 11, y - 8, x + 16, y);
+    g.fillStyle(0xffe08a, 1).fillCircle(x + 27, y - 3, 3);
+    this.add
+      .text(x, y + 24, t('merchant.name'), {
+        fontFamily: FONT_FAMILY,
+        fontSize: '9px',
+        color: '#ffc46b',
+        stroke: '#07060d',
+        strokeThickness: 3,
+      })
+      .setOrigin(0.5, 0)
+      .setDepth(5);
+    // Lanternes et caisses, pour l'ambiance (pas d'obstacle).
+    for (const [lx, ly] of [
+      [ARENA.left + 40, ARENA.top + 40],
+      [ARENA.right - 40, ARENA.top + 40],
+      [ARENA.left + 40, ARENA.bottom - 40],
+      [ARENA.right - 40, ARENA.bottom - 40],
+    ] as const) {
+      this.add
+        .image(lx, ly, 'glow')
+        .setTint(0xffc46b)
+        .setAlpha(0.45)
+        .setScale(1.4)
+        .setBlendMode('ADD');
+      g.fillStyle(0x2a1c12, 1).fillRect(lx - 4, ly - 6, 8, 12);
+      g.fillStyle(0xffc46b, 1).fillRect(lx - 2, ly - 3, 4, 6);
+    }
+    for (const [cx, cy] of [
+      [x - 62, y + 10],
+      [x - 58, y - 12],
+      [x + 52, y + 14],
+    ] as const) {
+      g.fillStyle(0x4a3018, 1).fillRect(cx - 9, cy - 8, 18, 16);
+      g.lineStyle(1, 0x8a5e30, 1).strokeRect(cx - 9, cy - 8, 18, 16);
+      g.lineBetween(cx - 9, cy - 8, cx + 9, cy + 8);
+    }
+  }
+
+  /** Ash s'approche de l'étal : bulle de Ratatosk, puis la boutique s'ouvre. */
+  private updateMerchant(): void {
+    const m = this.merchant;
+    if (!m || this.leaving || this.choosing) return;
+    const d = Math.hypot(this.player.x - m.x, this.player.y - m.y);
+    m.bubble.setAlpha(d < 110 ? 1 : Math.max(0, m.bubble.alpha - 0.05));
+    if (d > 70) m.armed = true;
+    if (!m.armed || d > 44) return;
+    m.armed = false;
     this.shopOpen = true;
-    this.time.delayedCall(500, () => this.openShop());
+    this.openShop();
   }
 
   private openShop(): void {
@@ -789,10 +892,11 @@ export class RunScene extends Phaser.Scene {
       },
       onLeave: () => {
         this.shopOpen = false;
+        this.choosing = false;
         markScene('run');
-        this.clearRoom();
       },
     };
+    this.choosing = true;
     this.scene.launch('shop', data);
     this.scene.bringToTop('shop');
   }
@@ -1145,6 +1249,7 @@ export class RunScene extends Phaser.Scene {
     this.checkDoors();
     this.updateFountain();
     this.updateTrial();
+    this.updateMerchant();
     this.updateBlasts();
     this.updateEvent();
     this.updateChest();
@@ -1203,7 +1308,7 @@ export class RunScene extends Phaser.Scene {
       ARENA.height + pad * 2,
       0x07060d,
     );
-    const theme = getBiome(this.run.biome).theme;
+    const theme = this.kind === 'shop' ? MERCHANT_THEME : getBiome(this.run.biome).theme;
     this.add.tileSprite(ARENA.centerX, ARENA.centerY, ARENA.width, ARENA.height, theme.floor);
     const g = this.add.graphics();
     // Murs : double trait néon, l'intérieur plus vif.

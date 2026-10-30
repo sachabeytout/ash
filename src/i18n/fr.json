@@ -165,7 +165,7 @@
   "reward.boss": "Gardienne",
   "reward.next": "Continuer",
   "biome.frostserver": "Le Givre-Serveur",
-  "hud.shop": "Le marchand",
+  "hud.shop": "Le Comptoir de Ratatosk",
   "hub.lastClearAll": "Victoire ! L'Oiseleur est tombé… mais la Lanterne reste scellée. Ash renaît dans la Cage.",
   "shop.title": "Ratatosk, le Coursier",
   "shop.greeting": "« Psst ! Des éclats contre de quoi survivre là-haut. Je passe entre les mondes, moi. »",
@@ -180,7 +180,7 @@
   "shop.buy": "Acheter · {cost} ◆",
   "shop.sold": "Vendu",
   "shop.tooPoor": "{cost} ◆ (pas assez)",
-  "shop.leave": "Continuer",
+  "shop.leave": "Fermer l'étal",
   "shop.shards": "◆ {count} éclats",
   "enemy.wolfbot": "Loup-relais",
   "enemy.frostcaster": "Givreur",
@@ -574,5 +574,13 @@
   "rack.lockedDawn": "À la {count}e victoire",
   "rack.equipped": "Équipée",
   "rack.choose": "Choisir ({key})",
-  "rack.forgeLevel": "Forgée · niveau {level}"
+  "rack.forgeLevel": "Forgée · niveau {level}",
+  "merchant.title": "Le Comptoir de Ratatosk",
+  "merchant.sub": "Un refuge entre deux mondes",
+  "merchant.name": "Ratatosk",
+  "merchant.greet.1": "Des éclats ? J'ai ce qu'il te faut, l'ami !",
+  "merchant.greet.2": "Je cours entre les mondes, moi. Les nouvelles vont vite… les prix aussi.",
+  "merchant.greet.3": "Le Maître de la tour n'aime pas que je commerce avec toi. Raison de plus !",
+  "merchant.greet.4": "Approche, approche ! Tout est garanti… jusqu'à la prochaine salle.",
+  "merchant.greet.5": "Encore vivant ? Bonne nouvelle pour mes affaires."
 }
