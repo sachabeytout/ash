@@ -91,4 +91,5 @@ Retour sur le lore v0.2 toujours attendu (« quand le fond aura avancé »).
 - [x] **M6.2 (0.34.0)** : ennemis de soutien (Rebouteux, Porte-bouclier) + Sauteur et Diffuseur
 - [x] **M6.3 (0.35.0)** : variantes de boss (débloquées par la 1re victoire, puis 1 fois sur 2)
 - [x] **M6.4 (0.36.0)** : salles spéciales (survie, sombre, champion)
+- [x] **M6.5 (0.37.0)** : les dieux parlent à l'offre de don (36 répliques) + 8 dialogues de la Cage
 - [ ] **M3** : finitions — coffres et évènements, préréglages de qualité, équilibrage avec la télémétrie, accessibilité

@@ -17,6 +17,9 @@ export interface BoonSceneData {
 
 const SPARK_COLOR = 0xffc46b;
 
+/** Nombre de répliques par dieu (`god.<id>.quote.<n>` dans les textes). */
+export const GOD_QUOTES = 4;
+
 const RARITY_COLOR: Record<Rarity, string> = {
   common: '#d6cfe6',
   rare: '#6fc3ff',
@@ -95,6 +98,25 @@ export class BoonScene extends Phaser.Scene {
     this.data_.offers.forEach((offer, i) =>
       this.makeCard(offer, left + i * (cardW + gap), top, cardW, cardH, i),
     );
+    if (!upgrade) {
+      // Le dieu parle : une réplique au hasard (personnalité, un peu d'humour).
+      const n = 1 + Math.floor(Math.random() * GOD_QUOTES);
+      this.add
+        .text(
+          width / 2,
+          top + cardH + 24,
+          `${t(god.nameKey as TextKey)} : « ${t(`${god.nameKey}.quote.${n}` as TextKey)} »`,
+          {
+            fontFamily: FONT_FAMILY,
+            fontSize: '10px',
+            fontStyle: 'italic',
+            color: godColor,
+            align: 'center',
+            wordWrap: { width: Math.min(560, width - 40) },
+          },
+        )
+        .setOrigin(0.5, 0);
+    }
     this.add
       .text(width / 2, height - 14, t('boonChoice.hint'), {
         fontFamily: FONT_FAMILY,

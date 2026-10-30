@@ -2,6 +2,16 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.37.0 — Les dieux parlent
+
+- **Chaque dieu te parle quand il t'offre un don** : une réplique sous les cartes, avec sa personnalité (36 répliques, un peu d'humour). Par exemple :
+  - Zeus : « Ne dis pas à Héra que je t'aide. Ni à personne, d'ailleurs. »
+  - Anubis : « Ceux qui sont presque morts ? Je m'occupe de la paperasse. »
+  - Thor : « BOUM ! Pardon. C'est comme ça que je dis bonjour. »
+- **8 nouveaux dialogues dans la Cage** au fil des runs : les bégaiements de Thot, les rumeurs de Vesper sur Ratatosk, Gérard le marteau de Brokk, et un souvenir d'Aelia.
+
+**Quoi tester** : lis les répliques des dieux pendant tes runs. Lequel a le plus de caractère ?
+
 ## 0.36.0 — Salles spéciales
 
 - **Une salle spéciale par monde** (sauf la Volière, trop courte), tirée parmi trois types. Son nom s'affiche en entrant :

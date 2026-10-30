@@ -55,3 +55,23 @@ describe('histoire', () => {
     for (let n = 1; n <= 10; n++) expect(DIALOGUES.some((d) => d.id === `victory_${n}`)).toBe(true);
   });
 });
+
+describe('répliques des dieux (0.37.0)', () => {
+  it('chaque dieu a ses 4 répliques en français et en anglais', async () => {
+    const { GOD_IDS, GODS } = await import('../../src/data/gods');
+    const fr = (await import('../../src/i18n/fr.json')).default as unknown as Record<
+      string,
+      string
+    >;
+    const en = (await import('../../src/i18n/en.json')).default as unknown as Record<
+      string,
+      string
+    >;
+    for (const id of GOD_IDS) {
+      for (let n = 1; n <= 4; n++) {
+        expect(fr[`${GODS[id].nameKey}.quote.${n}`]).toBeTruthy();
+        expect(en[`${GODS[id].nameKey}.quote.${n}`]).toBeTruthy();
+      }
+    }
+  });
+});

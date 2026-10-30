@@ -160,6 +160,55 @@ export const DIALOGUES: readonly DialogueDef[] = [
     priority: 31,
     lines: [line('aelia', 'story.spark_aelia.1'), line('thot', 'story.spark_aelia.2')],
   },
+  // ---------- Petites histoires de la Cage (0.37.0) ----------
+  {
+    id: 'thot_glitch',
+    condition: { minDeaths: 3 },
+    priority: 28,
+    lines: [line('thot', 'story.thot_glitch.1')],
+  },
+  {
+    id: 'vesper_rumor',
+    condition: { minRuns: 5, reachedBiome: 1 },
+    priority: 27,
+    lines: [line('vesper', 'story.vesper_rumor.1')],
+  },
+  {
+    id: 'vesper_arena',
+    condition: { minRuns: 6, reachedBiome: 1 },
+    priority: 26,
+    lines: [line('vesper', 'story.vesper_arena.1')],
+  },
+  {
+    id: 'thot_variants',
+    condition: { victories: 1 },
+    priority: 25,
+    lines: [line('thot', 'story.thot_variants.1')],
+  },
+  {
+    id: 'brokk_gerald',
+    condition: { minRuns: 8 },
+    priority: 24,
+    lines: [line('brokk', 'story.brokk_gerald.1'), line('thot', 'story.brokk_gerald.2')],
+  },
+  {
+    id: 'vesper_sleep',
+    condition: { minRuns: 10 },
+    priority: 23,
+    lines: [line('vesper', 'story.vesper_sleep.1')],
+  },
+  {
+    id: 'aelia_memory',
+    condition: { minRuns: 12 },
+    priority: 22,
+    lines: [line('aelia', 'story.aelia_memory.1'), line('aelia', 'story.aelia_memory.2')],
+  },
+  {
+    id: 'brokk_marks',
+    condition: { minRuns: 14 },
+    priority: 21,
+    lines: [line('brokk', 'story.brokk_marks.1')],
+  },
   // ---------- Renaissances ----------
   {
     id: 'deaths_5',
