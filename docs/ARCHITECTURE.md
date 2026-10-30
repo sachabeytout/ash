@@ -1,14 +1,28 @@
 # Architecture (carte du projet)
 
-> Statut 0.2.0 — existe : `core/` (rng, geometry, settings, input/buffer, combat/attack+health,
-> run/waves+rewards+state), `data/` (player, weapons, enemies, biomes), `game/` (scenes Title, Hub, Run, Ui ;
-> entities Player, Enemy ; input Controls, TouchControls ; fx/Juice ; audio/sfx ; textures ; physics),
-> `platform/` (pwa, device). Prévu : save/, boons/, telemetry, events, data/validate. Mettre à jour à chaque session.
+> Statut 0.3.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer,
+> combat/attack+health+status+superGauge, boons/boons, run/waves+rewards+state, save/schema+migrations+codec+store),
+> `data/` (player, weapons, enemies, biomes, gods, boons, status, skills), `game/` (scenes Title, Hub, Run, Ui, Boon ;
+> entities Player, Enemy ; input Controls, TouchControls ; fx/Juice+Lightning ; ui/button+ThothPanel ;
+> dom/saveDialog ; debug/cheats ; session ; icons ; audio/sfx ; textures ; physics), `platform/` (pwa, device).
+> Prévu : telemetry, events, data/validate. Mettre à jour à chaque session.
 
 ### Scènes
 
 `title` → `hub` (Cage) → `run` (une salle ; se relance à chaque porte) + `ui` (calque non zoomé : vie,
-salle, commandes tactiles, lancé par `run`). Mort ou sortie → `hub` avec un `RunSummary`.
+jauge de Super, dons, salle, flèches hors écran, commandes tactiles, lancé par `run`) + `boon` (choix 1 parmi 3,
+par-dessus). Mort ou sortie → `hub` avec un `RunSummary`.
+
+### Dons, Super, sauvegarde, Thot (où régler quoi)
+
+- Dons (valeurs, raretés, duo, amplification) : `src/data/boons.ts` ; dieux : `src/data/gods.ts`.
+- Brûlure / givre / gel : `src/data/status.ts` + `src/core/combat/status.ts`.
+- Tirage des dons et profil de combat : `src/core/boons/boons.ts` ; effets en jeu : `RunScene` (section « Dons »).
+- Super : `super` dans `src/data/weapons.ts` ; remplissage de la jauge : `PLAYER.superGauge` (`src/data/player.ts`).
+- Arbre de Thot : `src/data/skills.ts` + `src/core/meta.ts` ; fenêtre : `src/game/ui/ThothPanel.ts`.
+- Sauvegarde : `src/core/save/` (format v1, migrations, empreinte, copie de secours) ; `src/game/session.ts`
+  l'écrit à chaque entrée de salle, après un choix de don, en fin de run et quand l'app passe en arrière-plan.
+- Raccourcis de test (dev ou `?cheats`) : `src/game/debug/cheats.ts`.
 
 ### Combat (où régler quoi)
 

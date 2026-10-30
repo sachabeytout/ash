@@ -61,3 +61,39 @@ export function nearestInCone<T extends Vec2>(
   }
   return best;
 }
+
+export interface Rect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+/**
+ * Indicateur hors écran : si `target` est hors du rectangle visible, renvoie le point du bord
+ * (rentré de `inset`) dans la direction de la cible, et l'angle vers elle. Sinon null.
+ */
+export function edgeIndicator(
+  view: Rect,
+  target: Vec2,
+  inset: number,
+): { x: number; y: number; angle: number } | null {
+  const inside =
+    target.x >= view.x &&
+    target.x <= view.x + view.width &&
+    target.y >= view.y &&
+    target.y <= view.y + view.height;
+  if (inside) return null;
+  const cx = view.x + view.width / 2;
+  const cy = view.y + view.height / 2;
+  const dx = target.x - cx;
+  const dy = target.y - cy;
+  const halfW = Math.max(1, view.width / 2 - inset);
+  const halfH = Math.max(1, view.height / 2 - inset);
+  // On allonge la direction jusqu'à toucher le bord du rectangle rentré.
+  const scale = Math.min(
+    dx !== 0 ? halfW / Math.abs(dx) : Infinity,
+    dy !== 0 ? halfH / Math.abs(dy) : Infinity,
+  );
+  return { x: cx + dx * scale, y: cy + dy * scale, angle: Math.atan2(dy, dx) };
+}

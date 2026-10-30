@@ -2,8 +2,8 @@
 
 ## Prochaine étape
 
-M1.2 : les dons des dieux (Râ, Zeus, Skadi), le super, la sauvegarde (méta + run en cours). Puis M1.3 : élite, boss Ammit, musique.
-Retours attendus de l'utilisateur sur la 0.2.0 (ressenti du combat) et sur le lore v0.2.
+M1.3 : élite, boss Ammit, musique, menu pause et options, préréglages de qualité.
+Retours attendus de l'utilisateur sur la 0.3.0 (dons, Super, sauvegarde, Thot) et, plus tard, sur le lore v0.2.
 
 ## M0 — Fondations
 
@@ -35,13 +35,13 @@ Retours attendus de l'utilisateur sur la 0.2.0 (ressenti du combat) et sur le lo
 - [x] Contrôles tactile / clavier-souris / manette
 - [x] Bruitages synthétisés
 
-### M1.2 — Dons et sauvegarde
+### M1.2 — Dons et sauvegarde (0.3.0) ✅
 
-- [ ] 3 dieux (Râ, Zeus, Skadi), 12–15 dons, 1 duo, 1 amplification ; choix 1 parmi 3
-- [ ] Super (jauge) pour les 2 armes
-- [ ] Sauvegarde versionnée (méta + run en cours), export / import
-- [ ] Méta minimale : quelques compétences (arbre de Thot)
-- [ ] Indicateurs d'ennemis hors écran
+- [x] 3 dieux (Râ, Zeus, Skadi), 13 dons, 1 duo, 1 amplification ; choix 1 parmi 3
+- [x] Super (jauge) pour les 2 armes
+- [x] Sauvegarde versionnée (méta + run en cours), export / import
+- [x] Méta minimale : 5 compétences (arbre de Thot)
+- [x] Indicateurs d'ennemis hors écran
 
 ### M1.3 — Boss et ambiance
 

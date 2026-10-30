@@ -17,6 +17,7 @@ Roguelite d'action en vue de dessus (inspiré de Hadès, 100 % original), PWA po
 - **Règle d'or :** tout changement de stack ou de décision validée → expliquer + attendre sa validation. Tracer dans `docs/DECISIONS.md`.
 - Petits choix réversibles : décider, noter dans DECISIONS, signaler dans le résumé.
 - Il déteste la **frustration** et se sentir **bloqué** (BRIEF §6.9) : critère central.
+- Veut une **notification** (PushNotification) à chaque étape terminée.
 
 ## Stack
 

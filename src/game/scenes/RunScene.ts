@@ -10,7 +10,7 @@ import {
 import { applyDamage } from '../../core/combat/health';
 import { gainSuper, superReady } from '../../core/combat/superGauge';
 import { applyBurn, applyChill, isBurning, isFrozen, tickBurn } from '../../core/combat/status';
-import { hitsArc, type Vec2 } from '../../core/geometry';
+import { edgeIndicator, hitsArc, type Vec2 } from '../../core/geometry';
 import { createRng, type Rng } from '../../core/rng';
 import { rollDoors, type DoorReward, type RewardKind } from '../../core/run/rewards';
 import {
@@ -36,7 +36,7 @@ import { Lightning } from '../fx/Lightning';
 import { drawGodIcon } from '../icons';
 import type { BoonSceneData } from './BoonScene';
 import { Controls } from '../input/Controls';
-import { UiScene } from './UiScene';
+import { UiScene, type Indicator } from './UiScene';
 import { finishRun } from '../../core/meta';
 import { cheatsEnabled } from '../debug/cheats';
 import { session } from '../session';
@@ -113,6 +113,12 @@ export class RunScene extends Phaser.Scene {
   /** Un dieu propose un don : le combat attend. */
   private choosing = false;
   private lastChainSwing = -1;
+  private readonly indicatorBuf: Indicator[] = Array.from({ length: POOL_SIZE + 8 }, () => ({
+    x: 0,
+    y: 0,
+    angle: 0,
+    spawn: false,
+  }));
   private profile!: CombatProfile;
   private lightning!: Lightning;
 
@@ -389,6 +395,7 @@ export class RunScene extends Phaser.Scene {
     this.updateWaves();
     this.checkDoors();
     this.ui.showRun(this.run);
+    this.updateIndicators();
   }
 
   // ---------- Arène ----------
@@ -446,6 +453,28 @@ export class RunScene extends Phaser.Scene {
       e.y > view.y + inset &&
       e.y < view.bottom - inset
     );
+  }
+
+  /** Flèches au bord de l'écran vers les ennemis (et apparitions) hors champ. */
+  private updateIndicators(): void {
+    const cam = this.cameras.main;
+    const view = cam.worldView;
+    const zoom = cam.zoom;
+    let n = 0;
+    const push = (target: Vec2, spawn: boolean) => {
+      const slot = this.indicatorBuf[n];
+      if (!slot) return;
+      const p = edgeIndicator(view, target, 16 / zoom);
+      if (!p) return;
+      slot.x = (p.x - view.x) * zoom;
+      slot.y = (p.y - view.y) * zoom;
+      slot.angle = p.angle;
+      slot.spawn = spawn;
+      n++;
+    };
+    for (const e of this.enemies) if (e.alive) push(e, false);
+    for (const s of this.pending) push(s, true);
+    this.ui.showIndicators(this.indicatorBuf, n);
   }
 
   // ---------- Vagues et apparitions ----------

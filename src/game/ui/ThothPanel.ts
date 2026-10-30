@@ -19,6 +19,9 @@ function displayValue(skill: SkillDef, level: number): number {
 /** Fenêtre de l'arbre de Thot : une ligne par compétence, niveau, effet, bouton d'achat. */
 export class ThothPanel {
   private readonly root: Phaser.GameObjects.Container;
+  private readonly onKey = (e: KeyboardEvent) => {
+    if (e.code === 'Escape' || e.code === 'KeyT') this.close();
+  };
 
   constructor(
     private readonly scene: Phaser.Scene,
@@ -28,6 +31,8 @@ export class ThothPanel {
   ) {
     this.root = scene.add.container(0, 0).setDepth(100);
     this.build();
+    // Ajouté au tour suivant : l'appui qui a ouvert la fenêtre ne la referme pas.
+    setTimeout(() => window.addEventListener('keydown', this.onKey), 0);
   }
 
   private build(): void {
@@ -142,6 +147,7 @@ export class ThothPanel {
   }
 
   close(): void {
+    window.removeEventListener('keydown', this.onKey);
     sfx.tap();
     this.root.destroy(true);
     this.onClose();

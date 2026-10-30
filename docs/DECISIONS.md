@@ -35,6 +35,14 @@ Format : date — décision — raison — validée par l'utilisateur (oui / non
 | 2026-10-30 | Écran « Tourne ton téléphone » quand un téléphone est tenu en portrait                                                             | Le jeu se joue en paysage (décision validée) ; réversible                                                                                                                                           | à signaler |
 
 | 2026-10-30 | Mise à l'échelle **EXPAND** (hauteur 360 fixe, largeur qui s'adapte) au lieu de FIT | Remplit les écrans allongés des téléphones récents sans bandes noires ; les commandes tactiles occupent les bords | à signaler |
+| 2026-10-30 | La run **commence par un don** (dieu tiré au hasard) ; un don choisi à une porte se choisit **au début de la salle suivante** | Pouvoir dès le départ ; la reprise après fermeture repropose exactement les mêmes dons | à signaler |
+| 2026-10-30 | Un seul don par action (attaque, puissante, dash) ; un nouveau **remplace** l'ancien. Raretés Commun / Rare ×1,5 / Épique ×2 | Lisibilité des choix, comme dans le genre | à signaler |
+| 2026-10-30 | Gel : 5 charges de givre ; après un dégel, **2 s d'immunité** | Évite le gel permanent (surtout avec les doubles lames) | à signaler |
+| 2026-10-30 | Ash est **invincible pendant le Super** | Anti-frustration, le Super est un moment de puissance | à signaler |
+| 2026-10-30 | Reprise de run **au début de la salle** où l'on était (sauvegarde à l'entrée de salle) | Conforme au brief ; évite de reprendre au milieu d'un combat | à signaler |
+| 2026-10-30 | « Abandonner la run » dans la Cage : demande une confirmation, l'XP gagnée est conservée | Jamais de run « pour rien » | à signaler |
+| 2026-10-30 | Le Super n'est pas (encore) modifié par les dons | Simplicité M1 ; des dons de Super pourront venir en M2 | à signaler |
+| 2026-10-30 | Préférence : **notification à chaque étape terminée** | Demande de l'utilisateur | oui |
 
 ## Réponses de l'utilisateur (30/10/2026)
 

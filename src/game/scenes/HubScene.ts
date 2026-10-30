@@ -150,6 +150,10 @@ export class HubScene extends Phaser.Scene {
         this.scene.restart({});
         return;
       }
+      if (e.code === 'KeyT') {
+        this.openThoth();
+        return;
+      }
       if (session.save.run) {
         if (e.code === 'Enter' || e.code === 'Space' || e.code === 'Digit1') this.resume();
         return;

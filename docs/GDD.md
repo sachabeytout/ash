@@ -118,6 +118,17 @@ L'Oiseleur le laisse s'évader, encore et encore.
 Duo M1 : Râ + Skadi = **Choc thermique** (un ennemi gelé qui brûle explose).
 Amplification M1 : **Soleil de midi** (la brûlure de Râ dure 50 % plus longtemps).
 
+### Dons M1 (0.3.0) — valeurs : `src/data/boons.ts`
+
+| Dieu  | Attaque          | Puissante          | Dash            | Passifs                                                |
+| ----- | ---------------- | ------------------ | --------------- | ------------------------------------------------------ |
+| Râ    | Frappe solaire   | Lance du zénith    | Envol embrasé   | Œil de Râ (+dégâts sur brûlés), Feu du foyer (+PV max) |
+| Zeus  | Arc électrique   | Foudre descendante | Pas de tonnerre | Riposte orageuse (foudre quand on est touché)          |
+| Skadi | Morsure du givre | Avalanche          | Pas de neige    | Cœur d'hiver (+dégâts sur givrés)                      |
+
+Super : Katana = **Taille de l'Aube** ; Doubles lames = **Tempête de lames**.
+Arbre de Thot (M1) : Mémoire du feu, Lame affûtée, Braises vivaces, Faveur divine, Étincelle.
+
 ## 5. Systèmes nommés 🟡
 
 | Système                     | Nom                                                        |

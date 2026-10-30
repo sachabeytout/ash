@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { gainSuper, superReady } from '../../src/core/combat/superGauge';
+import { edgeIndicator } from '../../src/core/geometry';
 import { WEAPONS } from '../../src/data/weapons';
 import {
   nextComboIndex,
@@ -112,5 +113,29 @@ describe('jauge de Super', () => {
 
   it('chaque arme a un Super', () => {
     for (const w of Object.values(WEAPONS)) expect(w.super.length).toBeGreaterThan(0);
+  });
+});
+
+describe('indicateurs hors écran', () => {
+  const view = { x: 0, y: 0, width: 200, height: 100 };
+
+  it('rien pour un ennemi visible', () => {
+    expect(edgeIndicator(view, { x: 50, y: 50 }, 10)).toBeNull();
+  });
+
+  it('se colle au bord, du côté de l’ennemi', () => {
+    const right = edgeIndicator(view, { x: 400, y: 50 }, 10);
+    expect(right?.x).toBeCloseTo(190);
+    expect(right?.y).toBeCloseTo(50);
+    expect(right?.angle).toBeCloseTo(0);
+    const top = edgeIndicator(view, { x: 100, y: -300 }, 10);
+    expect(top?.y).toBeCloseTo(10);
+    expect(top?.x).toBeCloseTo(100);
+  });
+
+  it('reste dans l’écran pour un ennemi en diagonale', () => {
+    const p = edgeIndicator(view, { x: -500, y: 900 }, 10);
+    expect(p?.x).toBeGreaterThanOrEqual(10);
+    expect(p?.y).toBeLessThanOrEqual(90);
   });
 });

@@ -2,6 +2,23 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.3.0 — Les dieux s'en mêlent
+
+- **Dons des dieux** : trois dieux t'offrent leurs pouvoirs, tu en choisis **1 parmi 3**. La run commence toujours par un don, et les portes « Don » montrent quel dieu t'attend.
+  - **Râ** (soleil) : tes coups **brûlent** les ennemis (dégâts dans le temps, petites flammes au-dessus d'eux).
+  - **Zeus** (éclair) : **la foudre** rebondit d'ennemi en ennemi ou tombe du ciel.
+  - **Skadi** (flocon) : le **givre** ralentit, et à 5 charges l'ennemi **gèle sur place** (bloc de glace) — son attaque est annulée.
+  - Raretés : Commun, Rare (×1,5), Épique (×2). Un nouveau don sur la même action **remplace** l'ancien (c'est écrit sur la carte).
+  - **Duo « Choc thermique »** (Râ + Skadi) : un ennemi gelé qui brûle explose.
+  - **Amplification « Soleil de midi »** : tes brûlures durent 50 % plus longtemps.
+- **Super** (bouton étoile, touche E) : la jauge dorée sous ta vie se remplit en frappant et en étant touché. Katana : **Taille de l'Aube** (Ash fonce et tranche tout). Doubles lames : **Tempête de lames** (cinq tourbillons). Tu es invincible pendant le Super.
+- **Sauvegarde** : tout est enregistré automatiquement. Tu peux **fermer l'app en pleine run** : la Cage te proposera « Reprendre » (au début de la salle où tu étais).
+- **Bouton « Sauvegarde »** dans la Cage : copier ou télécharger un code de secours, ou importer un code (pour passer du téléphone au Mac).
+- **Arbre de Thot** (bouton en haut à gauche de la Cage) : dépense ton XP en 5 compétences permanentes (vie, dégâts, soin à chaque salle, dons plus rares, Super de départ).
+- **Flèches au bord de l'écran** vers les ennemis hors champ (flèche pâle = ennemi sur le point d'apparaître).
+
+**Quoi tester** : fais 3–4 runs. Est-ce que choisir un don est clair et agréable ? Lequel des trois dieux préfères-tu ? Le Super se remplit-il trop vite ou trop lentement ? Ferme l'app en pleine run et rouvre-la : la reprise marche-t-elle ? Achète une compétence chez Thot.
+
 ## 0.2.1 — Réglages
 
 - Doubles lames un peu plus puissantes (environ +18 % de dégâts).

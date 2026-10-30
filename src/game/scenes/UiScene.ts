@@ -11,6 +11,16 @@ import { drawGodIcon } from '../icons';
 import { TouchControls } from '../input/TouchControls';
 import { FONT_FAMILY } from '../theme';
 
+const INDICATOR_POOL = 24;
+
+export interface Indicator {
+  x: number;
+  y: number;
+  angle: number;
+  /** Ennemi sur le point d'apparaître (marqueur au sol). */
+  spawn: boolean;
+}
+
 /**
  * Calque d'interface au-dessus de la salle (non zoomé) : vie, salle, éclats, commandes tactiles.
  * La salle de combat (RunScene) le lance et lui envoie les infos à afficher.
@@ -26,6 +36,7 @@ export class UiScene extends Phaser.Scene {
   private boonKey = '';
   private touch!: TouchControls;
   private superWasReady = false;
+  private indicators: Phaser.GameObjects.Graphics[] = [];
 
   constructor() {
     super('ui');
@@ -54,6 +65,13 @@ export class UiScene extends Phaser.Scene {
       .setOrigin(0)
       .setAlpha(0)
       .setBlendMode('ADD');
+    // Flèches au bord de l'écran vers les ennemis hors champ (pool, rien n'est créé en combat).
+    this.indicators = Array.from({ length: INDICATOR_POOL }, () => {
+      const g = this.add.graphics().setVisible(false);
+      g.fillStyle(0xd8e2ff, 0.9).fillTriangle(9, 0, -6, -8, -6, 8);
+      g.lineStyle(1.5, 0x07060d, 0.9).strokeTriangle(9, 0, -6, -8, -6, 8);
+      return g;
+    });
     this.touch = new TouchControls(this, this.controls);
     this.superWasReady = false;
 
@@ -111,6 +129,23 @@ export class UiScene extends Phaser.Scene {
       g.lineStyle(1, gods[0]?.color ?? 0xffffff, 0.8).strokeCircle(x, y, 8);
       const main = gods[0];
       if (main) drawGodIcon(g, main, x, y, 5);
+    });
+  }
+
+  /** Affiche les `count` premiers indicateurs (coordonnées d'écran). Une apparition à venir est creuse. */
+  showIndicators(list: readonly Indicator[], count: number): void {
+    const pulse = 0.65 + 0.35 * Math.sin(this.time.now / 140);
+    this.indicators.forEach((g, i) => {
+      const ind = list[i];
+      if (i >= count || !ind) {
+        g.setVisible(false);
+        return;
+      }
+      g.setVisible(true)
+        .setPosition(ind.x, ind.y)
+        .setRotation(ind.angle)
+        .setAlpha(ind.spawn ? 0.45 : pulse)
+        .setScale(ind.spawn ? 0.8 : 1);
     });
   }
 
