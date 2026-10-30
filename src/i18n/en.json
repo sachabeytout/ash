@@ -582,5 +582,7 @@
   "merchant.greet.2": "I run between the worlds. News travels fast… so do prices.",
   "merchant.greet.3": "The Master of the tower hates me trading with you. All the more reason!",
   "merchant.greet.4": "Come closer, come closer! Everything's guaranteed… until the next room.",
-  "merchant.greet.5": "Still alive? Good news for business."
+  "merchant.greet.5": "Still alive? Good news for business.",
+  "trap.spikes": "Spike trap",
+  "trap.mine": "Explosive"
 }

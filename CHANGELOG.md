@@ -2,6 +2,16 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.32.0 — Pièges
+
+- **Des pièges dans les salles de combat**, à partir de la 3e salle de chaque monde (un peu plus nombreux plus loin) :
+  - **Trappe à pics** (plaque grise à trous) : si tu **restes dessus** un peu plus d'une demi-seconde, un contour rouge s'allume, puis les pics sortent. Si tu pars pendant l'alerte, rien ne se passe.
+  - **Explosif** (petit tonnelet avec une mèche) : quand tu passes **à côté**, la mèche s'allume. Un **cercle rouge** se remplit pendant 0,7 s, puis il explose.
+- Les pièges **blessent aussi les ennemis** : attire-les dessus !
+- Jamais de piège près de l'entrée, des portes ou du centre de la salle, ni dans les deux premières salles.
+
+**Quoi tester** : les pièges se voient-ils assez ? L'explosif te laisse-t-il le temps de t'écarter ?
+
 ## 0.31.2 — L'étal au centre
 
 - **L'étal de Ratatosk est au milieu de la pièce** : en arrivant, il suffit d'avancer tout droit pour ouvrir la boutique.

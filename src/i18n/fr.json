@@ -582,5 +582,7 @@
   "merchant.greet.2": "Je cours entre les mondes, moi. Les nouvelles vont vite… les prix aussi.",
   "merchant.greet.3": "Le Maître de la tour n'aime pas que je commerce avec toi. Raison de plus !",
   "merchant.greet.4": "Approche, approche ! Tout est garanti… jusqu'à la prochaine salle.",
-  "merchant.greet.5": "Encore vivant ? Bonne nouvelle pour mes affaires."
+  "merchant.greet.5": "Encore vivant ? Bonne nouvelle pour mes affaires.",
+  "trap.spikes": "Trappe à pics",
+  "trap.mine": "Explosif"
 }

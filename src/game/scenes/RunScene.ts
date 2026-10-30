@@ -30,6 +30,18 @@ import type { AttackStep } from '../../core/combat/attack';
 import { edgeIndicator, hitsArc, type Vec2 } from '../../core/geometry';
 import { createRng, type Rng } from '../../core/rng';
 import { insideAny, planObstacles, type KeepOut, type Rect } from '../../core/arena/obstacles';
+import {
+  MINE_FUSE_MS,
+  MINE_RADIUS,
+  MINE_TRIGGER_RADIUS,
+  SPIKE_ARM_MS,
+  mineDamage,
+  planTraps,
+  spikeDamage,
+  stepSpike,
+  trapCounts,
+  type SpikeState,
+} from '../../core/arena/traps';
 import { rollDoors, type DoorReward, type RewardKind } from '../../core/run/rewards';
 import {
   afterBoss,
@@ -241,6 +253,16 @@ export class RunScene extends Phaser.Scene {
   } | null = null;
   /** Piliers et murets de la salle (bloquent les déplacements et les tirs). */
   private obstacles: Rect[] = [];
+  /** Pièges de la salle : trappes à pics et explosifs. */
+  private spikeTraps: { rect: Rect; state: SpikeState; g: Phaser.GameObjects.Graphics }[] = [];
+  private mines: {
+    x: number;
+    y: number;
+    lit: number;
+    done: boolean;
+    g: Phaser.GameObjects.Graphics;
+    warn: Phaser.GameObjects.Graphics;
+  }[] = [];
   /** Explosions d'ennemis Instables : cercle d'alerte, puis dégâts. */
   private blasts: { x: number; y: number; at: number; g: Phaser.GameObjects.Graphics }[] = [];
   /** Salle d'évènement : l'objet au centre (s'ouvre quand Ash s'approche ; se réarme quand il s'éloigne). */
@@ -314,11 +336,14 @@ export class RunScene extends Phaser.Scene {
     this.chest = null;
     this.eventSpot = null;
     this.blasts = [];
+    this.spikeTraps = [];
+    this.mines = [];
     this.merchant = null;
     this.autoQuality = newAutoQuality();
     this.roomStart = { elapsed: this.run.elapsedMs, hp: this.run.hp };
     this.drawArena();
     this.placeObstacles();
+    this.placeTraps();
     this.physics.world.setBounds(ARENA.x, ARENA.y, ARENA.width, ARENA.height);
 
     this.juice = new Juice(this);
@@ -576,6 +601,134 @@ export class RunScene extends Phaser.Scene {
     sfx.boonTaken();
     f.glow.setAlpha(0.15);
     f.g.setAlpha(0.4);
+  }
+
+  // ---------- Pièges ----------
+
+  /** Pièges : seulement en combat, à partir de la 3e salle, loin de l'entrée, des portes et du centre. */
+  private placeTraps(): void {
+    if (this.kind !== 'combat') return;
+    const rng = createRng(
+      (this.run.seed ^ Math.imul(this.run.biome * 64 + this.run.room + 5, 0x7feb352d)) >>> 0,
+    );
+    const layout = planTraps(
+      rng,
+      { x: ARENA.x, y: ARENA.y, w: ARENA.width, h: ARENA.height },
+      KEEP_OUT,
+      this.obstacles,
+      trapCounts(this.run.room, rng),
+    );
+    for (const rect of layout.spikes) {
+      const g = this.add.graphics().setDepth(1);
+      const trap = { rect, state: { phase: 'idle' as const, at: 0 } as SpikeState, g };
+      this.spikeTraps.push(trap);
+      this.drawSpikes(trap, 0);
+    }
+    for (const p of layout.mines) {
+      const g = this.add.graphics().setDepth(3);
+      // Explosif : tonnelet sombre cerclé, mèche courte (forme bien à lui).
+      g.fillStyle(0x2a1e14, 1).fillCircle(p.x, p.y, 9);
+      g.lineStyle(2, 0x8a6a3a, 1).strokeCircle(p.x, p.y, 9);
+      g.lineBetween(p.x - 9, p.y, p.x + 9, p.y);
+      g.lineStyle(1.5, 0xc0c8d8, 1).lineBetween(p.x + 4, p.y - 8, p.x + 8, p.y - 13);
+      g.fillStyle(0xffa040, 1).fillCircle(p.x + 8, p.y - 13, 1.6);
+      const warn = this.add.graphics().setDepth(5);
+      this.mines.push({ x: p.x, y: p.y, lit: -1, done: false, g, warn });
+    }
+  }
+
+  /** Trappe à pics : plaque à trous ; alerte (contour de danger) ; pics sortis. */
+  private drawSpikes(
+    trap: { rect: Rect; state: SpikeState; g: Phaser.GameObjects.Graphics },
+    progress: number,
+  ): void {
+    const { rect: r, state, g } = trap;
+    g.clear();
+    g.fillStyle(0x16161e, 1).fillRect(r.x, r.y, r.w, r.h);
+    g.lineStyle(1.5, 0x8a8a9c, 1).strokeRect(r.x, r.y, r.w, r.h);
+    const step = r.w / 4;
+    for (let i = 0; i < 4; i++) {
+      for (let j = 0; j < 4; j++) {
+        const cx = r.x + step * (i + 0.5);
+        const cy = r.y + step * (j + 0.5);
+        if (state.phase === 'up') {
+          g.fillStyle(0xe8ecf4, 1).fillTriangle(cx - 2.5, cy + 2.5, cx + 2.5, cy + 2.5, cx, cy - 4);
+        } else {
+          g.fillStyle(0x07060d, 1).fillCircle(cx, cy, 1.4);
+        }
+      }
+    }
+    if (state.phase === 'arming') {
+      g.fillStyle(DANGER, 0.08 + 0.3 * progress).fillRect(r.x, r.y, r.w, r.h);
+      g.lineStyle(1.5, DANGER, 0.5 + 0.5 * progress).strokeRect(r.x, r.y, r.w, r.h);
+    } else if (state.phase === 'up') {
+      g.lineStyle(1.5, DANGER, 0.9).strokeRect(r.x, r.y, r.w, r.h);
+    }
+  }
+
+  private updateTraps(): void {
+    if (this.leaving) return;
+    const px = this.player.x;
+    const py = this.player.y;
+    for (const trap of this.spikeTraps) {
+      const r = trap.rect;
+      const on = px > r.x - 4 && px < r.x + r.w + 4 && py > r.y - 4 && py < r.y + r.h + 4;
+      const before = trap.state.phase;
+      const strikes = stepSpike(trap.state, this.sim, on);
+      if (trap.state.phase === 'arming') {
+        this.drawSpikes(trap, Math.min(1, (this.sim - trap.state.at) / SPIKE_ARM_MS));
+        if (before !== 'arming') sfx.telegraph();
+      } else if (before !== trap.state.phase) this.drawSpikes(trap, 0);
+      if (!strikes) continue;
+      sfx.block();
+      this.juice.burst(r.x + r.w / 2, r.y + r.h / 2, 0xe8ecf4, 10);
+      const dmg = spikeDamage(this.run.biome);
+      if (on && !this.player.isInvulnerable(this.sim))
+        this.hurtPlayer(dmg, { x: r.x + r.w / 2, y: r.y + r.h / 2 }, 'trap.spikes');
+      for (const e of this.enemies) {
+        if (e.alive && e.x > r.x && e.x < r.x + r.w && e.y > r.y && e.y < r.y + r.h)
+          this.trapHitEnemy(e, dmg);
+      }
+    }
+    for (const m of this.mines) {
+      if (m.done) continue;
+      if (m.lit < 0) {
+        if (Math.hypot(px - m.x, py - m.y) > MINE_TRIGGER_RADIUS) continue;
+        m.lit = this.sim;
+        sfx.telegraph();
+      }
+      const progress = (this.sim - m.lit) / MINE_FUSE_MS;
+      if (progress < 1) {
+        m.warn.clear();
+        m.warn.lineStyle(1.5, DANGER, 0.9).strokeCircle(m.x, m.y, MINE_RADIUS);
+        m.warn.fillStyle(DANGER, 0.1 + 0.3 * progress).fillCircle(m.x, m.y, MINE_RADIUS * progress);
+        continue;
+      }
+      m.done = true;
+      m.warn.destroy();
+      m.g.destroy();
+      this.juice.burst(m.x, m.y, 0xffa040, 22);
+      this.juice.shake(0.005, 140);
+      sfx.explode();
+      const dmg = mineDamage(this.run.biome);
+      if (
+        Math.hypot(px - m.x, py - m.y) <= MINE_RADIUS + PLAYER.radius &&
+        !this.player.isInvulnerable(this.sim)
+      )
+        this.hurtPlayer(dmg, m, 'trap.mine');
+      for (const e of this.enemies) {
+        if (e.alive && Math.hypot(e.x - m.x, e.y - m.y) <= MINE_RADIUS + e.radius)
+          this.trapHitEnemy(e, dmg);
+      }
+    }
+  }
+
+  /** Les pièges blessent aussi les ennemis (dégâts bruts, sans les bonus des dons). */
+  private trapHitEnemy(e: Enemy, amount: number): void {
+    const { dealt, killed } = applyDamage(e.health, amount);
+    e.hit(this.sim, e, 0);
+    this.juice.damageNumber(e.x, e.y - e.radius, dealt, '#e8ecf4');
+    if (killed) this.killEnemy(e);
   }
 
   // ---------- Marques de l'Oiseleur ----------
@@ -1255,6 +1408,7 @@ export class RunScene extends Phaser.Scene {
     this.updateTrial();
     this.updateMerchant();
     this.updateBlasts();
+    this.updateTraps();
     this.updateEvent();
     this.updateChest();
     this.ui.showRun(this.run);
