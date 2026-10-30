@@ -2,6 +2,13 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.31.2 — L'étal au centre
+
+- **L'étal de Ratatosk est au milieu de la pièce** : en arrivant, il suffit d'avancer tout droit pour ouvrir la boutique.
+- La **fontaine** est à gauche de l'étal, bien visible dès l'arrivée ; la bulle de Ratatosk est à droite.
+
+**Quoi tester** : en arrivant chez Ratatosk, avance tout droit. La boutique s'ouvre-t-elle au bon moment ?
+
 ## 0.31.1 — Une fontaine chez Ratatosk
 
 - **Une fontaine dans chaque Comptoir de Ratatosk** (à droite en arrivant) : elle rend **30 % de ta vie** entre chaque monde. (Avec la Mesure « Sans répit », elle reste à sec, comme les autres fontaines.)

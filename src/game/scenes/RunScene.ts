@@ -787,8 +787,8 @@ export class RunScene extends Phaser.Scene {
   private startShop(): void {
     this.shopSold = new Set();
     this.shopOpen = false;
-    // L'étal est visible dès l'arrivée (Ash entre en bas, au centre).
-    const x = ARENA.centerX - 130;
+    // L'étal est au milieu de la pièce : Ash, qui entre en bas au centre, n'a qu'à avancer.
+    const x = ARENA.centerX;
     const y = ARENA.centerY + 26;
     this.drawCounter(x, y);
     const rng = createRng((this.run.seed ^ Math.imul(this.run.biome + 11, 0x2545f491)) >>> 0);
@@ -806,8 +806,8 @@ export class RunScene extends Phaser.Scene {
       .setDepth(20)
       .setAlpha(0);
     this.merchant = { x, y: y + 30, armed: true, bubble };
-    // Une fontaine entre chaque monde, de l'autre côté de l'étal.
-    this.placeFountain(ARENA.centerX + 130, y + 10);
+    // Une fontaine entre chaque monde, à gauche de l'étal (la bulle de Ratatosk est à droite).
+    this.placeFountain(ARENA.centerX - 150, y + 56);
     this.time.delayedCall(400, () => this.ui.showBanner(t('merchant.title'), t('merchant.sub')));
     // Le lieu est sûr : la porte vers le monde suivant est ouverte tout de suite.
     this.time.delayedCall(600, () => this.clearRoom());
