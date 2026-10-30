@@ -50,6 +50,7 @@ import { planWaves, type Wave } from '../../core/run/waves';
 import {
   ANVIL_DAMAGE,
   PRISONER_MAX_HP,
+  SHRINE_XP,
   eventCost,
   eventOf,
   takeEvent,
@@ -653,7 +654,7 @@ export class RunScene extends Phaser.Scene {
       id,
       cost,
       blocked,
-      extra: { maxHp: PRISONER_MAX_HP, damage: Math.round(ANVIL_DAMAGE * 100) },
+      extra: { maxHp: PRISONER_MAX_HP, damage: Math.round(ANVIL_DAMAGE * 100), xp: SHRINE_XP },
       onTake: () => this.onEventTaken(id),
       onLeave: () => {
         this.choosing = false;
@@ -679,8 +680,9 @@ export class RunScene extends Phaser.Scene {
         (p as unknown as Phaser.GameObjects.Components.Alpha).setAlpha(0.3),
       );
     }
-    if (id === 'ember') {
+    if (hpBefore > this.run.hp)
       this.juice.damageNumber(this.player.x, this.player.y - 12, hpBefore - this.run.hp, '#ffa040');
+    if (this.run.pendingBoon) {
       this.choosing = true;
       this.time.delayedCall(380, () => this.offerBoon());
       return;
@@ -690,6 +692,7 @@ export class RunScene extends Phaser.Scene {
       t(`event.${id}.doneSub` as TextKey, {
         maxHp: PRISONER_MAX_HP,
         damage: Math.round(ANVIL_DAMAGE * 100),
+        xp: SHRINE_XP,
       }),
     );
   }

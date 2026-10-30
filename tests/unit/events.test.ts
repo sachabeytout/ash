@@ -101,3 +101,23 @@ describe('statistiques de run (récapitulatif)', () => {
     expect(save.run?.damageTaken).toBe(0);
   });
 });
+
+describe('nouveaux évènements (0.26.0)', () => {
+  it('le puits appelle un dieu contre des éclats ; l’autel donne de l’XP contre de la vie', () => {
+    const run = newRun(1, 'katana', 50, 0, 'ra');
+    run.pendingBoon = null;
+    expect(canTakeEvent(run, 'well')).toBe(false);
+    run.shards = 40;
+    expect(takeEvent(run, 'well')).toBe(true);
+    expect(run.shards).toBe(0);
+    expect(run.pendingBoon).not.toBeNull();
+    const other = newRun(2, 'katana', 50, 0, 'ra');
+    const xp = other.xp;
+    expect(takeEvent(other, 'shrine')).toBe(true);
+    expect(other.xp).toBeGreaterThan(xp);
+    expect(other.hp).toBe(50 - eventCost(other, 'shrine').hp);
+    const weak = newRun(3, 'katana', 50, 0, 'ra');
+    weak.hp = eventCost(weak, 'shrine').hp;
+    expect(canTakeEvent(weak, 'shrine')).toBe(false);
+  });
+});

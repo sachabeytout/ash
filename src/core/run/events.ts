@@ -8,8 +8,10 @@ import type { RunState } from './state';
  * - Braise d'Aelia : un don contre un peu de vie (jamais mortel).
  * - Âme en cage : la libérer donne des PV max (aucun coût).
  * - Enclume de Brokk : affûter l'arme contre des éclats.
+ * - Puits de Ratatosk : un don contre des éclats.
+ * - Autel de Thot : de l'XP contre un peu de vie (jamais mortel).
  */
-export const EVENT_IDS = ['ember', 'prisoner', 'anvil'] as const;
+export const EVENT_IDS = ['ember', 'prisoner', 'anvil', 'well', 'shrine'] as const;
 export type EventId = (typeof EVENT_IDS)[number];
 
 /** Braise : part des PV max payée. */
@@ -17,6 +19,10 @@ export const EMBER_HP_COST = 0.2;
 export const PRISONER_MAX_HP = 5;
 export const ANVIL_COST = 35;
 export const ANVIL_DAMAGE = 0.1;
+export const WELL_COST = 40;
+/** Autel : part des PV max payée, XP gagnée. */
+export const SHRINE_HP_COST = 0.15;
+export const SHRINE_XP = 40;
 
 /** L'évènement du biome, fixé par la graine de la run. */
 export function eventOf(seed: number, biomeIndex: number): EventId {
@@ -37,6 +43,10 @@ export function eventCost(run: RunState, id: EventId, priceMul = 1): EventCost {
       return { hp: 0, shards: 0 };
     case 'anvil':
       return { hp: 0, shards: Math.round(ANVIL_COST * priceMul) };
+    case 'well':
+      return { hp: 0, shards: Math.round(WELL_COST * priceMul) };
+    case 'shrine':
+      return { hp: Math.max(1, Math.round(run.maxHp * SHRINE_HP_COST)), shards: 0 };
   }
 }
 
@@ -55,7 +65,8 @@ export function takeEvent(run: RunState, id: EventId, priceMul = 1, favored?: Pa
   run.shards -= cost.shards;
   run.eventTaken = run.biome;
   switch (id) {
-    case 'ember': {
+    case 'ember':
+    case 'well': {
       const rng = createRng((run.seed ^ Math.imul(run.biome + 3, 0x165667b1)) >>> 0);
       run.pendingBoon = rollGod(rng, favored);
       break;
@@ -66,6 +77,9 @@ export function takeEvent(run: RunState, id: EventId, priceMul = 1, favored?: Pa
       break;
     case 'anvil':
       run.damageBonus += ANVIL_DAMAGE;
+      break;
+    case 'shrine':
+      run.xp += SHRINE_XP;
       break;
   }
   return true;

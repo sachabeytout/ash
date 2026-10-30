@@ -382,3 +382,13 @@ describe('nouvelles amplifications (0.25.0)', () => {
     expect(amped.on.attack.curse?.damage).toBeGreaterThan(base.on.attack.curse?.damage ?? 0);
   });
 });
+
+describe('noms des dons', () => {
+  it('deux dons n’ont jamais le même nom (français et anglais)', async () => {
+    for (const lang of ['fr', 'en'] as const) {
+      const dict = (await import(`../../src/i18n/${lang}.json`)).default as Record<string, string>;
+      const names = BOONS.map((b) => dict[b.nameKey]);
+      expect(new Set(names).size).toBe(names.length);
+    }
+  });
+});

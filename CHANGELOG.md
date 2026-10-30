@@ -2,12 +2,21 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.26.0 — Deux nouveaux évènements
+
+- **2 nouveaux évènements de salle** (il y en a maintenant 5) :
+  - **Puits de Ratatosk** (puits) : un don d'un dieu contre 40 éclats.
+  - **Autel de Thot** (terminal vert) : +40 XP contre 15 % de tes PV max. Jamais mortel.
+- Correctif : la nouvelle amplification d'Anubis s'appelait comme un de ses dons ; elle s'appelle maintenant **Plume de Maât**.
+
+**Quoi tester** : quel évènement préfères-tu ? Lequel ne prends-tu jamais ?
+
 ## 0.25.0 — Cinq nouvelles amplifications
 
 - **5 nouvelles amplifications** (elles renforcent un don que tu as déjà) :
   - **Arc supérieur** (Zeus) : ton éclair en chaîne rebondit 2 fois de plus.
   - **Hiver profond** (Skadi) : tes dons de givre posent 1 charge de plus à chaque coup.
-  - **Balance de Maât** (Anubis) : le seuil d'exécution augmente de 5 %.
+  - **Plume de Maât** (Anubis) : le seuil d'exécution augmente de 5 %.
   - **Carquois d'argent** (Artémis) : 1 flèche de plus.
   - **Fléau** (Hel) : explosions de malédiction 50 % plus fortes.
 - Chaque dieu a maintenant **au moins une amplification**.

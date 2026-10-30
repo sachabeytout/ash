@@ -528,10 +528,18 @@
   "boon.amp_arc.desc": "Your chain lightning bounces {value} more times.",
   "boon.amp_winter": "Deep Winter",
   "boon.amp_winter.desc": "Your frost boons add {value} more stack per hit.",
-  "boon.amp_scales": "Scales of Maat",
+  "boon.amp_scales": "Feather of Maat",
   "boon.amp_scales.desc": "Anubis's execution threshold rises by {value}%.",
   "boon.amp_quiver": "Silver Quiver",
   "boon.amp_quiver.desc": "Your Artemis boons fire {value} more arrow.",
   "boon.amp_plague": "Plague",
-  "boon.amp_plague.desc": "Curse explosions deal {value}% more damage."
+  "boon.amp_plague.desc": "Curse explosions deal {value}% more damage.",
+  "event.well.title": "Ratatosk's Well",
+  "event.well.desc": "Ratatosk swears this old well grants wishes… for a few shards. Perhaps a god will hear you.",
+  "event.well.accept": "Toss in shards ({shards})",
+  "event.shrine.title": "Thoth's Shrine",
+  "event.shrine.desc": "An old Thoth terminal. It can archive your fight, but it feeds on a little of your life.",
+  "event.shrine.accept": "Plug in (−{hp} HP, +{xp} XP)",
+  "event.shrine.done": "Fight archived",
+  "event.shrine.doneSub": "+{xp} XP"
 }

@@ -76,6 +76,7 @@ Format : date — décision — raison — validée par l'utilisateur (oui / non
 | 2026-10-30 | Télémétrie 100 % locale (300 salles max), visible seulement dans un menu caché | Aider l'équilibrage sans rien envoyer en ligne | à signaler |
 | 2026-10-30 | Sauvegarde v6 (migration 5 → 6 : Mesures d'urgence) | Sans perte | oui (règle) |
 | 2026-10-30 | Son sur iPhone : le jeu respecte le bouton silencieux (session audio « ambient ») ; l'audio est relancé au retour dans l'app et au toucher suivant, recréé s'il reste bloqué ; audio de Phaser désactivé (tout est synthétisé) | Retour : la musique ne revenait pas après le mode silencieux | à signaler |
+| 2026-10-30 | Évènements : Puits de Ratatosk (don contre 40 éclats × Rationnement, moins cher que la faveur du marchand à 60), Autel de Thot (+40 XP contre 15 % PV max, jamais mortel) | Plus de variété de choix | à signaler |
 | 2026-10-30 | 5 amplifications à palier fixe : +2 rebonds, +1 charge de givre, +5 % d'exécution, +1 flèche, +50 % malédiction | Chaque dieu a au moins une amplification | à signaler |
 | 2026-10-30 | 4 duos : Égide orageuse (24 dégâts, 3 rebonds), Soleil noir (6/s pendant 3 s), Griffes du tonnerre (critique = étourdi 0,45 s, plafonné sur les boss), Embaumement (3 PV) | Chaque dieu a au moins un duo ; plus de builds | à signaler |
 | 2026-10-30 | Option « Réduire les flashs » (désactivée par défaut) : voile rouge 0,1 au lieu de 0,28, ennemi touché assombri au lieu de blanc | Accessibilité (photosensibilité) | à signaler |
