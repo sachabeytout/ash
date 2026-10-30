@@ -160,5 +160,6 @@
   "options.joystick": "Joystick",
   "options.joystick.floating": "Flottant (où tu poses le pouce)",
   "options.joystick.fixed": "Fixe",
-  "options.touchButtonScale": "Taille des boutons"
+  "options.touchButtonScale": "Taille des boutons",
+  "enemy.stalker": "Traqueur"
 }

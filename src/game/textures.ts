@@ -109,6 +109,14 @@ export function ensureGameTextures(scene: Phaser.Scene): void {
     g.fillStyle(0x5d3fa8).fillRect(6, 18, 14, 3);
   });
 
+  // Élite (Traqueur) : losange pâle à lames latérales, œil unique.
+  shapeTexture(scene, 'stalker', 22, 22, (g) => {
+    g.fillStyle(0x140f24).fillTriangle(11, 0, 22, 11, 11, 22).fillTriangle(11, 0, 0, 11, 11, 22);
+    g.fillStyle(0xb8a8ff).fillTriangle(11, 2, 20, 11, 11, 20).fillTriangle(11, 2, 2, 11, 11, 20);
+    g.fillStyle(0x6d5cc8).fillRect(3, 10, 16, 2);
+    g.fillStyle(0xf6f2ff).fillCircle(11, 9, 2.2);
+  });
+
   // Projectile ennemi : losange magenta à cœur blanc (forme + couleur).
   shapeTexture(scene, 'shot', 9, 9, (g) => {
     g.fillStyle(0xff2a6d).fillTriangle(4.5, 0, 9, 4.5, 4.5, 9).fillTriangle(4.5, 0, 0, 4.5, 4.5, 9);

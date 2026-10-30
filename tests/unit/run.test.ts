@@ -60,3 +60,20 @@ describe('données', () => {
     biome.roster.forEach((r) => expect(ENEMIES[r.enemy]).toBeDefined());
   });
 });
+
+describe('élite', () => {
+  it('ouvre la première vague des salles d’élite, et seulement elles', () => {
+    for (let seed = 0; seed < 30; seed++) {
+      for (let room = 1; room <= biome.rooms; room++) {
+        const waves = planWaves(biome, room, threat, createRng(seed));
+        const hasElite = waves.flat().includes(biome.elite);
+        expect(hasElite).toBe(biome.eliteRooms.includes(room));
+        if (hasElite) expect(waves[0]?.[0]).toBe(biome.elite);
+      }
+    }
+  });
+
+  it('l’élite est marquée comme telle et rapporte de l’XP', () => {
+    expect(ENEMIES[biome.elite].elite?.xp).toBeGreaterThan(0);
+  });
+});

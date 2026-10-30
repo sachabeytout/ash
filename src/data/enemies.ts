@@ -1,4 +1,4 @@
-export type EnemyId = 'prowler' | 'gunner' | 'brute';
+export type EnemyId = 'prowler' | 'gunner' | 'brute' | 'stalker';
 
 /** Attaque au corps à corps : télégraphe (zone qui se remplit) puis coup. */
 interface MeleeAttack {
@@ -17,6 +17,15 @@ interface ShotAttack {
   projectileRadius: number;
 }
 
+/** Charge : une bande au sol montre la trajectoire, puis l'ennemi fonce en ligne droite. */
+interface ChargeAttack {
+  kind: 'charge';
+  triggerRange: number;
+  distance: number;
+  /** Largeur de la bande dangereuse (px). */
+  width: number;
+}
+
 export interface EnemyDef {
   id: EnemyId;
   nameKey: string;
@@ -33,9 +42,11 @@ export interface EnemyDef {
   poise: number;
   /** Couleur du corps (froide) ; les attaques ennemies sont toujours rouge-magenta. */
   color: number;
-  attack: MeleeAttack | ShotAttack;
+  attack: MeleeAttack | ShotAttack | ChargeAttack;
   /** Coût dans le « budget » d'une vague. */
   threat: number;
+  /** Élite : plus coriace, marqué d'une couronne, rapporte de l'XP. */
+  elite?: { xp: number };
 }
 
 export const ENEMIES: Record<EnemyId, EnemyDef> = {
@@ -86,5 +97,23 @@ export const ENEMIES: Record<EnemyId, EnemyDef> = {
     color: 0x9a6bff,
     attack: { kind: 'melee', triggerRange: 44, range: 46, arcDeg: 360, lunge: 0 },
     threat: 3,
+  },
+  // Élite : le Traqueur charge en ligne droite. La bande au sol montre la trajectoire : on esquive sur le côté.
+  stalker: {
+    id: 'stalker',
+    nameKey: 'enemy.stalker',
+    maxHp: 170,
+    radius: 9,
+    speed: 58,
+    damage: 14,
+    telegraphMs: 850,
+    activeMs: 280,
+    recoveryMs: 850,
+    cooldownMs: 700,
+    poise: 0.6,
+    color: 0xb8a8ff,
+    attack: { kind: 'charge', triggerRange: 150, distance: 170, width: 18 },
+    threat: 4,
+    elite: { xp: 15 },
   },
 };

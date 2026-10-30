@@ -37,5 +37,10 @@ export function planWaves(
     }
     if (wave.length > 0) waves.push(wave);
   }
+  // Salle d'élite : l'élite mène la première vague, qui perd deux ennemis pour rester juste.
+  if (biome.eliteRooms.includes(room)) {
+    const first = waves[0] ?? [];
+    waves[0] = [biome.elite, ...first.slice(0, Math.max(0, first.length - 2))];
+  }
   return waves;
 }

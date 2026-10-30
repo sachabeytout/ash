@@ -28,6 +28,7 @@ export class Enemy {
   private readonly mark: Phaser.GameObjects.Text;
   private readonly statusFx: Phaser.GameObjects.Graphics;
   private readonly hex = Array.from({ length: 6 }, () => new Phaser.Math.Vector2());
+  private readonly band = Array.from({ length: 4 }, () => new Phaser.Math.Vector2());
   def!: EnemyDef;
   status: StatusState = newStatus();
   uid = 0;
@@ -147,7 +148,7 @@ export class Enemy {
     else
       switch (this.state) {
         case 'chase': {
-          if (def.attack.kind === 'melee') {
+          if (def.attack.kind === 'melee' || def.attack.kind === 'charge') {
             vx = (dx / (dist || 1)) * def.speed;
             vy = (dy / (dist || 1)) * def.speed;
             if (canAttack && dist <= def.attack.triggerRange && now >= this.cooldownUntil)
@@ -170,7 +171,8 @@ export class Enemy {
         }
         case 'telegraph': {
           // Le tireur suit encore sa cible pendant la première moitié, puis la visée se fige : on peut esquiver.
-          if (def.attack.kind === 'shot' && elapsed < def.telegraphMs * 0.5) this.facing = toTarget;
+          if (def.attack.kind !== 'melee' && elapsed < def.telegraphMs * 0.5)
+            this.facing = toTarget;
           this.drawTelegraph(Math.min(1, elapsed / def.telegraphMs));
           if (elapsed >= def.telegraphMs) {
             this.telegraph.clear();
@@ -188,6 +190,11 @@ export class Enemy {
         case 'attack': {
           if (def.attack.kind === 'melee') {
             const speed = def.attack.lunge / (Math.max(1, def.activeMs) / 1000);
+            vx = Math.cos(this.facing) * speed;
+            vy = Math.sin(this.facing) * speed;
+            this.drawStrike();
+          } else if (def.attack.kind === 'charge') {
+            const speed = def.attack.distance / (Math.max(1, def.activeMs) / 1000);
             vx = Math.cos(this.facing) * speed;
             vy = Math.sin(this.facing) * speed;
             this.drawStrike();
@@ -228,6 +235,15 @@ export class Enemy {
     const g = this.statusFx.clear();
     const s = this.status;
     const r = this.def.radius;
+    if (this.def.elite) {
+      // Élite : anneau pâle et couronne (forme, pas seulement couleur).
+      g.lineStyle(1, 0xf0e8ff, 0.7).strokeCircle(this.x, this.y, r + 3);
+      g.fillStyle(0xf0e8ff, 0.95);
+      const cy = this.y - r - 5;
+      g.fillTriangle(this.x - 6, cy, this.x - 4, cy - 5, this.x - 2, cy);
+      g.fillTriangle(this.x - 2, cy, this.x, cy - 6, this.x + 2, cy);
+      g.fillTriangle(this.x + 2, cy, this.x + 4, cy - 5, this.x + 6, cy);
+    }
     if (frozen) {
       g.fillStyle(0x8ff0ff, 0.28).lineStyle(1.5, 0xd8fbff, 0.95);
       this.hex.forEach((p, i) => {
@@ -280,6 +296,15 @@ export class Enemy {
           .slice(this.x, this.y, reach * progress, this.facing - half, this.facing + half)
           .fillPath();
       }
+    } else if (def.attack.kind === 'charge') {
+      // Bande au sol : contour de toute la trajectoire, qui se remplit jusqu'au départ.
+      this.drawBand(
+        g,
+        def.attack.distance + def.radius,
+        def.attack.width,
+        0.12 + 0.3 * progress,
+        progress,
+      );
     } else {
       const len = 400;
       g.lineStyle(1 + progress * 2, DANGER, 0.35 + 0.5 * progress);
@@ -292,7 +317,39 @@ export class Enemy {
     }
   }
 
+  /** Bande rectangulaire devant l'ennemi (charge), remplie sur `fill` de sa longueur. */
+  private drawBand(
+    g: Phaser.GameObjects.Graphics,
+    length: number,
+    width: number,
+    alpha: number,
+    fill: number,
+  ): void {
+    const cos = Math.cos(this.facing);
+    const sin = Math.sin(this.facing);
+    const half = width / 2;
+    const set = (len: number) => {
+      const pts: [number, number][] = [
+        [0, -half],
+        [len, -half],
+        [len, half],
+        [0, half],
+      ];
+      pts.forEach(([along, side], i) =>
+        this.band[i]?.set(this.x + cos * along - sin * side, this.y + sin * along + cos * side),
+      );
+      return this.band;
+    };
+    g.lineStyle(1.5, DANGER, 0.9).strokePoints(set(length), true);
+    g.fillStyle(DANGER, alpha).fillPoints(set(length * fill), true);
+  }
+
   private drawStrike(): void {
+    if (this.def.attack.kind === 'charge') {
+      const g = this.telegraph.clear();
+      g.fillStyle(DANGER, 0.55).fillCircle(this.x, this.y, this.def.radius + 4);
+      return;
+    }
     if (this.def.attack.kind !== 'melee') return;
     const g = this.telegraph.clear();
     const range = this.def.attack.range;

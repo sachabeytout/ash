@@ -214,6 +214,7 @@ export class RunScene extends Phaser.Scene {
         this.offerBoon();
       }
       if (e.code === 'KeyG') this.run.superGauge = 1;
+      if (e.code === 'KeyL') this.spawnWave(['stalker']);
       if (e.code === 'KeyN') {
         this.pending.forEach((p) => p.marker.destroy());
         this.pending = [];
@@ -624,6 +625,11 @@ export class RunScene extends Phaser.Scene {
   }
 
   private killEnemy(e: Enemy): void {
+    if (e.def.elite) {
+      this.run.xp += e.def.elite.xp;
+      this.juice.damageNumber(e.x, e.y - e.radius - 8, e.def.elite.xp, '#b08cff');
+      this.juice.shake(0.005, 160);
+    }
     this.juice.burst(e.x, e.y, e.def.color, 16);
     sfx.kill();
     e.deactivate();
@@ -631,6 +637,15 @@ export class RunScene extends Phaser.Scene {
 
   private resolveEnemyAttacks(alive: readonly Enemy[]): void {
     for (const e of alive) {
+      if (e.state === 'attack' && !e.attackLanded && e.def.attack.kind === 'charge') {
+        if (this.player.isInvulnerable(this.sim)) continue;
+        const reach = e.def.attack.width / 2 + PLAYER.radius;
+        if (Math.hypot(this.player.x - e.x, this.player.y - e.y) < reach) {
+          e.attackLanded = true;
+          this.hurtPlayer(e.def.damage, e, e.def);
+        }
+        continue;
+      }
       if (e.state !== 'attack' || e.attackLanded || e.def.attack.kind !== 'melee') continue;
       if (this.player.isInvulnerable(this.sim)) continue;
       if (

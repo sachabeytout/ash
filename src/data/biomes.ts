@@ -10,6 +10,9 @@ export interface BiomeDef {
   /** Budget de menace d'une vague : base + croissance par salle. */
   waveBudget: { base: number; perRoom: number };
   wavesPerRoom: { min: number; max: number };
+  /** Salles où un élite ouvre la première vague. */
+  eliteRooms: readonly number[];
+  elite: EnemyId;
 }
 
 export const BIOMES: readonly BiomeDef[] = [
@@ -24,6 +27,8 @@ export const BIOMES: readonly BiomeDef[] = [
     ],
     waveBudget: { base: 2, perRoom: 0.45 },
     wavesPerRoom: { min: 1, max: 3 },
+    eliteRooms: [5, 8],
+    elite: 'stalker',
   },
 ];
 
