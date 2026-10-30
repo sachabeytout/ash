@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { t } from '../../i18n';
 import { tryLandscapeFullscreen } from '../../platform/device';
+import { unlockAudio } from '../audio/sfx';
 import { addEmbers, drawCage, ensureTextures } from '../backdrop';
 import { COLORS, FONT_FAMILY, GAME_HEIGHT, GAME_WIDTH } from '../theme';
 import { markScene } from './markScene';
@@ -54,17 +55,28 @@ export class TitleScene extends Phaser.Scene {
       ease: 'Sine.InOut',
     });
 
-    this.add
-      .text(GAME_WIDTH - 6, GAME_HEIGHT - 4, t('title.version', { version: __APP_VERSION__ }), {
+    const version = this.add
+      .text(0, 0, t('title.version', { version: __APP_VERSION__ }), {
         fontFamily: FONT_FAMILY,
         fontSize: '10px',
         color: COLORS.textDim,
       })
-      .setOrigin(1, 1);
+      .setOrigin(1, 1)
+      .setScrollFactor(0);
+
+    // L'écran peut être plus large que 640 px (mode EXPAND) : on garde la scène centrée.
+    const layout = () => {
+      this.cameras.main.centerOn(GAME_WIDTH / 2, GAME_HEIGHT / 2);
+      version.setPosition(this.scale.width - 6, this.scale.height - 4);
+    };
+    layout();
+    this.scale.on('resize', layout);
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.scale.off('resize', layout));
 
     this.cameras.main.fadeIn(600, 7, 6, 13);
 
     const start = () => {
+      unlockAudio();
       void tryLandscapeFullscreen();
       this.cameras.main.fadeOut(400, 7, 6, 13);
       this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () =>

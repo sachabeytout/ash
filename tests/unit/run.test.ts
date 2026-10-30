@@ -1,0 +1,62 @@
+import { describe, expect, it } from 'vitest';
+import { REWARD_KINDS, rollDoorRewards } from '../../src/core/run/rewards';
+import { planWaves } from '../../src/core/run/waves';
+import { createRng } from '../../src/core/rng';
+import { getBiome } from '../../src/data/biomes';
+import { ENEMIES } from '../../src/data/enemies';
+
+const biome = getBiome(0);
+const threat = (id: keyof typeof ENEMIES) => ENEMIES[id].threat;
+
+describe('vagues d’ennemis', () => {
+  it('la première salle ne contient que des ennemis de base', () => {
+    for (let seed = 0; seed < 50; seed++) {
+      const waves = planWaves(biome, 1, threat, createRng(seed));
+      expect(waves.length).toBeGreaterThan(0);
+      expect(waves.flat().every((id) => id === 'prowler')).toBe(true);
+    }
+  });
+
+  it('la menace grandit avec la profondeur', () => {
+    const total = (room: number) => {
+      let sum = 0;
+      for (let seed = 0; seed < 100; seed++) {
+        sum += planWaves(biome, room, threat, createRng(seed))
+          .flat()
+          .reduce((s, id) => s + threat(id), 0);
+      }
+      return sum;
+    };
+    expect(total(10)).toBeGreaterThan(total(1) * 2);
+  });
+
+  it('est reproductible avec la même graine', () => {
+    expect(planWaves(biome, 6, threat, createRng(9))).toEqual(
+      planWaves(biome, 6, threat, createRng(9)),
+    );
+  });
+});
+
+describe('récompenses des portes', () => {
+  it('propose des récompenses différentes et valides', () => {
+    for (let seed = 0; seed < 100; seed++) {
+      const r = rollDoorRewards(createRng(seed), 2);
+      expect(r).toHaveLength(2);
+      expect(new Set(r).size).toBe(2);
+      r.forEach((k) => expect(REWARD_KINDS).toContain(k));
+    }
+  });
+
+  it('les 5 types finissent tous par sortir', () => {
+    const seen = new Set<string>();
+    const rng = createRng(1);
+    for (let i = 0; i < 200; i++) rollDoorRewards(rng, 2).forEach((k) => seen.add(k));
+    expect(seen.size).toBe(5);
+  });
+});
+
+describe('données', () => {
+  it('les ennemis du biome existent', () => {
+    biome.roster.forEach((r) => expect(ENEMIES[r.enemy]).toBeDefined());
+  });
+});

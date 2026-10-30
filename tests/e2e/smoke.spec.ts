@@ -16,6 +16,22 @@ test('le jeu démarre, puis on entre dans la cage', async ({ page }, testInfo) =
   await page.waitForTimeout(800);
   await page.screenshot({ path: `tests/e2e/screenshots/${testInfo.project.name}-cage.png` });
 
+  // On s'évade avec le katana, on se déplace et on frappe.
+  await page.keyboard.press('Digit1');
+  await expect(page.locator('body')).toHaveAttribute('data-scene', 'run');
+  await page.waitForTimeout(1500); // les premiers ennemis apparaissent
+  await page.keyboard.down('KeyW');
+  await page.waitForTimeout(400);
+  await page.keyboard.up('KeyW');
+  for (let i = 0; i < 3; i++) {
+    await page.keyboard.press('KeyJ');
+    await page.waitForTimeout(200);
+  }
+  await page.keyboard.press('Space');
+  await page.keyboard.press('KeyK');
+  await page.waitForTimeout(150);
+  await page.screenshot({ path: `tests/e2e/screenshots/${testInfo.project.name}-combat.png` });
+
   expect(errors).toEqual([]);
 });
 

@@ -2,7 +2,8 @@
 
 ## Prochaine étape
 
-L'utilisateur installe l'app sur son téléphone (critère M0) et répond aux questions A–D ; ensuite M1.
+M1.2 : les dons des dieux (Râ, Zeus, Skadi), le super, la sauvegarde (méta + run en cours). Puis M1.3 : élite, boss Ammit, musique.
+Retours attendus de l'utilisateur sur la 0.2.0 (ressenti du combat) et sur le lore v0.2.
 
 ## M0 — Fondations
 
@@ -18,20 +19,35 @@ L'utilisateur installe l'app sur son téléphone (critère M0) et répond aux qu
 - [x] PWA : manifest, icônes, hors ligne, message « Nouvelle version disponible »
 - [x] Workflow GitHub Actions (vérifications + déploiement Pages) écrit
 - [x] Dépôt public `sachabeytout/ash`, Pages activé, en ligne : https://sachabeytout.github.io/ash/
-- [ ] **Critère : l'utilisateur installe l'app sur son téléphone et la voit en plein écran**
+- [x] **Critère : l'utilisateur installe l'app sur son téléphone et la voit en plein écran** (confirmé, rotation corrigée en 0.1.1)
 
-## M1 — Tranche verticale (après réponses A et B)
+## M1 — Tranche verticale
 
-- [ ] Recherche « game feel » résumée dans le GDD
-- [ ] La cage (hub minimal)
-- [ ] Ash : 4 actions, katana + doubles lames
-- [ ] 3–4 ennemis + 1 élite, télégraphes
-- [ ] 3 dieux, 12–15 dons (dont 1 duo, 1 amplification)
-- [ ] Choix entre 2 portes, 5 types de récompenses
-- [ ] Biome 1 (nombre de salles réglable) + boss 1
-- [ ] Mort → cage, sauvegarde en cours de run, méta minimale
-- [ ] Contrôles tactile / clavier-souris / manette
-- [ ] Bruitages de base + une musique
+### M1.1 — Premier combat (0.2.0) ✅
+
+- [x] Recherche « game feel » résumée dans le GDD
+- [x] La cage (hub minimal : choix d'arme, résumé de run)
+- [x] Ash : attaque (combo au rythme), puissante, dash ; katana + doubles lames
+- [x] 3 ennemis (Rôdeur, Sentinelle, Colosse) avec télégraphes ; apparitions annoncées
+- [x] Choix entre 2 portes, 5 types de récompenses (effets provisoires)
+- [x] Biome 1 en 10 salles (paramètre de données), difficulté croissante
+- [x] Mort → cage (méta en mémoire)
+- [x] Contrôles tactile / clavier-souris / manette
+- [x] Bruitages synthétisés
+
+### M1.2 — Dons et sauvegarde
+
+- [ ] 3 dieux (Râ, Zeus, Skadi), 12–15 dons, 1 duo, 1 amplification ; choix 1 parmi 3
+- [ ] Super (jauge) pour les 2 armes
+- [ ] Sauvegarde versionnée (méta + run en cours), export / import
+- [ ] Méta minimale : quelques compétences (arbre de Thot)
+- [ ] Indicateurs d'ennemis hors écran
+
+### M1.3 — Boss et ambiance
+
+- [ ] 1 élite
+- [ ] Boss 1 : Ammit, la Dévoreuse
+- [ ] Une musique ; préréglages de qualité ; menu options et pause
 
 ## M2+
 

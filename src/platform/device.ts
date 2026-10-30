@@ -46,6 +46,15 @@ export function resetPageViewport(): void {
   document.body.scrollTop = 0;
 }
 
+/** Vibration courte (Android seulement : Safari iOS ne la gère pas, on ignore sans bruit). */
+export function vibrate(ms: number): void {
+  try {
+    navigator.vibrate?.(ms);
+  } catch {
+    // ignoré
+  }
+}
+
 /** Appelle `onHide` quand l'app passe en arrière-plan (pause + sauvegarde). */
 export function onAppHidden(onHide: () => void): void {
   document.addEventListener('visibilitychange', () => {

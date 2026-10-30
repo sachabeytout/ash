@@ -37,7 +37,7 @@ export function drawCage(scene: Phaser.Scene, alpha = 1): Phaser.GameObjects.Gra
 /** Braises qui montent : l'empreinte du Phénix. */
 export function addEmbers(scene: Phaser.Scene): Phaser.GameObjects.Particles.ParticleEmitter {
   return scene.add.particles(0, GAME_HEIGHT + 4, 'ember', {
-    x: { min: 0, max: GAME_WIDTH },
+    x: { min: -160, max: GAME_WIDTH + 160 },
     speedY: { min: -40, max: -15 },
     speedX: { min: -8, max: 8 },
     lifespan: 6000,

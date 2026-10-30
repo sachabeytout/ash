@@ -1,9 +1,23 @@
 # Architecture (carte du projet)
 
-> Statut : M0 en place (local). Existe déjà : `src/main.ts`, `src/core/rng.ts`, `src/i18n/`,
-> `src/platform/` (pwa, device), `src/game/` (config, theme, backdrop, scenes Title + Hub),
-> tests `tests/unit/` (rng, i18n) et `tests/e2e/smoke.spec.ts`. Le reste est **prévu**.
-> Mettre à jour à chaque session.
+> Statut 0.2.0 — existe : `core/` (rng, geometry, settings, input/buffer, combat/attack+health,
+> run/waves+rewards+state), `data/` (player, weapons, enemies, biomes), `game/` (scenes Title, Hub, Run, Ui ;
+> entities Player, Enemy ; input Controls, TouchControls ; fx/Juice ; audio/sfx ; textures ; physics),
+> `platform/` (pwa, device). Prévu : save/, boons/, telemetry, events, data/validate. Mettre à jour à chaque session.
+
+### Scènes
+
+`title` → `hub` (Cage) → `run` (une salle ; se relance à chaque porte) + `ui` (calque non zoomé : vie,
+salle, commandes tactiles, lancé par `run`). Mort ou sortie → `hub` avec un `RunSummary`.
+
+### Combat (où régler quoi)
+
+- Durées, dégâts, portées des coups : `src/data/weapons.ts` (anticipation / actif / récupération).
+- Ennemis (PV, vitesse, télégraphe, attaque) : `src/data/enemies.ts`.
+- Déplacement, dash, invincibilité, buffer, aide à la visée : `src/data/player.ts`.
+- Vagues / difficulté par salle : `src/data/biomes.ts` + `src/core/run/waves.ts`.
+- Résolution des coups (qui touche qui) : `src/game/scenes/RunScene.ts` avec `core/geometry.hitsArc`.
+- Caméra zoom ×2 qui suit Ash ; un ennemi n'attaque que s'il est visible (`RunScene.isOnScreen`).
 
 ## Arborescence
 

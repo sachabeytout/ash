@@ -34,9 +34,24 @@ Format : date — décision — raison — validée par l'utilisateur (oui / non
 | 2026-10-30 | Page figée (rien ne déborde) + recadrage répété après chaque rotation                                                              | Corrige le zoom/débordement d'iOS lors des rotations (retour utilisateur)                                                                                                                           | à signaler |
 | 2026-10-30 | Écran « Tourne ton téléphone » quand un téléphone est tenu en portrait                                                             | Le jeu se joue en paysage (décision validée) ; réversible                                                                                                                                           | à signaler |
 
+| 2026-10-30 | Mise à l'échelle **EXPAND** (hauteur 360 fixe, largeur qui s'adapte) au lieu de FIT | Remplit les écrans allongés des téléphones récents sans bandes noires ; les commandes tactiles occupent les bords | à signaler |
+
+## Réponses de l'utilisateur (30/10/2026)
+
+| Sujet         | Décision                                                                                                                                                                                              | Validée        |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- |
+| A. Durée      | 37 salles normales, ~30–40 min, rythme varié                                                                                                                                                          | oui            |
+| B. Armes      | 4 imposées + **2 inventées au gameplay différent** (Disque d'Hélios, Gleipnir) + **arme légendaire « épée de chevalier »** (Lame de l'Aube) comme arme tardive. Les Ailes du Phénix sont abandonnées. | oui            |
+| C. Appareil   | iPhone 18 Pro, mais le jeu doit être **agréable sur tous les iPhone et Android** → préréglages de qualité obligatoires                                                                                | oui            |
+| D. Lore       | L'Oiseleur reste, **avec une dimension divine**. **Plus de malédiction qui empêche le contact** entre Ash et Aelia. **Vraie fin après 10 victoires.**                                                 | oui            |
+| D. Sous-titre | **Les Cendres de l'Aube**                                                                                                                                                                             | oui            |
+| D. Ash        | Le lore doit dire qu'Ash est **réellement né des cendres de quelque chose / quelqu'un d'important** → proposé : les cendres de l'Aube (le Phénix-Soleil)                                              | oui (principe) |
+| Méthode       | « Commence à travailler », poser les questions de lore / gameplay / DA au fil de l'eau                                                                                                                | oui            |
+
 ## En attente de l'utilisateur
 
-- A. Durée des runs / nombre de salles.
-- B. Nombre d'armes proposées par Claude (2 ou 3).
-- C. iPhone ou Android, modèle.
-- D. Validation du lore (`docs/GDD.md`).
+- Retour sur le lore v0.2 (dimension divine de l'Oiseleur, nouvelle malédiction d'Aelia, arc en 10 victoires).
+- Style de la Lame de l'Aube (parade-riposte proposée).
+- Caméra zoom ×2 qui suit Ash (2026-10-30, à signaler) : à 1×, Ash ne mesurait que ~4 mm sur un iPhone.
+- Un ennemi ne commence une attaque que s'il est visible à l'écran (2026-10-30, anti-frustration).
+- Interprétation : « oublie de suivre les bonnes pratiques » compris comme « n'oublie pas de suivre » (2026-10-30, à confirmer).

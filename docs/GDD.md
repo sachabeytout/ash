@@ -1,123 +1,153 @@
-# GDD — ASH (document vivant)
+# GDD — ASH : Les Cendres de l'Aube (document vivant)
 
-> Statut : **v0.1, proposition de Claude, À VALIDER** par l'utilisateur (question D du brief).
-> Rien de ce qui est marqué « proposition » n'est intégré au jeu avant validation.
+> Statut : **v0.2** — intègre les réponses de l'utilisateur du 30/10/2026.
+> ✅ = validé par l'utilisateur · 🟡 = proposition de Claude en attente de retour.
 
-## 1. Titre
+## 1. Titre ✅
 
-**ASH**. Sous-titres proposés :
+**ASH — Les Cendres de l'Aube**
 
-1. **ASH — Né des cendres**
-2. **ASH — La Cage du Phénix**
-3. **ASH — Les Cendres de l'Aube**
+## 2. Lore
 
-## 2. Lore (proposition)
+### Le mythe de l'Aube 🟡
 
-### Le monde
+Dans les trois panthéons, le soleil était un oiseau : **l'Aube**, le Phénix-Soleil (les Égyptiens l'appelaient Bénou).
+Chaque soir il mourait, chaque matin il renaissait de ses cendres : c'était ça, le lever du jour.
 
-Une mégapole sans fin, **Nox**, bâtie sur les ruines de trois panthéons (égyptien, grec, nordique).
-Il y a un siècle, le **Consortium** a **éteint le soleil** pour vendre la lumière au compteur : néons, batteries, abonnements.
-Les dieux, ruinés, survivent comme des **signaux parasites** dans le réseau. Ils parlent à Ash à travers des
-**autels néon** piratés et lui offrent leurs dons, chacun avec ses propres raisons.
+### L'Oiseleur — un dieu 🟡 (l'idée de l'Oiseleur est ✅, sa dimension divine est à valider)
 
-### Les personnages
+- Dieu **plus ancien que les trois panthéons** : le dieu des **filets, des cages et des serments**. C'est lui qui
+  enchaînait les monstres pour le compte des dieux. Chaque peuple lui donnait un nom : _Celui-qui-tend-le-filet_
+  (Égypte), _le Lieur_ (Grèce), _le Tisse-Chaînes_ (Nord).
+- Il était aussi le **gardien de l'Aube**. Il a vu le Phénix mourir chaque soir pendant dix mille ans, et ne l'a plus supporté.
+- Une nuit, il l'a attrapé dans son filet **entre sa mort et sa renaissance**. Le jour ne s'est plus jamais levé.
+- Pour garder ce pouvoir, il a fait jurer aux dieux un **Serment** : en échange de leur survie, ils ne l'en empêcheraient pas.
+  Ruinés et affaiblis, ils survivent aujourd'hui comme des signaux pirates dans le réseau de **Nox**, la mégapole sans soleil.
+- Dans la ville, il règne derrière le **Consortium**, qui vend la lumière artificielle au compteur.
+- Ce n'est pas un tyran gratuit : c'est un dieu qui a voulu **abolir la mort** et qui a figé le monde. Il croit sincèrement protéger tout le monde.
 
-| Personnage                      | Rôle                 | Idée clé                                                                                                                          |
-| ------------------------------- | -------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| **Ash**                         | Le héros             | Lié au Phénix : il renaît toujours. Taiseux, ironique, têtu.                                                                      |
-| **Aelia** (« celle du soleil ») | La femme d'Ash       | La dernière **Porteuse de lumière** : la dernière flamme du vieux soleil brûle dans son cœur.                                     |
-| **L'Oiseleur**                  | Antagoniste, geôlier | Ancien dieu des lois et des serments, devenu président du Consortium. Il collectionne les créatures de légende… dans des cages.   |
-| **Vesper**                      | Gardienne de la cage | Corbeau mécanique de l'Oiseleur. Sarcastique au début, de plus en plus complice.                                                  |
-| **Thot**                        | PNJ de la cage       | Dieu-archiviste égyptien emprisonné lui aussi, réduit à une IA fêlée. Gère l'**arbre de compétences** (XP). Connaît la prophétie. |
-| **Brokk**                       | PNJ de la cage       | Forgeron nain nordique, enchaîné à son enclume. Améliore les **armes** (pièces d'armes).                                          |
+### Ash — né des cendres de l'Aube ✅ (fait demandé par l'utilisateur)
 
-### La malédiction
+- Quand l'Oiseleur a capturé le Phénix, ses **cendres** sont tombées sur les Bas-Fonds. **Ash est né de ces cendres** :
+  il est littéralement ce qui reste de l'Aube. C'est pour ça qu'il renaît toujours.
+- Il ne le sait pas au début : il se croit simplement « maudit de ne pas pouvoir mourir ». La révélation arrive au fil des victoires.
+- Texte d'introduction en jeu (fiche de personnage) : _« On l'a trouvé enfant, endormi dans un tas de cendres encore
+  chaudes, la nuit où le soleil ne s'est pas levé. On l'a appelé Ash. Il ne sait pas encore de quoi il est le reste. »_
 
-L'Oiseleur a enfermé Aelia au sommet de sa tour : elle est la **Lanterne** qui alimente toute la ville.
-Il a scellé un **serment** sur eux : _« Ce qui brûle ne peut toucher ce qui éclaire. »_
-Si Ash et Aelia se touchent, ils se consument tous les deux.
+### Aelia 🟡
 
-### La prophétie
+- La femme d'Ash. Allumeuse de néons dans les Bas-Fonds, elle a trouvé et apprivoisé ce garçon qui ne mourait jamais.
+- Elle porte en elle la **dernière flamme** de l'Aube (le cœur du Phénix), sans le savoir.
+- **La malédiction (nouvelle version)** : l'Oiseleur l'a enfermée au sommet de sa tour. Elle y devient **la Lanterne**
+  qui éclaire toute la ville : chaque nuit, elle perd un peu d'elle-même (souvenirs, chaleur) au profit de la lumière
+  artificielle. Si sa flamme s'éteint, l'Aube est perdue à jamais.
+- **Ils restent en contact** ✅ : entre les runs, Aelia parle à Ash à travers les braises de la cage. Ces dialogues
+  sont le fil rouge de l'histoire.
 
-_« L'enfant de cendre ouvrira la cage, et la dernière flamme remontera au ciel. »_
-Tout le monde croit qu'elle annonce la délivrance. Mais « la dernière flamme qui remonte au ciel », c'est Aelia :
-**la prophétie exige son sacrifice** pour rallumer le soleil. C'est le cœur du conflit narratif.
+### La prophétie 🟡
 
-### Le secret de la cage (révélé au fil des victoires)
+_« Quand la cendre retrouvera la flamme, l'Aube renaîtra. »_ — Ash est la cendre, Aelia la flamme.
+L'Oiseleur les a séparés exprès : Ash dans la cage, Aelia dans la Lanterne.
 
-Ash ne renaît pas dans la cage par hasard : **chaque mort d'Ash produit une énergie colossale** que la cage capte
-pour la ville. L'Oiseleur l'a laissé « s'évader » volontairement, encore et encore. La prophétie, c'est **lui qui l'a écrite**.
+### Le secret de la cage 🟡
 
-### Les biomes et les boss
+Chaque renaissance d'Ash libère une énergie que la cage capte : elle alimente la ville.
+L'Oiseleur le laisse s'évader, encore et encore.
 
-| #   | Biome                                                 | Panthéon dominant | Boss                    | Idée                                                                                 |
-| --- | ----------------------------------------------------- | ----------------- | ----------------------- | ------------------------------------------------------------------------------------ |
-| 1   | **Les Bas-Fonds** : ruelles inondées de néon          | mélangé           | **Ammit, la Dévoreuse** | Chimère crocodile-lion modifiée, qui « dévore » les âmes des endettés.               |
-| 2   | **Le Givre-Serveur** : datacenter gelé                | nordique          | **Fenrir-Ω**            | Loup géant enchaîné à des câbles. Ses chaînes se brisent pendant le combat (phases). |
-| 3   | **L'Olympe Corporatif** : tours de verre et de bronze | grec              | **Talos**               | Géant de bronze automate, garde du conseil d'administration.                         |
-| 4   | **La Volière** : sommet de la tour de l'Oiseleur      | —                 | **L'Oiseleur**          | Combat final, sous la Lanterne d'Aelia.                                              |
+### Les habitants de la Cage 🟡
 
-### Arc narratif sur plusieurs victoires (proposition)
+| Personnage | Rôle                                                                                     |
+| ---------- | ---------------------------------------------------------------------------------------- |
+| **Vesper** | Corbeau mécanique de l'Oiseleur. Gardienne moqueuse au début, alliée à la fin.           |
+| **Thot**   | Dieu-archiviste emprisonné, réduit à une IA fêlée. Gère l'**arbre de compétences** (XP). |
+| **Brokk**  | Forgeron nain enchaîné à son enclume. Améliore les **armes** (pièces d'armes).           |
+| **Aelia**  | Parle à travers les braises (voix, pas présente physiquement avant la fin).              |
 
-| Étape                       | Ce qui se passe                                                                                               |
-| --------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| Morts avant la 1re victoire | Dialogues avec Vesper, Thot, Brokk et les dieux. On apprend la malédiction et la prophétie.                   |
-| **1re victoire**            | Ash bat l'Oiseleur, rejoint Aelia… le serment s'active : ils brûlent. Ash renaît dans la cage. Fin « amère ». |
-| **2e victoire**             | Thot découvre que la prophétie est un faux. Vesper commence à douter de son maître.                           |
-| **3e victoire**             | Ash comprend que ses morts alimentent la ville. Les dieux révèlent leurs vrais motifs.                        |
-| **4e victoire**             | Brokk forge une arme capable de trancher un serment : **l'arme tardive** se débloque.                         |
-| **5e victoire = vraie fin** | Ash brise le serment au lieu de sacrifier Aelia. Ensemble, ils rallument le soleil. La cage s'ouvre.          |
-| Après                       | Épilogue + modificateurs de difficulté pour continuer à jouer.                                                |
+### Biomes et boss 🟡
 
-## 3. Armes (proposition)
+| #   | Biome                                    | Panthéon | Boss                       |
+| --- | ---------------------------------------- | -------- | -------------------------- |
+| 1   | **Les Bas-Fonds** : ruelles de néon      | mélangé  | **Ammit, la Dévoreuse**    |
+| 2   | **Le Givre-Serveur** : datacenter gelé   | nordique | **Fenrir-Ω** (enchaîné)    |
+| 3   | **L'Olympe Corporatif** : tours de verre | grec     | **Talos**, géant de bronze |
+| 4   | **La Volière** : sommet de la tour       | —        | **L'Oiseleur**             |
 
-| #   | Arme                                    | Origine  | Style                                                                                      | Statut   |
-| --- | --------------------------------------- | -------- | ------------------------------------------------------------------------------------------ | -------- |
-| 1   | **Katana**                              | imposée  | Équilibrée, combo en 3 temps, puissante = coup chargé en ligne                             | imposée  |
-| 2   | **Doubles lames** (sabres laser courts) | imposée  | Très rapide, faible portée, mobilité                                                       | imposée  |
-| 3   | **Bâton à pierre**                      | imposée  | Sorts à distance, la puissante pose une zone                                               | imposée  |
-| 4   | **Arbalète revisitée**                  | imposée  | Tir rapide sans rechargement pénible, puissante = carreau perforant chargé                 | imposée  |
-| 5   | **Disque d'Hélios** (chakram néon)      | proposée | Se lance, rebondit, **revient** à Ash ; la puissante le fait tournoyer en orbite           | proposée |
-| 6   | **Gleipnir** (chaîne-fouet de plasma)   | proposée | Moyenne portée, **attire** les ennemis, contrôle de foule. Écho au thème des chaînes/cages | proposée |
-| 7   | **Ailes du Phénix** — _arme tardive_    | proposée | Ash combat avec ses propres flammes. Débloquée par l'histoire (4e victoire)                | proposée |
+### Arc narratif — vraie fin à la 10e victoire ✅ (contenu 🟡)
 
-Si l'utilisateur ne veut que 2 armes proposées (question B), on garde les Ailes du Phénix (tardive) + une des deux autres.
+| Victoire | Ce qui se passe                                                                                          |
+| -------- | -------------------------------------------------------------------------------------------------------- |
+| Avant    | Ash découvre la cage, ses habitants, la voix d'Aelia dans les braises.                                   |
+| 1        | Ash bat l'Oiseleur mais ne peut pas ouvrir la Lanterne : le Serment des dieux la scelle. Il renaît.      |
+| 2        | Vesper avoue que la cage capte les renaissances d'Ash.                                                   |
+| 3        | Thot déchiffre la prophétie : la cendre et la flamme.                                                    |
+| 4        | Les dieux révèlent ce qu'ils ont gagné à jurer le Serment.                                               |
+| 5        | **Ash apprend qu'il est né des cendres de l'Aube.** Brokk forge la **Lame de l'Aube** (arme légendaire). |
+| 6        | Le premier dieu rompt le Serment : la Lanterne se fissure.                                               |
+| 7        | Le vrai passé de l'Oiseleur : il était le gardien du Phénix.                                             |
+| 8        | Aelia retrouve ses souvenirs perdus ; elle et Ash parlent enfin de l'après.                              |
+| 9        | L'Oiseleur doute. Le combat final change.                                                                |
+| 10       | **Vraie fin** : la cendre retrouve la flamme. L'Oiseleur ouvre lui-même la cage. L'Aube se lève.         |
+| Après    | Épilogue + Mesures d'urgence (modificateurs) pour continuer.                                             |
 
-## 4. Dieux (proposition — 3 par panthéon, 3 dans le prototype M1)
+## 3. Armes ✅ (liste) / 🟡 (détails)
 
-| Dieu      | Panthéon | Identité mécanique                               | Dans M1 |
-| --------- | -------- | ------------------------------------------------ | ------- |
-| **Râ**    | égyptien | Brûlure (dégâts dans le temps)                   | ✅      |
-| Anubis    | égyptien | Jugement : marque, exécute les ennemis affaiblis |         |
-| Bastet    | égyptien | Vitesse, coups critiques                         |         |
-| **Zeus**  | grec     | Foudre en chaîne                                 | ✅      |
-| Athéna    | grec     | Bouclier, renvoi des projectiles                 |         |
-| Artémis   | grec     | Dégâts à distance, ciblage                       |         |
-| **Skadi** | nordique | Gel (ralentit, puis immobilise)                  | ✅      |
-| Thor      | nordique | Étourdissement, recul violent                    |         |
-| Hel       | nordique | Vol de vie, malédiction                          |         |
+| #   | Arme                             | Style de jeu                                                                                                                            |
+| --- | -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | **Katana**                       | Équilibré. Combo en 3 temps au rythme ; puissante = estoc chargé qui traverse.                                                          |
+| 2   | **Doubles lames** (laser courts) | Très rapide, courte portée ; puissante = tourbillon. Récompense le harcèlement au corps à corps.                                        |
+| 3   | **Bâton à pierre**               | Sorts à distance ; puissante = zone au sol. Jeu de placement.                                                                           |
+| 4   | **Arbalète revisitée**           | Tir rapide sans rechargement pénible ; puissante = carreau perforant chargé.                                                            |
+| 5   | **Disque d'Hélios** (chakram)    | **Lancer-rattraper** : le disque rebondit et revient. L'attraper au retour donne un bonus de dégâts.                                    |
+| 6   | **Gleipnir** (chaîne de plasma)  | **Grappin** : attire les petits ennemis, ou tire Ash vers les gros. Contrôle de foule et mobilité.                                      |
+| 7   | **Lame de l'Aube** — légendaire  | **Chevalier** : épée longue + garde. Lente et lourde ; la puissante = **parade** puis riposte dévastatrice. Débloquée à la 5e victoire. |
 
-Exemple de **duo** (M1) : Râ + Skadi = **Choc thermique** (un ennemi gelé qui brûle explose).
-Exemple d'**amplification** (M1) : « Soleil de midi » = la brûlure de Râ dure 50 % plus longtemps.
+## 4. Dieux 🟡 (3 par panthéon ; Râ, Zeus, Skadi dans le prototype)
 
-## 5. Systèmes nommés (proposition)
+| Dieu    | Panthéon | Identité mécanique                       | M1  |
+| ------- | -------- | ---------------------------------------- | --- |
+| Râ      | égyptien | Brûlure (dégâts dans le temps)           | ✅  |
+| Anubis  | égyptien | Jugement : exécute les ennemis affaiblis |     |
+| Bastet  | égyptien | Vitesse, coups critiques                 |     |
+| Zeus    | grec     | Foudre en chaîne                         | ✅  |
+| Athéna  | grec     | Bouclier, renvoi des projectiles         |     |
+| Artémis | grec     | Distance, ciblage                        |     |
+| Skadi   | nordique | Gel (ralentit puis immobilise)           | ✅  |
+| Thor    | nordique | Étourdissement, recul violent            |     |
+| Hel     | nordique | Vol de vie, malédiction                  |     |
 
-| Système                     | Nom proposé                                                              |
-| --------------------------- | ------------------------------------------------------------------------ |
-| Modificateurs de difficulté | **Mesures d'urgence** (idée de l'utilisateur)                            |
-| Mode assistance             | **Bénédiction du Phénix** (réduction de dégâts croissante à chaque mort) |
-| Monnaie de run              | **Éclats** (pièces)                                                      |
-| Ressource méta 1            | **XP** → arbre de Thot                                                   |
-| Ressource méta 2            | **Pièces d'arme** → forge de Brokk                                       |
+Duo M1 : Râ + Skadi = **Choc thermique** (un ennemi gelé qui brûle explose).
+Amplification M1 : **Soleil de midi** (la brûlure de Râ dure 50 % plus longtemps).
 
-## 6. Structure d'une run
+## 5. Systèmes nommés 🟡
 
-Voir BRIEF §6.6. Nombre de salles par biome = **paramètre de données**. En attente de la réponse A (durée).
+| Système                     | Nom                                                        |
+| --------------------------- | ---------------------------------------------------------- |
+| Modificateurs de difficulté | **Mesures d'urgence**                                      |
+| Mode assistance             | **Bénédiction du Phénix**                                  |
+| Monnaie de run              | **Éclats**                                                 |
+| Ressources méta             | **XP** (arbre de Thot), **Pièces d'arme** (forge de Brokk) |
 
-## 7. Combat — recherche « game feel »
+## 6. Structure d'une run ✅
 
-À rédiger (10 lignes max) avant d'implémenter le combat, au début de M1.
+37 salles (10/10/10/7) + 4 boss + 3 marchands, **~30–40 min**, rythme varié (salles rapides, coffres, fontaines,
+évènements, élites). Nombre de salles = paramètre de données. Sauvegarde à chaque entrée de salle.
+
+## 7. Combat — ce que retient la recherche « game feel »
+
+1. **Réponse immédiate** : l'action démarre dans la frame de l'appui ; un _buffer_ de ~120 ms garde un appui fait trop tôt.
+2. **Engagement** : une attaque a anticipation → coup actif → récupération ; le **dash annule la récupération**
+   (jamais l'anticipation), ce qui garde du poids sans rigidité.
+3. **Rythme, pas martelage** : le combo avance si on rappuie dans une fenêtre de timing ; marteler n'accélère rien.
+4. **Impact** : arrêt sur image (_hitstop_) de 40–90 ms selon la force, flash blanc, recul, particules, son net ;
+   tremblement de caméra **petit et rare** (coups forts seulement), désactivable.
+5. **Lisibilité** : chaque attaque ennemie a un **télégraphe** (forme + couleur réservée rouge-magenta) d'au moins 0,5 s ;
+   plus l'attaque est forte, plus il est long. Jamais de dégâts hors écran.
+6. **Dash généreux** : invincibilité sur presque toute sa durée, courte récupération, trace visible pour savoir quand il revient.
+7. **Équité** : apparitions annoncées par un marqueur au sol, jamais sur le joueur ; invincibilité brève après un coup reçu.
+8. **Densité maîtrisée** : peu d'ennemis à la fois, des rôles clairs (fonceur, tireur, tank), plutôt que la foule.
+9. **Mobile** : joystick flottant, zone morte ~12 %, boutons larges ; aide à la visée douce vers l'ennemi le plus proche.
+10. **Tout en données** : fenêtres, dégâts et durées se règlent dans `src/data/` sans toucher au moteur.
 
 ## 8. Chiffres d'équilibrage
 
-À remplir au prototype (M1).
+Voir `src/data/` (sources de vérité). À ajuster avec la télémétrie et les retours de test.
