@@ -9,7 +9,7 @@ import {
   type CombatProfile,
   type HitEffects,
 } from '../../core/boons/boons';
-import { applyDamage } from '../../core/combat/health';
+import { applyDamage, heal } from '../../core/combat/health';
 import { gainSuper, superReady } from '../../core/combat/superGauge';
 import {
   applyBurn,
@@ -408,6 +408,7 @@ export class RunScene extends Phaser.Scene {
       e.onShoot = (from, angle, enemy) =>
         this.fireShot(from, angle, enemy.def, weakenFactor(enemy.status, this.sim));
       e.onTelegraph = () => sfx.telegraph();
+      e.onSupport = (enemy) => this.supportCast(enemy);
       this.enemies.push(e);
     }
     this.physics.add.collider(
@@ -601,6 +602,26 @@ export class RunScene extends Phaser.Scene {
     sfx.boonTaken();
     f.glow.setAlpha(0.15);
     f.g.setAlpha(0.4);
+  }
+
+  // ---------- Ennemis de soutien ----------
+
+  /** Rebouteux : soigne les alliés proches ; Porte-bouclier : leur donne un bouclier. */
+  private supportCast(caster: Enemy): void {
+    const atk = caster.def.attack;
+    if (atk.kind !== 'heal' && atk.kind !== 'ward') return;
+    const color = atk.kind === 'heal' ? 0x7fe0a0 : 0xc8e8ff;
+    this.lightning.ring(caster, atk.radius, color);
+    for (const ally of this.enemies) {
+      if (!ally.alive || ally === caster) continue;
+      if (Math.hypot(ally.x - caster.x, ally.y - caster.y) > atk.radius + ally.radius) continue;
+      if (atk.kind === 'heal') {
+        const healed = heal(ally.health, atk.amount);
+        if (healed > 0) this.juice.damageNumber(ally.x, ally.y - ally.radius, healed, '#7fe0a0');
+      } else {
+        ally.health.ward = Math.max(ally.health.ward ?? 0, atk.amount);
+      }
+    }
   }
 
   // ---------- Pièges ----------
@@ -1857,6 +1878,19 @@ export class RunScene extends Phaser.Scene {
 
   private resolveEnemyAttacks(alive: readonly Enemy[]): void {
     for (const e of alive) {
+      if (e.justLanded && e.def.attack.kind === 'leap') {
+        // Sauteur : dégâts à l'atterrissage, dans le cercle annoncé.
+        e.justLanded = false;
+        this.juice.burst(e.leapTo.x, e.leapTo.y, e.def.color, 12);
+        this.juice.shake(0.003, 100);
+        const reach = e.def.attack.radius + PLAYER.radius;
+        if (
+          !this.player.isInvulnerable(this.sim) &&
+          Math.hypot(this.player.x - e.leapTo.x, this.player.y - e.leapTo.y) < reach
+        )
+          this.hurtPlayer(e.def.damage, e, e.def.nameKey);
+        continue;
+      }
       if (e.state === 'attack' && !e.attackLanded && e.def.attack.kind === 'beam') {
         if (this.player.isInvulnerable(this.sim)) continue;
         if (e.beamHits(this.player, PLAYER.radius)) {

@@ -14,9 +14,9 @@ describe('Archives de Thot', () => {
     }
   });
 
-  it('16 ennemis, 4 boss et 9 dieux', () => {
+  it('20 ennemis, 4 boss et 9 dieux', () => {
     const count = (s: string) => CODEX.filter((e) => e.section === s).length;
-    expect(count('enemy')).toBe(16);
+    expect(count('enemy')).toBe(20);
     expect(count('boss')).toBe(4);
     expect(count('god')).toBe(9);
   });

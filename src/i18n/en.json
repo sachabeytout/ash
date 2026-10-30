@@ -606,5 +606,13 @@
   "bark.aelia.2": "If you meet the Fowler, tell him his decor is awful.",
   "bark.aelia.3": "I'm waiting for you. But hurry: I have a whole city to light.",
   "bark.aelia.4": "Take care of yourself. Well… of what's left.",
-  "bark.aelia.5": "Don't let Brokk tell you about Gerald. Too late?"
+  "bark.aelia.5": "Don't let Brokk tell you about Gerald. Too late?",
+  "enemy.mender": "Mender",
+  "enemy.warder": "Shieldbearer",
+  "enemy.leaper": "Leaper",
+  "enemy.diffuser": "Diffuser",
+  "codex.enemy.mender": "A street medic patching up the Consortium's wounded… with duct tape. A green ring announces each heal: take him out first.",
+  "codex.enemy.warder": "He hands out shields like others hand out flyers. A light blue circle surrounds his protégés: hit them until it breaks, or go straight for him.",
+  "codex.enemy.leaper": "An acrobat on springs. The red circle shows where he'll land: get out, then hit him while he recovers.",
+  "codex.enemy.diffuser": "A projectile sprinkler: eight shots at once, in every direction. Slip between two aim lines."
 }

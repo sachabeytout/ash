@@ -60,7 +60,13 @@ export class Enemy {
   private flashUntil = 0;
   private strafe = 1;
 
+  /** Bond : départ, point d'atterrissage, et « vient d'atterrir » (lu une fois par la scène). */
+  private leapFrom: Vec2 = { x: 0, y: 0 };
+  leapTo: Vec2 = { x: 0, y: 0 };
+  justLanded = false;
+
   /** Rappels vers la scène. */
+  onSupport: (enemy: Enemy) => void = () => undefined;
   onShoot: (from: Vec2, angle: number, enemy: Enemy) => void = () => undefined;
   onTelegraph: () => void = () => undefined;
 
@@ -105,6 +111,7 @@ export class Enemy {
     this.def = def;
     this.uid = ++enemyCounter;
     this.affix = affix;
+    this.justLanded = false;
     const mark = affix ? AFFIXES[affix] : undefined;
     const maxHp = Math.round(def.maxHp * hpMul * (mark?.hpMul ?? 1));
     this.health = { hp: maxHp, maxHp };
@@ -186,11 +193,19 @@ export class Enemy {
               this.placeRunes(target, def.attack);
               this.startTelegraph(now, toTarget);
             }
-          } else if (def.attack.kind === 'melee' || def.attack.kind === 'charge') {
+          } else if (
+            def.attack.kind === 'melee' ||
+            def.attack.kind === 'charge' ||
+            def.attack.kind === 'leap'
+          ) {
             vx = (dx / (dist || 1)) * def.speed;
             vy = (dy / (dist || 1)) * def.speed;
-            if (canAttack && dist <= def.attack.triggerRange && now >= this.cooldownUntil)
+            if (canAttack && dist <= def.attack.triggerRange && now >= this.cooldownUntil) {
+              // Bond : le point d'atterrissage est fixé maintenant (là où est Ash).
+              this.leapFrom = { x: this.x, y: this.y };
+              this.leapTo = { x: target.x, y: target.y };
               this.startTelegraph(now, toTarget);
+            }
           } else {
             // Le tireur garde ses distances et tourne autour du joueur.
             const pref = def.attack.preferredDistance;
@@ -227,6 +242,10 @@ export class Enemy {
                 this.onShoot({ x: this.x, y: this.y }, this.facing + offset, this);
               }
               this.setState('recover', now);
+            } else if (def.attack.kind === 'heal' || def.attack.kind === 'ward') {
+              // Soutien : l'effet tombe sur les alliés proches (géré par la scène).
+              this.onSupport(this);
+              this.setState('recover', now);
             } else {
               this.attackLanded = false;
               this.setState('attack', now);
@@ -249,6 +268,18 @@ export class Enemy {
             this.drawStrike();
           } else if (def.attack.kind === 'beam') {
             this.drawStrike();
+          } else if (def.attack.kind === 'leap') {
+            // En l'air : glisse jusqu'au cercle, qui reste affiché plein.
+            const p = Math.min(1, elapsed / Math.max(1, def.activeMs));
+            const lx = this.leapFrom.x + (this.leapTo.x - this.leapFrom.x) * p;
+            const ly = this.leapFrom.y + (this.leapTo.y - this.leapFrom.y) * p;
+            bodyOf(this.sprite).reset(lx, ly);
+            this.sprite.setScale(1 + Math.sin(p * Math.PI) * 0.35);
+            this.drawTelegraph(1);
+            if (p >= 1) {
+              this.sprite.setScale(1);
+              this.justLanded = true;
+            }
           }
           if (elapsed >= def.activeMs) {
             this.telegraph.clear();
@@ -351,6 +382,10 @@ export class Enemy {
       g.strokePath();
     }
     if (this.affix) this.drawAffix(g, now, r);
+    if ((this.health.ward ?? 0) > 0) {
+      // Bouclier du Porte-bouclier : cercle bleu clair (il absorbe les prochains dégâts).
+      g.lineStyle(2, 0xc8e8ff, 0.85).strokeCircle(this.x, this.y, r + 7);
+    }
     if (this.def.elite) {
       // Élite : anneau pâle et couronne (forme, pas seulement couleur).
       g.lineStyle(1, 0xf0e8ff, 0.7).strokeCircle(this.x, this.y, r + 3);
@@ -464,6 +499,28 @@ export class Enemy {
         this.y + Math.sin(this.facing) * len,
       );
       g.strokeCircle(this.x, this.y, def.radius + 4 - progress * 3);
+    } else if (def.attack.kind === 'leap') {
+      // Cercle d'atterrissage (fixé) : contour, croix, puis remplissage jusqu'au saut.
+      const r = def.attack.radius;
+      const t = this.leapTo;
+      g.lineStyle(1.5, DANGER, 0.9).fillStyle(DANGER, 0.12 + 0.3 * progress);
+      g.strokeCircle(t.x, t.y, r).fillCircle(t.x, t.y, r * progress);
+      g.lineBetween(t.x - r * 0.35, t.y - r * 0.35, t.x + r * 0.35, t.y + r * 0.35);
+      g.lineBetween(t.x - r * 0.35, t.y + r * 0.35, t.x + r * 0.35, t.y - r * 0.35);
+    } else if (def.attack.kind === 'heal' || def.attack.kind === 'ward') {
+      // Soutien (pas un danger) : anneau qui grandit autour de lui, vert (soin) ou bleu clair (bouclier).
+      const color = def.attack.kind === 'heal' ? 0x7fe0a0 : 0xc8e8ff;
+      g.lineStyle(1.5, color, 0.35 + 0.5 * progress).strokeCircle(
+        this.x,
+        this.y,
+        def.radius + 4 + (def.attack.radius - def.radius) * progress,
+      );
+      if (def.attack.kind === 'heal') {
+        g.fillStyle(color, 0.9).fillRect(this.x - 1.5, this.y - def.radius - 11, 3, 8);
+        g.fillRect(this.x - 4, this.y - def.radius - 8.5, 8, 3);
+      } else {
+        g.lineStyle(2, color, 0.9).strokeCircle(this.x, this.y - def.radius - 7, 4);
+      }
     } else if (def.attack.kind === 'runes') {
       // Cercles runiques : contour, puis remplissage jusqu'à l'explosion.
       const r = def.attack.radius;
@@ -473,7 +530,7 @@ export class Enemy {
         g.lineBetween(spot.x - r * 0.4, spot.y, spot.x + r * 0.4, spot.y);
         g.lineBetween(spot.x, spot.y - r * 0.4, spot.x, spot.y + r * 0.4);
       }
-    } else {
+    } else if (def.attack.kind === 'shot') {
       const count = def.attack.count ?? 1;
       // Éventail : lignes plus courtes, pour ne pas couvrir tout l'écran.
       const len = count > 1 ? 220 : 400;

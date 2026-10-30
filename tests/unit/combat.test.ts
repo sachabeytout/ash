@@ -151,3 +151,14 @@ describe('ennemis', () => {
     }
   });
 });
+
+describe('bouclier du Porte-bouclier', () => {
+  it('le bouclier absorbe les dégâts avant les PV', () => {
+    const h = { hp: 30, maxHp: 30, ward: 12 };
+    expect(applyDamage(h, 8)).toEqual({ dealt: 0, killed: false });
+    expect(h.ward).toBe(4);
+    expect(applyDamage(h, 10).dealt).toBe(6);
+    expect(h.ward).toBe(0);
+    expect(h.hp).toBe(24);
+  });
+});

@@ -1,6 +1,8 @@
 export interface Health {
   hp: number;
   maxHp: number;
+  /** Bouclier temporaire (Porte-bouclier) : absorbe les dégâts avant les PV. */
+  ward?: number;
 }
 
 export interface DamageResult {
@@ -10,7 +12,13 @@ export interface DamageResult {
 
 /** Inflige des dégâts (arrondis, jamais négatifs) et indique si la cible est morte. */
 export function applyDamage(target: Health, amount: number): DamageResult {
-  const dealt = Math.max(0, Math.min(target.hp, Math.round(amount)));
+  let rest = Math.max(0, Math.round(amount));
+  if (target.ward && target.ward > 0) {
+    const absorbed = Math.min(target.ward, rest);
+    target.ward -= absorbed;
+    rest -= absorbed;
+  }
+  const dealt = Math.min(target.hp, rest);
   target.hp -= dealt;
   return { dealt, killed: target.hp <= 0 };
 }

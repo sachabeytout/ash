@@ -14,7 +14,11 @@ export type EnemyId =
   | 'sparrow'
   | 'crow'
   | 'jailer'
-  | 'herald';
+  | 'herald'
+  | 'mender'
+  | 'warder'
+  | 'leaper'
+  | 'diffuser';
 
 /** Attaque au corps à corps : télégraphe (zone qui se remplit) puis coup. */
 interface MeleeAttack {
@@ -66,6 +70,22 @@ interface BeamAttack {
   width: number;
 }
 
+/** Bond : un cercle marque l'endroit où l'ennemi va retomber, puis il saute dessus. */
+interface LeapAttack {
+  kind: 'leap';
+  triggerRange: number;
+  /** Rayon de la zone d'atterrissage. */
+  radius: number;
+}
+
+/** Soutien : l'ennemi se tient à distance et soigne (heal) ou protège (ward) ses alliés proches. */
+interface SupportAttack {
+  kind: 'heal' | 'ward';
+  preferredDistance: number;
+  radius: number;
+  amount: number;
+}
+
 export interface EnemyDef {
   id: EnemyId;
   nameKey: string;
@@ -82,7 +102,8 @@ export interface EnemyDef {
   poise: number;
   /** Couleur du corps (froide) ; les attaques ennemies sont toujours rouge-magenta. */
   color: number;
-  attack: MeleeAttack | ShotAttack | ChargeAttack | RunesAttack | BeamAttack;
+  attack:
+    MeleeAttack | ShotAttack | ChargeAttack | RunesAttack | BeamAttack | LeapAttack | SupportAttack;
   /** Coût dans le « budget » d'une vague. */
   threat: number;
   /** Élite : plus coriace, marqué d'une couronne, rapporte de l'XP. */
@@ -393,5 +414,81 @@ export const ENEMIES: Record<EnemyId, EnemyDef> = {
     threat: 4,
     elite: { xp: 20 },
     shield: { arcDeg: 120, blocked: 0.15 },
+  },
+  // ---------- Soutiens et nouveaux ennemis (0.34.0) ----------
+  // Rebouteux : soigne ses alliés (anneau vert qui se remplit). La cible à abattre en premier.
+  mender: {
+    id: 'mender',
+    nameKey: 'enemy.mender',
+    maxHp: 28,
+    radius: 7,
+    speed: 55,
+    damage: 0,
+    telegraphMs: 900,
+    activeMs: 0,
+    recoveryMs: 400,
+    cooldownMs: 3500,
+    poise: 0,
+    color: 0x7fe0a0,
+    attack: { kind: 'heal', preferredDistance: 120, radius: 90, amount: 14 },
+    threat: 2,
+  },
+  // Porte-bouclier : donne un bouclier temporaire à ses alliés (cercle bleu clair autour d'eux).
+  warder: {
+    id: 'warder',
+    nameKey: 'enemy.warder',
+    maxHp: 34,
+    radius: 7,
+    speed: 55,
+    damage: 0,
+    telegraphMs: 900,
+    activeMs: 0,
+    recoveryMs: 400,
+    cooldownMs: 4500,
+    poise: 0,
+    color: 0x9ec8ff,
+    attack: { kind: 'ward', preferredDistance: 120, radius: 90, amount: 12 },
+    threat: 2,
+  },
+  // Sauteur : le cercle d'atterrissage est fixé au début : on en sort.
+  leaper: {
+    id: 'leaper',
+    nameKey: 'enemy.leaper',
+    maxHp: 40,
+    radius: 8,
+    speed: 60,
+    damage: 10,
+    telegraphMs: 800,
+    activeMs: 450,
+    recoveryMs: 700,
+    cooldownMs: 1200,
+    poise: 0.2,
+    color: 0xb0a0ff,
+    attack: { kind: 'leap', triggerRange: 130, radius: 26 },
+    threat: 2,
+  },
+  // Diffuseur : 8 projectiles dans toutes les directions ; on se place entre deux lignes.
+  diffuser: {
+    id: 'diffuser',
+    nameKey: 'enemy.diffuser',
+    maxHp: 36,
+    radius: 8,
+    speed: 40,
+    damage: 6,
+    telegraphMs: 900,
+    activeMs: 0,
+    recoveryMs: 600,
+    cooldownMs: 2400,
+    poise: 0.1,
+    color: 0x60d0ff,
+    attack: {
+      kind: 'shot',
+      preferredDistance: 90,
+      projectileSpeed: 110,
+      projectileRadius: 3,
+      count: 8,
+      spreadDeg: 315,
+    },
+    threat: 2,
   },
 };

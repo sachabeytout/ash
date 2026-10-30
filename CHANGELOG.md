@@ -2,6 +2,18 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.34.0 — Ennemis de soutien et nouveaux ennemis
+
+- **2 ennemis de soutien** (ils restent à distance et n'attaquent pas : abats-les en premier !) :
+  - **Rebouteux** (rond vert à croix) : un anneau vert grandit autour de lui, puis il **soigne** ses alliés proches.
+  - **Porte-bouclier** (carré bleu clair à écusson) : il donne un **bouclier** à ses alliés proches. Un cercle bleu clair les entoure tant que le bouclier tient : il absorbe tes prochains coups.
+- **2 nouveaux ennemis** aux attaques différentes :
+  - **Sauteur** (losange violet) : un **cercle rouge avec une croix** marque l'endroit où il va retomber, puis il bondit dessus. Sors du cercle !
+  - **Diffuseur** (rond bleu à huit bouches) : il tire **8 projectiles dans toutes les directions** ; les lignes de visée s'affichent avant, glisse-toi entre deux.
+- Ils apparaissent dans les quatre mondes, surtout vers la fin de chaque monde. Leurs fiches sont dans les Archives.
+
+**Quoi tester** : repères-tu vite le Rebouteux et le Porte-bouclier ? Le Sauteur est-il juste ?
+
 ## 0.33.0 — Les habitants de la Cage parlent
 
 - **Brokk, Thot, Aelia et Vesper te lancent une petite phrase** quand Ash passe près d'eux dans la Cage, avec un peu d'humour. Une bulle s'affiche quelques secondes. Il y a 22 répliques, jamais deux fois de suite la même, par exemple :

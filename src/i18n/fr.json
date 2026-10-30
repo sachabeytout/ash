@@ -606,5 +606,13 @@
   "bark.aelia.2": "Si tu croises l'Oiseleur, dis-lui que sa décoration est nulle.",
   "bark.aelia.3": "Je t'attends. Mais ne traîne pas : j'ai une ville entière à éclairer.",
   "bark.aelia.4": "Prends soin de toi. Enfin… de ce qu'il en reste.",
-  "bark.aelia.5": "Ne laisse pas Brokk te parler de Gérard. Trop tard ?"
+  "bark.aelia.5": "Ne laisse pas Brokk te parler de Gérard. Trop tard ?",
+  "enemy.mender": "Rebouteux",
+  "enemy.warder": "Porte-bouclier",
+  "enemy.leaper": "Sauteur",
+  "enemy.diffuser": "Diffuseur",
+  "codex.enemy.mender": "Un infirmier de rue qui recolle les blessés du Consortium… avec du ruban adhésif. Un anneau vert annonce chaque soin : abats-le en premier.",
+  "codex.enemy.warder": "Il distribue des boucliers comme d'autres distribuent des prospectus. Un cercle bleu clair entoure ses protégés : frappe-les jusqu'à le briser, ou va droit sur lui.",
+  "codex.enemy.leaper": "Un acrobate monté sur ressorts. Le cercle rouge montre où il retombera : sors-en, et frappe-le pendant qu'il se relève.",
+  "codex.enemy.diffuser": "Un arroseur de projectiles : huit tirs d'un coup, dans toutes les directions. Glisse-toi entre deux lignes de visée."
 }

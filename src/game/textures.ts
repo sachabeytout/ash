@@ -253,6 +253,37 @@ export function ensureGameTextures(scene: Phaser.Scene): void {
     g.fillStyle(0x4a3a78).fillRect(5, 3, 2, 16).fillRect(10, 3, 2, 16).fillRect(15, 3, 2, 16);
     g.fillStyle(0xf6f2ff).fillCircle(11, 11, 2.5);
   });
+  // Rebouteux (soutien) : rond vert, croix claire.
+  shapeTexture(scene, 'mender', 16, 16, (g) => {
+    g.fillStyle(0x0c1a12).fillCircle(8, 8, 8);
+    g.fillStyle(0x7fe0a0).fillCircle(8, 8, 6.5);
+    g.fillStyle(0xf0fff4).fillRect(7, 3, 2, 10).fillRect(3, 7, 10, 2);
+  });
+  // Porte-bouclier (soutien) : carré bleu clair, écusson.
+  shapeTexture(scene, 'warder', 16, 16, (g) => {
+    g.fillStyle(0x0c1424).fillRoundedRect(0, 0, 16, 16, 3);
+    g.fillStyle(0x9ec8ff).fillRoundedRect(1.5, 1.5, 13, 13, 3);
+    g.fillStyle(0x24406a).fillTriangle(4, 4, 12, 4, 8, 13);
+    g.fillStyle(0xe8f4ff).fillRect(7, 5, 2, 5);
+  });
+  // Sauteur : losange aux pattes repliées.
+  shapeTexture(scene, 'leaper', 18, 18, (g) => {
+    g.fillStyle(0x140f24).fillTriangle(9, 0, 18, 9, 9, 18).fillTriangle(9, 0, 0, 9, 9, 18);
+    g.fillStyle(0xb0a0ff).fillTriangle(9, 2, 16, 9, 9, 16).fillTriangle(9, 2, 2, 9, 9, 16);
+    g.fillStyle(0x5a4a9a).fillRect(1, 13, 5, 2).fillRect(12, 13, 5, 2);
+    g.fillStyle(0xf4f0ff).fillRect(6, 7, 2, 2).fillRect(10, 7, 2, 2);
+  });
+  // Diffuseur : octogone hérissé de huit bouches.
+  shapeTexture(scene, 'diffuser', 18, 18, (g) => {
+    g.fillStyle(0x0a1820).fillCircle(9, 9, 9);
+    g.fillStyle(0x60d0ff).fillCircle(9, 9, 7);
+    g.fillStyle(0x0a1820);
+    for (let i = 0; i < 8; i++) {
+      const a = (i * Math.PI) / 4;
+      g.fillCircle(9 + Math.cos(a) * 6, 9 + Math.sin(a) * 6, 1.3);
+    }
+    g.fillStyle(0xe8f8ff).fillCircle(9, 9, 2.2);
+  });
   // Héraut du Serment (élite) : visage sous un voile, auréole.
   shapeTexture(scene, 'herald', 22, 22, (g) => {
     g.fillStyle(0x120e1c).fillCircle(11, 12, 10);
