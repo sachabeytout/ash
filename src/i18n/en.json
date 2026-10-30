@@ -5,11 +5,9 @@
   "title.version": "version {version}",
   "hub.name": "The Cage",
   "hub.placeholder": "Ash rises from his ashes…",
-  "hub.comingSoon": "More is coming in the next version.",
   "hub.chooseWeapon": "Pick your weapon and escape",
   "hub.escape": "Escape ({key})",
-  "hub.lastDeath": "Burned out in room {room} — by: {killer}",
-  "hub.lastClear": "Lowtown crossed! The warden awaits… (soon)",
+  "hub.lastDeath": "Burned out in {biome}, room {room} — by: {killer}",
   "hub.lastStats": "Time {minutes} min {seconds} s · +{xp} XP · +{parts} weapon parts",
   "hub.totals": "Total: {xp} XP · {parts} weapon parts · {rebirths}",
   "hub.rebirths": {
@@ -17,7 +15,7 @@
     "one": "{count} rebirth",
     "other": "{count} rebirths"
   },
-  "hud.room": "Room {room} / {total}",
+  "hud.room": "{biome} · Room {room} / {total}",
   "hud.shards": "◆ {count} shards",
   "weapon.katana": "Katana",
   "weapon.twinBlades": "Twin blades",
@@ -166,7 +164,9 @@
   "boss.ammit.title": "Warden of the Lowtown",
   "boss.phase2": "Ammit is enraged!",
   "reward.boss": "Warden",
-  "hud.boss": "Warden of the Lowtown",
-  "hub.lastClearBoss": "Ammit is defeated! What comes next (the Frost Server) is coming soon.",
-  "boss.defeated": "Ammit is defeated!"
+  "boss.defeated": "Ammit is defeated!",
+  "reward.next": "Continue",
+  "biome.frostserver": "The Frost Server",
+  "hud.shop": "The merchant",
+  "hub.lastClearAll": "You crossed every biome! What comes next (Corporate Olympus) is coming soon."
 }

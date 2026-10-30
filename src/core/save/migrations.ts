@@ -1,3 +1,4 @@
+import { BIOMES } from '../../data/biomes';
 import { WEAPONS } from '../../data/weapons';
 import { GOD_IDS } from '../../data/gods';
 import { getBoon } from '../../data/boons';
@@ -99,8 +100,8 @@ function sanitizeRun(raw: unknown): RunState | null {
   return {
     seed: num(raw.seed, 1) >>> 0,
     weapon: raw.weapon as RunState['weapon'],
-    biome: num(raw.biome, 0, 0),
-    room: num(raw.room, 1, 1),
+    biome: num(raw.biome, 0, 0, BIOMES.length - 1),
+    room: num(raw.room, 1, 0), // 0 = marchand
     hp: num(raw.hp, maxHp, 1, maxHp),
     maxHp,
     damageBonus: num(raw.damageBonus, 0, 0),

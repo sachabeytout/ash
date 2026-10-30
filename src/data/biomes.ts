@@ -1,4 +1,6 @@
+import type { BossId } from './bosses';
 import type { EnemyId } from './enemies';
+import type { TrackId } from './music';
 
 export interface BiomeDef {
   id: string;
@@ -13,6 +15,21 @@ export interface BiomeDef {
   /** Salles où un élite ouvre la première vague. */
   eliteRooms: readonly number[];
   elite: EnemyId;
+  boss: BossId;
+  /** Musique des salles de combat. */
+  music: TrackId;
+  /** Ambiance visuelle (jamais de rouge-magenta : réservé aux dangers). */
+  theme: BiomeTheme;
+}
+
+export interface BiomeTheme {
+  /** Texture du sol. */
+  floor: 'floor' | 'floorIce';
+  wall: number;
+  wallGlow: number;
+  neons: readonly [number, number];
+  /** Flocons qui tombent (Givre-Serveur). */
+  snow: boolean;
 }
 
 export const BIOMES: readonly BiomeDef[] = [
@@ -29,6 +46,38 @@ export const BIOMES: readonly BiomeDef[] = [
     wavesPerRoom: { min: 1, max: 3 },
     eliteRooms: [5, 8],
     elite: 'stalker',
+    boss: 'ammit',
+    music: 'combat',
+    theme: {
+      floor: 'floor',
+      wall: 0x2a2048,
+      wallGlow: 0x6b4cff,
+      neons: [0x6b4cff, 0x4de1ff],
+      snow: false,
+    },
+  },
+  {
+    id: 'frostserver',
+    nameKey: 'biome.frostserver',
+    rooms: 10,
+    roster: [
+      { enemy: 'prowler', fromRoom: 1 },
+      { enemy: 'gunner', fromRoom: 1 },
+      { enemy: 'brute', fromRoom: 3 },
+    ],
+    waveBudget: { base: 3, perRoom: 0.5 },
+    wavesPerRoom: { min: 2, max: 3 },
+    eliteRooms: [4, 8],
+    elite: 'stalker',
+    boss: 'ammit',
+    music: 'frost',
+    theme: {
+      floor: 'floorIce',
+      wall: 0x1c3348,
+      wallGlow: 0x8ff0ff,
+      neons: [0x8ff0ff, 0x9ab4ff],
+      snow: true,
+    },
   },
 ];
 

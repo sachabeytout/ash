@@ -5,11 +5,9 @@
   "title.version": "version {version}",
   "hub.name": "La Cage",
   "hub.placeholder": "Ash renaît de ses cendres…",
-  "hub.comingSoon": "La suite arrive dans la prochaine version.",
   "hub.chooseWeapon": "Choisis ton arme et évade-toi",
   "hub.escape": "S'évader ({key})",
-  "hub.lastDeath": "Consumé dans la salle {room} — par : {killer}",
-  "hub.lastClear": "Les Bas-Fonds sont traversés ! Le gardien t'attend… (bientôt)",
+  "hub.lastDeath": "Consumé dans {biome}, salle {room} — par : {killer}",
   "hub.lastStats": "Durée {minutes} min {seconds} s · +{xp} XP · +{parts} pièces d'arme",
   "hub.totals": "Total : {xp} XP · {parts} pièces d'arme · {rebirths}",
   "hub.rebirths": {
@@ -17,7 +15,7 @@
     "one": "{count} renaissance",
     "other": "{count} renaissances"
   },
-  "hud.room": "Salle {room} / {total}",
+  "hud.room": "{biome} · Salle {room} / {total}",
   "hud.shards": "◆ {count} éclats",
   "weapon.katana": "Katana",
   "weapon.twinBlades": "Doubles lames",
@@ -166,7 +164,9 @@
   "boss.ammit.title": "Gardienne des Bas-Fonds",
   "boss.phase2": "Ammit se déchaîne !",
   "reward.boss": "Gardienne",
-  "hud.boss": "Gardienne des Bas-Fonds",
-  "hub.lastClearBoss": "Ammit est vaincue ! La suite (le Givre-Serveur) arrive bientôt.",
-  "boss.defeated": "Ammit est vaincue !"
+  "boss.defeated": "Ammit est vaincue !",
+  "reward.next": "Continuer",
+  "biome.frostserver": "Le Givre-Serveur",
+  "hud.shop": "Le marchand",
+  "hub.lastClearAll": "Tu as traversé tous les biomes ! La suite (l'Olympe Corporatif) arrive bientôt."
 }

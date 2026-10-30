@@ -1,9 +1,10 @@
 import Phaser from 'phaser';
-import type { RunState } from '../../core/run/state';
+import { roomKind, type RunState } from '../../core/run/state';
+import { BOSSES } from '../../data/bosses';
 import { getBiome } from '../../data/biomes';
 import { getBoon } from '../../data/boons';
 import { GODS } from '../../data/gods';
-import { t } from '../../i18n';
+import { t, type TextKey } from '../../i18n';
 import { DANGER } from '../entities/Enemy';
 import type { Controls } from '../input/Controls';
 import { sfx } from '../audio/sfx';
@@ -132,9 +133,18 @@ export class UiScene extends Phaser.Scene {
     if (ready && !this.superWasReady) sfx.superReady();
     this.superWasReady = ready;
     this.touch.setSuperGauge(run.superGauge);
-    const rooms = getBiome(run.biome).rooms;
+    const biome = getBiome(run.biome);
+    const kind = roomKind(run, biome);
     this.room.setText(
-      run.room > rooms ? t('hud.boss') : t('hud.room', { room: run.room, total: rooms }),
+      kind === 'boss'
+        ? t(BOSSES[biome.boss].titleKey as TextKey)
+        : kind === 'shop'
+          ? t('hud.shop')
+          : t('hud.room', {
+              biome: t(biome.nameKey as TextKey),
+              room: run.room,
+              total: biome.rooms,
+            }),
     );
     this.shards.setText(t('hud.shards', { count: run.shards }));
     this.showBoons(run);

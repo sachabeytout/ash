@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { REWARD_KINDS, rollDoorRewards } from '../../src/core/run/rewards';
 import { planWaves } from '../../src/core/run/waves';
 import { createRng } from '../../src/core/rng';
-import { getBiome } from '../../src/data/biomes';
+import { BIOMES, getBiome } from '../../src/data/biomes';
+import { BOSSES } from '../../src/data/bosses';
+import { afterBoss, depth, newRun, roomKind, summarize } from '../../src/core/run/state';
 import { ENEMIES } from '../../src/data/enemies';
 
 const biome = getBiome(0);
@@ -75,5 +77,44 @@ describe('élite', () => {
 
   it('l’élite est marquée comme telle et rapporte de l’XP', () => {
     expect(ENEMIES[biome.elite].elite?.xp).toBeGreaterThan(0);
+  });
+});
+
+describe('enchaînement des biomes', () => {
+  it('salle 0 = marchand, 1…N = combat, N + 1 = boss', () => {
+    const run = newRun(1, 'katana', 50, 0, 'ra');
+    run.room = 0;
+    expect(roomKind(run, biome)).toBe('shop');
+    run.room = 1;
+    expect(roomKind(run, biome)).toBe('combat');
+    run.room = biome.rooms + 1;
+    expect(roomKind(run, biome)).toBe('boss');
+  });
+
+  it('après le boss : marchand du biome suivant, puis victoire au dernier biome', () => {
+    const run = newRun(1, 'katana', 50, 0, 'ra');
+    run.room = biome.rooms + 1;
+    expect(afterBoss(run, BIOMES.length)).toBe('nextBiome');
+    expect(run.biome).toBe(1);
+    expect(run.room).toBe(0);
+    run.room = getBiome(1).rooms + 1;
+    expect(afterBoss(run, BIOMES.length)).toBe(BIOMES.length > 2 ? 'nextBiome' : 'cleared');
+  });
+
+  it("l'XP de fin de run compte les salles des biomes précédents", () => {
+    const run = newRun(1, 'katana', 50, 0, 'ra');
+    run.biome = 1;
+    run.room = 3;
+    expect(depth(run)).toBe(14);
+    expect(summarize(run, 'death').xp).toBe(28);
+    expect(summarize(run, 'death').biome).toBe(1);
+  });
+
+  it('chaque biome référence des ennemis, un élite et un boss qui existent', () => {
+    for (const b of BIOMES) {
+      b.roster.forEach((r) => expect(ENEMIES[r.enemy], b.id).toBeDefined());
+      expect(ENEMIES[b.elite].elite, b.id).toBeDefined();
+      expect(BOSSES[b.boss], b.id).toBeDefined();
+    }
   });
 });

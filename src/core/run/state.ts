@@ -1,3 +1,4 @@
+import type { BiomeDef } from '../../data/biomes';
 import { getBoon } from '../../data/boons';
 import type { GodId } from '../../data/gods';
 import type { WeaponId } from '../../data/weapons';
@@ -41,6 +42,8 @@ export interface RunState {
 
 export interface RunSummary {
   outcome: 'death' | 'cleared';
+  /** Biome atteint (0 = Bas-Fonds). */
+  biome: number;
   room: number;
   killedBy?: string;
   elapsedMs: number;
@@ -118,6 +121,27 @@ export function onRoomCleared(run: RunState): number {
   return healed;
 }
 
+export type RoomKind = 'shop' | 'combat' | 'boss';
+
+/** Salle 0 = marchand (entre deux biomes), salles 1…N = combats, N + 1 = boss. */
+export function roomKind(run: RunState, biome: BiomeDef): RoomKind {
+  if (run.room <= 0) return 'shop';
+  return run.room > biome.rooms ? 'boss' : 'combat';
+}
+
+/** Salles traversées depuis le début de la run (biomes précédents : salles + boss). */
+export function depth(run: RunState, roomsPerBiome = 11): number {
+  return run.biome * roomsPerBiome + Math.max(0, run.room);
+}
+
+/** Boss vaincu : biome suivant (en passant par le marchand), ou run gagnée s'il n'y en a plus. */
+export function afterBoss(run: RunState, biomeCount: number): 'nextBiome' | 'cleared' {
+  if (run.biome + 1 >= biomeCount) return 'cleared';
+  run.biome += 1;
+  run.room = 0;
+  return 'nextBiome';
+}
+
 /** Ce qui est conservé à la mort : tout l'XP et les pièces d'arme (une mort fait toujours progresser). */
 export function summarize(
   run: RunState,
@@ -126,9 +150,11 @@ export function summarize(
 ): RunSummary {
   return {
     outcome,
+    biome: run.biome,
     room: run.room,
     elapsedMs: run.elapsedMs,
-    xp: run.xp + run.room * 2,
+    // Chaque salle traversée rapporte un peu d'XP, y compris dans les biomes précédents.
+    xp: run.xp + depth(run) * 2,
     weaponParts: run.weaponParts,
     ...(killedBy ? { killedBy } : {}),
   };

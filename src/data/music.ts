@@ -2,7 +2,7 @@
  * Musique composée en code (synthèse Web Audio) : 100 % originale, aucun fichier, aucune licence.
  * Motifs sur 16 pas par mesure ; un caractère = un pas ('.' = silence).
  */
-export type TrackId = 'hub' | 'combat' | 'boss';
+export type TrackId = 'hub' | 'combat' | 'frost' | 'boss';
 
 export interface TrackDef {
   bpm: number;
@@ -53,7 +53,20 @@ export const TRACKS: Record<TrackId, TrackDef> = {
     pad: true,
     mix: { bass: 0.55, arp: 0.22, kick: 0.6, hat: 0.18, pad: 0.18 },
   },
-  // Ammit : plus rapide, demi-ton menaçant (couleur phrygienne).
+  // Givre-Serveur : cristallin, arpège qui scintille, ventilateurs (charleston serré).
+  frost: {
+    bpm: 104,
+    rootHz: 123.47, // si
+    progression: [0, -3, -5, -2],
+    chord: [0, 3, 7, 10, 14],
+    bass: 'x.....x.x.....x.',
+    arp: '0.2.4.2.1.3.4.3.',
+    kick: 'x.......x..x....',
+    hat: 'x.x.x.x.x.x.x.x.',
+    pad: true,
+    mix: { bass: 0.5, arp: 0.24, kick: 0.5, hat: 0.1, pad: 0.22 },
+  },
+  // Les boss : plus rapide, demi-ton menaçant (couleur phrygienne).
   boss: {
     bpm: 132,
     rootHz: 98, // sol

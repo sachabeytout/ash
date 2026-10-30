@@ -1,9 +1,10 @@
 import type { EnemyId } from './enemies';
 
 export type BossAttackId = 'bite' | 'charge' | 'quake' | 'summon';
+export type BossId = 'ammit';
 
 export interface BossDef {
-  id: string;
+  id: BossId;
   nameKey: string;
   titleKey: string;
   maxHp: number;
@@ -91,3 +92,5 @@ export const AMMIT: BossDef = {
   summon: { telegraphMs: 900, recoveryMs: 700, enemy: 'prowler', count: 2 },
   reward: { xp: 50, weaponParts: 2 },
 };
+
+export const BOSSES: Record<BossId, BossDef> = { ammit: AMMIT };

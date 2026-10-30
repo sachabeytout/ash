@@ -4,6 +4,7 @@ import { randomSeed } from '../../core/rng';
 import { newRun, summarize, type RunSummary } from '../../core/run/state';
 import { exportCode, importCode } from '../../core/save/codec';
 import { NewerSaveError } from '../../core/save/migrations';
+import { getBiome } from '../../data/biomes';
 import { GOD_IDS } from '../../data/gods';
 import { PLAYER } from '../../data/player';
 import { WEAPONS, type WeaponId } from '../../data/weapons';
@@ -91,8 +92,12 @@ export class HubScene extends Phaser.Scene {
       const seconds = Math.floor((this.summary.elapsedMs % 60000) / 1000);
       lines.push(
         this.summary.outcome === 'death'
-          ? t('hub.lastDeath', { room: this.summary.room, killer: this.summary.killedBy ?? '?' })
-          : t('hub.lastClearBoss'),
+          ? t('hub.lastDeath', {
+              biome: t(getBiome(this.summary.biome).nameKey as TextKey),
+              room: this.summary.room,
+              killer: this.summary.killedBy ?? '?',
+            })
+          : t('hub.lastClearAll'),
         t('hub.lastStats', {
           minutes,
           seconds,

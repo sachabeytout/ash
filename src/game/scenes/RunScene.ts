@@ -14,15 +14,18 @@ import { edgeIndicator, hitsArc, type Vec2 } from '../../core/geometry';
 import { createRng, type Rng } from '../../core/rng';
 import { rollDoors, type DoorReward, type RewardKind } from '../../core/run/rewards';
 import {
+  afterBoss,
   applyReward,
   chooseBoon,
+  roomKind,
+  type RoomKind,
   onRoomCleared,
   summarize,
   type RunState,
 } from '../../core/run/state';
 import { planWaves, type Wave } from '../../core/run/waves';
-import { getBiome } from '../../data/biomes';
-import { AMMIT } from '../../data/bosses';
+import { BIOMES, getBiome } from '../../data/biomes';
+import { BOSSES } from '../../data/bosses';
 import { DASH_AURA_RADIUS, DASH_BOLT_RANGE, getBoon } from '../../data/boons';
 import { GOD_IDS, GODS } from '../../data/gods';
 import { ENEMIES, type EnemyDef } from '../../data/enemies';
@@ -43,6 +46,7 @@ import type { PauseSceneData } from './PauseScene';
 import { Controls } from '../input/Controls';
 import { UiScene, type Indicator } from './UiScene';
 import { finishRun } from '../../core/meta';
+import { QUALITY_PARTICLES, settings } from '../../core/settings';
 import { cheatsEnabled } from '../debug/cheats';
 import { session } from '../session';
 import { bodyOf } from '../physics';
@@ -73,7 +77,7 @@ interface Shot {
 }
 
 interface Door {
-  reward: DoorReward | 'exit' | 'boss';
+  reward: DoorReward | SpecialDoor;
   x: number;
   y: number;
   parts: Phaser.GameObjects.GameObject[];
@@ -89,7 +93,10 @@ const FX = {
   heal: '#9dffb0',
 } as const;
 
-const REWARD_STYLE: Record<RewardKind | 'exit' | 'boss', { color: number; label: TextKey }> = {
+/** Portes sans récompense : sortie de la run, boss, biome suivant / reprise après le marchand. */
+type SpecialDoor = 'exit' | 'boss' | 'next';
+
+const REWARD_STYLE: Record<RewardKind | SpecialDoor, { color: number; label: TextKey }> = {
   boon: { color: 0xffb02e, label: 'reward.boon' },
   shards: { color: 0x7fe7ff, label: 'reward.shards' },
   weaponMod: { color: 0xc0c8d8, label: 'reward.weaponMod' },
@@ -97,6 +104,7 @@ const REWARD_STYLE: Record<RewardKind | 'exit' | 'boss', { color: number; label:
   weaponParts: { color: 0xffe08a, label: 'reward.weaponParts' },
   exit: { color: 0xffffff, label: 'reward.exit' },
   boss: { color: 0xb8a8ff, label: 'reward.boss' },
+  next: { color: 0x8ff0ff, label: 'reward.next' },
 };
 
 /** Une salle de combat : vagues d'ennemis, puis choix entre deux portes. */
@@ -111,6 +119,7 @@ export class RunScene extends Phaser.Scene {
   /** Tout ce qu'Ash peut toucher cette frame (ennemis vivants + boss), tableau réutilisé. */
   private readonly targets: Hittable[] = [];
   private boss: Boss | null = null;
+  private kind: RoomKind = 'combat';
   private shots: Shot[] = [];
   private pending: PendingSpawn[] = [];
   private waves: Wave[] = [];
@@ -155,6 +164,7 @@ export class RunScene extends Phaser.Scene {
     const biome = getBiome(this.run.biome);
     this.rng = createRng((this.run.seed + this.run.room * 7919) >>> 0);
 
+    this.kind = roomKind(this.run, biome);
     this.drawArena();
     this.physics.world.setBounds(ARENA.x, ARENA.y, ARENA.width, ARENA.height);
 
@@ -201,16 +211,20 @@ export class RunScene extends Phaser.Scene {
     );
 
     this.setupCamera();
-    if (this.isBossRoom) {
-      this.waves = [];
-      this.startBoss();
-    } else {
-      this.waves = planWaves(biome, this.run.room, (id) => ENEMIES[id].threat, this.rng);
-    }
+    this.waves =
+      this.kind === 'combat'
+        ? planWaves(biome, this.run.room, (id) => ENEMIES[id].threat, this.rng)
+        : [];
+    if (this.kind === 'boss') this.startBoss();
+    if (this.kind === 'shop') this.startShop();
     this.nextWaveAt = 700;
+    // Entrée dans un nouveau biome : on annonce son nom.
+    if (this.run.room <= 1 && this.kind !== 'boss') {
+      this.time.delayedCall(400, () => this.ui.showBanner(t(biome.nameKey as TextKey), ''));
+    }
 
     this.cameras.main.fadeIn(350, 7, 6, 13);
-    music.play(this.isBossRoom ? 'boss' : 'combat');
+    music.play(this.kind === 'boss' ? 'boss' : this.kind === 'shop' ? 'hub' : biome.music);
     markScene('run');
     // Sauvegarde à chaque entrée de salle : fermer l'app à tout moment, reprendre ici.
     session.snapshotRun(this.run);
@@ -249,14 +263,15 @@ export class RunScene extends Phaser.Scene {
   // ---------- Boss ----------
 
   private get isBossRoom(): boolean {
-    return this.run.room > getBiome(this.run.biome).rooms;
+    return this.kind === 'boss';
   }
 
   private startBoss(): void {
     const intro = 1900;
+    const def = BOSSES[getBiome(this.run.biome).boss];
     const boss = new Boss(
       this,
-      AMMIT,
+      def,
       ARENA.centerX,
       ARENA.top + 70,
       createRng((this.run.seed ^ 0xa3317) >>> 0),
@@ -277,7 +292,7 @@ export class RunScene extends Phaser.Scene {
     };
     this.boss = boss;
     this.time.delayedCall(400, () =>
-      this.ui.showBanner(t(AMMIT.nameKey as TextKey), t(AMMIT.titleKey as TextKey)),
+      this.ui.showBanner(t(def.nameKey as TextKey), t(def.titleKey as TextKey)),
     );
   }
 
@@ -310,6 +325,13 @@ export class RunScene extends Phaser.Scene {
     this.pending = [];
     this.enemies.filter((en) => en.alive).forEach((en) => this.killEnemy(en));
     this.ui.showBanner(t('boss.defeated'), '');
+  }
+
+  // ---------- Marchand ----------
+
+  private startShop(): void {
+    // Le marchand arrive à l'étape suivante ; pour l'instant la salle s'ouvre directement.
+    this.time.delayedCall(600, () => this.clearRoom());
   }
 
   // ---------- Pause ----------
@@ -534,11 +556,12 @@ export class RunScene extends Phaser.Scene {
       ARENA.height + pad * 2,
       0x07060d,
     );
-    this.add.tileSprite(ARENA.centerX, ARENA.centerY, ARENA.width, ARENA.height, 'floor');
+    const theme = getBiome(this.run.biome).theme;
+    this.add.tileSprite(ARENA.centerX, ARENA.centerY, ARENA.width, ARENA.height, theme.floor);
     const g = this.add.graphics();
     // Murs : double trait néon, l'intérieur plus vif.
-    g.lineStyle(6, 0x2a2048, 1).strokeRectShape(ARENA);
-    g.lineStyle(2, 0x6b4cff, 0.9).strokeRect(
+    g.lineStyle(6, theme.wall, 1).strokeRectShape(ARENA);
+    g.lineStyle(2, theme.wallGlow, 0.9).strokeRect(
       ARENA.x - 1,
       ARENA.y - 1,
       ARENA.width + 2,
@@ -548,10 +571,28 @@ export class RunScene extends Phaser.Scene {
     const neon = (x: number, y: number, color: number) => {
       this.add.image(x, y, 'glow').setTint(color).setAlpha(0.5).setScale(2.2).setBlendMode('ADD');
     };
-    neon(ARENA.left, ARENA.top, 0x6b4cff);
-    neon(ARENA.right, ARENA.top, 0x4de1ff);
-    neon(ARENA.left, ARENA.bottom, 0x4de1ff);
-    neon(ARENA.right, ARENA.bottom, 0x6b4cff);
+    const [n1, n2] = theme.neons;
+    neon(ARENA.left, ARENA.top, n1);
+    neon(ARENA.right, ARENA.top, n2);
+    neon(ARENA.left, ARENA.bottom, n2);
+    neon(ARENA.right, ARENA.bottom, n1);
+    if (theme.snow) this.addSnow();
+  }
+
+  /** Givre-Serveur : flocons qui tombent doucement (moins nombreux en qualité basse). */
+  private addSnow(): void {
+    this.add
+      .particles(0, ARENA.top - 20, 'spark', {
+        x: { min: ARENA.left - 40, max: ARENA.right + 40 },
+        speedY: { min: 12, max: 30 },
+        speedX: { min: -10, max: 6 },
+        lifespan: 14000,
+        frequency: 90 / QUALITY_PARTICLES[settings.quality],
+        scale: { min: 0.3, max: 0.7 },
+        alpha: { start: 0.7, end: 0.1 },
+        tint: 0xd8f6ff,
+      })
+      .setDepth(2);
   }
 
   /** Caméra rapprochée qui suit Ash (les personnages restent lisibles sur un téléphone). */
@@ -608,10 +649,11 @@ export class RunScene extends Phaser.Scene {
     if (this.roomCleared || this.leaving) return;
     const anyAlive = this.enemies.some((e) => e.alive) || this.pending.length > 0;
     if (anyAlive) return;
-    if (this.isBossRoom) {
+    if (this.kind === 'boss') {
       if (this.boss && !this.boss.alive) this.clearRoom();
       return;
     }
+    if (this.kind === 'shop') return;
     if (this.waveIndex < this.waves.length) {
       if (this.nextWaveAt === 0) this.nextWaveAt = this.sim + 500;
       if (this.sim >= this.nextWaveAt) {
@@ -832,8 +874,10 @@ export class RunScene extends Phaser.Scene {
     const healed = onRoomCleared(this.run);
     if (healed > 0) this.juice.damageNumber(this.player.x, this.player.y - 12, healed, FX.heal);
     const biome = getBiome(this.run.biome);
-    if (this.isBossRoom) {
-      this.addDoor('exit', ARENA.centerX);
+    if (this.kind !== 'combat') {
+      // Après le boss : biome suivant s'il existe ; après le marchand : salle 1.
+      const last = this.kind === 'boss' && this.run.biome + 1 >= BIOMES.length;
+      this.addDoor(last ? 'exit' : 'next', ARENA.centerX);
       return;
     }
     if (this.run.room >= biome.rooms) {
@@ -845,14 +889,17 @@ export class RunScene extends Phaser.Scene {
     if (b) this.addDoor(b, ARENA.centerX + 120);
   }
 
-  private addDoor(reward: DoorReward | 'exit' | 'boss', x: number): void {
+  private addDoor(reward: DoorReward | SpecialDoor, x: number): void {
     const y = ARENA.top + 16;
     const kind = typeof reward === 'string' ? reward : reward.kind;
     const god = typeof reward !== 'string' && reward.god ? GODS[reward.god] : undefined;
     const color = god?.color ?? REWARD_STYLE[kind].color;
+    const nextBiome = BIOMES[this.kind === 'boss' ? this.run.biome + 1 : this.run.biome];
     const label = god
       ? t('reward.boonOf', { god: t(god.nameKey as TextKey) })
-      : t(REWARD_STYLE[kind].label);
+      : kind === 'next' && nextBiome
+        ? t(nextBiome.nameKey as TextKey)
+        : t(REWARD_STYLE[kind].label);
     const frame = this.add.graphics().setDepth(3);
     frame.fillStyle(0x07060d, 1).fillRoundedRect(x - 18, y - 22, 36, 34, 6);
     frame.lineStyle(2, color, 1).strokeRoundedRect(x - 18, y - 22, 36, 34, 6);
@@ -895,8 +942,12 @@ export class RunScene extends Phaser.Scene {
         this.endRun('cleared');
         return;
       }
-      if (d.reward !== 'boss') applyReward(this.run, d.reward.kind, d.reward.god);
-      this.run.room += 1;
+      if (d.reward === 'next' && this.kind === 'boss') afterBoss(this.run, BIOMES.length);
+      else if (d.reward === 'next' || d.reward === 'boss') this.run.room += 1;
+      else {
+        applyReward(this.run, d.reward.kind, d.reward.god);
+        this.run.room += 1;
+      }
       this.cameras.main.fadeOut(300, 7, 6, 13);
       this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () =>
         this.scene.restart({ run: this.run }),
@@ -944,7 +995,7 @@ function getBoonGod(offer: BoonOffer) {
 /** Icône de récompense : chaque type a une forme différente (pas seulement une couleur). */
 function drawRewardIcon(
   g: Phaser.GameObjects.Graphics,
-  kind: RewardKind | 'exit' | 'boss',
+  kind: RewardKind | SpecialDoor,
   x: number,
   y: number,
   color: number,
@@ -981,6 +1032,10 @@ function drawRewardIcon(
     }
     case 'exit':
       g.fillTriangle(x - 6, y + 6, x, y - 8, x + 6, y + 6);
+      break;
+    case 'next': // double chevron vers le haut
+      g.lineBetween(x - 7, y + 1, x, y - 6).lineBetween(x, y - 6, x + 7, y + 1);
+      g.lineBetween(x - 7, y + 8, x, y + 1).lineBetween(x, y + 1, x + 7, y + 8);
       break;
     case 'boss': // œil (forme propre à la porte du boss)
       g.strokeEllipse(x, y, 20, 11).fillCircle(x, y, 3.5);

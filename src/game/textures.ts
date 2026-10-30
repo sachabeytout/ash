@@ -138,6 +138,16 @@ export function ensureGameTextures(scene: Phaser.Scene): void {
     g.fillStyle(0xffffff).fillRect(3, 3, 3, 3);
   });
 
+  // Sol du Givre-Serveur : dalles bleu nuit, joints givrés, petites LED de serveur.
+  shapeTexture(scene, 'floorIce', 32, 32, (g) => {
+    g.fillStyle(0x0a1220).fillRect(0, 0, 32, 32);
+    g.fillStyle(0x0e1a2c).fillRect(1, 1, 30, 30);
+    g.fillStyle(0x1f3a52).fillRect(0, 0, 32, 1).fillRect(0, 0, 1, 32);
+    g.fillStyle(0x6fb8d0).fillRect(0, 0, 2, 2);
+    g.fillStyle(0x2c5470).fillRect(6, 24, 4, 1).fillRect(20, 9, 5, 1);
+    g.fillStyle(0x8ff0ff).fillRect(27, 27, 1, 1);
+  });
+
   // Sol : dalles sombres avec une grille néon discrète.
   shapeTexture(scene, 'floor', 32, 32, (g) => {
     g.fillStyle(0x0c0a15).fillRect(0, 0, 32, 32);
