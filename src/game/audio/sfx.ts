@@ -163,7 +163,43 @@ function noise(
   src.stop(ctx.currentTime + duration + 0.02);
 }
 
+/** Joue `fn` un peu plus tard (petites mélodies : arpèges, accords). */
+function later(ms: number, fn: () => void): void {
+  setTimeout(fn, ms);
+}
+
 export const sfx = {
+  /** Coffre de Vesper : arpège montant et scintillement. */
+  chest() {
+    if (!throttle('chest', 300)) return;
+    [523, 659, 784, 1047].forEach((f, i) =>
+      later(i * 70, () => tone('triangle', f, f, 0.22, 0.22)),
+    );
+    later(280, () => noise('highpass', 4000, 9000, 0.3, 0.12));
+  },
+  /** Étincelle du Phénix : flamme qui monte. */
+  spark() {
+    if (!throttle('spark', 300)) return;
+    tone('sine', 300, 1200, 0.45, 0.22);
+    later(120, () => tone('triangle', 600, 2400, 0.4, 0.14));
+  },
+  /** Renaissance : grondement qui enfle, puis accord lumineux. */
+  revive() {
+    if (!throttle('revive', 500)) return;
+    tone('sawtooth', 90, 220, 0.6, 0.3);
+    noise('lowpass', 300, 2400, 0.6, 0.25);
+    later(450, () => {
+      tone('triangle', 440, 440, 0.7, 0.2);
+      tone('triangle', 554, 554, 0.7, 0.16);
+      tone('triangle', 659, 659, 0.7, 0.14);
+    });
+  },
+  /** Évènement accepté : petite cloche. */
+  eventTake() {
+    if (!throttle('eventTake', 300)) return;
+    tone('sine', 880, 860, 0.5, 0.2);
+    later(90, () => tone('sine', 1320, 1300, 0.45, 0.12));
+  },
   swing(heavy = false) {
     if (!throttle('swing')) return;
     noise(

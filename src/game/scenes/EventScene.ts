@@ -102,7 +102,7 @@ export class EventScene extends Phaser.Scene {
   private take(): void {
     if (this.closing || this.data_.blocked || this.time.now - this.openedAt < 300) return;
     this.closing = true;
-    sfx.boonTaken();
+    sfx.eventTake();
     this.scene.stop();
     this.data_.onTake();
   }

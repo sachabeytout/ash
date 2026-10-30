@@ -2,6 +2,12 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.28.1 — Nouveaux sons
+
+- **Sons dédiés** pour le coffre de Vesper (petit arpège), l'Étincelle du Phénix (flamme qui monte), la Renaissance (grondement puis accord) et les évènements acceptés (petite cloche).
+
+**Quoi tester** : ces sons te plaisent-ils ? L'un d'eux est-il trop fort ?
+
 ## 0.28.0 — Exploits
 
 - **Nouvel onglet « Exploits »** dans les Archives (7e onglet, touche 7) : tes records.

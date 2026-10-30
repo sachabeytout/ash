@@ -760,7 +760,7 @@ export class RunScene extends Phaser.Scene {
     c.glow.setAlpha(0.1);
     c.g.setAlpha(0.4);
     this.juice.burst(c.x, c.y, 0xffe08a, 28);
-    sfx.boonTaken();
+    sfx.chest();
     this.ui.showBanner(t('trial.chest'), t('trial.loot', { ...c.loot }));
   }
 
@@ -858,6 +858,7 @@ export class RunScene extends Phaser.Scene {
         this.choosing = false;
         this.nextWaveAt = this.sim + 600;
         this.juice.burst(this.player.x, this.player.y, 0xffc46b, 28);
+        sfx.spark();
         markScene('run');
       },
     };
@@ -1740,7 +1741,7 @@ export class RunScene extends Phaser.Scene {
       this.ui.showBanner(t('skill.thoth_rebirth'), t('revive.sub'));
       this.juice.burst(this.player.x, this.player.y, 0xff7a2a, 40);
       this.lightning.ring(this.player, 50, 0xffb02e);
-      sfx.super();
+      sfx.revive();
       return;
     }
     if (killed) {
