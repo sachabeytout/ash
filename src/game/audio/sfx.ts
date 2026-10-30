@@ -22,6 +22,15 @@ export function unlockAudio(): void {
   }
 }
 
+/** Contexte audio partagé avec la musique (null tant que l'audio n'est pas débloqué). */
+export function audioContext(): AudioContext | null {
+  return ctx;
+}
+
+export function sharedNoise(): AudioBuffer | null {
+  return noiseBuffer;
+}
+
 function volume(): number {
   return settings.masterVolume * settings.sfxVolume;
 }

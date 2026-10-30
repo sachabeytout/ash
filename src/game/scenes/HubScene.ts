@@ -8,6 +8,7 @@ import { GOD_IDS } from '../../data/gods';
 import { PLAYER } from '../../data/player';
 import { WEAPONS, type WeaponId } from '../../data/weapons';
 import { t, type TextKey } from '../../i18n';
+import { music } from '../audio/music';
 import { sfx } from '../audio/sfx';
 import { addEmbers, drawCage, ensureTextures } from '../backdrop';
 import { cheatsEnabled } from '../debug/cheats';
@@ -174,6 +175,7 @@ export class HubScene extends Phaser.Scene {
     });
 
     this.cameras.main.fadeIn(500, 7, 6, 13);
+    music.play('hub');
     markScene('hub');
   }
 

@@ -129,6 +129,19 @@ Amplification M1 : **Soleil de midi** (la brûlure de Râ dure 50 % plus longtem
 Super : Katana = **Taille de l'Aube** ; Doubles lames = **Tempête de lames**.
 Arbre de Thot (M1) : Mémoire du feu, Lame affûtée, Braises vivaces, Faveur divine, Étincelle.
 
+### Ammit, la Dévoreuse (boss 1, 0.4.0) — valeurs : `src/data/bosses.ts`
+
+Gardienne des Bas-Fonds : crinière sombre, gueule de crocodile. Elle pèse les âmes de ceux qui s'évadent.
+
+| Attaque      | Télégraphe                                   | Esquive                          |
+| ------------ | -------------------------------------------- | -------------------------------- |
+| Morsure      | Cône rouge devant la gueule                  | Sortir du cône ou dash           |
+| Charge       | Bande rouge au sol (trajectoire)             | Se décaler sur le côté           |
+| Onde de choc | Cercle qui se resserre, puis anneau qui part | S'éloigner, ou traverser en dash |
+| Invocation   | Cercle bleu pulsant (phase 2)                | Abattre les deux Rôdeurs         |
+
+Phase 2 à 50 % : tempo +20 %, double onde, invocations. Élite du biome 1 : **le Traqueur** (charge en ligne droite).
+
 ## 5. Systèmes nommés 🟡
 
 | Système                     | Nom                                                        |

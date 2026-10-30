@@ -2,8 +2,9 @@
 
 ## Prochaine étape
 
-M1.3 : élite, boss Ammit, musique, menu pause et options, préréglages de qualité.
-Retours attendus de l'utilisateur sur la 0.3.0 (dons, Super, sauvegarde, Thot) et, plus tard, sur le lore v0.2.
+M1 est terminé : on attend les retours de l'utilisateur sur la 0.4.0 (boss, élite, musique, options) avant de détailler M2.
+Pistes M2 proposées : dialogues dans la Cage (Aelia, Thot, Vesper), forge de Brokk (pièces d'arme), mode assistance « Bénédiction du Phénix », biome 2.
+Retour sur le lore v0.2 toujours attendu (« quand le fond aura avancé »).
 
 ## M0 — Fondations
 
@@ -43,11 +44,11 @@ Retours attendus de l'utilisateur sur la 0.3.0 (dons, Super, sauvegarde, Thot) e
 - [x] Méta minimale : 5 compétences (arbre de Thot)
 - [x] Indicateurs d'ennemis hors écran
 
-### M1.3 — Boss et ambiance
+### M1.3 — Boss et ambiance (0.4.0) ✅
 
-- [ ] 1 élite
-- [ ] Boss 1 : Ammit, la Dévoreuse
-- [ ] Une musique ; préréglages de qualité ; menu options et pause
+- [x] 1 élite (le Traqueur)
+- [x] Boss 1 : Ammit, la Dévoreuse
+- [x] Musique (3 morceaux) ; préréglages de qualité ; menu options et pause
 
 ## M2+
 

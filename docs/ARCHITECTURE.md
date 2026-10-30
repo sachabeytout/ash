@@ -1,10 +1,11 @@
 # Architecture (carte du projet)
 
-> Statut 0.3.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer,
+> Statut 0.4.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
 > combat/attack+health+status+superGauge, boons/boons, run/waves+rewards+state, save/schema+migrations+codec+store),
-> `data/` (player, weapons, enemies, biomes, gods, boons, status, skills), `game/` (scenes Title, Hub, Run, Ui, Boon ;
-> entities Player, Enemy ; input Controls, TouchControls ; fx/Juice+Lightning ; ui/button+ThothPanel ;
-> dom/saveDialog ; debug/cheats ; session ; icons ; audio/sfx ; textures ; physics), `platform/` (pwa, device).
+> `data/` (player, weapons, enemies, biomes, gods, boons, status, skills, bosses, music), `game/` (scenes Title, Hub,
+> Run, Ui, Boon, Pause ; entities Player, Enemy, Boss, Hittable ; input Controls, TouchControls ; fx/Juice+Lightning ;
+> ui/button+ThothPanel+OptionsPanel ; dom/saveDialog ; debug/cheats ; session ; icons ; audio/sfx+music ; textures ;
+> physics), `platform/` (pwa, device).
 > Prévu : telemetry, events, data/validate. Mettre à jour à chaque session.
 
 ### Scènes
@@ -23,6 +24,15 @@ par-dessus). Mort ou sortie → `hub` avec un `RunSummary`.
 - Sauvegarde : `src/core/save/` (format v1, migrations, empreinte, copie de secours) ; `src/game/session.ts`
   l'écrit à chaque entrée de salle, après un choix de don, en fin de run et quand l'app passe en arrière-plan.
 - Raccourcis de test (dev ou `?cheats`) : `src/game/debug/cheats.ts`.
+
+### Boss, élite, pause, options, musique
+
+- Ammit (vie, attaques, télégraphes, phase 2, récompense) : `src/data/bosses.ts` ; choix des attaques :
+  `src/core/boss/pattern.ts` ; entité : `src/game/entities/Boss.ts`. La salle de boss = salle `rooms + 1` du biome.
+- Élite : `stalker` dans `src/data/enemies.ts` (attaque `charge`) ; salles d'élite : `eliteRooms` dans `src/data/biomes.ts`.
+- Pause : `src/game/scenes/PauseScene.ts` (ouverte par `RunScene.openPause`). Options : `src/game/ui/OptionsPanel.ts`,
+  réglages dans `src/core/settings.ts` (qualité → `QUALITY_PARTICLES`).
+- Musique : motifs dans `src/data/music.ts`, séquenceur dans `src/game/audio/music.ts`.
 
 ### Combat (où régler quoi)
 

@@ -45,6 +45,14 @@ test('écran titre → cage → don → combat → reprise après fermeture', as
   await page.waitForTimeout(150);
   await shot('combat');
 
+  // Pause (Échap) puis reprise.
+  await page.keyboard.press('Escape');
+  await expect(page.locator('body')).toHaveAttribute('data-scene', 'pause');
+  await page.waitForTimeout(300);
+  await shot('pause');
+  await page.keyboard.press('Escape');
+  await expect(page.locator('body')).toHaveAttribute('data-scene', 'run');
+
   // La run est sauvegardée : après un rechargement, la Cage propose de la reprendre.
   const saved = await page.evaluate(() => localStorage.getItem('ash.save'));
   expect(saved).toContain('katana');

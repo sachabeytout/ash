@@ -29,6 +29,7 @@ import { ENEMIES, type EnemyDef } from '../../data/enemies';
 import { PLAYER } from '../../data/player';
 import { WEAPONS } from '../../data/weapons';
 import { t, type TextKey } from '../../i18n';
+import { music } from '../audio/music';
 import { sfx } from '../audio/sfx';
 import { Boss } from '../entities/Boss';
 import { DANGER, Enemy } from '../entities/Enemy';
@@ -209,6 +210,7 @@ export class RunScene extends Phaser.Scene {
     this.nextWaveAt = 700;
 
     this.cameras.main.fadeIn(350, 7, 6, 13);
+    music.play(this.isBossRoom ? 'boss' : 'combat');
     markScene('run');
     // Sauvegarde à chaque entrée de salle : fermer l'app à tout moment, reprendre ici.
     session.snapshotRun(this.run);

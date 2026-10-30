@@ -43,6 +43,14 @@ Format : date — décision — raison — validée par l'utilisateur (oui / non
 | 2026-10-30 | « Abandonner la run » dans la Cage : demande une confirmation, l'XP gagnée est conservée | Jamais de run « pour rien » | à signaler |
 | 2026-10-30 | Le Super n'est pas (encore) modifié par les dons | Simplicité M1 ; des dons de Super pourront venir en M2 | à signaler |
 | 2026-10-30 | Préférence : **notification à chaque étape terminée** | Demande de l'utilisateur | oui |
+| 2026-10-30 | Boss Ammit : 800 PV, 4 attaques (morsure, charge, onde de choc, invocation), phase 2 à 50 % (+20 % de vitesse) | Patterns apprenables, toujours télégraphiés ; à régler selon les retours | à signaler |
+| 2026-10-30 | Sur le boss, le gel ne fait qu'un **sursaut** de 0,45 s | Sinon Skadi rendrait le boss trivial | à signaler |
+| 2026-10-30 | À la mort du boss, ses invocations disparaissent | Anti-frustration : pas de mort après la victoire | à signaler |
+| 2026-10-30 | Élite « Traqueur » dans les salles 5 et 8 ; +15 XP | Pic de difficulté lisible, récompensé | à signaler |
+| 2026-10-30 | Musique **synthétisée en code** (3 morceaux), pas de fichiers audio | 100 % originale, aucune licence, très léger | à signaler |
+| 2026-10-30 | Qualité graphique par défaut : **Haute** (Basse/Moyenne réduisent les particules) | Le jeu tourne bien sur iPhone récent ; réglable dans Options | à signaler |
+| 2026-10-30 | Pause automatique quand l'app passe en arrière-plan | Conforme au brief | oui (brief) |
+| 2026-10-30 | Mise en ligne en avançant `main` jusqu'à la branche de travail une fois les tests verts | Accord de l'utilisateur pour la 0.3.0 | oui |
 
 ## Réponses de l'utilisateur (30/10/2026)
 

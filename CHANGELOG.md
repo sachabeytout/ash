@@ -2,6 +2,22 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.4.0 — La Dévoreuse
+
+- **Boss : Ammit, la Dévoreuse.** Après la salle 10, une porte marquée d'un œil mène à la gardienne des Bas-Fonds. Ses 4 attaques sont toujours annoncées :
+  - **Morsure** : un cône rouge devant sa gueule.
+  - **Charge** : une bande rouge au sol montre sa trajectoire ; écarte-toi sur le côté.
+  - **Onde de choc** : un cercle se resserre sur elle, puis un anneau s'élargit ; éloigne-toi ou traverse-le en dash.
+  - **Invocation** (à partir de la moitié de sa vie) : elle appelle deux Rôdeurs.
+  - À la moitié de sa vie, elle **se déchaîne** : attaques plus rapides, double onde de choc.
+  - Victoire : +50 XP, +2 pièces d'arme, et la sortie s'ouvre.
+- **Élite : le Traqueur** (couronne au-dessus de la tête), dans les salles 5 et 8. Il charge en ligne droite après une bande d'avertissement au sol. +15 XP quand tu l'abats.
+- **Pause** : bouton en haut à droite, touche Échap ou P, bouton Start à la manette. Le jeu se met aussi en pause tout seul si tu quittes l'app (appel, verrouillage…).
+- **Options** (dans la Cage et dans la pause) : volumes (général, bruitages, musique), **qualité graphique** Basse / Moyenne / Haute, langue, tremblement de l'écran, vibrations, aide à la visée, chiffres de dégâts, joystick flottant ou fixe, taille des boutons.
+- **Musique** : trois morceaux originaux, composés directement dans le jeu (la Cage, les combats, le boss).
+
+**Quoi tester** : arrive jusqu'à Ammit et essaie de la battre. Ses attaques se voient-elles assez tôt ? Est-elle trop facile, juste, ou trop dure ? Que penses-tu de la musique (et de son volume) ? Essaie la pause et les options.
+
 ## 0.3.0 — Les dieux s'en mêlent
 
 - **Dons des dieux** : trois dieux t'offrent leurs pouvoirs, tu en choisis **1 parmi 3**. La run commence toujours par un don, et les portes « Don » montrent quel dieu t'attend.
