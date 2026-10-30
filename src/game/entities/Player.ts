@@ -17,8 +17,8 @@ export interface ActiveSwing {
   /** Identifiant unique : un ennemi n'est touché qu'une fois par coup. */
   id: number;
   heavy: boolean;
-  /** Attaque puissante (sinon attaque simple) : décide quels dons s'appliquent. */
-  power: boolean;
+  /** Type d'action : décide quels dons s'appliquent. */
+  kind: 'attack' | 'power' | 'super';
 }
 
 type State =
@@ -28,6 +28,8 @@ type State =
       step: AttackStep;
       index: number;
       power: boolean;
+      /** Étape du Super en cours (null pour une attaque normale). */
+      superIndex: number | null;
       startedAt: number;
       id: number;
     }
@@ -52,6 +54,9 @@ export class Player {
   /** Rappels vers la scène (sons, effets). */
   onSwing: (heavy: boolean) => void = () => undefined;
   onDash: () => void = () => undefined;
+  /** Le Super est-il prêt ? (la scène gère la jauge) */
+  canSuper: () => boolean = () => false;
+  onSuper: () => void = () => undefined;
 
   constructor(
     private readonly scene: Phaser.Scene,
@@ -81,6 +86,7 @@ export class Player {
 
   isInvulnerable(now: number): boolean {
     if (now < this.invulnerableUntil) return true;
+    if (this.state.kind === 'attack' && this.state.superIndex !== null) return true;
     return this.state.kind === 'dash' && now - this.state.startedAt < PLAYER.dash.iframesMs;
   }
 
@@ -92,7 +98,7 @@ export class Player {
       step: this.state.step,
       id: this.state.id,
       heavy: this.state.power || this.state.step.shake > 0,
-      power: this.state.power,
+      kind: this.state.superIndex !== null ? 'super' : this.state.power ? 'power' : 'attack',
     };
   }
 
@@ -103,7 +109,8 @@ export class Player {
       x: Math.cos(a) * PLAYER.hurtKnockback,
       y: Math.sin(a) * PLAYER.hurtKnockback,
     };
-    if (this.state.kind === 'attack') this.state = { kind: 'free' };
+    if (this.state.kind === 'attack' && this.state.superIndex === null)
+      this.state = { kind: 'free' };
   }
 
   update(now: number, dt: number, controls: Controls, enemies: readonly Vec2[]): void {
@@ -121,13 +128,25 @@ export class Player {
       }
     }
 
-    if (this.state.kind === 'attack') {
+    if (this.state.kind === 'attack' && this.state.superIndex !== null) {
+      // Le Super se joue d'un trait : rien ne l'interrompt.
+      const st = this.state;
+      const superIndex = st.superIndex ?? 0;
+      if (phaseAt(st.step, now - st.startedAt) === 'done') {
+        const next = this.weapon.super[superIndex + 1];
+        if (next) this.startSuperStep(now, superIndex + 1, next);
+        else this.state = { kind: 'free' };
+      }
+      if (this.state.kind === 'attack') this.updateAttackMotion(now);
+    } else if (this.state.kind === 'attack') {
       const st = this.state;
       const elapsed = now - st.startedAt;
       const phase = phaseAt(st.step, elapsed);
       if (phase === 'recovery' || phase === 'done') {
         // Le dash annule la récupération ; un appui d'attaque bien placé enchaîne le combo.
-        if (dashReady && buffer.consume('dash', now)) {
+        if (this.canSuper() && buffer.consume('super', now)) {
+          this.startSuper(now, controls, enemies);
+        } else if (dashReady && buffer.consume('dash', now)) {
           this.startDash(now, controls);
         } else if (buffer.consume('attack', now)) {
           const next = st.power
@@ -145,7 +164,9 @@ export class Player {
     }
 
     if (this.state.kind === 'free') {
-      if (dashReady && buffer.consume('dash', now)) {
+      if (this.canSuper() && buffer.consume('super', now)) {
+        this.startSuper(now, controls, enemies);
+      } else if (dashReady && buffer.consume('dash', now)) {
         this.startDash(now, controls);
       } else if (buffer.consume('attack', now)) {
         const last = this.lastAttack;
@@ -199,7 +220,15 @@ export class Player {
     const step = power ? this.weapon.power : this.weapon.combo[index];
     if (!step) return;
     this.facing = this.aimAngle(controls, enemies);
-    this.state = { kind: 'attack', step, index, power, startedAt: now, id: ++swingCounter };
+    this.state = {
+      kind: 'attack',
+      step,
+      index,
+      power,
+      superIndex: null,
+      startedAt: now,
+      id: ++swingCounter,
+    };
     this.drawnPhase = null;
     // Anticipation : léger recul et écrasement.
     this.scene.tweens.add({
@@ -209,6 +238,28 @@ export class Player {
       duration: step.windupMs,
       yoyo: true,
     });
+  }
+
+  private startSuper(now: number, controls: Controls, enemies: readonly Vec2[]): void {
+    const first = this.weapon.super[0];
+    if (!first) return;
+    this.facing = this.aimAngle(controls, enemies);
+    this.lastAttack = null;
+    this.onSuper();
+    this.startSuperStep(now, 0, first);
+  }
+
+  private startSuperStep(now: number, superIndex: number, step: AttackStep): void {
+    this.state = {
+      kind: 'attack',
+      step,
+      index: 0,
+      power: true,
+      superIndex,
+      startedAt: now,
+      id: ++swingCounter,
+    };
+    this.drawnPhase = null;
   }
 
   private startDash(now: number, controls: Controls): void {
@@ -239,7 +290,8 @@ export class Player {
     }
     if (phase !== this.drawnPhase) {
       this.drawnPhase = phase;
-      if (phase === 'active') this.drawSlash(step, this.state.power);
+      if (phase === 'active')
+        this.drawSlash(step, this.state.power, this.state.superIndex !== null ? 0xffe08a : null);
     }
   }
 
@@ -259,10 +311,10 @@ export class Player {
     }
   }
 
-  private drawSlash(step: AttackStep, power: boolean): void {
+  private drawSlash(step: AttackStep, power: boolean, colorOverride: number | null): void {
     this.onSwing(power || step.shake > 0);
     const g = this.slash.clear().setAlpha(1).setPosition(this.x, this.y);
-    const color = this.weapon.color;
+    const color = colorOverride ?? this.weapon.color;
     if (step.arcDeg >= 360) {
       g.fillStyle(color, 0.18).fillCircle(0, 0, step.range);
       g.lineStyle(4, color, 0.9).strokeCircle(0, 0, step.range * 0.85);

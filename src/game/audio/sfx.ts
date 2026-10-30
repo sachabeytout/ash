@@ -167,6 +167,16 @@ export const sfx = {
     tone('sawtooth', 140, 40, 0.35, 0.3);
     noise('lowpass', 2500, 80, 0.4, 0.5);
   },
+  super() {
+    if (!throttle('super', 300)) return;
+    tone('sawtooth', 110, 880, 0.5, 0.22);
+    tone('triangle', 220, 1760, 0.6, 0.18);
+    noise('bandpass', 400, 4000, 0.5, 0.35);
+  },
+  superReady() {
+    if (!throttle('superReady', 500)) return;
+    tone('sine', 880, 1320, 0.25, 0.14);
+  },
   tap() {
     if (!throttle('tap', 60)) return;
     tone('sine', 660, 880, 0.06, 0.15);

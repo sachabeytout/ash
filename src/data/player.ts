@@ -18,6 +18,8 @@ export const PLAYER = {
   hurtKnockback: 120,
   /** Mémoire des appuis (ms). */
   inputBufferMs: 130,
+  /** Jauge de Super : elle se remplit en frappant et (plus vite) en étant touché. */
+  superGauge: { perDamageDealt: 1 / 240, perDamageTaken: 1 / 45 },
   /** Aide à la visée (tactile / manette) : cône et portée. */
   aimAssist: { coneDeg: 70, range: 140 },
 } as const;

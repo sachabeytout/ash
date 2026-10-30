@@ -1,4 +1,6 @@
 import { describe, expect, it } from 'vitest';
+import { gainSuper, superReady } from '../../src/core/combat/superGauge';
+import { WEAPONS } from '../../src/data/weapons';
 import {
   nextComboIndex,
   phaseAt,
@@ -94,5 +96,21 @@ describe('zones de coup', () => {
     const behind = { x: -10, y: 0 };
     expect(nearestInCone(o, 0, 150, 60, [far, near, behind])).toBe(near);
     expect(nearestInCone(o, Math.PI / 2, 150, 60, [far, near])).toBeUndefined();
+  });
+});
+
+describe('jauge de Super', () => {
+  it('se remplit en frappant, plus vite en étant touché, sans dépasser 1', () => {
+    const afterHit = gainSuper(0, 24);
+    const afterHurt = gainSuper(0, 0, 24);
+    expect(afterHit).toBeGreaterThan(0);
+    expect(afterHurt).toBeGreaterThan(afterHit);
+    expect(gainSuper(0.9, 10_000)).toBe(1);
+    expect(superReady(1)).toBe(true);
+    expect(superReady(0.99)).toBe(false);
+  });
+
+  it('chaque arme a un Super', () => {
+    for (const w of Object.values(WEAPONS)) expect(w.super.length).toBeGreaterThan(0);
   });
 });

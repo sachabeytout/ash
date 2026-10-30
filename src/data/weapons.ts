@@ -11,7 +11,24 @@ export interface WeaponDef {
   /** Temps laissé après un coup pour enchaîner le suivant. */
   comboWindowMs: number;
   power: AttackStep;
+  /** Super : suite de coups joués d'un trait, Ash est invincible pendant toute la durée. */
+  superNameKey: string;
+  super: readonly AttackStep[];
 }
+
+/** Un tour du tourbillon du Super des doubles lames. */
+const STORM_SPIN: AttackStep = {
+  damage: 9,
+  windupMs: 0,
+  activeMs: 70,
+  recoveryMs: 40,
+  range: 48,
+  arcDeg: 360,
+  lunge: 0,
+  knockback: 50,
+  hitstopMs: 18,
+  shake: 0,
+};
 
 export const WEAPONS: Record<WeaponId, WeaponDef> = {
   katana: {
@@ -70,6 +87,22 @@ export const WEAPONS: Record<WeaponId, WeaponDef> = {
       hitstopMs: 90,
       shake: 0.006,
     },
+    // Taille de l'Aube : Ash fonce en avant et tranche tout sur son passage.
+    superNameKey: 'super.katana',
+    super: [
+      {
+        damage: 55,
+        windupMs: 140,
+        activeMs: 170,
+        recoveryMs: 260,
+        range: 52,
+        arcDeg: 120,
+        lunge: 110,
+        knockback: 260,
+        hitstopMs: 110,
+        shake: 0.008,
+      },
+    ],
   },
   twinBlades: {
     id: 'twinBlades',
@@ -139,5 +172,22 @@ export const WEAPONS: Record<WeaponId, WeaponDef> = {
       hitstopMs: 60,
       shake: 0.004,
     },
+    // Tempête de lames : cinq tours de tourbillon, le dernier repousse tout.
+    superNameKey: 'super.twinBlades',
+    super: [
+      { ...STORM_SPIN, windupMs: 110 },
+      STORM_SPIN,
+      STORM_SPIN,
+      STORM_SPIN,
+      {
+        ...STORM_SPIN,
+        damage: 20,
+        range: 56,
+        knockback: 220,
+        hitstopMs: 70,
+        recoveryMs: 220,
+        shake: 0.006,
+      },
+    ],
   },
 };

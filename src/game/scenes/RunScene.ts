@@ -8,6 +8,7 @@ import {
   type HitEffects,
 } from '../../core/boons/boons';
 import { applyDamage } from '../../core/combat/health';
+import { gainSuper, superReady } from '../../core/combat/superGauge';
 import { applyBurn, applyChill, isBurning, isFrozen, tickBurn } from '../../core/combat/status';
 import { hitsArc, type Vec2 } from '../../core/geometry';
 import { createRng, type Rng } from '../../core/rng';
@@ -152,6 +153,15 @@ export class RunScene extends Phaser.Scene {
       this.juice.burst(this.player.x, this.player.y, 0xff7a2a, 6);
       this.dashEffects();
     };
+    this.player.canSuper = () => superReady(this.run.superGauge) && !this.choosing;
+    this.player.onSuper = () => {
+      this.run.superGauge = 0;
+      sfx.super();
+      this.juice.hitstop(60);
+      this.juice.shake(0.004, 160);
+      this.lightning.ring(this.player, 40, 0xffe08a);
+      this.juice.burst(this.player.x, this.player.y, 0xffe08a, 24);
+    };
 
     for (let i = 0; i < POOL_SIZE; i++) {
       const e = new Enemy(this);
@@ -185,6 +195,7 @@ export class RunScene extends Phaser.Scene {
         this.choosing = true;
         this.offerBoon();
       }
+      if (e.code === 'KeyG') this.run.superGauge = 1;
       if (e.code === 'KeyN') {
         this.pending.forEach((p) => p.marker.destroy());
         this.pending = [];
@@ -515,7 +526,7 @@ export class RunScene extends Phaser.Scene {
     const swing = this.player.activeSwing(this.sim);
     if (!swing) return;
     const { step } = swing;
-    const fx = this.profile.on[swing.power ? 'power' : 'attack'];
+    const fx: HitEffects = swing.kind === 'super' ? {} : this.profile.on[swing.kind];
     for (const e of alive) {
       if (!e.alive || e.lastSwingId === swing.id) continue;
       if (!hitsArc(this.player, this.player.facing, step.range, step.arcDeg, e, e.radius)) continue;
@@ -537,6 +548,7 @@ export class RunScene extends Phaser.Scene {
       this.juice.shake(step.shake);
       this.juice.burst(e.x, e.y, 0xffe9d6, swing.heavy ? 10 : 6);
       this.juice.damageNumber(e.x, e.y - e.radius, dealt);
+      if (swing.kind !== 'super') this.run.superGauge = gainSuper(this.run.superGauge, dealt);
       sfx.hit(swing.heavy);
       if (killed) this.killEnemy(e);
       else this.applyHitEffects(e, fx);
@@ -611,6 +623,7 @@ export class RunScene extends Phaser.Scene {
     const health = { hp: this.run.hp, maxHp: this.run.maxHp };
     const { dealt, killed } = applyDamage(health, amount);
     this.run.hp = health.hp;
+    this.run.superGauge = gainSuper(this.run.superGauge, 0, dealt);
     this.player.takeHit(this.sim, from);
     this.juice.hitstop(70);
     this.juice.shake(0.006, 140);
