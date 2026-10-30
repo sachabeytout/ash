@@ -39,6 +39,13 @@ import { newAutoQuality } from '../../core/perf';
 import { markScene } from './markScene';
 import { Controls } from '../input/Controls';
 import { WeaponPanel } from '../ui/WeaponPanel';
+import {
+  BARK_COOLDOWN_MS,
+  BARK_RANGE,
+  BARK_SHOW_MS,
+  BARKS,
+  type BarkSpeaker,
+} from '../../data/barks';
 
 /** La Cage (hub) : résumé de la dernière run, reprise, choix de l'arme, sauvegarde. */
 export class HubScene extends Phaser.Scene {
@@ -54,6 +61,15 @@ export class HubScene extends Phaser.Scene {
   private walkTarget: { x: number; y: number; station?: Station } | null = null;
   private prompt!: Phaser.GameObjects.Text;
   private padA = false;
+  /** Habitants qui parlent quand Ash passe près d'eux. */
+  private barkers: {
+    who: BarkSpeaker;
+    x: number;
+    y: number;
+    lastAt: number;
+    last: number;
+    bubble: Phaser.GameObjects.Text;
+  }[] = [];
   /** Abandon de la run : deuxième appui pour confirmer. */
   private abandonArmed = false;
 
@@ -66,6 +82,7 @@ export class HubScene extends Phaser.Scene {
     this.starting = false;
     this.modal = false;
     this.stations = [];
+    this.barkers = [];
     this.walkTarget = null;
     this.padA = false;
     this.abandonArmed = false;
@@ -208,6 +225,7 @@ export class HubScene extends Phaser.Scene {
     if (this.modal || this.starting) return;
     this.moveAsh(delta);
     this.highlightStations();
+    this.updateBarks();
     // Manette : A agit sur la station la plus proche (ou reprend la run).
     const pad = navigator.getGamepads?.().find((p) => p?.connected);
     const pressed = pad?.buttons[0]?.pressed ?? false;
@@ -358,8 +376,12 @@ export class HubScene extends Phaser.Scene {
       // Vesper, perché près de la porte : il observe Ash.
       const g = this.add.graphics();
       drawRaven(g, GAME_WIDTH / 2 - 56, 112);
+      this.addBarker('vesper', GAME_WIDTH / 2 - 56, 100, 150);
       this.tweens.add({ targets: g, y: -1.5, duration: 1300, yoyo: true, repeat: -1 });
     }
+    this.addBarker('thot', 150, 270, 320);
+    this.addBarker('brokk', 473, 178, 230);
+    this.addBarker('aelia', GAME_WIDTH / 2, 196, 252);
     this.prompt = this.add
       .text(0, 0, '', {
         fontFamily: FONT_FAMILY,
@@ -371,6 +393,52 @@ export class HubScene extends Phaser.Scene {
       .setOrigin(0.5, 1)
       .setDepth(30)
       .setVisible(false);
+  }
+
+  /** Un habitant qui parle : bulle au-dessus de lui (`reach` : jusqu'où Ash peut être, en hauteur). */
+  private addBarker(who: BarkSpeaker, x: number, y: number, reachY?: number): void {
+    const bubble = this.add
+      .text(x, y, '', {
+        fontFamily: FONT_FAMILY,
+        fontSize: '8px',
+        color: '#ffe9d6',
+        backgroundColor: '#14101e',
+        padding: { x: 5, y: 3 },
+        align: 'center',
+        wordWrap: { width: 150 },
+      })
+      .setOrigin(0.5, 1)
+      .setDepth(40)
+      .setAlpha(0);
+    this.barkers.push({ who, x, y: reachY ?? y + 40, lastAt: -BARK_COOLDOWN_MS, last: -1, bubble });
+  }
+
+  private updateBarks(): void {
+    const now = this.time.now;
+    for (const b of this.barkers) {
+      if (now - b.lastAt < BARK_COOLDOWN_MS) continue;
+      if (Math.hypot(this.ash.x - b.x, this.ash.y - b.y) > BARK_RANGE) continue;
+      // Une réplique au hasard, jamais deux fois de suite la même.
+      const count = BARKS[b.who];
+      let n = Math.floor(Math.random() * count);
+      if (n === b.last) n = (n + 1) % count;
+      b.last = n;
+      b.lastAt = now;
+      b.bubble
+        .setText(t(`bark.${b.who}.${n + 1}` as TextKey, { deaths: session.save.meta.deaths }))
+        .setAlpha(0);
+      // La bulle ne sort jamais de l'écran.
+      const half = b.bubble.width / 2;
+      b.bubble.setX(Math.min(GAME_WIDTH - 6 - half, Math.max(6 + half, b.bubble.x)));
+      this.tweens.killTweensOf(b.bubble);
+      this.tweens.add({
+        targets: b.bubble,
+        alpha: 1,
+        duration: 200,
+        hold: BARK_SHOW_MS,
+        yoyo: true,
+      });
+    }
   }
 
   private addStation(def: Omit<Station, 'labelText' | 'graphics'>): void {

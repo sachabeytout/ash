@@ -1,6 +1,6 @@
 # Architecture (carte du projet)
 
-> Statut 0.32.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
+> Statut 0.33.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
 > combat/attack+health+status+superGauge, boons/boons, run/waves+rewards+state, save/schema+migrations+codec+store),
 > `data/` (player, weapons, enemies, biomes, gods, boons, status, skills, bosses, music, shop), `game/` (scenes Title, Hub,
 > Run, Ui, Boon, Pause, Shop ; entities Player, Enemy, Boss, Hittable ; input Controls, TouchControls ; fx/Juice+Lightning ;
@@ -25,7 +25,8 @@ par-dessus). Mort ou sortie → `hub` avec un `RunSummary`.
   `floorRoots` (`textures.ts`), musique `merchant` ; `RunScene.startShop` / `drawCounter` / `updateMerchant` ; fontaine `RunScene.placeFountain`.
 - Cage niveau 0 : `HubScene` (stations `buildStations`, déplacement `moveAsh` + `Controls`, toucher pour marcher,
   `nearStation` / Entrée / bouton A) ; râtelier `src/game/ui/WeaponPanel.ts`, arme mémorisée `meta.selectedWeapon`
-  (`chosenWeapon` / `selectWeapon` dans `src/core/forge.ts`, sauvegarde v13).
+  (`chosenWeapon` / `selectWeapon` dans `src/core/forge.ts`, sauvegarde v13). Répliques des habitants :
+  `src/data/barks.ts` + `bark.*` (i18n), `HubScene.addBarker` / `updateBarks`.
 - Arbre de Thot : `src/data/skills.ts` + `src/core/meta.ts` (`runBonuses` → `RunPerks`) ; fenêtre : `src/game/ui/ThothPanel.ts`
   (deux colonnes). Renaissance : `RunScene.hurtPlayer` (`revivesUsed`, sauvegarde v11).
 - Sauvegarde : `src/core/save/` (format v1, migrations, empreinte, copie de secours) ; `src/game/session.ts`

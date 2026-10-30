@@ -2,6 +2,16 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.33.0 — Les habitants de la Cage parlent
+
+- **Brokk, Thot, Aelia et Vesper te lancent une petite phrase** quand Ash passe près d'eux dans la Cage, avec un peu d'humour. Une bulle s'affiche quelques secondes. Il y a 22 répliques, jamais deux fois de suite la même, par exemple :
+  - Brokk : « Mon marteau s'appelle Gérard. Ne pose pas de questions. »
+  - Thot : « Je ne juge pas. J'archive. C'est pire. »
+  - Vesper : « Je ne t'aide pas. J'optimise ta souffrance. Nuance. »
+  - Aelia : « Tu as mangé ? Ah, c'est vrai… tu es fait de cendres. »
+
+**Quoi tester** : promène-toi dans la Cage. L'humour te plaît-il ? Un personnage est-il trop bavard ?
+
 ## 0.32.0 — Pièges
 
 - **Des pièges dans les salles de combat**, à partir de la 3e salle de chaque monde (un peu plus nombreux plus loin) :
