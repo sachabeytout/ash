@@ -162,9 +162,7 @@
   "enemy.stalker": "Stalker",
   "boss.ammit": "Ammit, the Devourer",
   "boss.ammit.title": "Warden of the Lowtown",
-  "boss.phase2": "Ammit is enraged!",
   "reward.boss": "Warden",
-  "boss.defeated": "Ammit is defeated!",
   "reward.next": "Continue",
   "biome.frostserver": "The Frost Server",
   "hud.shop": "The merchant",
@@ -187,5 +185,11 @@
   "enemy.wolfbot": "Relay Wolf",
   "enemy.frostcaster": "Frostcaster",
   "enemy.runewarden": "Rune Warden",
-  "enemy.einherjar": "Einherjar"
+  "enemy.einherjar": "Einherjar",
+  "boss.fenrir": "Fenrir-Ω",
+  "boss.fenrir.title": "The Chained Wolf of the Frost Server",
+  "boss.ammit.phase2": "Ammit is enraged!",
+  "boss.ammit.defeated": "Ammit is defeated!",
+  "boss.fenrir.phase2": "Fenrir breaks a chain!",
+  "boss.fenrir.defeated": "Fenrir-Ω is defeated!"
 }

@@ -162,9 +162,7 @@
   "enemy.stalker": "Traqueur",
   "boss.ammit": "Ammit, la Dévoreuse",
   "boss.ammit.title": "Gardienne des Bas-Fonds",
-  "boss.phase2": "Ammit se déchaîne !",
   "reward.boss": "Gardienne",
-  "boss.defeated": "Ammit est vaincue !",
   "reward.next": "Continuer",
   "biome.frostserver": "Le Givre-Serveur",
   "hud.shop": "Le marchand",
@@ -187,5 +185,11 @@
   "enemy.wolfbot": "Loup-relais",
   "enemy.frostcaster": "Givreur",
   "enemy.runewarden": "Gardien runique",
-  "enemy.einherjar": "Einherjar"
+  "enemy.einherjar": "Einherjar",
+  "boss.fenrir": "Fenrir-Ω",
+  "boss.fenrir.title": "Le Loup enchaîné du Givre-Serveur",
+  "boss.ammit.phase2": "Ammit se déchaîne !",
+  "boss.ammit.defeated": "Ammit est vaincue !",
+  "boss.fenrir.phase2": "Fenrir brise une chaîne !",
+  "boss.fenrir.defeated": "Fenrir-Ω est vaincu !"
 }

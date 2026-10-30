@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { bossPhase, chooseBossAttack, ringHits, tempo } from '../../src/core/boss/pattern';
 import { createRng } from '../../src/core/rng';
 import type { BossAttackId } from '../../src/data/bosses';
-import { AMMIT } from '../../src/data/bosses';
+import { AMMIT, BOSSES, FENRIR } from '../../src/data/bosses';
 import { allDictionaries } from '../../src/i18n';
 
 describe('Ammit', () => {
@@ -49,5 +49,30 @@ describe('Ammit', () => {
       expect(dict[AMMIT.nameKey]).toBeDefined();
       expect(dict[AMMIT.titleKey]).toBeDefined();
     }
+  });
+});
+
+describe('tous les boss', () => {
+  it('chaque attaque possible a ses réglages et ses textes', () => {
+    for (const boss of Object.values(BOSSES)) {
+      for (const phase of [1, 2] as const) {
+        for (const id of Object.keys(boss.weights[phase]) as BossAttackId[]) {
+          expect(boss[id], `${boss.id} ${id}`).toBeDefined();
+        }
+      }
+      for (const dict of Object.values(allDictionaries)) {
+        for (const key of [boss.nameKey, boss.titleKey, boss.phase2Key, boss.defeatedKey])
+          expect(dict[key], key).toBeDefined();
+      }
+    }
+  });
+
+  it('Fenrir ne répète jamais trois fois la même attaque et n’invoque qu’en phase 2', () => {
+    const rng = createRng(2);
+    const h: BossAttackId[] = [];
+    for (let i = 0; i < 200; i++) h.push(chooseBossAttack(FENRIR, 1, h, rng));
+    expect(h).not.toContain('summon');
+    expect(h).toContain('leap');
+    expect(h).toContain('icefall');
   });
 });

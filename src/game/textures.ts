@@ -170,6 +170,20 @@ export function ensureGameTextures(scene: Phaser.Scene): void {
     g.fillStyle(0xf2e6c8).fillTriangle(2, 9, 0, 1, 6, 6).fillTriangle(20, 9, 22, 1, 16, 6);
   });
 
+  // Fenrir-Ω : loup d'acier, crinière givrée, collier à maillons, gueule tournée vers la droite.
+  shapeTexture(scene, 'fenrir', 50, 44, (g) => {
+    g.fillStyle(0x0b0f1a).fillCircle(20, 22, 20);
+    g.fillStyle(0xd8f0ff).fillCircle(20, 22, 18);
+    g.fillStyle(0x8fa4c8).fillCircle(20, 22, 14);
+    g.fillStyle(0x0b0f1a).fillTriangle(26, 12, 50, 22, 26, 32);
+    g.fillStyle(0x6f84a8).fillTriangle(27, 14, 47, 22, 27, 30);
+    g.fillStyle(0xf2f8ff);
+    for (let x = 31; x < 45; x += 4) g.fillTriangle(x, 21, x + 2, 21, x + 1, 24);
+    g.fillStyle(0x8ff0ff).fillCircle(27, 16, 2.4).fillCircle(27, 28, 2.4);
+    g.fillStyle(0x6d7891).fillRect(10, 8, 4, 28).fillRect(8, 12, 8, 3).fillRect(8, 28, 8, 3);
+    g.fillStyle(0xd8f0ff).fillTriangle(6, 6, 12, 0, 14, 8).fillTriangle(6, 38, 12, 44, 14, 36);
+  });
+
   // Projectile ennemi : losange magenta à cœur blanc (forme + couleur).
   shapeTexture(scene, 'shot', 9, 9, (g) => {
     g.fillStyle(0xff2a6d).fillTriangle(4.5, 0, 9, 4.5, 4.5, 9).fillTriangle(4.5, 0, 0, 4.5, 4.5, 9);

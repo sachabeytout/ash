@@ -281,9 +281,10 @@ export class RunScene extends Phaser.Scene {
       def,
       ARENA.centerX,
       ARENA.top + 70,
-      createRng((this.run.seed ^ 0xa3317) >>> 0),
+      createRng((this.run.seed ^ 0xa3317 ^ this.run.biome) >>> 0),
       this.sim,
       intro,
+      ARENA,
     );
     boss.onTelegraph = () => sfx.telegraph();
     boss.onQuake = () => {
@@ -292,7 +293,7 @@ export class RunScene extends Phaser.Scene {
     };
     boss.onSummon = (enemy, count) => this.spawnWave(Array<typeof enemy>(count).fill(enemy));
     boss.onPhase2 = () => {
-      this.ui.showBanner(t('boss.phase2'), '');
+      this.ui.showBanner(t(def.phase2Key as TextKey), '');
       this.juice.burst(boss.x, boss.y, 0xb8a8ff, 30);
       this.juice.shake(0.006, 260);
       sfx.super();
@@ -332,7 +333,7 @@ export class RunScene extends Phaser.Scene {
     this.pending.forEach((p) => p.marker.destroy());
     this.pending = [];
     this.enemies.filter((en) => en.alive).forEach((en) => this.killEnemy(en));
-    this.ui.showBanner(t('boss.defeated'), '');
+    this.ui.showBanner(t(boss.def.defeatedKey as TextKey), '');
   }
 
   // ---------- Marchand ----------

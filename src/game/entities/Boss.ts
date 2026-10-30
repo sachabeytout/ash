@@ -35,17 +35,20 @@ interface Ring {
 
 /** Durée d'un gel sur un boss : un simple sursaut, pas une immobilisation. */
 const BOSS_FREEZE_MS = 450;
+const MAX_ZONES = 6;
 
 /**
  * Boss : machine à états (intro → attente → télégraphe → attaque → récupération).
  * Chaque attaque a un télégraphe rouge-magenta en forme propre : cône (morsure), bande (charge),
- * cercle qui se resserre puis anneau (onde de choc), cercle pulsant (invocation).
+ * cercle qui se resserre puis anneau (onde de choc), cercle pulsant (invocation),
+ * cercle d'atterrissage (bond), cercles au sol (pluie de glace).
  */
 export class Boss implements Hittable {
   readonly sprite: Phaser.Physics.Arcade.Image;
   private readonly telegraph: Phaser.GameObjects.Graphics;
   private readonly rings: Phaser.GameObjects.Graphics;
   private readonly statusFx: Phaser.GameObjects.Graphics;
+  private readonly chains: Phaser.GameObjects.Graphics;
   private readonly mark: Phaser.GameObjects.Text;
   private readonly band = Array.from({ length: 4 }, () => new Phaser.Math.Vector2());
   private readonly ringSlots: Ring[] = [0, 1].map(() => ({
@@ -55,6 +58,11 @@ export class Boss implements Hittable {
     radius: 0,
     hit: false,
   }));
+  /** Zones au sol (pluie de glace, atterrissage du bond) : positions fixées au télégraphe. */
+  private readonly zones: Vec2[] = Array.from({ length: MAX_ZONES }, () => ({ x: 0, y: 0 }));
+  private zoneCount = 0;
+  private leapFrom: Vec2 = { x: 0, y: 0 };
+  private landingImpact = false;
   health: Health;
   status: StatusState = newStatus();
   lastSwingId = -1;
@@ -67,6 +75,8 @@ export class Boss implements Hittable {
   private readonly history: BossAttackId[] = [];
   private attackLanded = false;
   private flashUntil = 0;
+  /** Points d'ancrage des chaînes (Fenrir) ; une se brise en phase 2. */
+  private readonly anchors: Vec2[];
 
   onTelegraph: () => void = () => undefined;
   onQuake: () => void = () => undefined;
@@ -81,12 +91,14 @@ export class Boss implements Hittable {
     private readonly rng: Rng,
     now: number,
     introMs: number,
+    arena: Phaser.Geom.Rectangle,
   ) {
     this.health = { hp: def.maxHp, maxHp: def.maxHp };
+    this.chains = scene.add.graphics().setDepth(4);
     this.telegraph = scene.add.graphics().setDepth(5);
     this.rings = scene.add.graphics().setDepth(6);
     this.statusFx = scene.add.graphics().setDepth(9);
-    this.sprite = scene.physics.add.image(x, y, 'ammit').setDepth(8);
+    this.sprite = scene.physics.add.image(x, y, def.texture).setDepth(8);
     bodyOf(this.sprite).setCircle(
       def.radius,
       this.sprite.width / 2 - def.radius,
@@ -103,6 +115,12 @@ export class Boss implements Hittable {
       .setOrigin(0.5, 1)
       .setDepth(20)
       .setVisible(false);
+    this.anchors = def.chained
+      ? [
+          { x: arena.left, y: arena.top },
+          { x: arena.right, y: arena.top },
+        ]
+      : [];
     this.stateAt = now;
     this.stateMs = introMs;
   }
@@ -132,9 +150,7 @@ export class Boss implements Hittable {
     this.state = 'dead';
     bodyOf(this.sprite).setVelocity(0, 0);
     bodyOf(this.sprite).enable = false;
-    this.telegraph.clear();
-    this.rings.clear();
-    this.statusFx.clear();
+    [this.telegraph, this.rings, this.statusFx, this.chains].forEach((g) => g.clear());
     this.mark.setVisible(false);
     this.ringSlots.forEach((r) => (r.active = false));
   }
@@ -149,9 +165,11 @@ export class Boss implements Hittable {
     const frozen = isFrozen(this.status, now);
     let vx = 0;
     let vy = 0;
+    this.landingImpact = false;
 
     if (this.phase === 1 && bossPhase(def, this.health.hp, this.health.maxHp) === 2) {
       this.phase = 2;
+      this.anchors.pop(); // une chaîne se brise
       this.onPhase2();
     }
 
@@ -169,26 +187,45 @@ export class Boss implements Hittable {
             vx = (dx / dist) * def.speed;
             vy = (dy / dist) * def.speed;
           }
-          if (elapsed >= this.stateMs && canAttack) this.startTelegraph(now, toTarget);
+          if (elapsed >= this.stateMs && canAttack) this.startTelegraph(now, toTarget, target);
           break;
         case 'telegraph': {
           const total = this.telegraphMs();
-          if ((this.attack === 'bite' || this.attack === 'charge') && elapsed < total * 0.5)
-            this.facing = toTarget;
+          const tracking = this.attack === 'bite' || this.attack === 'charge';
+          if (tracking && elapsed < total * 0.5) this.facing = toTarget;
+          // Le bond vise Ash jusqu'aux 60 % du télégraphe, puis la zone se fige.
+          if (this.attack === 'leap' && elapsed < total * 0.6) this.setZone(0, target);
           this.drawTelegraph(Math.min(1, elapsed / total));
           if (elapsed >= total) this.release(now);
           break;
         }
         case 'attack': {
-          const cfg = this.attack === 'charge' ? def.charge : def.bite;
-          const reach = this.attack === 'charge' ? def.charge.distance : def.bite.lunge;
-          const speed = reach / (cfg.activeMs / 1000);
-          vx = Math.cos(this.facing) * speed;
-          vy = Math.sin(this.facing) * speed;
-          this.drawStrike();
-          if (elapsed >= cfg.activeMs) {
+          const active = this.activeMs();
+          if (this.attack === 'bite' || this.attack === 'charge') {
+            const reach =
+              this.attack === 'charge' ? (def.charge?.distance ?? 0) : (def.bite?.lunge ?? 0);
+            const speed = reach / (active / 1000);
+            vx = Math.cos(this.facing) * speed;
+            vy = Math.sin(this.facing) * speed;
+          } else if (this.attack === 'leap') {
+            const to = this.zones[0] ?? target;
+            const t = Math.min(1, elapsed / active);
+            // Saut : trajectoire droite, le sprite grossit puis retombe.
+            this.sprite.setPosition(
+              this.leapFrom.x + (to.x - this.leapFrom.x) * t,
+              this.leapFrom.y + (to.y - this.leapFrom.y) * t,
+            );
+            this.sprite.setScale(1 + Math.sin(t * Math.PI) * 0.35);
+          }
+          this.drawStrike(elapsed / active);
+          if (elapsed >= active) {
+            if (this.attack === 'leap') {
+              this.landingImpact = true;
+              this.onQuake();
+            }
             this.telegraph.clear();
-            this.setState('recover', now, tempo(def, this.phase, cfg.recoveryMs));
+            this.sprite.setScale(1);
+            this.setState('recover', now, tempo(def, this.phase, this.recoveryMs()));
           }
           break;
         }
@@ -200,9 +237,14 @@ export class Boss implements Hittable {
       }
     }
 
-    this.updateRings(now, dt);
+    this.updateRings(dt, now);
+    this.drawChains();
     const slow = speedFactor(this.status, now);
-    bodyOf(this.sprite).setVelocity(vx * slow, vy * slow);
+    if (!(this.state === 'attack' && this.attack === 'leap')) {
+      bodyOf(this.sprite).setVelocity(vx * slow, vy * slow);
+    } else {
+      bodyOf(this.sprite).setVelocity(0, 0);
+    }
     this.sprite.setFlipX(Math.cos(this.facing) < 0);
     if (now < this.flashUntil) this.sprite.setTint(0xffffff).setTintMode(Phaser.TintModes.FILL);
     else this.sprite.clearTint().setTintMode(Phaser.TintModes.MULTIPLY);
@@ -215,37 +257,91 @@ export class Boss implements Hittable {
     if (!this.alive) return 0;
     const def = this.def;
     if (this.state === 'attack' && !this.attackLanded) {
-      const touched =
-        this.attack === 'bite'
-          ? hitsArc(this, this.facing, def.bite.range, def.bite.arcDeg, player, playerRadius)
-          : Math.hypot(player.x - this.x, player.y - this.y) < def.charge.width / 2 + playerRadius;
-      if (touched) {
+      let damage = 0;
+      if (this.attack === 'bite' && def.bite) {
+        if (hitsArc(this, this.facing, def.bite.range, def.bite.arcDeg, player, playerRadius))
+          damage = def.bite.damage;
+      } else if (this.attack === 'charge' && def.charge) {
+        if (Math.hypot(player.x - this.x, player.y - this.y) < def.charge.width / 2 + playerRadius)
+          damage = def.charge.damage;
+      } else if (this.attack === 'icefall' && def.icefall) {
+        if (this.inZone(player, def.icefall.radius + playerRadius)) damage = def.icefall.damage;
+      }
+      if (damage > 0) {
         this.attackLanded = true;
-        return this.attack === 'bite' ? def.bite.damage : def.charge.damage;
+        return damage;
       }
     }
+    // Le bond ne blesse qu'à l'atterrissage, la frame où il retombe.
+    if (this.landingImpact && def.leap) {
+      this.landingImpact = false;
+      if (this.inZone(player, def.leap.radius + playerRadius)) return def.leap.damage;
+    }
+    const quake = def.quake;
+    if (!quake) return 0;
     for (const r of this.ringSlots) {
       if (!r.active || r.hit || r.radius <= 0) continue;
       const d = Math.hypot(player.x - r.origin.x, player.y - r.origin.y);
-      if (ringHits(r.radius, def.quake.thickness, d, playerRadius)) {
+      if (ringHits(r.radius, quake.thickness, d, playerRadius)) {
         r.hit = true;
-        return def.quake.damage;
+        return quake.damage;
       }
     }
     return 0;
   }
 
+  private inZone(p: Vec2, reach: number): boolean {
+    for (let i = 0; i < this.zoneCount; i++) {
+      const z = this.zones[i];
+      if (z && Math.hypot(p.x - z.x, p.y - z.y) < reach) return true;
+    }
+    return false;
+  }
+
+  private setZone(i: number, at: Vec2): void {
+    const z = this.zones[i];
+    if (!z) return;
+    z.x = at.x;
+    z.y = at.y;
+  }
+
   private telegraphMs(): number {
     const def = this.def;
-    const base =
-      this.attack === 'bite'
-        ? def.bite.telegraphMs
-        : this.attack === 'charge'
-          ? def.charge.telegraphMs
-          : this.attack === 'quake'
-            ? def.quake.telegraphMs
-            : def.summon.telegraphMs;
-    return tempo(def, this.phase, base);
+    const base = {
+      bite: def.bite?.telegraphMs,
+      charge: def.charge?.telegraphMs,
+      quake: def.quake?.telegraphMs,
+      summon: def.summon?.telegraphMs,
+      leap: def.leap?.telegraphMs,
+      icefall: def.icefall?.telegraphMs,
+    }[this.attack];
+    return tempo(def, this.phase, base ?? 800);
+  }
+
+  private activeMs(): number {
+    const def = this.def;
+    const ms = {
+      bite: def.bite?.activeMs,
+      charge: def.charge?.activeMs,
+      leap: def.leap?.activeMs,
+      icefall: def.icefall?.activeMs,
+      quake: 0,
+      summon: 0,
+    }[this.attack];
+    return Math.max(1, ms ?? 1);
+  }
+
+  private recoveryMs(): number {
+    const def = this.def;
+    const ms = {
+      bite: def.bite?.recoveryMs,
+      charge: def.charge?.recoveryMs,
+      leap: def.leap?.recoveryMs,
+      icefall: def.icefall?.recoveryMs,
+      quake: def.quake?.recoveryMs,
+      summon: def.summon?.recoveryMs,
+    }[this.attack];
+    return ms ?? 700;
   }
 
   private setState(state: BossState, now: number, ms = 0): void {
@@ -259,10 +355,26 @@ export class Boss implements Hittable {
     this.setState('idle', now, tempo(this.def, this.phase, min + this.rng.next() * (max - min)));
   }
 
-  private startTelegraph(now: number, angle: number): void {
+  private startTelegraph(now: number, angle: number, target: Vec2): void {
     this.attack = chooseBossAttack(this.def, this.phase, this.history, this.rng);
     this.history.push(this.attack);
     this.facing = angle;
+    this.zoneCount = 0;
+    const ice = this.def.icefall;
+    if (this.attack === 'icefall' && ice) {
+      // Un cercle sous Ash, les autres autour : on sort en se déplaçant (ou on traverse en dash).
+      const count = Math.min(MAX_ZONES, ice.count + (this.phase === 2 ? 1 : 0));
+      for (let i = 0; i < count; i++) {
+        const a = this.rng.next() * Math.PI * 2;
+        const d = i === 0 ? 0 : ice.spread * (0.5 + this.rng.next() * 0.7);
+        this.setZone(i, { x: target.x + Math.cos(a) * d, y: target.y + Math.sin(a) * d });
+      }
+      this.zoneCount = count;
+    }
+    if (this.attack === 'leap') {
+      this.setZone(0, target);
+      this.zoneCount = 1;
+    }
     this.setState('telegraph', now);
     this.mark.setVisible(true);
     this.onTelegraph();
@@ -276,7 +388,14 @@ export class Boss implements Hittable {
     switch (this.attack) {
       case 'bite':
       case 'charge':
+      case 'icefall':
         this.attackLanded = false;
+        this.setState('attack', now);
+        if (this.attack === 'icefall') this.onQuake();
+        break;
+      case 'leap':
+        this.attackLanded = false;
+        this.leapFrom = { x: this.x, y: this.y };
         this.setState('attack', now);
         break;
       case 'quake': {
@@ -293,20 +412,21 @@ export class Boss implements Hittable {
         this.setState(
           'recover',
           now,
-          tempo(def, this.phase, def.quake.recoveryMs) + (count - 1) * 380,
+          tempo(def, this.phase, def.quake?.recoveryMs ?? 700) + (count - 1) * 380,
         );
         break;
       }
       case 'summon':
-        this.onSummon(def.summon.enemy, def.summon.count);
-        this.setState('recover', now, tempo(def, this.phase, def.summon.recoveryMs));
+        if (def.summon) this.onSummon(def.summon.enemy, def.summon.count);
+        this.setState('recover', now, tempo(def, this.phase, def.summon?.recoveryMs ?? 700));
         break;
     }
   }
 
-  private updateRings(now: number, dt: number): void {
+  private updateRings(dt: number, now: number): void {
     const g = this.rings.clear();
     const q = this.def.quake;
+    if (!q) return;
     for (const r of this.ringSlots) {
       if (!r.active || now < r.startAt) continue;
       r.radius += (q.ringSpeed * dt) / 1000;
@@ -324,12 +444,33 @@ export class Boss implements Hittable {
     }
   }
 
+  /** Chaînes de Fenrir : du mur jusqu'à son cou (forme et ambiance, aucun danger). */
+  private drawChains(): void {
+    const g = this.chains.clear();
+    if (this.anchors.length === 0) return;
+    g.lineStyle(2, 0x6d7891, 0.9);
+    for (const a of this.anchors) {
+      const links = 10;
+      for (let i = 0; i < links; i += 2) {
+        const t0 = i / links;
+        const t1 = (i + 1) / links;
+        g.lineBetween(
+          a.x + (this.x - a.x) * t0,
+          a.y + (this.y - a.y) * t0,
+          a.x + (this.x - a.x) * t1,
+          a.y + (this.y - a.y) * t1,
+        );
+      }
+    }
+  }
+
   private drawTelegraph(progress: number): void {
     const g = this.telegraph.clear();
     const def = this.def;
     g.lineStyle(2, DANGER, 0.9);
     switch (this.attack) {
       case 'bite': {
+        if (!def.bite) break;
         const reach = def.bite.range + def.bite.lunge;
         const half = (def.bite.arcDeg * Math.PI) / 360;
         g.beginPath()
@@ -342,10 +483,11 @@ export class Boss implements Hittable {
         break;
       }
       case 'charge':
-        this.drawBand(g, def.charge.distance + def.radius, def.charge.width, progress);
+        if (def.charge)
+          this.drawBand(g, def.charge.distance + def.radius, def.charge.width, progress);
         break;
       case 'quake': {
-        // Le cercle se resserre sur Ammit : l'onde part quand il touche son corps.
+        // Le cercle se resserre sur le boss : l'onde part quand il touche son corps.
         const r = def.radius + (1 - progress) * 46;
         g.strokeCircle(this.x, this.y, r);
         g.fillStyle(DANGER, 0.1 + 0.25 * progress).fillCircle(this.x, this.y, r);
@@ -354,6 +496,31 @@ export class Boss implements Hittable {
       case 'summon': {
         const pulse = def.radius + 6 + Math.sin(progress * Math.PI * 6) * 4;
         g.lineStyle(2, 0x9ab4ff, 0.9).strokeCircle(this.x, this.y, pulse);
+        break;
+      }
+      case 'leap':
+      case 'icefall': {
+        const r = this.attack === 'leap' ? (def.leap?.radius ?? 40) : (def.icefall?.radius ?? 20);
+        g.fillStyle(DANGER, 0.1 + 0.3 * progress);
+        for (let i = 0; i < this.zoneCount; i++) {
+          const z = this.zones[i];
+          if (!z) continue;
+          g.strokeCircle(z.x, z.y, r).fillCircle(z.x, z.y, r * progress);
+          if (this.attack === 'icefall') {
+            // Flocon dans le cercle : on reconnaît la pluie de glace sans la couleur.
+            for (let k = 0; k < 3; k++) {
+              const a = (k * Math.PI) / 3;
+              g.lineBetween(
+                z.x - Math.cos(a) * r * 0.45,
+                z.y - Math.sin(a) * r * 0.45,
+                z.x + Math.cos(a) * r * 0.45,
+                z.y + Math.sin(a) * r * 0.45,
+              );
+            }
+          } else {
+            g.strokeCircle(z.x, z.y, r * 0.35);
+          }
+        }
         break;
       }
     }
@@ -384,16 +551,27 @@ export class Boss implements Hittable {
     g.fillStyle(DANGER, 0.12 + 0.3 * fill).fillPoints(set(length * fill), true);
   }
 
-  private drawStrike(): void {
+  private drawStrike(progress: number): void {
     const g = this.telegraph.clear();
+    const def = this.def;
     g.fillStyle(DANGER, 0.6);
-    if (this.attack === 'bite') {
-      const half = (this.def.bite.arcDeg * Math.PI) / 360;
+    if (this.attack === 'bite' && def.bite) {
+      const half = (def.bite.arcDeg * Math.PI) / 360;
       g.beginPath()
-        .slice(this.x, this.y, this.def.bite.range, this.facing - half, this.facing + half)
+        .slice(this.x, this.y, def.bite.range, this.facing - half, this.facing + half)
         .fillPath();
+    } else if (this.attack === 'icefall' && def.icefall) {
+      for (let i = 0; i < this.zoneCount; i++) {
+        const z = this.zones[i];
+        if (z) g.fillCircle(z.x, z.y, def.icefall.radius);
+      }
+    } else if (this.attack === 'leap' && def.leap) {
+      const z = this.zones[0];
+      // L'ombre d'atterrissage reste visible pendant tout le saut.
+      if (z) g.lineStyle(2, DANGER, 0.9).strokeCircle(z.x, z.y, def.leap.radius);
+      if (z && progress > 0.85) g.fillCircle(z.x, z.y, def.leap.radius);
     } else {
-      g.fillCircle(this.x, this.y, this.def.radius + 6);
+      g.fillCircle(this.x, this.y, def.radius + 6);
     }
   }
 

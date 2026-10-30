@@ -69,7 +69,7 @@ export const BIOMES: readonly BiomeDef[] = [
     wavesPerRoom: { min: 2, max: 3 },
     eliteRooms: [4, 8],
     elite: 'einherjar',
-    boss: 'ammit',
+    boss: 'fenrir',
     music: 'frost',
     theme: {
       floor: 'floorIce',
