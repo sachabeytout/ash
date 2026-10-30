@@ -4,7 +4,7 @@ import type { HeatLevels } from '../heat';
 import type { RunState } from '../run/state';
 
 /** Version actuelle du format. Tout changement de format = nouvelle version + migration (voir migrations.ts). */
-export const SAVE_VERSION = 11;
+export const SAVE_VERSION = 12;
 
 /** Progression permanente (conservée entre les runs). */
 export interface MetaState {
@@ -30,6 +30,22 @@ export interface MetaState {
   heat: HeatLevels;
   /** Archives de Thot : rencontres par fiche (`enemy.prowler`…). Ajouté en v8. */
   codex: Record<string, number>;
+  /** Exploits (Archives) : records de toutes les runs. Ajouté en v12. */
+  records: Records;
+}
+
+export interface Records {
+  /** Plus grand nombre de salles traversées en une run. */
+  bestRooms: number;
+  /** Victoire la plus rapide (ms ; 0 = aucune). */
+  fastestClearMs: number;
+  totalKills: number;
+  /** Victoires par arme. */
+  clearsByWeapon: Partial<Record<WeaponId, number>>;
+}
+
+export function emptyRecords(): Records {
+  return { bestRooms: 0, fastestClearMs: 0, totalKills: 0, clearsByWeapon: {} };
 }
 
 export interface SaveData {
@@ -56,6 +72,7 @@ export function defaultMeta(): MetaState {
     seenDialogues: [],
     heat: {},
     codex: {},
+    records: emptyRecords(),
   };
 }
 

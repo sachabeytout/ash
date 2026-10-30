@@ -549,5 +549,15 @@
   "skill.thoth_rebirth": "Renaissance",
   "skill.thoth_rebirth.desc": "{value} fois par run, un coup mortel te relève avec 40 % de tes PV.",
   "revive.sub": "Ash se relève de ses cendres",
-  "thoth.buyShort": "{cost} XP"
+  "thoth.buyShort": "{cost} XP",
+  "codex.tab.records": "Exploits",
+  "codex.records.runs": "Runs jouées",
+  "codex.records.victories": "Victoires",
+  "codex.records.deaths": "Renaissances",
+  "codex.records.bestRooms": "Plus longue run (salles)",
+  "codex.records.fastest": "Victoire la plus rapide",
+  "codex.records.kills": "Ennemis vaincus (total)",
+  "codex.records.totalXp": "XP gagnée (total)",
+  "codex.records.byWeapon": "Victoires par arme",
+  "codex.records.time": "{minutes} min {seconds} s"
 }

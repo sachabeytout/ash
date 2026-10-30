@@ -13,7 +13,20 @@ export function finishRun(save: SaveData, summary: RunSummary): void {
     meta.deaths += 1;
     if (save.settings.assist) meta.assistDeaths += 1;
   } else meta.clears += 1;
+  updateRecords(meta, summary);
   save.run = null;
+}
+
+/** Exploits : records battus à la fin d'une run. */
+export function updateRecords(meta: MetaState, summary: RunSummary): void {
+  const r = meta.records;
+  r.bestRooms = Math.max(r.bestRooms, summary.rooms ?? 0);
+  r.totalKills += summary.kills ?? 0;
+  if (summary.outcome !== 'cleared') return;
+  if (r.fastestClearMs === 0 || summary.elapsedMs < r.fastestClearMs)
+    r.fastestClearMs = summary.elapsedMs;
+  if (summary.weapon)
+    r.clearsByWeapon[summary.weapon] = (r.clearsByWeapon[summary.weapon] ?? 0) + 1;
 }
 
 export function skillLevel(meta: MetaState, skill: SkillDef): number {

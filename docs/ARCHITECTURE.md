@@ -1,6 +1,6 @@
 # Architecture (carte du projet)
 
-> Statut 0.27.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
+> Statut 0.28.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
 > combat/attack+health+status+superGauge, boons/boons, run/waves+rewards+state, save/schema+migrations+codec+store),
 > `data/` (player, weapons, enemies, biomes, gods, boons, status, skills, bosses, music, shop), `game/` (scenes Title, Hub,
 > Run, Ui, Boon, Pause, Shop ; entities Player, Enemy, Boss, Hittable ; input Controls, TouchControls ; fx/Juice+Lightning ;
@@ -74,7 +74,7 @@ par-dessus). Mort ou sortie → `hub` avec un `RunSummary`.
 - Archives de Thot : fiches et compteurs `src/core/codex.ts` (`CODEX`, `recordCodex`, `codexCount`, sauvegarde v8
   `meta.codex` ; armes = disponibles, habitants = dialogues entendus),
   textes `codex.*` dans `src/i18n/`, fenêtre `src/game/ui/CodexPanel.ts` (onglet Souvenirs : `meta.seenDialogues`,
-  réécoute via `DialogueBox`) ; rencontres notées dans `RunScene`
+  réécoute via `DialogueBox` ; onglet Exploits : `meta.records`, `updateRecords` dans `src/core/meta.ts`, sauvegarde v12) ; rencontres notées dans `RunScene`
   (`killEnemy`, `defeatBoss`, `onBoonPicked`).
 - Récapitulatif de fin de run : compteurs `recordKill` / `recordDamage` et champs du `RunSummary`
   (`src/core/run/state.ts`, sauvegarde v9), fenêtre `src/game/ui/RecapPanel.ts` ouverte par `HubScene.openRecap`.

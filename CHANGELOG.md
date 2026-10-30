@@ -2,6 +2,17 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.28.0 — Exploits
+
+- **Nouvel onglet « Exploits »** dans les Archives (7e onglet, touche 7) : tes records.
+  - Runs jouées, victoires et renaissances.
+  - Plus longue run en salles et victoire la plus rapide.
+  - Ennemis vaincus et XP gagnée au total.
+  - Victoires avec chaque arme.
+- Les records commencent maintenant (les anciennes runs ne sont pas comptées, sauf les totaux déjà connus). Ta sauvegarde passe au nouveau format **sans rien perdre**.
+
+**Quoi tester** : après quelques runs, regarde tes Exploits. Un record te manque-t-il ?
+
 ## 0.27.0 — Trois nouvelles compétences de Thot
 
 - **L'arbre de Thot passe de 5 à 8 compétences** (fenêtre réorganisée en deux colonnes) :

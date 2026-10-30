@@ -17,15 +17,15 @@ import { sfx } from '../audio/sfx';
 import { drawGodIcon } from '../icons';
 import { COLORS, FONT_FAMILY } from '../theme';
 import { DIALOGUES, SPEAKERS, type DialogueDef, type Speaker } from '../../data/story';
-import { WEAPONS, type WeaponId } from '../../data/weapons';
+import { WEAPON_ORDER, WEAPONS, type WeaponId } from '../../data/weapons';
 import { DialogueBox } from './DialogueBox';
 
 /** Couleur des Archives : le vert de Thot. */
 const CODEX_COLOR = 0x7fffc0;
 
 /** Onglets : les trois sections de fiches, puis les souvenirs (dialogues déjà entendus). */
-type Tab = CodexSection | 'memory';
-const TABS: readonly Tab[] = [...CODEX_SECTIONS, 'memory'];
+type Tab = CodexSection | 'memory' | 'records';
+const TABS: readonly Tab[] = [...CODEX_SECTIONS, 'memory', 'records'];
 
 /** Archives de Thot : onglets Ennemis / Boss / Dieux, liste à gauche, fiche à droite. */
 export class CodexPanel {
@@ -37,7 +37,9 @@ export class CodexPanel {
   private readonly onKey = (e: KeyboardEvent) => {
     if (this.replaying) return;
     if (e.code === 'Escape' || e.code === 'KeyA') this.close();
-    const tab = ['Digit1', 'Digit2', 'Digit3', 'Digit4', 'Digit5', 'Digit6'].indexOf(e.code);
+    const tab = ['Digit1', 'Digit2', 'Digit3', 'Digit4', 'Digit5', 'Digit6', 'Digit7'].indexOf(
+      e.code,
+    );
     const section = TABS[tab];
     if (section) this.show(section);
   };
@@ -56,6 +58,10 @@ export class CodexPanel {
     this.section = section;
     if (section === 'memory') {
       this.selected = this.memories()[0]?.id ?? null;
+      this.build();
+      return;
+    }
+    if (section === 'records') {
       this.build();
       return;
     }
@@ -127,6 +133,11 @@ export class CodexPanel {
       this.closeButton(cx, top + h - 16);
       return;
     }
+    if (this.section === 'records') {
+      this.buildRecords(left, top, w);
+      this.closeButton(cx, top + h - 16);
+      return;
+    }
     // Liste (deux colonnes) à gauche.
     const entries = CODEX.filter((e) => e.section === this.section);
     const colW = (listW - 14) / 2;
@@ -177,6 +188,48 @@ export class CodexPanel {
     const zone = this.scene.add.zone(x, y, 160, 28).setInteractive({ useHandCursor: true });
     zone.on('pointerup', () => this.close());
     this.root.add(zone);
+  }
+
+  /** Exploits : statistiques de toutes les runs et victoires par arme. */
+  private buildRecords(left: number, top: number, w: number): void {
+    const m = this.meta;
+    const r = m.records;
+    const fastest =
+      r.fastestClearMs > 0
+        ? t('codex.records.time', {
+            minutes: Math.floor(r.fastestClearMs / 60000),
+            seconds: String(Math.floor((r.fastestClearMs % 60000) / 1000)).padStart(2, '0'),
+          })
+        : '—';
+    const rows: [string, string][] = [
+      [t('codex.records.runs'), String(m.runs)],
+      [t('codex.records.victories'), String(m.clears)],
+      [t('codex.records.deaths'), String(m.deaths)],
+      [t('codex.records.bestRooms'), String(r.bestRooms)],
+      [t('codex.records.fastest'), fastest],
+      [t('codex.records.kills'), String(r.totalKills)],
+      [t('codex.records.totalXp'), String(m.totalXp)],
+    ];
+    const colW = (w - 40) / 2;
+    rows.forEach(([label, value], i) => {
+      const y = top + 88 + i * 24;
+      this.text(left + 20, y, label, 10, COLORS.textDim);
+      this.text(left + 20 + colW - 20, y, value, 11, COLORS.text, true).setOrigin(1, 0);
+    });
+    const wx = left + 20 + colW + 20;
+    this.text(wx, top + 88, t('codex.records.byWeapon'), 10, '#7fffc0', true);
+    WEAPON_ORDER.forEach((id, i) => {
+      const y = top + 112 + i * 22;
+      this.text(wx, y, t(WEAPONS[id].nameKey as TextKey), 10, COLORS.textDim);
+      this.text(
+        wx + colW - 20,
+        y,
+        String(r.clearsByWeapon[id] ?? 0),
+        11,
+        COLORS.text,
+        true,
+      ).setOrigin(1, 0);
+    });
   }
 
   /** Dialogues déjà entendus, dans l'ordre où ils l'ont été. */

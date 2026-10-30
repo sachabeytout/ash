@@ -549,5 +549,15 @@
   "skill.thoth_rebirth": "Rebirth",
   "skill.thoth_rebirth.desc": "{value} time(s) per run, a lethal blow brings you back with 40% of your HP.",
   "revive.sub": "Ash rises from his ashes",
-  "thoth.buyShort": "{cost} XP"
+  "thoth.buyShort": "{cost} XP",
+  "codex.tab.records": "Feats",
+  "codex.records.runs": "Runs played",
+  "codex.records.victories": "Victories",
+  "codex.records.deaths": "Rebirths",
+  "codex.records.bestRooms": "Longest run (rooms)",
+  "codex.records.fastest": "Fastest victory",
+  "codex.records.kills": "Enemies defeated (total)",
+  "codex.records.totalXp": "XP earned (total)",
+  "codex.records.byWeapon": "Victories per weapon",
+  "codex.records.time": "{minutes} min {seconds} s"
 }

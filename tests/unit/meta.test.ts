@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buySkill, nextCost, runBonuses, skillLevel } from '../../src/core/meta';
+import { buySkill, nextCost, runBonuses, skillLevel, updateRecords } from '../../src/core/meta';
 import { defaultMeta } from '../../src/core/save/schema';
 import { newRun } from '../../src/core/run/state';
 import { migrate } from '../../src/core/save/migrations';
@@ -75,5 +75,44 @@ describe('nouvelles compétences de Thot (0.27.0)', () => {
     expect(save.run?.revivesUsed).toBe(0);
     expect(save.run?.perks.damage).toBe(0.05);
     expect(save.run?.perks.revives).toBe(0);
+  });
+});
+
+describe('Exploits (0.28.0)', () => {
+  it('les records se mettent à jour à la fin des runs', () => {
+    const meta = defaultMeta();
+    const base = { biome: 0, room: 3, xp: 0, weaponParts: 0 } as const;
+    updateRecords(meta, { ...base, outcome: 'death', elapsedMs: 50000, rooms: 7, kills: 20 });
+    updateRecords(meta, {
+      ...base,
+      outcome: 'cleared',
+      elapsedMs: 900000,
+      rooms: 41,
+      kills: 150,
+      weapon: 'katana',
+    });
+    updateRecords(meta, {
+      ...base,
+      outcome: 'cleared',
+      elapsedMs: 800000,
+      rooms: 41,
+      kills: 140,
+      weapon: 'katana',
+    });
+    expect(meta.records.bestRooms).toBe(41);
+    expect(meta.records.totalKills).toBe(310);
+    expect(meta.records.fastestClearMs).toBe(800000);
+    expect(meta.records.clearsByWeapon.katana).toBe(2);
+  });
+
+  it('une sauvegarde v11 passe en v12 avec des records vides', () => {
+    const save = migrate({ version: 11, meta: { xp: 5 }, settings: {}, run: null });
+    expect(save.meta.xp).toBe(5);
+    expect(save.meta.records).toEqual({
+      bestRooms: 0,
+      fastestClearMs: 0,
+      totalKills: 0,
+      clearsByWeapon: {},
+    });
   });
 });

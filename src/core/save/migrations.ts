@@ -7,7 +7,14 @@ import { GOD_IDS } from '../../data/gods';
 import { getBoon } from '../../data/boons';
 import { DEFAULT_SETTINGS, type Settings } from '../settings';
 import { NO_PERKS, type RunState } from '../run/state';
-import { SAVE_VERSION, defaultMeta, type MetaState, type SaveData } from './schema';
+import {
+  SAVE_VERSION,
+  defaultMeta,
+  emptyRecords,
+  type MetaState,
+  type Records,
+  type SaveData,
+} from './schema';
 
 type Raw = Record<string, unknown>;
 
@@ -88,6 +95,11 @@ const MIGRATIONS: Record<number, (save: Raw) => Raw> = {
     };
     return { ...old, version: 11, run };
   },
+  // v11 → v12 : Exploits (records vides : ils se remplissent à partir de maintenant).
+  11: (old) => {
+    const meta = isObject(old.meta) ? old.meta : {};
+    return { ...old, version: 12, meta: { ...meta, records: emptyRecords() } };
+  },
 };
 
 function isObject(v: unknown): v is Raw {
@@ -153,6 +165,7 @@ function sanitizeMeta(raw: unknown): MetaState {
       : [],
     heat: sanitizeHeat(m.heat),
     codex: sanitizeCodex(m.codex),
+    records: sanitizeRecords(m.records),
   };
 }
 
@@ -224,6 +237,22 @@ function sanitizeRun(raw: unknown): RunState | null {
       dashCooldown: num(perks.dashCooldown, NO_PERKS.dashCooldown, 0, 0.5),
       revives: Math.floor(num(perks.revives, NO_PERKS.revives, 0, 3)),
     },
+  };
+}
+
+function sanitizeRecords(raw: unknown): Records {
+  const r = isObject(raw) ? raw : {};
+  const byWeapon: Records['clearsByWeapon'] = {};
+  if (isObject(r.clearsByWeapon)) {
+    for (const [id, n] of Object.entries(r.clearsByWeapon)) {
+      if (id in WEAPONS) byWeapon[id as WeaponId] = Math.floor(num(n, 0, 0));
+    }
+  }
+  return {
+    bestRooms: Math.floor(num(r.bestRooms, 0, 0)),
+    fastestClearMs: Math.floor(num(r.fastestClearMs, 0, 0)),
+    totalKills: Math.floor(num(r.totalKills, 0, 0)),
+    clearsByWeapon: byWeapon,
   };
 }
 
