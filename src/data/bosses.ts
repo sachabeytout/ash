@@ -1,7 +1,7 @@
 import type { EnemyId } from './enemies';
 
 export type BossAttackId = 'bite' | 'charge' | 'quake' | 'summon' | 'leap' | 'icefall' | 'sweep';
-export type BossId = 'ammit' | 'fenrir' | 'talos';
+export type BossId = 'ammit' | 'fenrir' | 'talos' | 'oiseleur';
 
 export interface BossDef {
   id: BossId;
@@ -70,7 +70,7 @@ export interface BossDef {
     radius: number;
     spread: number;
     /** Dessin dans les cercles : flocon (glace) ou croix (débris). */
-    glyph?: 'flake' | 'cross';
+    glyph?: 'flake' | 'cross' | 'net';
   };
   /** Balayage : un rayon part des yeux et balaie un arc annoncé (on passe derrière, ou on le traverse en dash). */
   sweep?: {
@@ -240,4 +240,67 @@ export const TALOS: BossDef = {
   reward: { xp: 90, weaponParts: 4 },
 };
 
-export const BOSSES: Record<BossId, BossDef> = { ammit: AMMIT, fenrir: FENRIR, talos: TALOS };
+/** L'Oiseleur : le dieu des filets, des cages et des serments. Boss final (interprétation originale). */
+export const OISELEUR: BossDef = {
+  id: 'oiseleur',
+  texture: 'oiseleur',
+  nameKey: 'boss.oiseleur',
+  titleKey: 'boss.oiseleur.title',
+  phase2Key: 'boss.oiseleur.phase2',
+  defeatedKey: 'boss.oiseleur.defeated',
+  maxHp: 1800,
+  radius: 18,
+  speed: 52,
+  phase2At: 0.5,
+  phase2Tempo: 0.8,
+  idleMs: { min: 500, max: 850 },
+  weights: {
+    1: { sweep: 2, icefall: 2, leap: 2, quake: 1 },
+    2: { sweep: 2, icefall: 2, leap: 2, quake: 1, charge: 1, summon: 1 },
+  },
+  charge: {
+    telegraphMs: 900,
+    activeMs: 360,
+    recoveryMs: 850,
+    damage: 16,
+    distance: 260,
+    width: 26,
+  },
+  quake: {
+    telegraphMs: 950,
+    recoveryMs: 700,
+    damage: 12,
+    ringSpeed: 175,
+    ringMax: 230,
+    thickness: 12,
+  },
+  summon: { telegraphMs: 900, recoveryMs: 700, enemy: 'sparrow', count: 3 },
+  leap: { telegraphMs: 950, activeMs: 420, recoveryMs: 850, damage: 16, radius: 46 },
+  icefall: {
+    telegraphMs: 1000,
+    activeMs: 150,
+    recoveryMs: 700,
+    damage: 13,
+    count: 6,
+    radius: 22,
+    spread: 85,
+    glyph: 'net',
+  },
+  sweep: {
+    telegraphMs: 1000,
+    activeMs: 1000,
+    recoveryMs: 800,
+    damage: 15,
+    range: 200,
+    arcDeg: 180,
+    thickness: 10,
+  },
+  reward: { xp: 150, weaponParts: 5 },
+};
+
+export const BOSSES: Record<BossId, BossDef> = {
+  ammit: AMMIT,
+  fenrir: FENRIR,
+  talos: TALOS,
+  oiseleur: OISELEUR,
+};

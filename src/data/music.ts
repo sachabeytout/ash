@@ -4,7 +4,15 @@
  */
 /** Chaque biome a son thème, et une version « boss » du même thème (même tonalité, mêmes accords, plus intense). */
 export type TrackId =
-  'hub' | 'lowtown' | 'lowtownBoss' | 'frost' | 'frostBoss' | 'olympus' | 'olympusBoss';
+  | 'hub'
+  | 'lowtown'
+  | 'lowtownBoss'
+  | 'frost'
+  | 'frostBoss'
+  | 'olympus'
+  | 'olympusBoss'
+  | 'aviary'
+  | 'aviaryBoss';
 
 export interface TrackDef {
   bpm: number;
@@ -106,6 +114,32 @@ export const TRACKS: Record<TrackId, TrackDef> = {
     hat: '..x...x...x...x.',
     pad: true,
     mix: { bass: 0.58, arp: 0.2, kick: 0.7, hat: 0.14, pad: 0.18 },
+  },
+  // La Volière : boîte à musique inquiétante, chants d'oiseaux (arpège aigu), basse lente.
+  aviary: {
+    bpm: 98,
+    rootHz: 82.41, // mi
+    progression: [0, 1, -4, -1],
+    chord: [0, 3, 7, 11, 14],
+    bass: 'x.......x...x...',
+    arp: '0.2.3.4.3.2.1.2.',
+    kick: 'x.......x.......',
+    hat: '..x...x...x...x.',
+    pad: true,
+    mix: { bass: 0.55, arp: 0.24, kick: 0.45, hat: 0.1, pad: 0.26 },
+  },
+  // L'Oiseleur : le thème de la Volière, rapide et oppressant.
+  aviaryBoss: {
+    bpm: 140,
+    rootHz: 82.41,
+    progression: [0, 1, -4, -1],
+    chord: [0, 3, 7, 11, 14],
+    bass: 'xx.xxx.xxx.xxx.x',
+    arp: '0234320102343212',
+    kick: 'x..x..x.x..x..xx',
+    hat: 'x.xxx.xxx.xxx.xx',
+    pad: true,
+    mix: { bass: 0.6, arp: 0.22, kick: 0.72, hat: 0.13, pad: 0.2 },
   },
   // Fenrir-Ω : le thème du Givre-Serveur, plus rapide, arpège continu.
   frostBoss: {

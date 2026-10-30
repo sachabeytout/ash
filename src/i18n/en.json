@@ -166,7 +166,7 @@
   "reward.next": "Continue",
   "biome.frostserver": "The Frost Server",
   "hud.shop": "The merchant",
-  "hub.lastClearAll": "You crossed every biome! What comes next (Corporate Olympus) is coming soon.",
+  "hub.lastClearAll": "Victory! The Fowler has fallen… but the Lantern stays sealed. Ash is reborn in the Cage.",
   "shop.title": "Ratatosk, the Courier",
   "shop.greeting": "“Psst! Shards for something to survive up there. I travel between worlds, me.”",
   "shop.heal": "Healing Ember",
@@ -223,5 +223,14 @@
   "boss.talos.title": "The Bronze Giant of Olympus",
   "boss.talos.phase2": "Talos overheats!",
   "boss.talos.defeated": "Talos collapses!",
-  "hub.lastDeathBoss": "Burned out facing {killer}, at the end of {biome}"
+  "hub.lastDeathBoss": "Burned out facing {killer}, at the end of {biome}",
+  "biome.aviary": "The Aviary",
+  "enemy.sparrow": "Steel Sparrow",
+  "enemy.crow": "Sentinel Crow",
+  "enemy.jailer": "Jailer",
+  "enemy.herald": "Herald of the Oath",
+  "boss.oiseleur": "The Fowler",
+  "boss.oiseleur.title": "God of Nets and Oaths",
+  "boss.oiseleur.phase2": "The Fowler casts his nets!",
+  "boss.oiseleur.defeated": "The Fowler falls… the tower shakes."
 }

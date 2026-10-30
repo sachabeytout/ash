@@ -166,7 +166,7 @@
   "reward.next": "Continuer",
   "biome.frostserver": "Le Givre-Serveur",
   "hud.shop": "Le marchand",
-  "hub.lastClearAll": "Tu as traversé tous les biomes ! La suite (l'Olympe Corporatif) arrive bientôt.",
+  "hub.lastClearAll": "Victoire ! L'Oiseleur est tombé… mais la Lanterne reste scellée. Ash renaît dans la Cage.",
   "shop.title": "Ratatosk, le Coursier",
   "shop.greeting": "« Psst ! Des éclats contre de quoi survivre là-haut. Je passe entre les mondes, moi. »",
   "shop.heal": "Braise de soin",
@@ -223,5 +223,14 @@
   "boss.talos.title": "Le Géant de bronze de l'Olympe",
   "boss.talos.phase2": "Talos surchauffe !",
   "boss.talos.defeated": "Talos s'effondre !",
-  "hub.lastDeathBoss": "Consumé face à {killer}, au bout de {biome}"
+  "hub.lastDeathBoss": "Consumé face à {killer}, au bout de {biome}",
+  "biome.aviary": "La Volière",
+  "enemy.sparrow": "Moineau d'acier",
+  "enemy.crow": "Corbeau-sentinelle",
+  "enemy.jailer": "Geôlier",
+  "enemy.herald": "Héraut du Serment",
+  "boss.oiseleur": "L'Oiseleur",
+  "boss.oiseleur.title": "Le Dieu des filets et des serments",
+  "boss.oiseleur.phase2": "L'Oiseleur déploie ses filets !",
+  "boss.oiseleur.defeated": "L'Oiseleur tombe… la tour tremble."
 }

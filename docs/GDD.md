@@ -192,6 +192,14 @@ par une ligne). Élite : **Minotaure-Ω** (3 charges enchaînées, chacune réan
 **Talos, le Géant de bronze** : **balayage** (rayon qui balaie un arc annoncé, bord de départ en trait épais), onde de choc,
 pluie de débris (cercles à croix), charge ; phase 2 : invoque des Hoplites.
 
+### La Volière (biome 4, 7 salles, 0.8.0)
+
+Ennemis : **Moineau d'acier** (nuée rapide), **Corbeau-sentinelle** (5 plumes en éventail), **Geôlier** (deux cages qui
+tombent). Élite : **Héraut du Serment** (bouclier frontal + rayon).
+
+**L'Oiseleur, dieu des filets et des serments** (boss final) : balayage en demi-cercle, filets (cercles quadrillés), piqué
+(cercle d'atterrissage), ondes de choc ; phase 2 : charge et Moineaux. Le battre = **une victoire**.
+
 ## 9. Musique
 
 Synthétisée en code (`src/data/music.ts`). Un thème par biome + **une version boss du même thème** (même tonalité et mêmes

@@ -2,6 +2,24 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.8.0 — La Volière : une vraie victoire
+
+- **Quatrième et dernier biome : la Volière**, au sommet de la tour (7 salles, plumes qui tombent, musique inquiétante et sa version boss).
+- **Nouveaux ennemis** :
+  - **Moineau d'acier** : minuscule et rapide, il arrive en nuée.
+  - **Corbeau-sentinelle** : 5 plumes en éventail.
+  - **Geôlier** : il fait tomber deux cages sur toi.
+- **Nouvel élite : le Héraut du Serment.** Il a un bouclier de face **et** tire un rayon : contourne-le entre deux rayons.
+- **Boss final : l'Oiseleur**, le dieu des filets et des serments. Ses attaques :
+  - **balayage** sur un demi-cercle ;
+  - **filets** : des cercles quadrillés, dont un sous toi ;
+  - **piqué** : un cercle marque où il va retomber ;
+  - **ondes de choc** ;
+  - en phase 2, il charge et appelle des Moineaux.
+- **Battre l'Oiseleur = une victoire !** La run complète, c'est 4 biomes et 4 boss. La Cage compte tes victoires.
+
+**Quoi tester** : essaie d'aller jusqu'au bout (la Bénédiction du Phénix peut aider). Combien de temps dure une run complète pour toi ?
+
 ## 0.7.0 — L'Olympe Corporatif
 
 - **Troisième biome : l'Olympe Corporatif**, des tours de verre et de marbre (sol aux veines dorées, nouvelle musique et sa version boss). On y arrive après Fenrir-Ω, en passant chez Ratatosk.

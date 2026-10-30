@@ -234,6 +234,59 @@ export function ensureGameTextures(scene: Phaser.Scene): void {
     g.fillStyle(0xffe08a).fillRect(0, 0, 2, 2);
   });
 
+  // La Volière. Moineau d'acier : petit triangle aux ailes repliées.
+  shapeTexture(scene, 'sparrow', 12, 10, (g) => {
+    g.fillStyle(0x10121e).fillTriangle(0, 0, 12, 5, 0, 10);
+    g.fillStyle(0xb8c8ff).fillTriangle(1, 1, 10, 5, 1, 9);
+    g.fillStyle(0xf2f6ff).fillRect(5, 4, 2, 2);
+  });
+  // Corbeau-sentinelle : silhouette en éventail, œil unique.
+  shapeTexture(scene, 'crow', 18, 14, (g) => {
+    g.fillStyle(0x0e0b18).fillTriangle(0, 7, 18, 0, 18, 14);
+    g.fillStyle(0x8f86c8).fillTriangle(2, 7, 17, 1, 17, 13);
+    g.fillStyle(0xf6f2ff).fillCircle(12, 7, 1.8);
+  });
+  // Geôlier : cage portative (barreaux) autour d'un œil.
+  shapeTexture(scene, 'jailer', 22, 22, (g) => {
+    g.fillStyle(0x120e1c).fillRoundedRect(0, 0, 22, 22, 6);
+    g.fillStyle(0xa890d8).fillRoundedRect(2, 2, 18, 18, 5);
+    g.fillStyle(0x4a3a78).fillRect(5, 3, 2, 16).fillRect(10, 3, 2, 16).fillRect(15, 3, 2, 16);
+    g.fillStyle(0xf6f2ff).fillCircle(11, 11, 2.5);
+  });
+  // Héraut du Serment (élite) : visage sous un voile, auréole.
+  shapeTexture(scene, 'herald', 22, 22, (g) => {
+    g.fillStyle(0x120e1c).fillCircle(11, 12, 10);
+    g.fillStyle(0xe8dcff).fillCircle(11, 12, 8);
+    g.fillStyle(0x9a8ad0).fillRect(4, 13, 14, 4);
+    g.fillStyle(0xffe08a).fillRect(4, 1, 14, 2);
+    g.fillStyle(0x120e1c).fillRect(8, 9, 2, 2).fillRect(12, 9, 2, 2);
+  });
+  // L'Oiseleur : capuche, grandes ailes de filet, visage d'or (tourné vers la droite).
+  shapeTexture(scene, 'oiseleur', 52, 48, (g) => {
+    g.fillStyle(0x0c0914).fillTriangle(0, 4, 26, 24, 0, 44).fillTriangle(52, 4, 26, 24, 52, 44);
+    g.lineStyle(1, 0xd8b8ff, 0.8);
+    for (let i = 0; i < 4; i++) {
+      g.lineBetween(2, 8 + i * 9, 22, 22 + i * 2).lineBetween(50, 8 + i * 9, 30, 22 + i * 2);
+    }
+    g.fillStyle(0x0c0914).fillCircle(26, 24, 15);
+    g.fillStyle(0x3a2a5a).fillCircle(26, 24, 13);
+    g.fillStyle(0xffe08a).fillRoundedRect(26, 18, 12, 12, 4);
+    g.fillStyle(0x0c0914).fillRect(30, 21, 2, 2).fillRect(30, 26, 2, 2);
+    g.fillStyle(0xd8b8ff).fillTriangle(38, 22, 44, 24, 38, 26);
+  });
+  // Plume (Volière).
+  shapeTexture(scene, 'feather', 3, 7, (g) => {
+    g.fillStyle(0xffffff).fillRect(1, 0, 1, 7).fillRect(0, 1, 3, 4);
+  });
+  // Sol de la Volière : dalles sombres traversées par l'ombre des barreaux.
+  shapeTexture(scene, 'floorAviary', 32, 32, (g) => {
+    g.fillStyle(0x0d0a14).fillRect(0, 0, 32, 32);
+    g.fillStyle(0x130f1d).fillRect(1, 1, 30, 30);
+    g.fillStyle(0x2a1f3a).fillRect(0, 0, 32, 1).fillRect(0, 0, 1, 32);
+    g.fillStyle(0x1c1628).fillRect(10, 0, 3, 32).fillRect(24, 0, 3, 32);
+    g.fillStyle(0xd8b8ff).fillRect(0, 0, 2, 2);
+  });
+
   // Projectile ennemi : losange magenta à cœur blanc (forme + couleur).
   shapeTexture(scene, 'shot', 9, 9, (g) => {
     g.fillStyle(0xff2a6d).fillTriangle(4.5, 0, 9, 4.5, 4.5, 9).fillTriangle(4.5, 0, 0, 4.5, 4.5, 9);

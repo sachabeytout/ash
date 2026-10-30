@@ -630,13 +630,14 @@ export class RunScene extends Phaser.Scene {
     neon(ARENA.right, ARENA.top, n2);
     neon(ARENA.left, ARENA.bottom, n2);
     neon(ARENA.right, ARENA.bottom, n1);
-    if (theme.snow) this.addSnow();
+    if (theme.snow) this.addSnow(0xd8f6ff);
+    if (theme.feathers) this.addSnow(0xd8b8ff, 'feather');
   }
 
   /** Givre-Serveur : flocons qui tombent doucement (moins nombreux en qualité basse). */
-  private addSnow(): void {
+  private addSnow(tint: number, texture = 'spark'): void {
     this.add
-      .particles(0, ARENA.top - 20, 'spark', {
+      .particles(0, ARENA.top - 20, texture, {
         x: { min: ARENA.left - 40, max: ARENA.right + 40 },
         speedY: { min: 12, max: 30 },
         speedX: { min: -10, max: 6 },
@@ -644,7 +645,8 @@ export class RunScene extends Phaser.Scene {
         frequency: 90 / QUALITY_PARTICLES[settings.quality],
         scale: { min: 0.3, max: 0.7 },
         alpha: { start: 0.7, end: 0.1 },
-        tint: 0xd8f6ff,
+        tint,
+        rotate: { min: 0, max: 360 },
       })
       .setDepth(2);
   }

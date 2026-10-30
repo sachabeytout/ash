@@ -59,6 +59,8 @@ Format : date — décision — raison — validée par l'utilisateur (oui / non
 | 2026-10-30 | Bénédiction du Phénix : −20 % de dégâts reçus, −2 % de plus par mort, plafond 80 % ; désactivable à tout moment | Mode assistance du brief, sans jugement | à signaler |
 | 2026-10-30 | Sauvegarde v2 (migration 1 → 2) | Ajout forge + assistance, sans perte | oui (règle) |
 | 2026-10-30 | Biome 3 « Olympe Corporatif » : Hoplite, Harpie-drone, Oracle ; élite Minotaure-Ω (3 charges) ; boss Talos (1400 PV, balayage) | Suite du plan validé (4 biomes, 4 boss) | oui (brief) |
+| 2026-10-30 | Biome 4 « La Volière » (7 salles) : Moineau, Corbeau, Geôlier ; élite Héraut (bouclier + rayon) ; boss final l'Oiseleur (1800 PV) | Structure du brief (10/10/10/7) | oui (brief) |
+| 2026-10-30 | Message de victoire provisoire : « l'Oiseleur est tombé… mais la Lanterne reste scellée » | Fidèle à l'arc (victoire 1) ; textes définitifs avec la narration (M2.7) | à signaler |
 | 2026-10-30 | Fenrir-Ω : 1100 PV, bond / pluie de glace / morsure / charge, meute en phase 2 | Boss plus mobile qu'Ammit, toujours télégraphié | à signaler |
 
 ## Réponses de l'utilisateur (30/10/2026)

@@ -25,12 +25,14 @@ export interface BiomeDef {
 
 export interface BiomeTheme {
   /** Texture du sol. */
-  floor: 'floor' | 'floorIce' | 'floorMarble';
+  floor: 'floor' | 'floorIce' | 'floorMarble' | 'floorAviary';
   wall: number;
   wallGlow: number;
   neons: readonly [number, number];
   /** Flocons qui tombent (Givre-Serveur). */
   snow: boolean;
+  /** Plumes qui tombent (Volière). */
+  feathers?: boolean;
 }
 
 export const BIOMES: readonly BiomeDef[] = [
@@ -104,6 +106,31 @@ export const BIOMES: readonly BiomeDef[] = [
       wallGlow: 0xffe08a,
       neons: [0xffe08a, 0x9fe0ff],
       snow: false,
+    },
+  },
+  {
+    id: 'aviary',
+    nameKey: 'biome.aviary',
+    rooms: 7,
+    roster: [
+      { enemy: 'sparrow', fromRoom: 1 },
+      { enemy: 'crow', fromRoom: 1 },
+      { enemy: 'jailer', fromRoom: 3 },
+    ],
+    waveBudget: { base: 4, perRoom: 0.7 },
+    wavesPerRoom: { min: 2, max: 3 },
+    eliteRooms: [4],
+    elite: 'herald',
+    boss: 'oiseleur',
+    music: 'aviary',
+    bossMusic: 'aviaryBoss',
+    theme: {
+      floor: 'floorAviary',
+      wall: 0x2a1f3a,
+      wallGlow: 0xd8b8ff,
+      neons: [0xd8b8ff, 0xffe08a],
+      snow: false,
+      feathers: true,
     },
   },
 ];

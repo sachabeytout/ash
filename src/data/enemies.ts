@@ -10,7 +10,11 @@ export type EnemyId =
   | 'hoplite'
   | 'harpy'
   | 'oracle'
-  | 'minotaur';
+  | 'minotaur'
+  | 'sparrow'
+  | 'crow'
+  | 'jailer'
+  | 'herald';
 
 /** Attaque au corps à corps : télégraphe (zone qui se remplit) puis coup. */
 interface MeleeAttack {
@@ -310,5 +314,84 @@ export const ENEMIES: Record<EnemyId, EnemyDef> = {
     },
     threat: 4,
     elite: { xp: 20 },
+  },
+
+  // ---------- La Volière ----------
+  // Moineau d'acier : tout petit, très rapide, arrive en nuée.
+  sparrow: {
+    id: 'sparrow',
+    nameKey: 'enemy.sparrow',
+    maxHp: 18,
+    radius: 5,
+    speed: 108,
+    damage: 5,
+    telegraphMs: 500,
+    activeMs: 110,
+    recoveryMs: 650,
+    cooldownMs: 700,
+    poise: 0,
+    color: 0xb8c8ff,
+    attack: { kind: 'melee', triggerRange: 46, range: 20, arcDeg: 90, lunge: 34 },
+    threat: 1,
+  },
+  // Corbeau-sentinelle : cinq plumes en éventail large.
+  crow: {
+    id: 'crow',
+    nameKey: 'enemy.crow',
+    maxHp: 32,
+    radius: 7,
+    speed: 56,
+    damage: 6,
+    telegraphMs: 900,
+    activeMs: 0,
+    recoveryMs: 650,
+    cooldownMs: 1800,
+    poise: 0,
+    color: 0x8f86c8,
+    attack: {
+      kind: 'shot',
+      preferredDistance: 120,
+      projectileSpeed: 115,
+      projectileRadius: 3,
+      count: 5,
+      spreadDeg: 52,
+    },
+    threat: 2,
+  },
+  // Geôlier : fait tomber deux cages (cercles) sur Ash et à côté.
+  jailer: {
+    id: 'jailer',
+    nameKey: 'enemy.jailer',
+    maxHp: 100,
+    radius: 10,
+    speed: 40,
+    damage: 12,
+    telegraphMs: 950,
+    activeMs: 150,
+    recoveryMs: 900,
+    cooldownMs: 1400,
+    poise: 0.8,
+    color: 0xa890d8,
+    attack: { kind: 'runes', triggerRange: 170, count: 2, radius: 24, spread: 40 },
+    threat: 3,
+  },
+  // Élite : le Héraut du Serment. Bouclier de face, rayon annoncé : on le contourne entre deux rayons.
+  herald: {
+    id: 'herald',
+    nameKey: 'enemy.herald',
+    maxHp: 240,
+    radius: 9,
+    speed: 46,
+    damage: 14,
+    telegraphMs: 900,
+    activeMs: 280,
+    recoveryMs: 1000,
+    cooldownMs: 1200,
+    poise: 0.85,
+    color: 0xe8dcff,
+    attack: { kind: 'beam', preferredDistance: 110, length: 280, width: 14 },
+    threat: 4,
+    elite: { xp: 20 },
+    shield: { arcDeg: 120, blocked: 0.15 },
   },
 };

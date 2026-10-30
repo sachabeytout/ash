@@ -552,7 +552,13 @@ export class Boss implements Hittable {
           const z = this.zones[i];
           if (!z) continue;
           g.strokeCircle(z.x, z.y, r).fillCircle(z.x, z.y, r * progress);
-          if (this.attack === 'icefall' && def.icefall?.glyph === 'cross') {
+          if (this.attack === 'icefall' && def.icefall?.glyph === 'net') {
+            // Filet : quadrillage dans le cercle (l'Oiseleur).
+            for (const o of [-0.4, 0, 0.4]) {
+              g.lineBetween(z.x + o * r, z.y - r * 0.6, z.x + o * r, z.y + r * 0.6);
+              g.lineBetween(z.x - r * 0.6, z.y + o * r, z.x + r * 0.6, z.y + o * r);
+            }
+          } else if (this.attack === 'icefall' && def.icefall?.glyph === 'cross') {
             // Croix de débris (Talos).
             g.lineBetween(z.x - r * 0.45, z.y - r * 0.45, z.x + r * 0.45, z.y + r * 0.45);
             g.lineBetween(z.x - r * 0.45, z.y + r * 0.45, z.x + r * 0.45, z.y - r * 0.45);
