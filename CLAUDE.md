@@ -26,8 +26,8 @@ Phaser 4 (WebGL uniquement) · TypeScript strict (6.0, voir DECISIONS) · Vite �
 
 ## Commandes
 
-Node.js 24 est installé dans `~/.local/node` (pas dans le PATH par défaut) : préfixer chaque commande par
-`export PATH="$HOME/.local/node/bin:$PATH";`. git exige les « Command Line Tools » d'Apple.
+Node.js 24 et gh sont installés dans `~/.local/node` et `~/.local/gh` (pas dans le PATH par défaut) : préfixer chaque commande par
+`export PATH="$HOME/.local/node/bin:$HOME/.local/gh/bin:$PATH";`. git exige les « Command Line Tools » d'Apple.
 
 - `npm run dev` — serveur de développement
 - `npm run lint` · `npm run format` · `npm run typecheck` · `npm test` · `npm run e2e`
