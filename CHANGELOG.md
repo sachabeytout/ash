@@ -2,6 +2,17 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.40.0 — Un décor pour chaque monde
+
+- **Chaque monde a maintenant son propre décor** (discret, sous les personnages ; les dangers restent les seuls éléments rouges) :
+  - **Les Bas-Fonds** : enseignes néon qui grésillent sur les murs, flaques qui reflètent les néons, plaques d'égout qui fument, tuyaux, poubelles et caisses.
+  - **Le Givre-Serveur** : baies de serveurs aux voyants qui clignotent, stalactites de glace, plaques de givre, câbles gelés, grilles au sol.
+  - **L'Olympe Corporatif** : colonnes de marbre et baies vitrées, tapis pourpre jusqu'à la porte, incrustations dorées, oliviers en pot, poussière dorée qui flotte.
+  - **La Volière** : ombres des barreaux de la grande cage sur le sol, chaînes qui pendent, perchoirs avec des oiseaux, nids, plumes éparpillées.
+- Le décor change un peu d'une salle à l'autre.
+
+**Quoi tester** : reconnais-tu chaque monde au premier coup d'œil ? Le décor gêne-t-il la lecture des combats ?
+
 ## 0.39.0 — Taille du texte
 
 - **Nouvelle option « Taille du texte »** (Options) : **Normale** ou **Grande**. En Grande, les petits textes (cartes de dons, boutique, Archives, bulles, descriptions…) sont **20 % plus grands**. Les grands titres ne changent pas.

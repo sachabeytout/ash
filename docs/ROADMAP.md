@@ -94,4 +94,5 @@ Retour sur le lore v0.2 toujours attendu (« quand le fond aura avancé »).
 - [x] **M6.5 (0.37.0)** : les dieux parlent à l'offre de don (36 répliques) + 8 dialogues de la Cage
 - [x] **M6.6 (0.38.0)** : introduction (cendres, feu, Ash qui se lève, fumée qui forme le logo)
 - [x] **M6.7 (0.39.0)** : option « Taille du texte » (Normale / Grande)
+- [x] **M6.8 (0.40.0)** : décor propre à chaque monde — demandé par l'utilisateur
 - [ ] **M3** : finitions — coffres et évènements, préréglages de qualité, équilibrage avec la télémétrie, accessibilité

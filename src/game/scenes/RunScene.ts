@@ -118,6 +118,7 @@ import { TRUE_ENDING_VICTORIES } from '../../data/story';
 import { QUALITY_PARTICLES, settings } from '../../core/settings';
 import { newAutoQuality } from '../../core/perf';
 import { applyPostFx, autoLowerQuality } from '../fx/postfx';
+import { drawBiomeDecor } from '../fx/biomeDecor';
 import { cheatsEnabled } from '../debug/cheats';
 import { session } from '../session';
 import { telemetry } from '../telemetry';
@@ -365,6 +366,17 @@ export class RunScene extends Phaser.Scene {
     this.autoQuality = newAutoQuality();
     this.roomStart = { elapsed: this.run.elapsedMs, hp: this.run.hp };
     this.drawArena();
+    // Décor propre au monde (le Comptoir de Ratatosk a le sien).
+    if (this.kind !== 'shop')
+      drawBiomeDecor(
+        this,
+        biome,
+        ARENA,
+        createRng(
+          (this.run.seed ^ Math.imul(this.run.biome * 64 + this.run.room + 9, 0x1b873593)) >>> 0,
+        ),
+        KEEP_OUT,
+      );
     this.placeObstacles();
     this.placeTraps();
     this.physics.world.setBounds(ARENA.x, ARENA.y, ARENA.width, ARENA.height);
@@ -488,6 +500,14 @@ export class RunScene extends Phaser.Scene {
         this.run.pendingBoon = GOD_IDS[Math.floor(Math.random() * GOD_IDS.length)] ?? 'ra';
         this.choosing = true;
         this.offerBoon();
+      }
+      if (e.code === 'KeyH') {
+        // Monde suivant (salle 2), pour vérifier les décors.
+        this.run.biome = (this.run.biome + 1) % BIOMES.length;
+        this.run.room = 2;
+        this.leaving = true;
+        this.scene.restart({ run: this.run });
+        return;
       }
       if (e.code === 'KeyU') {
         // Étincelle du Phénix immédiate.
