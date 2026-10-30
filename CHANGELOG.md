@@ -2,6 +2,17 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.15.0 — Salles d'évènement
+
+- **Une salle d'évènement par biome**, sans combat. Approche-toi de l'objet au centre : un court texte s'affiche, et tu choisis **Accepter** ou **Partir** (partir ne coûte jamais rien).
+  - **Braise d'Aelia** (flamme) : un **don** d'un dieu contre 20 % de tes PV max. Jamais mortelle : si tu es trop faible, le bouton est bloqué.
+  - **Âme en cage** (petite cage) : libère l'esprit, **+5 PV max**, gratuit.
+  - **Enclume de Brokk** (enclume) : **+10 % de dégâts** pour la run contre 35 éclats.
+- Un évènement ne se prend qu'une fois, même si tu fermes l'app.
+- Ta sauvegarde passe au nouveau format **sans rien perdre**.
+
+**Quoi tester** : les choix te paraissent-ils intéressants ? La braise vaut-elle sa perte de vie ?
+
 ## 0.14.0 — Des salles qui ne se ressemblent plus
 
 - **Obstacles dans les salles de combat** : piliers, murets, blocs… Six dispositions différentes (dont la salle vide), parfois en miroir. La disposition change d'une salle à l'autre et d'une run à l'autre.

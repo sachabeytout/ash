@@ -76,6 +76,7 @@ Format : date — décision — raison — validée par l'utilisateur (oui / non
 | 2026-10-30 | Télémétrie 100 % locale (300 salles max), visible seulement dans un menu caché | Aider l'équilibrage sans rien envoyer en ligne | à signaler |
 | 2026-10-30 | Sauvegarde v6 (migration 5 → 6 : Mesures d'urgence) | Sans perte | oui (règle) |
 | 2026-10-30 | Son sur iPhone : le jeu respecte le bouton silencieux (session audio « ambient ») ; l'audio est relancé au retour dans l'app et au toucher suivant, recréé s'il reste bloqué ; audio de Phaser désactivé (tout est synthétisé) | Retour : la musique ne revenait pas après le mode silencieux | à signaler |
+| 2026-10-30 | Évènements : 1 salle par biome (remplace un combat) ; Braise d'Aelia (don contre 20 % PV max, jamais mortel), Âme en cage (+5 PV max), Enclume de Brokk (+10 % dégâts, 35 éclats × Rationnement) ; une fois par biome (sauvegarde v7) | GDD « évènements » ; choix toujours refusables (anti-frustration) | à signaler |
 | 2026-10-30 | Obstacles : 6 dispositions (dont vide), seulement en combat et jamais en 1re salle ; bloquent tirs ennemis et la plupart des projectiles d'Ash (pas les zones) ; zones libres garanties (apparition, portes, centre), marge 30 px aux murs | Salles variées, couvert tactique, sans se sentir coincé | à signaler |
 | 2026-10-30 | Épreuve de Vesper : 1 salle chronométrée par biome (9 s + 2,6 s/ennemi + 1,5 s/vague), coffre 30 éclats + 15 XP (+10/+5 par biome) ; échec sans pénalité | Variété des salles sans frustration | à signaler |
 

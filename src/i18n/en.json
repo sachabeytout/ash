@@ -402,5 +402,22 @@
   "trial.failed": "Too late…",
   "trial.failedSub": "No harm done: the room goes on as usual",
   "trial.chest": "Vesper's Chest",
-  "trial.loot": "+{shards} shards · +{xp} XP"
+  "trial.loot": "+{shards} shards · +{xp} XP",
+  "event.ember.title": "Aelia's Ember",
+  "event.ember.desc": "One of Aelia's embers still burns here. It can wake a god… if you feed it a little of your life.",
+  "event.ember.accept": "Feed the ember (−{hp} HP)",
+  "event.prisoner.title": "Caged Soul",
+  "event.prisoner.desc": "A small cage of the Fowler holds a spirit. It begs you to free it and promises to watch over you.",
+  "event.prisoner.accept": "Free it (+{maxHp} max HP)",
+  "event.prisoner.done": "The spirit is free",
+  "event.prisoner.doneSub": "+{maxHp} max HP",
+  "event.anvil.title": "Brokk's Anvil",
+  "event.anvil.desc": "An anvil Brokk left behind. For a few shards, you can sharpen your weapon for the rest of the run.",
+  "event.anvil.accept": "Sharpen (+{damage}%, {shards} shards)",
+  "event.anvil.done": "Weapon sharpened",
+  "event.anvil.doneSub": "+{damage}% damage",
+  "event.leave": "Leave",
+  "event.blocked.taken": "Already done",
+  "event.blocked.hp": "Too weak (need over {hp} HP)",
+  "event.blocked.shards": "Needs {shards} shards"
 }

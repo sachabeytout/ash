@@ -69,4 +69,5 @@ Retour sur le lore v0.2 toujours attendu (« quand le fond aura avancé »).
 - [x] **M2.8 (0.12.0)** : Mesures d'urgence (6 réglages, récompense +10 %/point), fontaines, télémétrie locale + menu de debug caché
 - [x] **M3.1 (0.13.0)** : Épreuves de Vesper (salle chronométrée, coffre ; échec sans pénalité)
 - [x] **M3.2 (0.14.0)** : obstacles dans les arènes (6 dispositions, couvert contre les tirs, contournement par les ennemis)
+- [x] **M3.3 (0.15.0)** : salles d'évènement (Braise d'Aelia, Âme en cage, Enclume de Brokk), sauvegarde v7
 - [ ] **M3** : finitions — coffres et évènements, préréglages de qualité, équilibrage avec la télémétrie, accessibilité

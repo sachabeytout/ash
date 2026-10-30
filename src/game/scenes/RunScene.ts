@@ -42,6 +42,14 @@ import {
 } from '../../core/run/state';
 import { chestLoot, openChest, trialRoom, trialTimeMs, type ChestLoot } from '../../core/run/trial';
 import { planWaves, type Wave } from '../../core/run/waves';
+import {
+  ANVIL_DAMAGE,
+  PRISONER_MAX_HP,
+  eventCost,
+  eventOf,
+  takeEvent,
+  type EventId,
+} from '../../core/run/events';
 import { BIOMES, getBiome, type BiomeDef } from '../../data/biomes';
 import { BOSSES } from '../../data/bosses';
 import { DASH_AURA_RADIUS, DASH_BOLT_RANGE, getBoon } from '../../data/boons';
@@ -63,6 +71,8 @@ import { drawGodIcon } from '../icons';
 import type { BoonSceneData } from './BoonScene';
 import type { PauseSceneData } from './PauseScene';
 import type { ShopSceneData } from './ShopScene';
+import type { EventSceneData } from './EventScene';
+import { drawEventIcon, EVENT_COLOR } from './eventIcons';
 import { Controls } from '../input/Controls';
 import { UiScene, type Indicator } from './UiScene';
 import { finishRun } from '../../core/meta';
@@ -217,6 +227,14 @@ export class RunScene extends Phaser.Scene {
   } | null = null;
   /** Piliers et murets de la salle (bloquent les déplacements et les tirs). */
   private obstacles: Rect[] = [];
+  /** Salle d'évènement : l'objet au centre (s'ouvre quand Ash s'approche ; se réarme quand il s'éloigne). */
+  private eventSpot: {
+    id: EventId;
+    x: number;
+    y: number;
+    armed: boolean;
+    parts: Phaser.GameObjects.GameObject[];
+  } | null = null;
   private shopOpen = false;
   private shopSold = new Set<ShopItemId>();
   private shots: Shot[] = [];
@@ -270,6 +288,7 @@ export class RunScene extends Phaser.Scene {
     this.fountain = null;
     this.trial = null;
     this.chest = null;
+    this.eventSpot = null;
     this.roomStart = { elapsed: this.run.elapsedMs, hp: this.run.hp };
     this.drawArena();
     this.placeObstacles();
@@ -360,6 +379,7 @@ export class RunScene extends Phaser.Scene {
       this.startTrial(biome);
     if (this.kind === 'boss') this.startBoss();
     if (this.kind === 'fountain') this.startFountain();
+    if (this.kind === 'event') this.startEvent();
     if (this.kind === 'shop') this.startShop();
     this.nextWaveAt = 700;
     // Entrée dans un nouveau biome : on annonce son nom.
@@ -513,6 +533,104 @@ export class RunScene extends Phaser.Scene {
     sfx.boonTaken();
     f.glow.setAlpha(0.15);
     f.g.setAlpha(0.4);
+  }
+
+  // ---------- Évènement ----------
+
+  private startEvent(): void {
+    const id = eventOf(this.run.seed, this.run.biome);
+    const x = ARENA.centerX;
+    const y = ARENA.centerY;
+    const taken = this.run.eventTaken === this.run.biome;
+    const glow = this.add
+      .image(x, y, 'glow')
+      .setTint(EVENT_COLOR[id])
+      .setAlpha(taken ? 0.12 : 0.55)
+      .setScale(1.6)
+      .setBlendMode('ADD');
+    const g = this.add
+      .graphics()
+      .setDepth(3)
+      .setAlpha(taken ? 0.45 : 1);
+    drawEventIcon(g, id, x, y);
+    const label = this.add
+      .text(x, y + 24, t(`event.${id}.title` as TextKey), {
+        fontFamily: FONT_FAMILY,
+        fontSize: '9px',
+        color: '#ffe9d6',
+        stroke: '#07060d',
+        strokeThickness: 3,
+      })
+      .setOrigin(0.5, 0)
+      .setDepth(3)
+      .setAlpha(taken ? 0.45 : 0.9);
+    this.eventSpot = { id, x, y, armed: !taken, parts: [glow, g, label] };
+    this.time.delayedCall(600, () => this.clearRoom());
+  }
+
+  private updateEvent(): void {
+    const spot = this.eventSpot;
+    if (!spot || this.leaving || this.choosing) return;
+    const d = Math.hypot(this.player.x - spot.x, this.player.y - spot.y);
+    if (d > 44 && this.run.eventTaken !== this.run.biome) spot.armed = true;
+    if (!spot.armed || d > 28) return;
+    spot.armed = false;
+    this.openEvent(spot.id);
+  }
+
+  private openEvent(id: EventId): void {
+    const cost = eventCost(this.run, id, this.heat.shopPrice);
+    const blocked: EventSceneData['blocked'] =
+      this.run.eventTaken === this.run.biome
+        ? 'taken'
+        : this.run.hp <= cost.hp
+          ? 'hp'
+          : this.run.shards < cost.shards
+            ? 'shards'
+            : undefined;
+    const data: EventSceneData = {
+      id,
+      cost,
+      blocked,
+      extra: { maxHp: PRISONER_MAX_HP, damage: Math.round(ANVIL_DAMAGE * 100) },
+      onTake: () => this.onEventTaken(id),
+      onLeave: () => {
+        this.choosing = false;
+        markScene('run');
+      },
+    };
+    this.choosing = true;
+    this.scene.launch('event', data);
+    this.scene.bringToTop('event');
+  }
+
+  private onEventTaken(id: EventId): void {
+    const biome = getBiome(this.run.biome);
+    const hpBefore = this.run.hp;
+    this.choosing = false;
+    markScene('run');
+    if (!takeEvent(this.run, id, this.heat.shopPrice, biome.pantheon)) return;
+    session.snapshotRun(this.run);
+    const spot = this.eventSpot;
+    if (spot) {
+      this.juice.burst(spot.x, spot.y, EVENT_COLOR[id], 26);
+      spot.parts.forEach((p) =>
+        (p as unknown as Phaser.GameObjects.Components.Alpha).setAlpha(0.3),
+      );
+    }
+    if (id === 'ember') {
+      this.juice.damageNumber(this.player.x, this.player.y - 12, hpBefore - this.run.hp, '#ffa040');
+      this.choosing = true;
+      this.time.delayedCall(380, () => this.offerBoon());
+      return;
+    }
+    this.ui.showBanner(
+      t(`event.${id}.done` as TextKey),
+      t(`event.${id}.doneSub` as TextKey, {
+        maxHp: PRISONER_MAX_HP,
+        damage: Math.round(ANVIL_DAMAGE * 100),
+      }),
+    );
   }
 
   // ---------- Épreuve de Vesper ----------
@@ -927,6 +1045,7 @@ export class RunScene extends Phaser.Scene {
     this.checkDoors();
     this.updateFountain();
     this.updateTrial();
+    this.updateEvent();
     this.updateChest();
     this.ui.showRun(this.run);
     this.updateIndicators();
@@ -1082,7 +1201,7 @@ export class RunScene extends Phaser.Scene {
       if (this.boss && !this.boss.alive) this.clearRoom();
       return;
     }
-    if (this.kind === 'shop' || this.kind === 'fountain') return;
+    if (this.kind === 'shop' || this.kind === 'fountain' || this.kind === 'event') return;
     if (this.waveIndex < this.waves.length) {
       if (this.nextWaveAt === 0) this.nextWaveAt = this.sim + 500;
       if (this.sim >= this.nextWaveAt) {

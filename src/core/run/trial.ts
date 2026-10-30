@@ -1,5 +1,5 @@
 import type { BiomeDef } from '../../data/biomes';
-import { createRng } from '../rng';
+import { specialCandidates, specialRooms } from './special';
 import type { RunState } from './state';
 import type { Wave } from './waves';
 
@@ -13,22 +13,12 @@ export const TRIAL_BASE_MS = 9000;
 export const TRIAL_PER_ENEMY_MS = 2600;
 export const TRIAL_PER_WAVE_MS = 1500;
 
-/** Salles possibles : pas trop tôt, ni élite, ni fontaine, ni la dernière avant le boss. */
-export function trialCandidates(biome: BiomeDef): number[] {
-  const rooms: number[] = [];
-  for (let room = 3; room < biome.rooms; room++) {
-    if (biome.eliteRooms.includes(room) || biome.fountainRooms.includes(room)) continue;
-    rooms.push(room);
-  }
-  return rooms;
-}
+/** Salles possibles (communes avec les évènements). */
+export const trialCandidates = specialCandidates;
 
 /** La salle-épreuve du biome, fixée par la graine de la run (la même si on reprend la partie). */
 export function trialRoom(seed: number, biomeIndex: number, biome: BiomeDef): number | null {
-  const candidates = trialCandidates(biome);
-  if (candidates.length === 0) return null;
-  const rng = createRng((seed ^ Math.imul(biomeIndex + 1, 0x9e3779b1)) >>> 0);
-  return rng.pick(candidates);
+  return specialRooms(seed, biomeIndex, biome).trial;
 }
 
 export function trialTimeMs(waves: readonly Wave[], elite?: string): number {

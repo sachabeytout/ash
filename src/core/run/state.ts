@@ -5,6 +5,7 @@ import type { WeaponId } from '../../data/weapons';
 import { mainValue, takeBoon, type BoonOffer, type OwnedBoon } from '../boons/boons';
 import { heatModifiers, type HeatLevels } from '../heat';
 import type { RewardKind } from './rewards';
+import { specialRooms } from './special';
 
 /** Bonus permanents (arbre de Thot) figés au début de la run. */
 export interface RunPerks {
@@ -45,6 +46,8 @@ export interface RunState {
   lastBreathUsed: boolean;
   /** Mesures d'urgence actives pour cette run (figées au départ). */
   heat: HeatLevels;
+  /** Biome dont l'évènement a déjà été accepté (-1 : aucun). Empêche de le refaire après une reprise. */
+  eventTaken: number;
 }
 
 export interface RunSummary {
@@ -90,6 +93,7 @@ export function newRun(
     weaponLevel,
     lastBreathUsed: false,
     heat: { ...heat },
+    eventTaken: -1,
   };
 }
 
@@ -134,13 +138,14 @@ export function onRoomCleared(run: RunState): number {
   return healed;
 }
 
-export type RoomKind = 'shop' | 'combat' | 'fountain' | 'boss';
+export type RoomKind = 'shop' | 'combat' | 'fountain' | 'event' | 'boss';
 
 /** Salle 0 = marchand, 1…N = combats (certaines sont des fontaines), N + 1 = boss. */
 export function roomKind(run: RunState, biome: BiomeDef): RoomKind {
   if (run.room <= 0) return 'shop';
   if (run.room > biome.rooms) return 'boss';
-  return biome.fountainRooms.includes(run.room) ? 'fountain' : 'combat';
+  if (biome.fountainRooms.includes(run.room)) return 'fountain';
+  return specialRooms(run.seed, run.biome, biome).event === run.room ? 'event' : 'combat';
 }
 
 /** Fontaine : soigne une part de la vie max (rien avec « Sans répit »). */

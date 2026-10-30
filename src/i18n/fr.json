@@ -402,5 +402,22 @@
   "trial.failed": "Trop tard…",
   "trial.failedSub": "Pas grave : la salle continue normalement",
   "trial.chest": "Coffre de Vesper",
-  "trial.loot": "+{shards} éclats · +{xp} XP"
+  "trial.loot": "+{shards} éclats · +{xp} XP",
+  "event.ember.title": "Braise d'Aelia",
+  "event.ember.desc": "Une braise d'Aelia brûle encore ici. Elle peut éveiller un dieu… si tu la nourris d'un peu de ta vie.",
+  "event.ember.accept": "Nourrir la braise (−{hp} PV)",
+  "event.prisoner.title": "Âme en cage",
+  "event.prisoner.desc": "Une petite cage de l'Oiseleur retient un esprit. Il te supplie de le libérer et promet de veiller sur toi.",
+  "event.prisoner.accept": "Le libérer (+{maxHp} PV max)",
+  "event.prisoner.done": "L'esprit est libre",
+  "event.prisoner.doneSub": "+{maxHp} PV max",
+  "event.anvil.title": "Enclume de Brokk",
+  "event.anvil.desc": "Une enclume oubliée par Brokk. Contre quelques éclats, tu peux affûter ton arme pour le reste de la run.",
+  "event.anvil.accept": "Affûter (+{damage} %, {shards} éclats)",
+  "event.anvil.done": "Arme affûtée",
+  "event.anvil.doneSub": "+{damage} % de dégâts",
+  "event.leave": "Partir",
+  "event.blocked.taken": "Déjà fait",
+  "event.blocked.hp": "Trop faible (plus de {hp} PV)",
+  "event.blocked.shards": "Il faut {shards} éclats"
 }

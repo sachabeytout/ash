@@ -3,6 +3,7 @@ import { BoonScene } from './scenes/BoonScene';
 import { HubScene } from './scenes/HubScene';
 import { PauseScene } from './scenes/PauseScene';
 import { ShopScene } from './scenes/ShopScene';
+import { EventScene } from './scenes/EventScene';
 import { EndingScene } from './scenes/EndingScene';
 import { RunScene } from './scenes/RunScene';
 import { UiScene } from './scenes/UiScene';
@@ -30,6 +31,16 @@ export function createGameConfig(parent: string): Phaser.Types.Core.GameConfig {
       default: 'arcade',
       arcade: { debug: new URLSearchParams(location.search).has('debug') },
     },
-    scene: [TitleScene, HubScene, RunScene, UiScene, BoonScene, PauseScene, ShopScene, EndingScene],
+    scene: [
+      TitleScene,
+      HubScene,
+      RunScene,
+      UiScene,
+      BoonScene,
+      PauseScene,
+      ShopScene,
+      EventScene,
+      EndingScene,
+    ],
   };
 }
