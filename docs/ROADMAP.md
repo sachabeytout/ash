@@ -71,4 +71,5 @@ Retour sur le lore v0.2 toujours attendu (« quand le fond aura avancé »).
 - [x] **M3.2 (0.14.0)** : obstacles dans les arènes (6 dispositions, couvert contre les tirs, contournement par les ennemis)
 - [x] **M3.3 (0.15.0)** : salles d'évènement (Braise d'Aelia, Âme en cage, Enclume de Brokk), sauvegarde v7
 - [x] **M3.4 (0.16.0)** : rendu néon (halo, vignettage selon la qualité) et qualité automatique
+- [x] **M3.5 (0.17.0)** : Archives de Thot (29 fiches débloquées à la rencontre), sauvegarde v8
 - [ ] **M3** : finitions — coffres et évènements, préréglages de qualité, équilibrage avec la télémétrie, accessibilité

@@ -76,6 +76,7 @@ import { drawEventIcon, EVENT_COLOR } from './eventIcons';
 import { Controls } from '../input/Controls';
 import { UiScene, type Indicator } from './UiScene';
 import { finishRun } from '../../core/meta';
+import { recordCodex } from '../../core/codex';
 import { buyItem } from '../../core/shop';
 import { heatModifiers, type HeatModifiers } from '../../core/heat';
 import { assistReduction, reducedDamage } from '../../core/assist';
@@ -489,6 +490,7 @@ export class RunScene extends Phaser.Scene {
     const boss = this.boss;
     if (!boss?.alive) return;
     boss.kill();
+    recordCodex(session.save.meta, `boss.${boss.def.id}`);
     this.run.xp += boss.def.reward.xp;
     this.run.weaponParts += boss.def.reward.weaponParts;
     this.run.shards += SHARD_BOUNTY.boss;
@@ -793,6 +795,7 @@ export class RunScene extends Phaser.Scene {
 
   private onBoonPicked(offer: BoonOffer): void {
     chooseBoon(this.run, offer);
+    recordCodex(session.save.meta, `god.${getBoonGod(offer)}`);
     session.snapshotRun(this.run);
     this.profile = buildProfile(this.run.boons);
     this.applyProfile();
@@ -1437,6 +1440,7 @@ export class RunScene extends Phaser.Scene {
       return;
     }
     if (!(e instanceof Enemy)) return;
+    recordCodex(session.save.meta, `enemy.${e.def.id}`);
     if (e.def.elite) {
       this.run.xp += e.def.elite.xp;
       this.run.shards += SHARD_BOUNTY.elite;

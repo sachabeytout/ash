@@ -2,6 +2,16 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.17.0 — Les Archives de Thot
+
+- **Nouveau bouton « Archives »** dans la Cage (sous Options, ou touche A) : le bestiaire de Thot.
+  - **29 fiches** : 16 ennemis, 4 boss, 9 dieux, rangées en trois onglets.
+  - Une fiche s'ouvre à la **première rencontre** (ennemi ou boss vaincu, don accepté). Avant, elle reste « ??? ».
+  - Chaque fiche a un court texte d'histoire, souvent avec un conseil pour le combat, et un compteur (ennemis vaincus, dons acceptés).
+- Les archives commencent vides, même pour une sauvegarde existante : elles se remplissent au fil des runs. Ta sauvegarde passe au nouveau format **sans rien perdre**.
+
+**Quoi tester** : ouvre les Archives après une run. Les textes te plaisent-ils ? Les conseils t'aident-ils ?
+
 ## 0.16.0 — Rendu néon et qualité automatique
 
 - **Rendu néon** : en qualité **Haute**, les lumières vives ont un léger **halo**, et les bords de l'écran sont un peu assombris pour mettre l'action au centre. En **Moyenne**, seulement les bords assombris. En **Basse**, aucun effet (le plus fluide).

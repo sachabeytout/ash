@@ -1,4 +1,5 @@
 import { BIOMES } from '../../data/biomes';
+import { CODEX_KEYS } from '../codex';
 import { HEAT } from '../../data/heat';
 import type { HeatLevels } from '../heat';
 import { WEAPONS, type WeaponId } from '../../data/weapons';
@@ -60,6 +61,11 @@ const MIGRATIONS: Record<number, (save: Raw) => Raw> = {
   6: (old) => {
     const run = isObject(old.run) ? { ...old.run, eventTaken: -1 } : old.run;
     return { ...old, version: 7, run };
+  },
+  // v7 → v8 : Archives de Thot (vides : elles se remplissent aux prochaines rencontres).
+  7: (old) => {
+    const meta = isObject(old.meta) ? old.meta : {};
+    return { ...old, version: 8, meta: { ...meta, codex: {} } };
   },
 };
 
@@ -125,6 +131,7 @@ function sanitizeMeta(raw: unknown): MetaState {
       ? [...new Set(m.seenDialogues.filter((id): id is string => typeof id === 'string'))]
       : [],
     heat: sanitizeHeat(m.heat),
+    codex: sanitizeCodex(m.codex),
   };
 }
 
@@ -190,6 +197,16 @@ function sanitizeRun(raw: unknown): RunState | null {
       rareBonus: num(perks.rareBonus, NO_PERKS.rareBonus, 0),
     },
   };
+}
+
+function sanitizeCodex(raw: unknown): Record<string, number> {
+  const out: Record<string, number> = {};
+  if (!isObject(raw)) return out;
+  for (const [key, value] of Object.entries(raw)) {
+    const n = Math.floor(num(value, 0, 0));
+    if (CODEX_KEYS.has(key) && n > 0) out[key] = n;
+  }
+  return out;
 }
 
 function sanitizeSettings(raw: unknown): Settings {

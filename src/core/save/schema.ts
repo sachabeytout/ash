@@ -4,7 +4,7 @@ import type { HeatLevels } from '../heat';
 import type { RunState } from '../run/state';
 
 /** Version actuelle du format. Tout changement de format = nouvelle version + migration (voir migrations.ts). */
-export const SAVE_VERSION = 7;
+export const SAVE_VERSION = 8;
 
 /** Progression permanente (conservée entre les runs). */
 export interface MetaState {
@@ -28,6 +28,8 @@ export interface MetaState {
   seenDialogues: string[];
   /** Mesures d'urgence choisies (niveau par mesure). Ajouté en v6. */
   heat: HeatLevels;
+  /** Archives de Thot : rencontres par fiche (`enemy.prowler`…). Ajouté en v8. */
+  codex: Record<string, number>;
 }
 
 export interface SaveData {
@@ -53,6 +55,7 @@ export function defaultMeta(): MetaState {
     unlocked: [],
     seenDialogues: [],
     heat: {},
+    codex: {},
   };
 }
 

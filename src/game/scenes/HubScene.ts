@@ -32,6 +32,8 @@ import { assistReduction } from '../../core/assist';
 import { forgeLevel, isUnlocked } from '../../core/forge';
 import { settings } from '../../core/settings';
 import { applyPostFx, autoLowerQuality } from '../fx/postfx';
+import { CODEX, recordCodex } from '../../core/codex';
+import { CodexPanel } from '../ui/CodexPanel';
 import { newAutoQuality } from '../../core/perf';
 import { markScene } from './markScene';
 
@@ -166,6 +168,16 @@ export class HubScene extends Phaser.Scene {
       fontSize: 12,
       onTap: () => this.openForge(),
     });
+    makeButton(this, {
+      x: GAME_WIDTH - 180,
+      y: 62,
+      w: 108,
+      h: 30,
+      label: t('hub.codexButton'),
+      color: 0x7fffc0,
+      fontSize: 12,
+      onTap: () => this.openCodex(),
+    });
     // Mesures d'urgence : après la 1re victoire.
     if (meta.clears >= HEAT_UNLOCK_VICTORIES) {
       const heat = heatTotal(meta.heat);
@@ -243,6 +255,16 @@ export class HubScene extends Phaser.Scene {
       }
       if (e.code === 'KeyM') {
         this.openHeat();
+        return;
+      }
+      if (e.code === 'KeyA') {
+        this.openCodex();
+        return;
+      }
+      if (cheatsEnabled && e.code === 'KeyK') {
+        // Archives complètes (pour vérifier l'affichage).
+        for (const entry of CODEX) recordCodex(session.save.meta, entry.key, 3);
+        session.commit();
         return;
       }
       if (session.save.run) {
@@ -389,6 +411,15 @@ export class HubScene extends Phaser.Scene {
       markScene('hub');
       // La Lame de l'Aube vient d'être forgée : on redessine la Cage pour l'afficher.
       if (dialogue.id === `victory_${DAWNBLADE_VICTORIES}`) this.scene.restart({});
+    });
+  }
+
+  private openCodex(): void {
+    if (this.modal || this.starting) return;
+    this.modal = true;
+    sfx.tap();
+    new CodexPanel(this, session.save.meta, () => {
+      this.modal = false;
     });
   }
 
