@@ -38,6 +38,11 @@ const MIGRATIONS: Record<number, (save: Raw) => Raw> = {
     const meta = isObject(old.meta) ? old.meta : {};
     return { ...old, version: 3, meta: { ...meta, unlocked: [] } };
   },
+  // v3 → v4 : nouveaux dieux ; la run en cours garde son « Dernier souffle » de Hel (pas encore utilisé).
+  3: (old) => {
+    const run = isObject(old.run) ? { ...old.run, lastBreathUsed: false } : old.run;
+    return { ...old, version: 4, run };
+  },
 };
 
 function isObject(v: unknown): v is Raw {
@@ -145,6 +150,7 @@ function sanitizeRun(raw: unknown): RunState | null {
         : null,
     superGauge: num(raw.superGauge, 0, 0, 1),
     weaponLevel: num(raw.weaponLevel, 0, 0, 20),
+    lastBreathUsed: raw.lastBreathUsed === true,
     perks: {
       damage: num(perks.damage, NO_PERKS.damage, 0),
       healPerRoom: num(perks.healPerRoom, NO_PERKS.healPerRoom, 0),

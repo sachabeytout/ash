@@ -1,4 +1,4 @@
-import { GOD_IDS, type GodId } from '../../data/gods';
+import { GOD_IDS, GODS, type GodId, type Pantheon } from '../../data/gods';
 import type { Rng } from '../rng';
 
 /** Les 5 récompenses possibles derrière une porte. */
@@ -37,9 +37,22 @@ export interface DoorReward {
   god?: GodId;
 }
 
+/** Les dieux du panthéon du biome sortent 3 fois plus souvent (nordiques au Givre-Serveur…). */
+const FAVORED_WEIGHT = 3;
+
+export function rollGod(rng: Rng, favored?: Pantheon): GodId {
+  const weight = (id: GodId) => (favored && GODS[id].pantheon === favored ? FAVORED_WEIGHT : 1);
+  let roll = rng.next() * GOD_IDS.reduce((sum, id) => sum + weight(id), 0);
+  for (const id of GOD_IDS) {
+    roll -= weight(id);
+    if (roll < 0) return id;
+  }
+  return GOD_IDS[GOD_IDS.length - 1] ?? 'ra';
+}
+
 /** Portes de sortie d'une salle : récompenses différentes, un dieu tiré pour la porte de don. */
-export function rollDoors(rng: Rng, count: number): DoorReward[] {
+export function rollDoors(rng: Rng, count: number, favored?: Pantheon): DoorReward[] {
   return rollDoorRewards(rng, count).map((kind) =>
-    kind === 'boon' ? { kind, god: rng.pick(GOD_IDS) } : { kind },
+    kind === 'boon' ? { kind, god: rollGod(rng, favored) } : { kind },
   );
 }

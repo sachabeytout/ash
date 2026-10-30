@@ -39,6 +39,59 @@ export function drawGodIcon(
       g.fillPoints(pts, true);
       break;
     }
+    case 'jackal': {
+      // Tête de chacal : museau pointu, deux grandes oreilles.
+      g.fillTriangle(
+        x - size * 0.6,
+        y - size * 0.1,
+        x - size * 0.35,
+        y - size,
+        x - size * 0.1,
+        y - size * 0.2,
+      );
+      g.fillTriangle(
+        x + size * 0.6,
+        y - size * 0.1,
+        x + size * 0.35,
+        y - size,
+        x + size * 0.1,
+        y - size * 0.2,
+      );
+      g.fillTriangle(x - size * 0.6, y - size * 0.2, x + size * 0.6, y - size * 0.2, x, y + size);
+      break;
+    }
+    case 'cat': {
+      // Œil de chat : amande, pupille fendue.
+      g.fillEllipse(x, y, size * 1.9, size * 1.1);
+      g.fillStyle(0x07060d, 1).fillRect(x - size * 0.08, y - size * 0.45, size * 0.16, size * 0.9);
+      break;
+    }
+    case 'shield': {
+      // Bouclier rond à umbo.
+      g.strokeCircle(x, y, size * 0.85);
+      g.fillCircle(x, y, size * 0.35);
+      break;
+    }
+    case 'moon': {
+      // Croissant de lune.
+      g.fillCircle(x, y, size * 0.85);
+      g.fillStyle(0x07060d, 1).fillCircle(x + size * 0.38, y - size * 0.15, size * 0.7);
+      break;
+    }
+    case 'hammer': {
+      // Marteau : tête rectangulaire, manche.
+      g.fillRect(x - size * 0.8, y - size * 0.8, size * 1.6, size * 0.6);
+      g.fillRect(x - size * 0.15, y - size * 0.2, size * 0.3, size * 1.1);
+      break;
+    }
+    case 'veil': {
+      // Voile de Hel : demi-visage (moitié pleine, moitié vide).
+      g.strokeCircle(x, y, size * 0.8);
+      g.beginPath();
+      g.slice(x, y, size * 0.8, Math.PI / 2, (Math.PI * 3) / 2, false);
+      g.fillPath();
+      break;
+    }
     case 'flake': {
       for (let i = 0; i < 3; i++) {
         const a = (i * Math.PI) / 3;

@@ -40,6 +40,8 @@ export interface RunState {
   perks: RunPerks;
   /** Niveau de forge de l'arme, figé au début de la run. */
   weaponLevel: number;
+  /** « Dernier souffle » de Hel déjà utilisé pendant cette run. */
+  lastBreathUsed: boolean;
 }
 
 export interface RunSummary {
@@ -82,6 +84,7 @@ export function newRun(
     superGauge,
     perks,
     weaponLevel,
+    lastBreathUsed: false,
   };
 }
 

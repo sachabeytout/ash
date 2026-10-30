@@ -3,7 +3,7 @@
 Liste tenue à jour par Claude. Réponds quand tu veux, même en vrac (« 3 : oui, 7 : plutôt la B »).
 En attendant ta réponse, Claude applique **ce qui est indiqué en gras** (toujours modifiable ensuite).
 
-Dernière mise à jour : 30/10/2026 (version 0.9.0).
+Dernière mise à jour : 30/10/2026 (version 0.10.0).
 
 ## A. Ressenti de jeu
 
@@ -11,7 +11,7 @@ Dernière mise à jour : 30/10/2026 (version 0.9.0).
 2. Le marchand Ratatosk : ses prix te paraissent-ils justes, ou manques-tu d'éclats ? → **prix actuels gardés**
 3. L'Einherjar (élite au bouclier) : comprends-tu tout de suite qu'il faut le frapper de dos ?
 4. Les biomes (Bas-Fonds, Givre-Serveur, Olympe, Volière) : l'un d'eux te plaît-il moins (décor, ennemis) ?
-5. Quel dieu préfères-tu ? Y en a-t-il un trop faible ou trop fort ?
+5. Quel dieu préfères-tu (il y en a 9 maintenant) ? Y en a-t-il un trop faible ou trop fort ?
 6. Le Super se remplit-il trop vite, trop lentement, ou c'est bien ?
 7. Les compétences de Thot (30 à 130 XP) : sens-tu que tu progresses assez vite ?
 8. Sur ton iPhone, les textes des cartes de don et du marchand sont-ils assez grands ?

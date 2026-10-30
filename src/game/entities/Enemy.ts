@@ -2,7 +2,9 @@ import Phaser from 'phaser';
 import type { Health } from '../../core/combat/health';
 import {
   isBurning,
+  isCursed,
   isFrozen,
+  isStunned,
   newStatus,
   speedFactor,
   type StatusState,
@@ -145,10 +147,11 @@ export class Enemy {
     let vy = 0;
     const elapsed = now - this.stateAt;
     const frozen = isFrozen(this.status, now);
-    const slow = speedFactor(this.status, now);
+    const stunned = isStunned(this.status, now);
+    const slow = stunned ? 0 : speedFactor(this.status, now);
 
     // Gelé : l'ennemi ne bouge plus et son horloge s'arrête (il reprend où il en était).
-    if (frozen) this.stateAt += dt;
+    if (frozen || stunned) this.stateAt += dt;
     else
       switch (this.state) {
         case 'chase': {
@@ -266,11 +269,11 @@ export class Enemy {
     if (flashing) this.sprite.setTint(0xffffff).setTintMode(Phaser.TintModes.FILL);
     else this.sprite.clearTint().setTintMode(Phaser.TintModes.MULTIPLY);
     this.mark.setPosition(this.x, this.y - def.radius - 4);
-    this.drawStatus(now, frozen);
+    this.drawStatus(now, frozen, stunned);
   }
 
   /** États visibles par la forme : bloc de glace (gel), flocons (givre), flammèches (brûlure). */
-  private drawStatus(now: number, frozen: boolean): void {
+  private drawStatus(now: number, frozen: boolean, stunned: boolean): void {
     const g = this.statusFx.clear();
     const s = this.status;
     const r = this.def.radius;
@@ -300,6 +303,36 @@ export class Enemy {
     } else if (now < s.chillUntil && s.chill > 0) {
       g.fillStyle(0x8ff0ff, 1);
       for (let i = 0; i < s.chill; i++) g.fillRect(this.x - r + i * 4, this.y + r + 3, 2, 2);
+    }
+    if (stunned) {
+      // Étoiles qui tournent au-dessus de la tête (Thor).
+      g.fillStyle(0xf0a860, 1);
+      for (let i = 0; i < 3; i++) {
+        const a = now / 200 + (i * Math.PI * 2) / 3;
+        const sx = this.x + Math.cos(a) * (r + 2);
+        const sy = this.y - r - 6 + Math.sin(a) * 2;
+        g.fillTriangle(sx, sy - 2, sx + 2, sy, sx, sy + 2).fillTriangle(
+          sx,
+          sy - 2,
+          sx - 2,
+          sy,
+          sx,
+          sy + 2,
+        );
+      }
+    }
+    if (isCursed(s, now)) {
+      // Malédiction : petit voile sombre sous l'ennemi.
+      g.lineStyle(1.5, 0x9a8fb5, 0.9).strokeEllipse(this.x, this.y + r + 2, r * 2 + 4, 5);
+    }
+    if (now < s.judgedUntil) {
+      // Jugé : plume de Maât (trait vertical) au-dessus.
+      g.lineStyle(2, 0x4fd1a0, 0.95).lineBetween(
+        this.x + r + 3,
+        this.y - r - 6,
+        this.x + r + 3,
+        this.y - r + 2,
+      );
     }
     if (isBurning(s, now)) {
       g.fillStyle(0xffa53a, 0.9);

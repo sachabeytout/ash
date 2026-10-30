@@ -10,6 +10,7 @@ import type { Health } from '../../core/combat/health';
 import {
   isBurning,
   isFrozen,
+  isStunned,
   newStatus,
   speedFactor,
   type StatusState,
@@ -166,7 +167,7 @@ export class Boss implements Hittable {
     const dy = target.y - this.y;
     const dist = Math.hypot(dx, dy);
     const toTarget = Math.atan2(dy, dx);
-    const frozen = isFrozen(this.status, now);
+    const frozen = isFrozen(this.status, now) || isStunned(this.status, now);
     let vx = 0;
     let vy = 0;
     this.landingImpact = false;

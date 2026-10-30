@@ -3,7 +3,7 @@ import type { WeaponId } from '../../data/weapons';
 import type { RunState } from '../run/state';
 
 /** Version actuelle du format. Tout changement de format = nouvelle version + migration (voir migrations.ts). */
-export const SAVE_VERSION = 3;
+export const SAVE_VERSION = 4;
 
 /** Progression permanente (conservée entre les runs). */
 export interface MetaState {

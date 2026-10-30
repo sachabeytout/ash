@@ -12,6 +12,18 @@ export interface StatusState {
   frozenUntil: number;
   /** Le choc thermique a déjà explosé pendant ce gel (une seule fois par gel). */
   shocked: boolean;
+  /** Étourdi (Thor) : l'ennemi s'arrête, sans immunité ensuite. */
+  stunUntil: number;
+  /** Jugé (Anubis) : dégâts reçus augmentés. */
+  judgedUntil: number;
+  judgedBonus: number;
+  /** Affaibli (Athéna) : ses dégâts sont réduits. */
+  weakenUntil: number;
+  weaken: number;
+  /** Maudit (Hel) : explose à sa mort. */
+  cursedUntil: number;
+  curseDamage: number;
+  curseRadius: number;
 }
 
 export function newStatus(): StatusState {
@@ -24,6 +36,14 @@ export function newStatus(): StatusState {
     chillUntil: 0,
     frozenUntil: -Infinity,
     shocked: false,
+    stunUntil: 0,
+    judgedUntil: 0,
+    judgedBonus: 0,
+    weakenUntil: 0,
+    weaken: 0,
+    cursedUntil: 0,
+    curseDamage: 0,
+    curseRadius: 0,
   };
 }
 
@@ -83,4 +103,49 @@ export function tickBurn(s: StatusState, now: number): number {
     s.burnCarry = 0;
   }
   return damage;
+}
+
+export function isStunned(s: StatusState, now: number): boolean {
+  return now < s.stunUntil;
+}
+
+export function applyStun(s: StatusState, now: number, durationMs: number): void {
+  s.stunUntil = Math.max(s.stunUntil, now + durationMs);
+}
+
+/** Bonus de dégâts reçus si l'ennemi est jugé (0 sinon). */
+export function judgedBonus(s: StatusState, now: number): number {
+  return now < s.judgedUntil ? s.judgedBonus : 0;
+}
+
+export function applyJudge(s: StatusState, now: number, bonus: number, durationMs: number): void {
+  const previous = now < s.judgedUntil ? s.judgedBonus : 0;
+  s.judgedBonus = Math.max(bonus, previous);
+  s.judgedUntil = now + durationMs;
+}
+
+/** Multiplicateur des dégâts infligés par un ennemi affaibli (1 sinon). */
+export function weakenFactor(s: StatusState, now: number): number {
+  return now < s.weakenUntil ? 1 - s.weaken : 1;
+}
+
+export function applyWeaken(
+  s: StatusState,
+  now: number,
+  reduction: number,
+  durationMs: number,
+): void {
+  s.weakenUntil = now + durationMs;
+  s.weaken = Math.max(s.weaken, reduction);
+}
+
+export function isCursed(s: StatusState, now: number): boolean {
+  return now < s.cursedUntil;
+}
+
+/** Une malédiction dure longtemps (jusqu'à la mort de l'ennemi, en pratique). */
+export function applyCurse(s: StatusState, now: number, damage: number, radius: number): void {
+  s.cursedUntil = now + 8000;
+  s.curseDamage = Math.max(s.curseDamage, damage);
+  s.curseRadius = Math.max(s.curseRadius, radius);
 }

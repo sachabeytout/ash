@@ -3,7 +3,8 @@ import type { AttackStep, ProjectileSpec, ZoneSpec } from '../../core/combat/att
 import type { Vec2 } from '../../core/geometry';
 import type { Hittable } from './Hittable';
 
-export type HitKind = 'attack' | 'power' | 'super';
+/** `boon` : flèches d'Artémis (dégâts de don, sans effets d'arme). */
+export type HitKind = 'attack' | 'power' | 'super' | 'boon';
 
 export interface ShotHit {
   damage: number;

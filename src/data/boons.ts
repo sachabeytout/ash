@@ -13,15 +13,62 @@ export type BoonEffect =
   | { type: 'chain'; on: Trigger; damage: number; bounces: number; range: number }
   /** Foudre qui tombe sur la cible et touche autour d'elle. */
   | { type: 'bolt'; on: Trigger; damage: number; radius: number }
-  /** Dégâts en plus contre les ennemis qui brûlent / sont givrés. */
-  | { type: 'damageVs'; status: 'burning' | 'chilled'; bonus: number }
+  /** Dégâts en plus contre les ennemis qui brûlent / sont givrés / étourdis / loin d'Ash. */
+  | { type: 'damageVs'; status: 'burning' | 'chilled' | 'stunned' | 'far'; bonus: number }
   | { type: 'maxHp'; amount: number }
   /** Quand Ash est touché, la foudre frappe l'ennemi le plus proche. */
   | { type: 'retaliate'; damage: number; range: number }
   /** Duo Râ + Skadi : un ennemi gelé qui brûle explose. */
   | { type: 'thermalShock'; damage: number; radius: number }
   /** Amplification : la brûlure dure plus longtemps. */
-  | { type: 'burnDuration'; bonus: number };
+  | { type: 'burnDuration'; bonus: number }
+  // ---------- Anubis : jugement ----------
+  /** Exécute un ennemi (hors boss) sous ce pourcentage de vie. */
+  | { type: 'execute'; on: Trigger; threshold: number }
+  /** Le dash « juge » les ennemis proches : ils subissent plus de dégâts un moment. */
+  | { type: 'judge'; on: Trigger; bonus: number; durationMs: number }
+  | { type: 'healOnKill'; amount: number }
+  // ---------- Bastet : vitesse, critiques ----------
+  /** Chance de coup critique (dégâts doublés). */
+  | { type: 'crit'; on: Trigger; chance: number }
+  | { type: 'dashCooldown'; on: Trigger; bonus: number }
+  | { type: 'speed'; bonus: number }
+  | { type: 'critDamage'; bonus: number }
+  // ---------- Athéna : protection ----------
+  /** Égide : les premiers coups reçus dans chaque salle sont bloqués. */
+  | { type: 'aegis'; charges: number }
+  /** Les ennemis touchés font moins de dégâts un moment. */
+  | { type: 'weaken'; on: Trigger; reduction: number; durationMs: number }
+  /** Bouclier qui absorbe des dégâts. */
+  | { type: 'barrier'; on: Trigger; amount: number }
+  /** Le dash détruit les projectiles ennemis proches. */
+  | { type: 'deflect'; on: Trigger; radius: number }
+  // ---------- Artémis : chasse ----------
+  /** Des flèches partent vers les ennemis les plus proches. */
+  | { type: 'arrows'; on: Trigger; damage: number; count: number }
+  // ---------- Thor : choc ----------
+  /** Étourdit (l'ennemi s'arrête) ; `scales` dit si la rareté augmente la chance ou la durée. */
+  | {
+      type: 'stun';
+      on: Trigger;
+      chance: number;
+      durationMs: number;
+      scales: 'chance' | 'duration';
+    }
+  /** Onde autour d'Ash : dégâts et recul. */
+  | { type: 'shockwave'; on: Trigger; damage: number; radius: number; knockback: number }
+  // ---------- Hel : malédiction ----------
+  /** Maudit : à sa mort, l'ennemi explose et blesse ses voisins. */
+  | { type: 'curse'; on: Trigger; damage: number; radius: number }
+  | { type: 'lifeOnHit'; on: Trigger; amount: number }
+  /** Une fois par run, un coup mortel laisse Ash en vie. */
+  | { type: 'lastBreath'; hp: number }
+  // ---------- Duos et amplifications ----------
+  | { type: 'stormStun'; durationMs: number }
+  | { type: 'judgementDay'; threshold: number }
+  | { type: 'nightHunt'; chance: number }
+  | { type: 'aegisCharge'; charges: number }
+  | { type: 'stunDuration'; bonus: number };
 
 export type BoonKind = 'normal' | 'duo' | 'amp';
 
@@ -182,6 +229,257 @@ export const BOONS: readonly BoonDef[] = [
     descKey: 'boon.amp_noon.desc',
     effect: { type: 'burnDuration', bonus: 0.5 },
     requiresAny: ['ra_attack', 'ra_power', 'ra_dash'],
+  },
+  // ---------- Anubis : jugement ----------
+  {
+    id: 'anubis_attack',
+    gods: ['anubis'],
+    kind: 'normal',
+    nameKey: 'boon.anubis_attack',
+    descKey: 'boon.anubis_attack.desc',
+    effect: { type: 'execute', on: 'attack', threshold: 10 },
+  },
+  {
+    id: 'anubis_power',
+    gods: ['anubis'],
+    kind: 'normal',
+    nameKey: 'boon.anubis_power',
+    descKey: 'boon.anubis_power.desc',
+    effect: { type: 'execute', on: 'power', threshold: 20 },
+  },
+  {
+    id: 'anubis_dash',
+    gods: ['anubis'],
+    kind: 'normal',
+    nameKey: 'boon.anubis_dash',
+    descKey: 'boon.anubis_dash.desc',
+    effect: { type: 'judge', on: 'dash', bonus: 0.25, durationMs: 4000 },
+  },
+  {
+    id: 'anubis_soul',
+    gods: ['anubis'],
+    kind: 'normal',
+    nameKey: 'boon.anubis_soul',
+    descKey: 'boon.anubis_soul.desc',
+    effect: { type: 'healOnKill', amount: 2 },
+  },
+  // ---------- Bastet : vitesse, critiques ----------
+  {
+    id: 'bastet_attack',
+    gods: ['bastet'],
+    kind: 'normal',
+    nameKey: 'boon.bastet_attack',
+    descKey: 'boon.bastet_attack.desc',
+    effect: { type: 'crit', on: 'attack', chance: 10 },
+  },
+  {
+    id: 'bastet_power',
+    gods: ['bastet'],
+    kind: 'normal',
+    nameKey: 'boon.bastet_power',
+    descKey: 'boon.bastet_power.desc',
+    effect: { type: 'crit', on: 'power', chance: 20 },
+  },
+  {
+    id: 'bastet_dash',
+    gods: ['bastet'],
+    kind: 'normal',
+    nameKey: 'boon.bastet_dash',
+    descKey: 'boon.bastet_dash.desc',
+    effect: { type: 'dashCooldown', on: 'dash', bonus: 0.25 },
+  },
+  {
+    id: 'bastet_swift',
+    gods: ['bastet'],
+    kind: 'normal',
+    nameKey: 'boon.bastet_swift',
+    descKey: 'boon.bastet_swift.desc',
+    effect: { type: 'speed', bonus: 0.08 },
+  },
+  // ---------- Athéna : protection ----------
+  {
+    id: 'athena_aegis',
+    gods: ['athena'],
+    kind: 'normal',
+    nameKey: 'boon.athena_aegis',
+    descKey: 'boon.athena_aegis.desc',
+    effect: { type: 'aegis', charges: 1 },
+  },
+  {
+    id: 'athena_attack',
+    gods: ['athena'],
+    kind: 'normal',
+    nameKey: 'boon.athena_attack',
+    descKey: 'boon.athena_attack.desc',
+    effect: { type: 'weaken', on: 'attack', reduction: 0.2, durationMs: 4000 },
+  },
+  {
+    id: 'athena_power',
+    gods: ['athena'],
+    kind: 'normal',
+    nameKey: 'boon.athena_power',
+    descKey: 'boon.athena_power.desc',
+    effect: { type: 'barrier', on: 'power', amount: 6 },
+  },
+  {
+    id: 'athena_dash',
+    gods: ['athena'],
+    kind: 'normal',
+    nameKey: 'boon.athena_dash',
+    descKey: 'boon.athena_dash.desc',
+    effect: { type: 'deflect', on: 'dash', radius: 40 },
+  },
+  // ---------- Artémis : chasse ----------
+  {
+    id: 'artemis_attack',
+    gods: ['artemis'],
+    kind: 'normal',
+    nameKey: 'boon.artemis_attack',
+    descKey: 'boon.artemis_attack.desc',
+    effect: { type: 'arrows', on: 'attack', damage: 5, count: 1 },
+  },
+  {
+    id: 'artemis_power',
+    gods: ['artemis'],
+    kind: 'normal',
+    nameKey: 'boon.artemis_power',
+    descKey: 'boon.artemis_power.desc',
+    effect: { type: 'arrows', on: 'power', damage: 9, count: 3 },
+  },
+  {
+    id: 'artemis_dash',
+    gods: ['artemis'],
+    kind: 'normal',
+    nameKey: 'boon.artemis_dash',
+    descKey: 'boon.artemis_dash.desc',
+    effect: { type: 'arrows', on: 'dash', damage: 8, count: 3 },
+  },
+  {
+    id: 'artemis_mark',
+    gods: ['artemis'],
+    kind: 'normal',
+    nameKey: 'boon.artemis_mark',
+    descKey: 'boon.artemis_mark.desc',
+    effect: { type: 'damageVs', status: 'far', bonus: 0.15 },
+  },
+  // ---------- Thor : choc ----------
+  {
+    id: 'thor_attack',
+    gods: ['thor'],
+    kind: 'normal',
+    nameKey: 'boon.thor_attack',
+    descKey: 'boon.thor_attack.desc',
+    effect: { type: 'stun', on: 'attack', chance: 12, durationMs: 800, scales: 'chance' },
+  },
+  {
+    id: 'thor_power',
+    gods: ['thor'],
+    kind: 'normal',
+    nameKey: 'boon.thor_power',
+    descKey: 'boon.thor_power.desc',
+    effect: { type: 'stun', on: 'power', chance: 100, durationMs: 700, scales: 'duration' },
+  },
+  {
+    id: 'thor_dash',
+    gods: ['thor'],
+    kind: 'normal',
+    nameKey: 'boon.thor_dash',
+    descKey: 'boon.thor_dash.desc',
+    effect: { type: 'shockwave', on: 'dash', damage: 10, radius: 38, knockback: 200 },
+  },
+  {
+    id: 'thor_wrath',
+    gods: ['thor'],
+    kind: 'normal',
+    nameKey: 'boon.thor_wrath',
+    descKey: 'boon.thor_wrath.desc',
+    effect: { type: 'damageVs', status: 'stunned', bonus: 0.25 },
+  },
+  // ---------- Hel : malédiction ----------
+  {
+    id: 'hel_attack',
+    gods: ['hel'],
+    kind: 'normal',
+    nameKey: 'boon.hel_attack',
+    descKey: 'boon.hel_attack.desc',
+    effect: { type: 'curse', on: 'attack', damage: 12, radius: 36 },
+  },
+  {
+    id: 'hel_power',
+    gods: ['hel'],
+    kind: 'normal',
+    nameKey: 'boon.hel_power',
+    descKey: 'boon.hel_power.desc',
+    effect: { type: 'lifeOnHit', on: 'power', amount: 1 },
+  },
+  {
+    id: 'hel_dash',
+    gods: ['hel'],
+    kind: 'normal',
+    nameKey: 'boon.hel_dash',
+    descKey: 'boon.hel_dash.desc',
+    effect: { type: 'curse', on: 'dash', damage: 15, radius: 36 },
+  },
+  {
+    id: 'hel_last',
+    gods: ['hel'],
+    kind: 'normal',
+    nameKey: 'boon.hel_last',
+    descKey: 'boon.hel_last.desc',
+    effect: { type: 'lastBreath', hp: 10 },
+  },
+  // ---------- Duos ----------
+  {
+    id: 'duo_storm',
+    gods: ['zeus', 'thor'],
+    kind: 'duo',
+    nameKey: 'boon.duo_storm',
+    descKey: 'boon.duo_storm.desc',
+    effect: { type: 'stormStun', durationMs: 500 },
+  },
+  {
+    id: 'duo_judgement',
+    gods: ['anubis', 'hel'],
+    kind: 'duo',
+    nameKey: 'boon.duo_judgement',
+    descKey: 'boon.duo_judgement.desc',
+    effect: { type: 'judgementDay', threshold: 25 },
+  },
+  {
+    id: 'duo_hunt',
+    gods: ['bastet', 'artemis'],
+    kind: 'duo',
+    nameKey: 'boon.duo_hunt',
+    descKey: 'boon.duo_hunt.desc',
+    effect: { type: 'nightHunt', chance: 10 },
+  },
+  // ---------- Amplifications ----------
+  {
+    id: 'amp_aegis',
+    gods: ['athena'],
+    kind: 'amp',
+    nameKey: 'boon.amp_aegis',
+    descKey: 'boon.amp_aegis.desc',
+    effect: { type: 'aegisCharge', charges: 1 },
+    requiresAny: ['athena_aegis'],
+  },
+  {
+    id: 'amp_thunder',
+    gods: ['thor'],
+    kind: 'amp',
+    nameKey: 'boon.amp_thunder',
+    descKey: 'boon.amp_thunder.desc',
+    effect: { type: 'stunDuration', bonus: 0.5 },
+    requiresAny: ['thor_attack', 'thor_power'],
+  },
+  {
+    id: 'amp_claws',
+    gods: ['bastet'],
+    kind: 'amp',
+    nameKey: 'boon.amp_claws',
+    descKey: 'boon.amp_claws.desc',
+    effect: { type: 'critDamage', bonus: 0.5 },
+    requiresAny: ['bastet_attack', 'bastet_power'],
   },
 ];
 

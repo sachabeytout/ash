@@ -57,6 +57,9 @@ export class Player {
   onFire: (step: AttackStep, angle: number, kind: ActiveSwing['kind'], id: number) => void = () =>
     undefined;
   onDash: () => void = () => undefined;
+  /** Bonus des dons (Bastet) : vitesse de course, recharge du dash. */
+  speedMul = 1;
+  dashCooldownMul = 1;
   /** Le Super est-il prêt ? (la scène gère la jauge) */
   canSuper: () => boolean = () => false;
   onSuper: () => void = () => undefined;
@@ -119,7 +122,7 @@ export class Player {
 
   update(now: number, dt: number, controls: Controls, enemies: readonly Vec2[]): void {
     const buffer = controls.buffer;
-    const dashReady = now - this.lastDashEnd >= PLAYER.dash.cooldownMs;
+    const dashReady = now - this.lastDashEnd >= PLAYER.dash.cooldownMs * this.dashCooldownMul;
 
     if (this.state.kind === 'dash') {
       const t = now - this.state.startedAt;
@@ -325,7 +328,8 @@ export class Player {
 
   private updateFreeMotion(dt: number, controls: Controls): void {
     const m = controls.move;
-    const target = { x: m.x * PLAYER.speed, y: m.y * PLAYER.speed };
+    const speed = PLAYER.speed * this.speedMul;
+    const target = { x: m.x * speed, y: m.y * speed };
     const moving = Math.hypot(m.x, m.y) > 0.01;
     const rate = (moving ? PLAYER.acceleration : PLAYER.deceleration) * (dt / 1000);
     this.velocity.x = approach(this.velocity.x, target.x, rate);

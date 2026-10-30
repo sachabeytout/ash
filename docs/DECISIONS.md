@@ -64,6 +64,9 @@ Format : date — décision — raison — validée par l'utilisateur (oui / non
 | 2026-10-30 | Armes 3 à 6 à débloquer chez Brokk : bâton 3, arbalète 3, disque 5, Gleipnir 5 pièces | Progression d'armes du brief ; donne un usage fort aux pièces | à signaler |
 | 2026-10-30 | Disque rattrapé : +50 % au lancer suivant ; grappin : attire si l'ennemi est petit, sinon tire Ash (invincible pendant le trajet) | Gameplay « lancer-rattraper » et « grappin » du GDD | à signaler |
 | 2026-10-30 | Sauvegarde v3 (migration 2 → 3 : armes débloquées) | Sans perte | oui (règle) |
+| 2026-10-30 | 6 nouveaux dieux (4 dons chacun), 3 duos, 3 amplifications ; panthéon du biome ×3 | Liste des dieux du GDD | oui (GDD) |
+| 2026-10-30 | Exécution d'Anubis et étourdissement long : jamais sur les boss (étourdissement plafonné à 0,4 s) | Les boss doivent rester des combats | à signaler |
+| 2026-10-30 | « Dernier souffle » de Hel : une fois par run (sauvegarde v4) | Anti-frustration, sans rendre invincible | à signaler |
 | 2026-10-30 | Fenrir-Ω : 1100 PV, bond / pluie de glace / morsure / charge, meute en phase 2 | Boss plus mobile qu'Ammit, toujours télégraphié | à signaler |
 
 ## Réponses de l'utilisateur (30/10/2026)

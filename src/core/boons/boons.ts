@@ -104,12 +104,43 @@ export function mainValue(effect: BoonEffect, rarity: Rarity): number {
     case 'bolt':
     case 'retaliate':
     case 'thermalShock':
+    case 'arrows':
+    case 'shockwave':
+    case 'curse':
       return Math.round(effect.damage * p);
     case 'damageVs':
     case 'burnDuration':
-      return Math.round(effect.bonus * p * 100);
+    case 'judge':
+    case 'dashCooldown':
+    case 'speed':
+    case 'critDamage':
+    case 'weaken':
+    case 'stunDuration':
+      return Math.round(('bonus' in effect ? effect.bonus : effect.reduction) * p * 100);
     case 'maxHp':
+    case 'healOnKill':
+    case 'barrier':
+    case 'lifeOnHit':
       return Math.round(effect.amount * p);
+    case 'execute':
+    case 'judgementDay':
+      return Math.round(effect.threshold * p);
+    case 'crit':
+    case 'nightHunt':
+      return Math.round(effect.chance * p);
+    case 'aegis':
+    case 'aegisCharge':
+      return Math.round(effect.charges * p);
+    case 'deflect':
+      return Math.round(effect.radius * p);
+    case 'stun':
+      return effect.scales === 'chance'
+        ? Math.round(effect.chance * p)
+        : Math.round(effect.durationMs * p);
+    case 'lastBreath':
+      return Math.round(effect.hp * p);
+    case 'stormStun':
+      return effect.durationMs;
   }
 }
 
@@ -120,15 +151,43 @@ export interface HitEffects {
   chill?: number;
   chain?: { damage: number; bounces: number; range: number };
   bolt?: { damage: number; radius: number };
+  /** Exécution sous cette part de vie (0,1 = 10 %). */
+  execute?: number;
+  judge?: { bonus: number; durationMs: number };
+  /** Chance de critique (0,1 = 10 %). */
+  crit?: number;
+  weaken?: { reduction: number; durationMs: number };
+  barrier?: number;
+  deflect?: number;
+  arrows?: { damage: number; count: number };
+  stun?: { chance: number; durationMs: number };
+  shockwave?: { damage: number; radius: number; knockback: number };
+  curse?: { damage: number; radius: number };
+  lifeOnHit?: number;
+  dashCooldown?: number;
 }
 
 export interface CombatProfile {
   on: Record<Trigger, HitEffects>;
-  /** Bonus de dégâts (0,2 = +20 %) contre les ennemis qui brûlent / sont givrés. */
+  /** Bonus de dégâts (0,2 = +20 %) contre les ennemis qui brûlent / givrés / étourdis / loin. */
   vsBurning: number;
   vsChilled: number;
+  vsStunned: number;
+  vsFar: number;
   retaliate?: { damage: number; range: number };
   thermalShock?: { damage: number; radius: number };
+  healOnKill: number;
+  speed: number;
+  /** Dégâts des critiques : ×(2 + critDamage). */
+  critDamage: number;
+  /** Chance de critique en plus sur toutes les actions (duo). */
+  critAll: number;
+  aegis: number;
+  lastBreath: number;
+  /** Les éclairs de Zeus étourdissent (ms, duo). */
+  stormStun: number;
+  /** Les explosions de malédiction exécutent sous ce seuil (duo). */
+  judgementDay: number;
 }
 
 export function buildProfile(owned: readonly OwnedBoon[]): CombatProfile {
@@ -136,8 +195,19 @@ export function buildProfile(owned: readonly OwnedBoon[]): CombatProfile {
     on: { attack: {}, power: {}, dash: {} },
     vsBurning: 0,
     vsChilled: 0,
+    vsStunned: 0,
+    vsFar: 0,
+    healOnKill: 0,
+    speed: 0,
+    critDamage: 0,
+    critAll: 0,
+    aegis: 0,
+    lastBreath: 0,
+    stormStun: 0,
+    judgementDay: 0,
   };
   let burnDurationBonus = 0;
+  let stunDurationBonus = 0;
   for (const o of owned) {
     const def = getBoon(o.id);
     if (!def) continue;
@@ -158,7 +228,9 @@ export function buildProfile(owned: readonly OwnedBoon[]): CombatProfile {
         break;
       case 'damageVs':
         if (e.status === 'burning') profile.vsBurning += v / 100;
-        else profile.vsChilled += v / 100;
+        else if (e.status === 'chilled') profile.vsChilled += v / 100;
+        else if (e.status === 'stunned') profile.vsStunned += v / 100;
+        else profile.vsFar += v / 100;
         break;
       case 'maxHp':
         break; // appliqué une fois, au moment où on prend le don (voir run/state)
@@ -171,12 +243,80 @@ export function buildProfile(owned: readonly OwnedBoon[]): CombatProfile {
       case 'burnDuration':
         burnDurationBonus += v / 100;
         break;
+      case 'execute':
+        profile.on[e.on].execute = v / 100;
+        break;
+      case 'judge':
+        profile.on[e.on].judge = { bonus: v / 100, durationMs: e.durationMs };
+        break;
+      case 'healOnKill':
+        profile.healOnKill += v;
+        break;
+      case 'crit':
+        profile.on[e.on].crit = v / 100;
+        break;
+      case 'dashCooldown':
+        profile.on[e.on].dashCooldown = v / 100;
+        break;
+      case 'speed':
+        profile.speed += v / 100;
+        break;
+      case 'critDamage':
+        profile.critDamage += v / 100;
+        break;
+      case 'aegis':
+      case 'aegisCharge':
+        profile.aegis += v;
+        break;
+      case 'weaken':
+        profile.on[e.on].weaken = { reduction: v / 100, durationMs: e.durationMs };
+        break;
+      case 'barrier':
+        profile.on[e.on].barrier = v;
+        break;
+      case 'deflect':
+        profile.on[e.on].deflect = v;
+        break;
+      case 'arrows':
+        profile.on[e.on].arrows = { damage: v, count: e.count };
+        break;
+      case 'stun':
+        profile.on[e.on].stun =
+          e.scales === 'chance'
+            ? { chance: v / 100, durationMs: e.durationMs }
+            : { chance: e.chance / 100, durationMs: v };
+        break;
+      case 'shockwave':
+        profile.on[e.on].shockwave = { damage: v, radius: e.radius, knockback: e.knockback };
+        break;
+      case 'curse':
+        profile.on[e.on].curse = { damage: v, radius: e.radius };
+        break;
+      case 'lifeOnHit':
+        profile.on[e.on].lifeOnHit = v;
+        break;
+      case 'lastBreath':
+        profile.lastBreath = v;
+        break;
+      case 'stormStun':
+        profile.stormStun = v;
+        break;
+      case 'judgementDay':
+        profile.judgementDay = v / 100;
+        break;
+      case 'nightHunt':
+        profile.critAll += v / 100;
+        break;
+      case 'stunDuration':
+        stunDurationBonus += v / 100;
+        break;
     }
   }
-  if (burnDurationBonus > 0) {
-    for (const fx of Object.values(profile.on)) {
-      if (fx.burn) fx.burn.durationMs = Math.round(fx.burn.durationMs * (1 + burnDurationBonus));
-    }
+  for (const fx of Object.values(profile.on)) {
+    if (fx.burn && burnDurationBonus > 0)
+      fx.burn.durationMs = Math.round(fx.burn.durationMs * (1 + burnDurationBonus));
+    if (fx.stun && stunDurationBonus > 0)
+      fx.stun.durationMs = Math.round(fx.stun.durationMs * (1 + stunDurationBonus));
   }
   return profile;
 }
@@ -184,7 +324,20 @@ export function buildProfile(owned: readonly OwnedBoon[]): CombatProfile {
 /** Multiplicateur de dégâts d'un coup selon l'état de la cible. */
 export function damageMultiplier(
   profile: CombatProfile,
-  target: { burning: boolean; chilled: boolean },
+  target: {
+    burning: boolean;
+    chilled: boolean;
+    stunned?: boolean;
+    far?: boolean;
+    judged?: number;
+  },
 ): number {
-  return 1 + (target.burning ? profile.vsBurning : 0) + (target.chilled ? profile.vsChilled : 0);
+  return (
+    1 +
+    (target.burning ? profile.vsBurning : 0) +
+    (target.chilled ? profile.vsChilled : 0) +
+    (target.stunned ? profile.vsStunned : 0) +
+    (target.far ? profile.vsFar : 0) +
+    (target.judged ?? 0)
+  );
 }

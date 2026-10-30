@@ -11,16 +11,24 @@ import {
 import {
   applyBurn,
   applyChill,
+  applyCurse,
+  applyJudge,
+  applyStun,
+  applyWeaken,
+  isCursed,
   isFrozen,
+  isStunned,
+  judgedBonus,
   newStatus,
   speedFactor,
   tickBurn,
+  weakenFactor,
 } from '../../src/core/combat/status';
 import { createRng } from '../../src/core/rng';
 import { chooseBoon, newRun } from '../../src/core/run/state';
-import { rollDoors } from '../../src/core/run/rewards';
+import { rollDoors, rollGod } from '../../src/core/run/rewards';
 import { BOONS, getBoon, slotOf } from '../../src/data/boons';
-import { GOD_IDS } from '../../src/data/gods';
+import { GOD_IDS, GODS } from '../../src/data/gods';
 import { STATUS } from '../../src/data/status';
 import { allDictionaries } from '../../src/i18n';
 
@@ -45,14 +53,24 @@ describe('données des dons', () => {
     }
   });
 
-  it('M1 : 12 à 15 dons de dieux, au moins un duo et une amplification', () => {
+  it('chaque dieu a au moins 4 dons ; il existe des duos et des amplifications', () => {
     const normal = BOONS.filter((b) => b.kind === 'normal');
-    expect(normal.length).toBeGreaterThanOrEqual(12);
-    expect(normal.length).toBeLessThanOrEqual(15);
-    expect(BOONS.some((b) => b.kind === 'duo')).toBe(true);
-    expect(BOONS.some((b) => b.kind === 'amp')).toBe(true);
-    for (const god of GOD_IDS)
-      expect(normal.filter((b) => b.gods.includes(god)).length).toBe(4 + (god === 'ra' ? 1 : 0));
+    for (const god of GOD_IDS) {
+      expect(normal.filter((b) => b.gods.includes(god)).length, god).toBeGreaterThanOrEqual(4);
+    }
+    expect(BOONS.filter((b) => b.kind === 'duo').length).toBeGreaterThanOrEqual(4);
+    expect(BOONS.filter((b) => b.kind === 'amp').length).toBeGreaterThanOrEqual(4);
+  });
+
+  it('chaque action a au plus un don par dieu (sinon le choix serait confus)', () => {
+    for (const god of GOD_IDS) {
+      for (const slot of ['attack', 'power', 'dash'] as const) {
+        const n = BOONS.filter(
+          (b) => b.kind === 'normal' && b.gods.includes(god) && slotOf(b.effect) === slot,
+        ).length;
+        expect(n, `${god} ${slot}`).toBeLessThanOrEqual(1);
+      }
+    }
   });
 });
 
@@ -189,5 +207,60 @@ describe('run et dons', () => {
         if (d.kind === 'boon') expect(GOD_IDS).toContain(d.god);
       }
     }
+  });
+});
+
+describe('nouveaux dieux : profil et états', () => {
+  it('Anubis : seuils d’exécution ; Bastet : critiques et vitesse', () => {
+    const p = buildProfile(own('anubis_attack', 'anubis_power', 'bastet_swift', 'bastet_dash'));
+    expect(p.on.attack.execute).toBeCloseTo(0.1);
+    expect(p.on.power.execute).toBeCloseTo(0.2);
+    expect(p.speed).toBeCloseTo(0.08);
+    expect(p.on.dash.dashCooldown).toBeCloseTo(0.25);
+  });
+
+  it('Athéna : égide + amplification ; Thor : l’amplification allonge l’étourdissement', () => {
+    const p = buildProfile(own('athena_aegis', 'amp_aegis', 'thor_power', 'amp_thunder'));
+    expect(p.aegis).toBe(2);
+    expect(p.on.power.stun?.chance).toBe(1);
+    expect(p.on.power.stun?.durationMs).toBe(Math.round(700 * 1.5));
+  });
+
+  it('les bonus de dégâts se cumulent selon l’état de la cible', () => {
+    const p = buildProfile(own('thor_wrath', 'artemis_mark'));
+    expect(
+      damageMultiplier(p, {
+        burning: false,
+        chilled: false,
+        stunned: true,
+        far: true,
+        judged: 0.25,
+      }),
+    ).toBeCloseTo(1.65);
+  });
+
+  it('étourdi, jugé, affaibli, maudit', () => {
+    const s = newStatus();
+    applyStun(s, 0, 500);
+    expect(isStunned(s, 400)).toBe(true);
+    expect(isStunned(s, 600)).toBe(false);
+    applyJudge(s, 0, 0.25, 1000);
+    applyJudge(s, 100, 0.1, 1000);
+    expect(judgedBonus(s, 500)).toBeCloseTo(0.25);
+    expect(judgedBonus(s, 1200)).toBe(0);
+    applyWeaken(s, 0, 0.2, 1000);
+    expect(weakenFactor(s, 500)).toBeCloseTo(0.8);
+    expect(weakenFactor(s, 1500)).toBe(1);
+    applyCurse(s, 0, 12, 36);
+    expect(isCursed(s, 100)).toBe(true);
+  });
+
+  it('chaque biome favorise son panthéon', () => {
+    const rng = createRng(11);
+    let norse = 0;
+    for (let i = 0; i < 900; i++) if (GODS[rollGod(rng, 'norse')].pantheon === 'norse') norse++;
+    // 3 dieux à poids 3 contre 6 à poids 1 : 60 % attendus.
+    expect(norse / 900).toBeGreaterThan(0.5);
+    expect(norse / 900).toBeLessThan(0.7);
   });
 });

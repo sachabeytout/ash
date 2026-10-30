@@ -1,5 +1,6 @@
 import type { BossId } from './bosses';
 import type { EnemyId } from './enemies';
+import type { Pantheon } from './gods';
 import type { TrackId } from './music';
 
 export interface BiomeDef {
@@ -16,6 +17,8 @@ export interface BiomeDef {
   eliteRooms: readonly number[];
   elite: EnemyId;
   boss: BossId;
+  /** Panthéon dont les dieux apparaissent plus souvent (aucun = tous à égalité). */
+  pantheon?: Pantheon;
   /** Thème du biome (salles de combat) et sa version pour le boss. */
   music: TrackId;
   bossMusic: TrackId;
@@ -74,6 +77,7 @@ export const BIOMES: readonly BiomeDef[] = [
     eliteRooms: [4, 8],
     elite: 'einherjar',
     boss: 'fenrir',
+    pantheon: 'norse',
     music: 'frost',
     bossMusic: 'frostBoss',
     theme: {
@@ -98,6 +102,7 @@ export const BIOMES: readonly BiomeDef[] = [
     eliteRooms: [4, 8],
     elite: 'minotaur',
     boss: 'talos',
+    pantheon: 'greece',
     music: 'olympus',
     bossMusic: 'olympusBoss',
     theme: {

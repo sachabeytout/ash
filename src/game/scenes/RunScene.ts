@@ -9,7 +9,22 @@ import {
 } from '../../core/boons/boons';
 import { applyDamage } from '../../core/combat/health';
 import { gainSuper, superReady } from '../../core/combat/superGauge';
-import { applyBurn, applyChill, isBurning, isFrozen, tickBurn } from '../../core/combat/status';
+import {
+  applyBurn,
+  applyChill,
+  applyCurse,
+  applyJudge,
+  applyStun,
+  applyWeaken,
+  isBurning,
+  isCursed,
+  isFrozen,
+  isStunned,
+  judgedBonus,
+  tickBurn,
+  weakenFactor,
+} from '../../core/combat/status';
+import type { AttackStep } from '../../core/combat/attack';
 import { edgeIndicator, hitsArc, type Vec2 } from '../../core/geometry';
 import { createRng, type Rng } from '../../core/rng';
 import { rollDoors, type DoorReward, type RewardKind } from '../../core/run/rewards';
@@ -89,6 +104,31 @@ interface Door {
   parts: Phaser.GameObjects.GameObject[];
 }
 
+/** Distance au-delà de laquelle un ennemi est « loin » (Artémis). */
+const FAR_DISTANCE = 70;
+/** Flèche d'Artémis (projectile de don : pas d'effets d'arme). */
+const ARROW = {
+  damage: 5,
+  speed: 380,
+  radius: 3,
+  range: 260,
+  pierce: 0,
+  knockback: 20,
+  look: 'bolt',
+} as const;
+const ARROW_STEP: AttackStep = {
+  damage: 0,
+  windupMs: 0,
+  activeMs: 0,
+  recoveryMs: 0,
+  range: 0,
+  arcDeg: 0,
+  lunge: 0,
+  knockback: 0,
+  hitstopMs: 0,
+  shake: 0,
+};
+
 /** Couleurs des effets des dons (côté joueur : jamais le rouge-magenta des dangers). */
 const FX = {
   burn: 0xffa53a,
@@ -97,6 +137,7 @@ const FX = {
   burnText: '#ffb35a',
   zapText: '#e2d2ff',
   heal: '#9dffb0',
+  arrowText: '#cfe0ff',
 } as const;
 
 /** Portes sans récompense : sortie de la run, boss, biome suivant / reprise après le marchand. */
@@ -128,6 +169,9 @@ export class RunScene extends Phaser.Scene {
   private shotsP!: PlayerShots;
   /** Disque rattrapé : le prochain lancer frappe plus fort. */
   private discCharged = false;
+  /** Égide d'Athéna (coups bloqués restants dans la salle) et bouclier en PV. */
+  private aegisLeft = 0;
+  private barrier = 0;
   private kind: RoomKind = 'combat';
   private shopOpen = false;
   private shopSold = new Set<ShopItemId>();
@@ -185,6 +229,7 @@ export class RunScene extends Phaser.Scene {
     this.lightning = new Lightning(this);
     this.profile = buildProfile(this.run.boons);
     this.forge = weaponBonuses(this.run.weapon, this.run.weaponLevel);
+    this.barrier = 0;
     this.controls = new Controls(this, () => this.sim);
     this.controls.onPause = () => this.openPause();
     this.scene.launch('ui', { controls: this.controls });
@@ -205,8 +250,10 @@ export class RunScene extends Phaser.Scene {
     };
     this.shotsP = new PlayerShots(this, ARENA);
     this.discCharged = false;
-    this.shotsP.onHit = (target, hit) =>
-      this.weaponHit(target, { ...hit, hitstopMs: hit.heavy ? 40 : 18 });
+    this.shotsP.onHit = (target, hit) => {
+      if (hit.kind === 'boon') this.damageEnemy(target, hit.damage, FX.arrowText);
+      else this.weaponHit(target, { ...hit, kind: hit.kind, hitstopMs: hit.heavy ? 40 : 18 });
+    };
     this.shotsP.onGrapple = (target, hit) => this.grapple(target, hit);
     this.shotsP.onCatch = () => {
       this.discCharged = true;
@@ -223,6 +270,8 @@ export class RunScene extends Phaser.Scene {
       if (charged) this.discCharged = false;
       this.shotsP.fire(this.sim, this.player, angle, step, kind, id, charged ? 1.5 : 1);
     };
+    this.applyProfile();
+    this.aegisLeft = this.profile.aegis;
     this.player.canSuper = () => superReady(this.run.superGauge) && !this.choosing;
     this.player.onSuper = () => {
       this.run.superGauge = 0;
@@ -235,7 +284,8 @@ export class RunScene extends Phaser.Scene {
 
     for (let i = 0; i < POOL_SIZE; i++) {
       const e = new Enemy(this);
-      e.onShoot = (from, angle, enemy) => this.fireShot(from, angle, enemy.def);
+      e.onShoot = (from, angle, enemy) =>
+        this.fireShot(from, angle, enemy.def, weakenFactor(enemy.status, this.sim));
       e.onTelegraph = () => sfx.telegraph();
       this.enemies.push(e);
     }
@@ -456,6 +506,8 @@ export class RunScene extends Phaser.Scene {
     chooseBoon(this.run, offer);
     session.snapshotRun(this.run);
     this.profile = buildProfile(this.run.boons);
+    this.applyProfile();
+    this.aegisLeft = Math.max(this.aegisLeft, this.profile.aegis);
     this.choosing = false;
     this.nextWaveAt = this.sim + 600;
     this.juice.burst(this.player.x, this.player.y, GODS[getBoonGod(offer)].color, 24);
@@ -475,7 +527,60 @@ export class RunScene extends Phaser.Scene {
       sfx.freeze();
       this.juice.burst(e.x, e.y, FX.ice, 10);
     }
+    if (fx.judge) applyJudge(e.status, this.sim, fx.judge.bonus, fx.judge.durationMs);
+    if (fx.weaken) applyWeaken(e.status, this.sim, fx.weaken.reduction, fx.weaken.durationMs);
+    if (fx.curse) applyCurse(e.status, this.sim, fx.curse.damage, fx.curse.radius);
+    if (fx.stun && Math.random() < fx.stun.chance) this.stun(e, fx.stun.durationMs);
     this.checkThermalShock(e);
+  }
+
+  /** Étourdit (Thor) ; sur un boss, ce n'est qu'un court sursaut. */
+  private stun(e: Hittable, durationMs: number): void {
+    applyStun(e.status, this.sim, e === this.boss ? Math.min(durationMs, 400) : durationMs);
+    this.juice.burst(e.x, e.y - e.radius, 0xf0a860, 6);
+  }
+
+  /** Les dons du profil qui changent Ash lui-même (Bastet : vitesse, dash). */
+  private applyProfile(): void {
+    this.player.speedMul = 1 + this.profile.speed;
+    this.player.dashCooldownMul = Math.max(0.3, 1 - (this.profile.on.dash.dashCooldown ?? 0));
+  }
+
+  /** État de la cible pour les bonus de dégâts des dons. */
+  private targetState(e: Hittable) {
+    return {
+      burning: isBurning(e.status, this.sim),
+      chilled: isFrozen(e.status, this.sim) || this.sim < e.status.chillUntil,
+      stunned: isStunned(e.status, this.sim),
+      far: Math.hypot(e.x - this.player.x, e.y - this.player.y) > FAR_DISTANCE,
+      judged: judgedBonus(e.status, this.sim),
+    };
+  }
+
+  /** Flèches d'Artémis : vers les ennemis visibles les plus proches. */
+  private fireArrows(arrows: NonNullable<HitEffects['arrows']>, id: number): void {
+    const visible = this.targets
+      .filter((t) => t.alive && this.isOnScreen(t))
+      .sort(
+        (a, b) =>
+          Math.hypot(a.x - this.player.x, a.y - this.player.y) -
+          Math.hypot(b.x - this.player.x, b.y - this.player.y),
+      );
+    if (visible.length === 0) return;
+    for (let i = 0; i < arrows.count; i++) {
+      const t = visible[i % visible.length];
+      if (!t) continue;
+      const angle =
+        Math.atan2(t.y - this.player.y, t.x - this.player.x) + (i >= visible.length ? 0.15 : 0);
+      this.shotsP.fire(
+        this.sim,
+        this.player,
+        angle,
+        { ...ARROW_STEP, projectile: { ...ARROW, damage: arrows.damage } },
+        'boon',
+        id,
+      );
+    }
   }
 
   /** Duo Râ + Skadi : un ennemi gelé qui brûle explose (une fois par gel). */
@@ -517,6 +622,7 @@ export class RunScene extends Phaser.Scene {
       this.lightning.zap(current, next, FX.zap);
       current = { x: next.x, y: next.y };
       this.damageEnemy(next, chain.damage, FX.zapText);
+      if (this.profile.stormStun) this.stun(next, this.profile.stormStun);
     }
     if (hit.size > 1) sfx.zap();
   }
@@ -529,14 +635,37 @@ export class RunScene extends Phaser.Scene {
       if (!e.alive) continue;
       if (Math.hypot(e.x - at.x, e.y - at.y) > radius + e.radius) continue;
       this.damageEnemy(e, damage, FX.zapText);
+      if (this.profile.stormStun) this.stun(e, this.profile.stormStun);
     }
   }
 
   private dashEffects(): void {
     const fx = this.profile.on.dash;
     const at = { x: this.player.x, y: this.player.y };
-    if (fx.burn || fx.chill) {
-      this.lightning.ring(at, DASH_AURA_RADIUS, fx.burn ? FX.burn : FX.ice);
+    if (fx.deflect) this.deflectShots(at, fx.deflect);
+    if (fx.arrows) this.fireArrows(fx.arrows, -1);
+    if (fx.shockwave) {
+      const wave = fx.shockwave;
+      this.lightning.ring(at, wave.radius, 0xf0a860);
+      this.juice.shake(0.003);
+      for (const e of this.targets) {
+        if (!e.alive) continue;
+        if (Math.hypot(e.x - at.x, e.y - at.y) > wave.radius + e.radius) continue;
+        this.damageEnemy(e, wave.damage, '#ffd8b0');
+        if (e.alive) e.hit(this.sim, at, wave.knockback);
+      }
+    }
+    if (fx.burn || fx.chill || fx.judge || fx.curse || fx.weaken || fx.stun) {
+      const color = fx.burn
+        ? FX.burn
+        : fx.chill
+          ? FX.ice
+          : fx.judge
+            ? GODS.anubis.color
+            : fx.curse
+              ? GODS.hel.color
+              : 0xffffff;
+      this.lightning.ring(at, DASH_AURA_RADIUS, color);
       for (const e of this.targets) {
         if (!e.alive) continue;
         if (Math.hypot(e.x - at.x, e.y - at.y) > DASH_AURA_RADIUS + e.radius) continue;
@@ -547,6 +676,18 @@ export class RunScene extends Phaser.Scene {
       const target = this.nearestEnemy(at, DASH_BOLT_RANGE);
       if (target) this.lightningBolt(target, fx.bolt.damage, fx.bolt.radius);
     }
+  }
+
+  /** Athéna : le dash détruit les projectiles ennemis proches. */
+  private deflectShots(at: Vec2, radius: number): void {
+    for (const s of this.shots) {
+      if (!s.sprite.active) continue;
+      if (Math.hypot(s.sprite.x - at.x, s.sprite.y - at.y) > radius) continue;
+      this.juice.burst(s.sprite.x, s.sprite.y, GODS.athena.color, 6);
+      s.sprite.setActive(false).setVisible(false);
+      bodyOf(s.sprite).enable = false;
+    }
+    this.lightning.ring(at, radius, GODS.athena.color);
   }
 
   private nearestEnemy(at: { x: number; y: number }, range: number): Hittable | undefined {
@@ -566,10 +707,7 @@ export class RunScene extends Phaser.Scene {
   /** Dégâts venus d'un don (foudre, explosion) : bonus selon l'état de la cible, mort éventuelle. */
   private damageEnemy(e: Hittable, base: number, color: string): void {
     if (!e.alive) return;
-    const mult = damageMultiplier(this.profile, {
-      burning: isBurning(e.status, this.sim),
-      chilled: isFrozen(e.status, this.sim) || this.sim < e.status.chillUntil,
-    });
+    const mult = damageMultiplier(this.profile, this.targetState(e));
     const { dealt, killed } = applyDamage(e.health, base * mult);
     e.hit(this.sim, this.player, 0);
     this.juice.damageNumber(e.x, e.y - e.radius, dealt, color);
@@ -850,17 +988,18 @@ export class RunScene extends Phaser.Scene {
     // Un seul éclair en chaîne par coup, même si le coup touche plusieurs ennemis.
     const firstHit = this.lastChainSwing !== hit.id;
     this.lastChainSwing = hit.id;
-    const mult = damageMultiplier(this.profile, {
-      burning: isBurning(e.status, this.sim),
-      chilled: isFrozen(e.status, this.sim) || this.sim < e.status.chillUntil,
-    });
+    const mult = damageMultiplier(this.profile, this.targetState(e));
     const at = { x: e.x, y: e.y };
+    // Critique (Bastet) : dégâts doublés, ou plus avec « Griffes affûtées ».
+    const critChance = (fx.crit ?? 0) + (hit.kind === 'super' ? 0 : this.profile.critAll);
+    const crit = critChance > 0 && Math.random() < critChance;
+    const critMult = crit ? 2 + this.profile.critDamage : 1;
     // Bouclier frontal (Einherjar, Héraut) : le coup est presque entièrement bloqué, sans effet de don.
     const blocked = e instanceof Enemy && e.blocks(hit.from, this.sim);
     const shieldFactor = blocked && e instanceof Enemy ? (e.def.shield?.blocked ?? 1) : 1;
     const { dealt, killed } = applyDamage(
       e.health,
-      hit.damage * this.weaponMultiplier(hit.kind) * mult * shieldFactor,
+      hit.damage * this.weaponMultiplier(hit.kind) * mult * shieldFactor * critMult,
     );
     if (blocked) {
       e.hit(this.sim, hit.from, hit.knockback * 0.3);
@@ -871,14 +1010,24 @@ export class RunScene extends Phaser.Scene {
       return;
     }
     e.hit(this.sim, hit.from, hit.knockback);
-    this.juice.hitstop(killed ? hit.hitstopMs + 30 : hit.hitstopMs);
-    this.juice.shake(hit.shake);
-    this.juice.burst(e.x, e.y, 0xffe9d6, hit.heavy ? 10 : 6);
-    this.juice.damageNumber(e.x, e.y - e.radius, dealt);
+    this.juice.hitstop(killed || crit ? hit.hitstopMs + 30 : hit.hitstopMs);
+    this.juice.shake(crit ? Math.max(hit.shake, 0.003) : hit.shake);
+    this.juice.burst(e.x, e.y, crit ? GODS.bastet.color : 0xffe9d6, hit.heavy || crit ? 10 : 6);
+    this.juice.damageNumber(e.x, e.y - e.radius, dealt, crit ? '#e8ff9a' : undefined);
+    // Jugement d'Anubis : exécution des ennemis (hors boss) sous le seuil de vie.
+    let dead = killed;
+    if (!dead && fx.execute && e !== this.boss && e.health.hp / e.health.maxHp <= fx.execute) {
+      applyDamage(e.health, e.health.hp);
+      dead = true;
+      this.juice.burst(e.x, e.y, GODS.anubis.color, 14);
+    }
+    if (fx.lifeOnHit) this.healPlayer(fx.lifeOnHit);
+    if (fx.barrier) this.barrier = Math.max(this.barrier, fx.barrier);
+    if (fx.arrows && firstHit) this.fireArrows(fx.arrows, hit.id);
     if (hit.kind !== 'super')
       this.run.superGauge = gainSuper(this.run.superGauge, dealt * (1 + this.forge.superGain));
-    sfx.hit(hit.heavy);
-    if (killed) this.killEnemy(e);
+    sfx.hit(hit.heavy || crit);
+    if (dead) this.killEnemy(e);
     else this.applyHitEffects(e, fx);
     if (fx.chain && firstHit) this.chainLightning(e, fx.chain);
     if (fx.bolt) this.lightningBolt(at, fx.bolt.damage, fx.bolt.radius);
@@ -889,7 +1038,12 @@ export class RunScene extends Phaser.Scene {
    * tire Ash vers lui. Dans les deux cas le coup fait aussi des dégâts.
    */
   private grapple(target: Hittable, hit: ShotHit): void {
-    this.weaponHit(target, { ...hit, knockback: 0, hitstopMs: 40 });
+    this.weaponHit(target, {
+      ...hit,
+      kind: hit.kind === 'boon' ? 'power' : hit.kind,
+      knockback: 0,
+      hitstopMs: 40,
+    });
     if (!target.alive) return;
     const small = target instanceof Enemy && !target.def.elite && target.radius <= 9;
     if (small) {
@@ -916,7 +1070,41 @@ export class RunScene extends Phaser.Scene {
     }
     this.juice.burst(e.x, e.y, e.def.color, 16);
     sfx.kill();
+    if (this.profile.healOnKill) this.healPlayer(this.profile.healOnKill);
+    const cursed = isCursed(e.status, this.sim);
+    const curse = { damage: e.status.curseDamage, radius: e.status.curseRadius, x: e.x, y: e.y };
     e.deactivate();
+    if (cursed) this.curseExplosion(curse);
+  }
+
+  /** Malédiction de Hel : l'ennemi maudit explose à sa mort. */
+  private curseExplosion(c: { damage: number; radius: number; x: number; y: number }): void {
+    this.lightning.ring(c, c.radius, GODS.hel.color);
+    this.juice.burst(c.x, c.y, GODS.hel.color, 14);
+    sfx.explode();
+    for (const other of this.targets) {
+      if (!other.alive) continue;
+      if (Math.hypot(other.x - c.x, other.y - c.y) > c.radius + other.radius) continue;
+      this.damageEnemy(other, c.damage, '#d8d0f0');
+      // Duo « Jugement dernier » : l'explosion exécute les ennemis affaiblis (hors boss).
+      const day = this.profile.judgementDay;
+      if (
+        day &&
+        other.alive &&
+        other !== this.boss &&
+        other.health.hp / other.health.maxHp <= day
+      ) {
+        applyDamage(other.health, other.health.hp);
+        this.killEnemy(other);
+      }
+    }
+  }
+
+  private healPlayer(amount: number): void {
+    const healed = Math.min(this.run.maxHp - this.run.hp, Math.round(amount));
+    if (healed <= 0) return;
+    this.run.hp += healed;
+    this.juice.damageNumber(this.player.x, this.player.y - 12, healed, FX.heal);
   }
 
   private resolveEnemyAttacks(alive: readonly Enemy[]): void {
@@ -957,14 +1145,14 @@ export class RunScene extends Phaser.Scene {
     }
   }
 
-  private fireShot(from: Vec2, angle: number, def: EnemyDef): void {
+  private fireShot(from: Vec2, angle: number, def: EnemyDef, factor = 1): void {
     if (def.attack.kind !== 'shot') return;
     let shot = this.shots.find((s) => !s.sprite.active);
     if (!shot) {
       shot = { sprite: this.physics.add.image(0, 0, 'shot').setDepth(15), damage: 0, source: def };
       this.shots.push(shot);
     }
-    shot.damage = def.damage;
+    shot.damage = Math.max(1, Math.round(def.damage * factor));
     shot.source = def;
     const speed = def.attack.projectileSpeed;
     shot.sprite.setPosition(from.x, from.y).setActive(true).setVisible(true).setRotation(angle);
@@ -1001,6 +1189,28 @@ export class RunScene extends Phaser.Scene {
 
   private hurtPlayer(amount: number, from: Vec2, sourceNameKey: string): void {
     if (this.leaving) return;
+    // Athéna : un ennemi affaibli frappe moins fort ; l'égide bloque ; le bouclier absorbe.
+    if (from instanceof Enemy)
+      amount = Math.max(1, Math.round(amount * weakenFactor(from.status, this.sim)));
+    if (this.aegisLeft > 0) {
+      this.aegisLeft--;
+      this.player.takeHit(this.sim, from);
+      this.lightning.ring(this.player, 22, GODS.athena.color);
+      this.juice.burst(this.player.x, this.player.y, GODS.athena.color, 12);
+      sfx.block();
+      return;
+    }
+    if (this.barrier > 0) {
+      const absorbed = Math.min(this.barrier, amount);
+      this.barrier -= absorbed;
+      amount -= absorbed;
+      this.juice.burst(this.player.x, this.player.y, GODS.athena.color, 6);
+      if (amount <= 0) {
+        this.player.takeHit(this.sim, from);
+        sfx.block();
+        return;
+      }
+    }
     const health = { hp: this.run.hp, maxHp: this.run.maxHp };
     // Bénédiction du Phénix : dégâts reçus réduits (option, sans jugement).
     const reduction = assistReduction(settings.assist, session.save.meta.assistDeaths);
@@ -1014,6 +1224,14 @@ export class RunScene extends Phaser.Scene {
     this.juice.damageNumber(this.player.x, this.player.y - 10, dealt, '#ff6f96');
     sfx.hurt();
     this.ui.flashHurt();
+    if (killed && this.profile.lastBreath > 0 && !this.run.lastBreathUsed) {
+      // Hel : « Dernier souffle », une fois par run.
+      this.run.lastBreathUsed = true;
+      this.run.hp = Math.min(this.run.maxHp, this.profile.lastBreath);
+      this.ui.showBanner(t('boon.hel_last'), '');
+      this.juice.burst(this.player.x, this.player.y, GODS.hel.color, 30);
+      return;
+    }
     if (killed) {
       this.die(t(sourceNameKey as TextKey));
       return;
@@ -1043,7 +1261,7 @@ export class RunScene extends Phaser.Scene {
       this.addDoor('boss', ARENA.centerX);
       return;
     }
-    const [a, b] = rollDoors(this.rng, 2);
+    const [a, b] = rollDoors(this.rng, 2, biome.pantheon);
     if (a) this.addDoor(a, ARENA.centerX - 120);
     if (b) this.addDoor(b, ARENA.centerX + 120);
   }

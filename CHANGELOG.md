@@ -2,6 +2,22 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.10.0 — Neuf dieux
+
+- **6 nouveaux dieux**, chacun avec 4 dons :
+  - **Anubis** (chacal) : il exécute les ennemis affaiblis (hors boss) ; son dash juge les ennemis (ils prennent plus de dégâts) ; chaque ennemi vaincu te soigne.
+  - **Bastet** (œil de chat) : coups critiques (dégâts doublés), course plus rapide, dash qui se recharge plus vite.
+  - **Athéna** (bouclier) : l'**Égide** bloque le premier coup reçu dans chaque salle ; ennemis affaiblis ; bouclier de PV ; dash qui détruit les projectiles.
+  - **Artémis** (croissant de lune) : des flèches partent toutes seules vers les ennemis ; bonus contre les ennemis éloignés.
+  - **Thor** (marteau) : il étourdit (petites étoiles au-dessus de l'ennemi, qui s'arrête) ; son dash repousse tout autour.
+  - **Hel** (demi-visage) : les ennemis maudits explosent à leur mort ; soin ; et **Dernier souffle** : une fois par run, un coup mortel te laisse en vie.
+- **3 nouveaux duos** : Tempête d'Asgard (Zeus + Thor), Jugement dernier (Anubis + Hel), Chasse nocturne (Bastet + Artémis).
+- **3 nouvelles amplifications** : Égide renforcée, Mjölnir chargé, Griffes affûtées.
+- Les dieux du biome apparaissent plus souvent : les **nordiques** au Givre-Serveur, les **grecs** dans l'Olympe.
+- Ta sauvegarde passe au nouveau format **sans rien perdre**.
+
+**Quoi tester** : fais quelques runs et essaie des dieux différents. Lequel préfères-tu maintenant ? Un don te paraît-il trop fort ?
+
 ## 0.9.0 — Quatre nouvelles armes
 
 - **4 nouvelles armes**, à débloquer chez **Brokk** avec les pièces d'arme. Une arme verrouillée renvoie vers la forge depuis la Cage.

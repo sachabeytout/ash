@@ -101,7 +101,7 @@ L'Oiseleur le laisse s'évader, encore et encore.
 | 6   | **Gleipnir** (chaîne de plasma)  | **Grappin** : attire les petits ennemis, ou tire Ash vers les gros. Contrôle de foule et mobilité.                                      |
 | 7   | **Lame de l'Aube** — légendaire  | **Chevalier** : épée longue + garde. Lente et lourde ; la puissante = **parade** puis riposte dévastatrice. Débloquée à la 5e victoire. |
 
-## 4. Dieux 🟡 (3 par panthéon ; Râ, Zeus, Skadi dans le prototype)
+## 4. Dieux 🟡 (3 par panthéon ; les 9 sont en jeu depuis la 0.10.0)
 
 | Dieu    | Panthéon | Identité mécanique                       | M1  |
 | ------- | -------- | ---------------------------------------- | --- |
@@ -117,6 +117,20 @@ L'Oiseleur le laisse s'évader, encore et encore.
 
 Duo M1 : Râ + Skadi = **Choc thermique** (un ennemi gelé qui brûle explose).
 Amplification M1 : **Soleil de midi** (la brûlure de Râ dure 50 % plus longtemps).
+
+### Dons des 6 autres dieux (0.10.0)
+
+| Dieu    | Attaque                  | Puissante              | Dash                       | Passif                 |
+| ------- | ------------------------ | ---------------------- | -------------------------- | ---------------------- |
+| Anubis  | Exécution < 10 %         | Exécution < 20 %       | Jugement (+25 % de dégâts) | Soin à chaque ennemi   |
+| Bastet  | Critique 10 %            | Critique 20 %          | Recharge du dash −25 %     | Vitesse +8 %           |
+| Athéna  | Affaiblit (−20 % dégâts) | Bouclier de 6 PV       | Détruit les projectiles    | Égide (1 coup / salle) |
+| Artémis | 1 flèche                 | 3 flèches              | 3 flèches                  | +15 % contre les loin  |
+| Thor    | Étourdit (12 %)          | Étourdit (700 ms)      | Onde qui repousse          | +25 % contre étourdis  |
+| Hel     | Maudit (explosion)       | Soin par ennemi touché | Maudit autour              | Dernier souffle        |
+
+Duos : Tempête d'Asgard (Zeus + Thor), Jugement dernier (Anubis + Hel), Chasse nocturne (Bastet + Artémis).
+Amplifications : Égide renforcée, Mjölnir chargé, Griffes affûtées.
 
 ### Dons M1 (0.3.0) — valeurs : `src/data/boons.ts`
 
