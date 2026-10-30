@@ -4,7 +4,8 @@ test('le jeu démarre, puis on entre dans la cage', async ({ page }, testInfo) =
   const errors: string[] = [];
   page.on('pageerror', (err) => errors.push(err.message));
 
-  await page.goto('/');
+  // Chemins relatifs : le jeu peut être servi sous un sous-chemin (GitHub Pages).
+  await page.goto('./');
   await expect(page.locator('body')).toHaveAttribute('data-scene', 'title');
   await expect(page.locator('#game canvas')).toBeVisible();
   await page.waitForTimeout(800); // fin du fondu d'entrée
@@ -19,7 +20,7 @@ test('le jeu démarre, puis on entre dans la cage', async ({ page }, testInfo) =
 });
 
 test('le manifeste PWA est servi', async ({ request }) => {
-  const res = await request.get('/manifest.webmanifest');
+  const res = await request.get('manifest.webmanifest');
   expect(res.ok()).toBe(true);
   const manifest = (await res.json()) as { display: string; orientation: string };
   expect(manifest.display).toBe('fullscreen');

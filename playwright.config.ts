@@ -1,19 +1,21 @@
 import { defineConfig, devices } from '@playwright/test';
 
-// Le smoke test tourne sur le build de production (comme en ligne).
+// Le smoke test tourne sur le build de production (comme en ligne), sous le même sous-chemin.
+const baseURL = `http://localhost:4173${process.env.BASE_PATH ?? '/'}`;
+
 export default defineConfig({
   testDir: 'tests/e2e',
   timeout: 30_000,
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? 'github' : 'list',
   use: {
-    baseURL: 'http://localhost:4173',
+    baseURL,
     serviceWorkers: 'block',
     locale: 'fr-FR',
   },
   webServer: {
     command: 'npm run build && npm run preview -- --port 4173 --strictPort',
-    url: 'http://localhost:4173',
+    url: baseURL,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
   },
