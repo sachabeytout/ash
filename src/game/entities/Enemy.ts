@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { hitFlash } from '../fx/hitFlash';
 import { AFFIXES, type AffixId } from '../../data/affixes';
 import { steerAround, type Rect } from '../../core/arena/obstacles';
 import type { Health } from '../../core/combat/health';
@@ -291,7 +292,7 @@ export class Enemy {
     this.sprite.setFlipX(Math.cos(this.facing) < 0);
 
     const flashing = now < this.flashUntil;
-    if (flashing) this.sprite.setTint(0xffffff).setTintMode(Phaser.TintModes.FILL);
+    if (flashing) hitFlash(this.sprite);
     else this.sprite.clearTint().setTintMode(Phaser.TintModes.MULTIPLY);
     this.mark.setPosition(this.x, this.y - def.radius - 4);
     this.drawStatus(now, frozen, stunned);

@@ -2,6 +2,12 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.22.0 — Réduire les flashs
+
+- **Nouvelle option « Réduire les flashs »** (Options, accessibilité) : quand tu es touché, l'écran rougit beaucoup moins, et un ennemi touché s'assombrit au lieu de flasher en blanc. Désactivée par défaut.
+
+**Quoi tester** : rien de spécial, sauf si les flashs te fatiguent les yeux.
+
 ## 0.21.0 — Les Marques de l'Oiseleur
 
 - **Ennemis marqués** à partir du **Givre-Serveur** (2e biome), de plus en plus fréquents ensuite. Chaque marque a sa propre forme :

@@ -485,5 +485,6 @@
   "codex.tab.memory": "Memories",
   "codex.memory.none": "No memories yet. Dialogues from the Cage appear here once heard.",
   "codex.memory.replay": "Replay",
-  "affix.volatile": "Unstable blast"
+  "affix.volatile": "Unstable blast",
+  "options.reduceFlashes": "Reduce flashes"
 }

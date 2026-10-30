@@ -11,7 +11,7 @@ type Row =
   | { kind: 'step'; key: 'masterVolume' | 'sfxVolume' | 'musicVolume' | 'touchButtonScale' }
   | {
       kind: 'toggle';
-      key: 'screenShake' | 'vibration' | 'aimAssist' | 'damageNumbers' | 'assist';
+      key: 'screenShake' | 'reduceFlashes' | 'vibration' | 'aimAssist' | 'damageNumbers' | 'assist';
     }
   | { kind: 'choice'; key: 'joystick' | 'quality' | 'language'; values: readonly string[] };
 
@@ -22,6 +22,7 @@ const ROWS: readonly Row[] = [
   { kind: 'choice', key: 'quality', values: ['auto', 'low', 'medium', 'high'] },
   { kind: 'choice', key: 'language', values: ['auto', 'fr', 'en'] },
   { kind: 'toggle', key: 'screenShake' },
+  { kind: 'toggle', key: 'reduceFlashes' },
   { kind: 'toggle', key: 'vibration' },
   { kind: 'toggle', key: 'aimAssist' },
   { kind: 'toggle', key: 'damageNumbers' },
@@ -68,7 +69,7 @@ export class OptionsPanel {
     const cx = cam.midPoint.x;
     const cy = cam.midPoint.y;
     const w = Math.min(600, cam.width / cam.zoom - 20);
-    const h = 336;
+    const h = 344;
     const left = cx - w / 2;
     const top = cy - h / 2;
 
@@ -93,7 +94,7 @@ export class OptionsPanel {
 
     // Deux colonnes de réglages.
     const colW = (w - 28) / 2;
-    const rowH = 44;
+    const rowH = 38;
     const perCol = Math.ceil(ROWS.length / 2);
     ROWS.forEach((row, i) => {
       const col = Math.floor(i / perCol);

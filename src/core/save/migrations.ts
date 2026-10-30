@@ -231,6 +231,8 @@ function sanitizeSettings(raw: unknown): Settings {
     sfxVolume: num(s.sfxVolume, d.sfxVolume, 0, 1),
     musicVolume: num(s.musicVolume, d.musicVolume, 0, 1),
     screenShake: bool(s.screenShake, d.screenShake),
+    // Ajouté en 0.22.0 : désactivé par défaut.
+    reduceFlashes: bool(s.reduceFlashes, d.reduceFlashes),
     vibration: bool(s.vibration, d.vibration),
     aimAssist: bool(s.aimAssist, d.aimAssist),
     damageNumbers: bool(s.damageNumbers, d.damageNumbers),

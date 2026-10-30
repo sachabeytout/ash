@@ -7,6 +7,8 @@ export interface Settings {
   sfxVolume: number;
   musicVolume: number;
   screenShake: boolean;
+  /** Accessibilité : flashs plus doux (dégâts reçus, ennemis touchés). */
+  reduceFlashes: boolean;
   vibration: boolean;
   aimAssist: boolean;
   damageNumbers: boolean;
@@ -26,6 +28,7 @@ export const DEFAULT_SETTINGS: Settings = {
   sfxVolume: 0.8,
   musicVolume: 0.6,
   screenShake: true,
+  reduceFlashes: false,
   vibration: true,
   aimAssist: true,
   damageNumbers: true,

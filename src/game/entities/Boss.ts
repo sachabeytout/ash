@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { hitFlash } from '../fx/hitFlash';
 import {
   bossPhase,
   chooseBossAttack,
@@ -256,7 +257,7 @@ export class Boss implements Hittable {
       bodyOf(this.sprite).setVelocity(0, 0);
     }
     this.sprite.setFlipX(Math.cos(this.facing) < 0);
-    if (now < this.flashUntil) this.sprite.setTint(0xffffff).setTintMode(Phaser.TintModes.FILL);
+    if (now < this.flashUntil) hitFlash(this.sprite);
     else this.sprite.clearTint().setTintMode(Phaser.TintModes.MULTIPLY);
     this.mark.setPosition(this.x, this.y - def.radius - 6);
     this.drawStatus(now, frozen);

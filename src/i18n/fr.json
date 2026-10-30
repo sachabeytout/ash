@@ -485,5 +485,6 @@
   "codex.tab.memory": "Souvenirs",
   "codex.memory.none": "Aucun souvenir pour l'instant. Les dialogues de la Cage s'affichent ici une fois entendus.",
   "codex.memory.replay": "Réécouter",
-  "affix.volatile": "Explosion instable"
+  "affix.volatile": "Explosion instable",
+  "options.reduceFlashes": "Réduire les flashs"
 }

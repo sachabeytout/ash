@@ -9,6 +9,7 @@ import { DANGER } from '../entities/Enemy';
 import type { Controls } from '../input/Controls';
 import { sfx } from '../audio/sfx';
 import { telemetry } from '../telemetry';
+import { settings } from '../../core/settings';
 import { drawGodIcon } from '../icons';
 import { TouchControls } from '../input/TouchControls';
 import { FONT_FAMILY } from '../theme';
@@ -257,7 +258,7 @@ export class UiScene extends Phaser.Scene {
 
   flashHurt(): void {
     if (!this.hurtOverlay) return;
-    this.hurtOverlay.setAlpha(0.28);
+    this.hurtOverlay.setAlpha(settings.reduceFlashes ? 0.1 : 0.28);
     this.tweens.add({ targets: this.hurtOverlay, alpha: 0, duration: 260 });
   }
 }
