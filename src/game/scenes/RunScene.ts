@@ -82,6 +82,8 @@ import { Controls } from '../input/Controls';
 import { UiScene, type Indicator } from './UiScene';
 import { finishRun } from '../../core/meta';
 import { recordCodex } from '../../core/codex';
+import { rollAffix, volatileDamage } from '../../core/affixes';
+import { AFFIX_BOUNTY, VOLATILE_BLAST } from '../../data/affixes';
 import { buyItem } from '../../core/shop';
 import { heatModifiers, type HeatModifiers } from '../../core/heat';
 import { assistReduction, reducedDamage } from '../../core/assist';
@@ -236,6 +238,8 @@ export class RunScene extends Phaser.Scene {
   } | null = null;
   /** Piliers et murets de la salle (bloquent les déplacements et les tirs). */
   private obstacles: Rect[] = [];
+  /** Explosions d'ennemis Instables : cercle d'alerte, puis dégâts. */
+  private blasts: { x: number; y: number; at: number; g: Phaser.GameObjects.Graphics }[] = [];
   /** Salle d'évènement : l'objet au centre (s'ouvre quand Ash s'approche ; se réarme quand il s'éloigne). */
   private eventSpot: {
     id: EventId;
@@ -299,6 +303,7 @@ export class RunScene extends Phaser.Scene {
     this.trial = null;
     this.chest = null;
     this.eventSpot = null;
+    this.blasts = [];
     this.autoQuality = newAutoQuality();
     this.roomStart = { elapsed: this.run.elapsedMs, hp: this.run.hp };
     this.drawArena();
@@ -555,6 +560,40 @@ export class RunScene extends Phaser.Scene {
     sfx.boonTaken();
     f.glow.setAlpha(0.15);
     f.g.setAlpha(0.4);
+  }
+
+  // ---------- Marques de l'Oiseleur ----------
+
+  /** Un Instable vaincu : cercle d'alerte (couleur des dangers) qui se remplit, puis explosion. */
+  private armBlast(x: number, y: number): void {
+    const g = this.add.graphics().setDepth(5);
+    this.blasts.push({ x, y, at: this.sim + VOLATILE_BLAST.delayMs, g });
+    sfx.telegraph();
+  }
+
+  private updateBlasts(): void {
+    for (let i = this.blasts.length - 1; i >= 0; i--) {
+      const b = this.blasts[i];
+      if (!b) continue;
+      const left = b.at - this.sim;
+      if (left > 0) {
+        const progress = 1 - left / VOLATILE_BLAST.delayMs;
+        b.g.clear();
+        b.g.lineStyle(1.5, DANGER, 0.9).strokeCircle(b.x, b.y, VOLATILE_BLAST.radius);
+        b.g
+          .fillStyle(DANGER, 0.1 + 0.3 * progress)
+          .fillCircle(b.x, b.y, VOLATILE_BLAST.radius * progress);
+        continue;
+      }
+      b.g.destroy();
+      this.blasts.splice(i, 1);
+      this.juice.burst(b.x, b.y, 0xffa040, 18);
+      sfx.explode();
+      const d = Math.hypot(this.player.x - b.x, this.player.y - b.y);
+      if (d <= VOLATILE_BLAST.radius + PLAYER.radius && !this.player.isInvulnerable(this.sim)) {
+        this.hurtPlayer(volatileDamage(this.run.biome), b, 'affix.volatile');
+      }
+    }
   }
 
   // ---------- Évènement ----------
@@ -1098,6 +1137,7 @@ export class RunScene extends Phaser.Scene {
     this.checkDoors();
     this.updateFountain();
     this.updateTrial();
+    this.updateBlasts();
     this.updateEvent();
     this.updateChest();
     this.ui.showRun(this.run);
@@ -1333,7 +1373,8 @@ export class RunScene extends Phaser.Scene {
       this.pending.splice(i, 1);
       const slot = this.enemies.find((e) => !e.alive);
       if (!slot) continue;
-      slot.activate(s.def, s.x, s.y, this.sim, this.heat.enemyHp, this.heat.enemySpeed);
+      const affix = rollAffix(this.rng, this.run.biome, s.def.elite !== undefined);
+      slot.activate(s.def, s.x, s.y, this.sim, this.heat.enemyHp, this.heat.enemySpeed, affix);
       this.juice.burst(s.x, s.y, s.def.color, 10);
     }
   }
@@ -1486,6 +1527,10 @@ export class RunScene extends Phaser.Scene {
     }
     if (!(e instanceof Enemy)) return;
     recordKill(this.run);
+    if (e.affix) {
+      this.run.shards += AFFIX_BOUNTY;
+      if (e.affix === 'volatile') this.armBlast(e.x, e.y);
+    }
     recordCodex(session.save.meta, `enemy.${e.def.id}`);
     if (e.def.elite) {
       this.run.xp += e.def.elite.xp;

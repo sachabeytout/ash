@@ -484,5 +484,6 @@
   "spark.from": "{from} → {to}",
   "codex.tab.memory": "Souvenirs",
   "codex.memory.none": "Aucun souvenir pour l'instant. Les dialogues de la Cage s'affichent ici une fois entendus.",
-  "codex.memory.replay": "Réécouter"
+  "codex.memory.replay": "Réécouter",
+  "affix.volatile": "Explosion instable"
 }

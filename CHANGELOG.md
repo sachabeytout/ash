@@ -2,6 +2,17 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.21.0 — Les Marques de l'Oiseleur
+
+- **Ennemis marqués** à partir du **Givre-Serveur** (2e biome), de plus en plus fréquents ensuite. Chaque marque a sa propre forme :
+  - **Blindé** (coins blancs autour de l'ennemi) : plus résistant.
+  - **Rapide** (petits chevrons derrière lui) : se déplace plus vite.
+  - **Instable** (couronne de pointes orange) : à sa mort, un **cercle d'alerte** rouge se remplit pendant presque une seconde, puis explose. Sors du cercle !
+- Un ennemi marqué vaincu rapporte **3 éclats** de plus.
+- Jamais sur les élites ni les boss, et aucune marque dans les Bas-Fonds.
+
+**Quoi tester** : reconnais-tu les marques en plein combat ? L'explosion de l'Instable te prend-elle par surprise ?
+
 ## 0.20.0 — Souvenirs
 
 - **Nouvel onglet « Souvenirs »** dans les Archives de Thot (4e onglet, ou touche 4) : tous les dialogues déjà entendus dans la Cage, dans l'ordre.

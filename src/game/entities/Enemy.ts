@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { AFFIXES, type AffixId } from '../../data/affixes';
 import { steerAround, type Rect } from '../../core/arena/obstacles';
 import type { Health } from '../../core/combat/health';
 import {
@@ -42,6 +43,8 @@ export class Enemy {
   private speedMul = 1;
   /** Obstacles de la salle : en poursuite, l'ennemi les contourne. */
   obstacles: readonly Rect[] = [];
+  /** Marque de l'Oiseleur (Blindé, Rapide, Instable) ou aucune. */
+  affix: AffixId | null = null;
   uid = 0;
   health: Health = { hp: 1, maxHp: 1 };
   state: EnemyState = 'dead';
@@ -89,12 +92,22 @@ export class Enemy {
     return this.def.radius;
   }
 
-  activate(def: EnemyDef, x: number, y: number, now: number, hpMul = 1, speedMul = 1): void {
+  activate(
+    def: EnemyDef,
+    x: number,
+    y: number,
+    now: number,
+    hpMul = 1,
+    speedMul = 1,
+    affix: AffixId | null = null,
+  ): void {
     this.def = def;
     this.uid = ++enemyCounter;
-    const maxHp = Math.round(def.maxHp * hpMul);
+    this.affix = affix;
+    const mark = affix ? AFFIXES[affix] : undefined;
+    const maxHp = Math.round(def.maxHp * hpMul * (mark?.hpMul ?? 1));
     this.health = { hp: maxHp, maxHp };
-    this.speedMul = speedMul;
+    this.speedMul = speedMul * (mark?.speedMul ?? 1);
     this.status = newStatus();
     this.state = 'chase';
     this.stateAt = now;
@@ -284,6 +297,46 @@ export class Enemy {
     this.drawStatus(now, frozen, stunned);
   }
 
+  /** Marques : coins de blindage (Blindé), chevrons derrière (Rapide), couronne de pointes (Instable). */
+  private drawAffix(g: Phaser.GameObjects.Graphics, now: number, r: number): void {
+    const x = this.x;
+    const y = this.y;
+    const d = r + 5;
+    if (this.affix === 'armored') {
+      g.lineStyle(2, 0xd8e2ff, 0.9);
+      for (const [sx, sy] of [
+        [-1, -1],
+        [1, -1],
+        [1, 1],
+        [-1, 1],
+      ] as const) {
+        g.lineBetween(x + sx * d, y + sy * d, x + sx * (d - 5), y + sy * d);
+        g.lineBetween(x + sx * d, y + sy * d, x + sx * d, y + sy * (d - 5));
+      }
+    } else if (this.affix === 'swift') {
+      const back = this.facing + Math.PI;
+      g.lineStyle(2, 0x9dffe0, 0.85);
+      for (const k of [0, 1]) {
+        const cx = x + Math.cos(back) * (d + k * 5);
+        const cy = y + Math.sin(back) * (d + k * 5);
+        const a1 = this.facing + 2.4;
+        const a2 = this.facing - 2.4;
+        g.lineBetween(cx, cy, cx + Math.cos(a1) * 4, cy + Math.sin(a1) * 4);
+        g.lineBetween(cx, cy, cx + Math.cos(a2) * 4, cy + Math.sin(a2) * 4);
+      }
+    } else if (this.affix === 'volatile') {
+      const spin = now / 600;
+      g.fillStyle(0xffa040, 0.9);
+      for (let i = 0; i < 6; i++) {
+        const a = spin + (i * Math.PI) / 3;
+        const tip = { x: x + Math.cos(a) * (d + 4), y: y + Math.sin(a) * (d + 4) };
+        const l = { x: x + Math.cos(a - 0.25) * d, y: y + Math.sin(a - 0.25) * d };
+        const rr = { x: x + Math.cos(a + 0.25) * d, y: y + Math.sin(a + 0.25) * d };
+        g.fillTriangle(tip.x, tip.y, l.x, l.y, rr.x, rr.y);
+      }
+    }
+  }
+
   /** États visibles par la forme : bloc de glace (gel), flocons (givre), flammèches (brûlure). */
   private drawStatus(now: number, frozen: boolean, stunned: boolean): void {
     const g = this.statusFx.clear();
@@ -296,6 +349,7 @@ export class Enemy {
       g.arc(this.x, this.y, r + 6, this.facing - half, this.facing + half);
       g.strokePath();
     }
+    if (this.affix) this.drawAffix(g, now, r);
     if (this.def.elite) {
       // Élite : anneau pâle et couronne (forme, pas seulement couleur).
       g.lineStyle(1, 0xf0e8ff, 0.7).strokeCircle(this.x, this.y, r + 3);
