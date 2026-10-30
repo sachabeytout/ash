@@ -29,6 +29,7 @@ export class Enemy {
   private readonly statusFx: Phaser.GameObjects.Graphics;
   private readonly hex = Array.from({ length: 6 }, () => new Phaser.Math.Vector2());
   private readonly band = Array.from({ length: 4 }, () => new Phaser.Math.Vector2());
+  private readonly runeSpots: Vec2[] = [0, 1, 2].map(() => ({ x: 0, y: 0 }));
   def!: EnemyDef;
   status: StatusState = newStatus();
   uid = 0;
@@ -148,7 +149,17 @@ export class Enemy {
     else
       switch (this.state) {
         case 'chase': {
-          if (def.attack.kind === 'melee' || def.attack.kind === 'charge') {
+          if (def.attack.kind === 'runes') {
+            // Le gardien avance lentement et pose ses runes de loin.
+            if (dist > 90) {
+              vx = (dx / dist) * def.speed;
+              vy = (dy / dist) * def.speed;
+            }
+            if (canAttack && dist <= def.attack.triggerRange && now >= this.cooldownUntil) {
+              this.placeRunes(target, def.attack);
+              this.startTelegraph(now, toTarget);
+            }
+          } else if (def.attack.kind === 'melee' || def.attack.kind === 'charge') {
             vx = (dx / (dist || 1)) * def.speed;
             vy = (dy / (dist || 1)) * def.speed;
             if (canAttack && dist <= def.attack.triggerRange && now >= this.cooldownUntil)
@@ -171,14 +182,22 @@ export class Enemy {
         }
         case 'telegraph': {
           // Le tireur suit encore sa cible pendant la première moitié, puis la visée se fige : on peut esquiver.
-          if (def.attack.kind !== 'melee' && elapsed < def.telegraphMs * 0.5)
+          if (
+            (def.attack.kind === 'shot' || def.attack.kind === 'charge') &&
+            elapsed < def.telegraphMs * 0.5
+          )
             this.facing = toTarget;
           this.drawTelegraph(Math.min(1, elapsed / def.telegraphMs));
           if (elapsed >= def.telegraphMs) {
             this.telegraph.clear();
             this.mark.setVisible(false);
             if (def.attack.kind === 'shot') {
-              this.onShoot({ x: this.x, y: this.y }, this.facing, this);
+              const count = def.attack.count ?? 1;
+              const spread = ((def.attack.spreadDeg ?? 0) * Math.PI) / 180;
+              for (let i = 0; i < count; i++) {
+                const offset = count > 1 ? (i / (count - 1) - 0.5) * spread : 0;
+                this.onShoot({ x: this.x, y: this.y }, this.facing + offset, this);
+              }
               this.setState('recover', now);
             } else {
               this.attackLanded = false;
@@ -192,6 +211,8 @@ export class Enemy {
             const speed = def.attack.lunge / (Math.max(1, def.activeMs) / 1000);
             vx = Math.cos(this.facing) * speed;
             vy = Math.sin(this.facing) * speed;
+            this.drawStrike();
+          } else if (def.attack.kind === 'runes') {
             this.drawStrike();
           } else if (def.attack.kind === 'charge') {
             const speed = def.attack.distance / (Math.max(1, def.activeMs) / 1000);
@@ -235,6 +256,13 @@ export class Enemy {
     const g = this.statusFx.clear();
     const s = this.status;
     const r = this.def.radius;
+    if (this.def.shield) {
+      // Bouclier : arc épais devant l'ennemi (on voit de quel côté il protège).
+      const half = (this.def.shield.arcDeg * Math.PI) / 360;
+      g.lineStyle(3, 0xe8f2ff, frozen ? 0.3 : 0.9).beginPath();
+      g.arc(this.x, this.y, r + 6, this.facing - half, this.facing + half);
+      g.strokePath();
+    }
     if (this.def.elite) {
       // Élite : anneau pâle et couronne (forme, pas seulement couleur).
       g.lineStyle(1, 0xf0e8ff, 0.7).strokeCircle(this.x, this.y, r + 3);
@@ -305,16 +333,54 @@ export class Enemy {
         0.12 + 0.3 * progress,
         progress,
       );
+    } else if (def.attack.kind === 'runes') {
+      // Cercles runiques : contour, puis remplissage jusqu'à l'explosion.
+      const r = def.attack.radius;
+      g.lineStyle(1.5, DANGER, 0.9).fillStyle(DANGER, 0.12 + 0.3 * progress);
+      for (const spot of this.runeSpots) {
+        g.strokeCircle(spot.x, spot.y, r).fillCircle(spot.x, spot.y, r * progress);
+        g.lineBetween(spot.x - r * 0.4, spot.y, spot.x + r * 0.4, spot.y);
+        g.lineBetween(spot.x, spot.y - r * 0.4, spot.x, spot.y + r * 0.4);
+      }
     } else {
-      const len = 400;
+      const count = def.attack.count ?? 1;
+      // Éventail : lignes plus courtes, pour ne pas couvrir tout l'écran.
+      const len = count > 1 ? 220 : 400;
+      const spread = ((def.attack.spreadDeg ?? 0) * Math.PI) / 180;
       g.lineStyle(1 + progress * 2, DANGER, 0.35 + 0.5 * progress);
-      g.lineBetween(
-        this.x,
-        this.y,
-        this.x + Math.cos(this.facing) * len,
-        this.y + Math.sin(this.facing) * len,
-      );
+      for (let i = 0; i < count; i++) {
+        const a = this.facing + (count > 1 ? (i / (count - 1) - 0.5) * spread : 0);
+        g.lineBetween(this.x, this.y, this.x + Math.cos(a) * len, this.y + Math.sin(a) * len);
+      }
     }
+  }
+
+  /** Positions des runes : sous Ash et autour (fixées au début du télégraphe : on peut en sortir). */
+  private placeRunes(target: Vec2, attack: { count: number; spread: number }): void {
+    this.runeSpots.forEach((spot, i) => {
+      if (i >= attack.count) return;
+      const a = (i / attack.count) * Math.PI * 2 + Math.random() * 0.6;
+      const d = i === 0 ? 0 : attack.spread;
+      spot.x = target.x + Math.cos(a) * d;
+      spot.y = target.y + Math.sin(a) * d;
+    });
+  }
+
+  /** Ash est-il dans une rune qui explose ? */
+  runeHits(target: Vec2, targetRadius: number): boolean {
+    if (this.def.attack.kind !== 'runes') return false;
+    const r = this.def.attack.radius + targetRadius;
+    return this.runeSpots.some((s) => Math.hypot(target.x - s.x, target.y - s.y) < r);
+  }
+
+  /** Le bouclier frontal arrête-t-il un coup venu de `from` ? */
+  blocks(from: Vec2, now: number): boolean {
+    const shield = this.def.shield;
+    if (!shield || isFrozen(this.status, now)) return false;
+    const toAttacker = Math.atan2(from.y - this.y, from.x - this.x);
+    let diff = Math.abs(toAttacker - this.facing) % (Math.PI * 2);
+    if (diff > Math.PI) diff = Math.PI * 2 - diff;
+    return diff <= (shield.arcDeg * Math.PI) / 360;
   }
 
   /** Bande rectangulaire devant l'ennemi (charge), remplie sur `fill` de sa longueur. */
@@ -345,6 +411,12 @@ export class Enemy {
   }
 
   private drawStrike(): void {
+    if (this.def.attack.kind === 'runes') {
+      const g = this.telegraph.clear();
+      g.fillStyle(DANGER, 0.7);
+      for (const spot of this.runeSpots) g.fillCircle(spot.x, spot.y, this.def.attack.radius);
+      return;
+    }
     if (this.def.attack.kind === 'charge') {
       const g = this.telegraph.clear();
       g.fillStyle(DANGER, 0.55).fillCircle(this.x, this.y, this.def.radius + 4);

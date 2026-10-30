@@ -186,6 +186,11 @@ export const sfx = {
     if (!throttle('superReady', 500)) return;
     tone('sine', 880, 1320, 0.25, 0.14);
   },
+  block() {
+    if (!throttle('block', 80)) return;
+    tone('square', 1400, 900, 0.07, 0.15);
+    noise('highpass', 3000, 6000, 0.06, 0.2);
+  },
   tap() {
     if (!throttle('tap', 60)) return;
     tone('sine', 660, 880, 0.06, 0.15);

@@ -61,14 +61,14 @@ export const BIOMES: readonly BiomeDef[] = [
     nameKey: 'biome.frostserver',
     rooms: 10,
     roster: [
-      { enemy: 'prowler', fromRoom: 1 },
-      { enemy: 'gunner', fromRoom: 1 },
-      { enemy: 'brute', fromRoom: 3 },
+      { enemy: 'wolfbot', fromRoom: 1 },
+      { enemy: 'frostcaster', fromRoom: 2 },
+      { enemy: 'runewarden', fromRoom: 4 },
     ],
     waveBudget: { base: 3, perRoom: 0.5 },
     wavesPerRoom: { min: 2, max: 3 },
     eliteRooms: [4, 8],
-    elite: 'stalker',
+    elite: 'einherjar',
     boss: 'ammit',
     music: 'frost',
     theme: {

@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { gainSuper, superReady } from '../../src/core/combat/superGauge';
+import { ENEMIES } from '../../src/data/enemies';
+import { allDictionaries } from '../../src/i18n';
 import { edgeIndicator } from '../../src/core/geometry';
 import { WEAPONS } from '../../src/data/weapons';
 import {
@@ -137,5 +139,15 @@ describe('indicateurs hors écran', () => {
     const p = edgeIndicator(view, { x: -500, y: 900 }, 10);
     expect(p?.x).toBeGreaterThanOrEqual(10);
     expect(p?.y).toBeLessThanOrEqual(90);
+  });
+});
+
+describe('ennemis', () => {
+  it('chaque ennemi a un nom traduit et un télégraphe d’au moins 0,5 s', () => {
+    for (const e of Object.values(ENEMIES)) {
+      for (const dict of Object.values(allDictionaries))
+        expect(dict[e.nameKey], e.id).toBeDefined();
+      expect(e.telegraphMs, e.id).toBeGreaterThanOrEqual(500);
+    }
   });
 });

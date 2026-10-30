@@ -1,4 +1,12 @@
-export type EnemyId = 'prowler' | 'gunner' | 'brute' | 'stalker';
+export type EnemyId =
+  | 'prowler'
+  | 'gunner'
+  | 'brute'
+  | 'stalker'
+  | 'wolfbot'
+  | 'frostcaster'
+  | 'runewarden'
+  | 'einherjar';
 
 /** Attaque au corps à corps : télégraphe (zone qui se remplit) puis coup. */
 interface MeleeAttack {
@@ -15,6 +23,19 @@ interface ShotAttack {
   preferredDistance: number;
   projectileSpeed: number;
   projectileRadius: number;
+  /** Plusieurs projectiles en éventail (une ligne de visée par projectile). */
+  count?: number;
+  spreadDeg?: number;
+}
+
+/** Runes : des cercles apparaissent sous Ash et autour, puis explosent. On sort des cercles. */
+interface RunesAttack {
+  kind: 'runes';
+  triggerRange: number;
+  count: number;
+  radius: number;
+  /** Écart des cercles autour de la position d'Ash (px). */
+  spread: number;
 }
 
 /** Charge : une bande au sol montre la trajectoire, puis l'ennemi fonce en ligne droite. */
@@ -42,11 +63,13 @@ export interface EnemyDef {
   poise: number;
   /** Couleur du corps (froide) ; les attaques ennemies sont toujours rouge-magenta. */
   color: number;
-  attack: MeleeAttack | ShotAttack | ChargeAttack;
+  attack: MeleeAttack | ShotAttack | ChargeAttack | RunesAttack;
   /** Coût dans le « budget » d'une vague. */
   threat: number;
   /** Élite : plus coriace, marqué d'une couronne, rapporte de l'XP. */
   elite?: { xp: number };
+  /** Bouclier frontal : les coups venus de face sont presque tous bloqués (il faut le contourner). */
+  shield?: { arcDeg: number; blocked: number };
 }
 
 export const ENEMIES: Record<EnemyId, EnemyDef> = {
@@ -115,5 +138,84 @@ export const ENEMIES: Record<EnemyId, EnemyDef> = {
     attack: { kind: 'charge', triggerRange: 150, distance: 170, width: 18 },
     threat: 4,
     elite: { xp: 15 },
+  },
+
+  // ---------- Givre-Serveur ----------
+  // Loup-relais : rapide et fragile, chasse en meute, morsure bondissante.
+  wolfbot: {
+    id: 'wolfbot',
+    nameKey: 'enemy.wolfbot',
+    maxHp: 26,
+    radius: 7,
+    speed: 96,
+    damage: 7,
+    telegraphMs: 520,
+    activeMs: 120,
+    recoveryMs: 700,
+    cooldownMs: 600,
+    poise: 0,
+    color: 0x9ab4ff,
+    attack: { kind: 'melee', triggerRange: 50, range: 26, arcDeg: 90, lunge: 40 },
+    threat: 1,
+  },
+  // Givreur : trois éclats de glace en éventail.
+  frostcaster: {
+    id: 'frostcaster',
+    nameKey: 'enemy.frostcaster',
+    maxHp: 30,
+    radius: 7,
+    speed: 50,
+    damage: 6,
+    telegraphMs: 850,
+    activeMs: 0,
+    recoveryMs: 600,
+    cooldownMs: 1600,
+    poise: 0,
+    color: 0x6fd6c8,
+    attack: {
+      kind: 'shot',
+      preferredDistance: 115,
+      projectileSpeed: 120,
+      projectileRadius: 3,
+      count: 3,
+      spreadDeg: 26,
+    },
+    threat: 2,
+  },
+  // Gardien runique : lent et solide, ses runes explosent sous les pieds.
+  runewarden: {
+    id: 'runewarden',
+    nameKey: 'enemy.runewarden',
+    maxHp: 110,
+    radius: 10,
+    speed: 36,
+    damage: 12,
+    telegraphMs: 1000,
+    activeMs: 150,
+    recoveryMs: 900,
+    cooldownMs: 1500,
+    poise: 0.8,
+    color: 0x7a9cc6,
+    attack: { kind: 'runes', triggerRange: 170, count: 3, radius: 18, spread: 34 },
+    threat: 3,
+  },
+  // Élite : l'Einherjar, guerrier au bouclier. De face, presque invulnérable ; il faut le prendre à revers.
+  einherjar: {
+    id: 'einherjar',
+    nameKey: 'enemy.einherjar',
+    maxHp: 200,
+    radius: 9,
+    speed: 52,
+    damage: 15,
+    telegraphMs: 850,
+    activeMs: 300,
+    recoveryMs: 1100,
+    cooldownMs: 600,
+    poise: 0.85,
+    color: 0xd0d8ff,
+    attack: { kind: 'charge', triggerRange: 140, distance: 150, width: 20 },
+    threat: 4,
+    elite: { xp: 15 },
+    shield: { arcDeg: 120, blocked: 0.15 },
   },
 };

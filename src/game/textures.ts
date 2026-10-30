@@ -132,6 +132,44 @@ export function ensureGameTextures(scene: Phaser.Scene): void {
     g.fillStyle(0x5a9fae).fillTriangle(4, 8, 10, 2, 12, 10).fillTriangle(4, 36, 10, 42, 12, 34);
   });
 
+  // Givre-Serveur. Loup-relais : tête de loup anguleuse, oreilles en pointe.
+  shapeTexture(scene, 'wolfbot', 16, 16, (g) => {
+    g.fillStyle(0x0d1424).fillTriangle(0, 3, 16, 8, 0, 13).fillRect(0, 3, 6, 10);
+    g.fillStyle(0x9ab4ff).fillTriangle(1, 4, 14, 8, 1, 12);
+    g.fillStyle(0x5a74c0).fillTriangle(1, 4, 4, 0, 6, 5).fillTriangle(1, 12, 4, 16, 6, 11);
+    g.fillStyle(0xeaf2ff).fillRect(6, 6, 2, 1).fillRect(6, 9, 2, 1);
+  });
+  // Givreur : cristal hexagonal, cœur pâle.
+  shapeTexture(scene, 'frostcaster', 16, 16, (g) => {
+    const hex = (r: number) =>
+      [0, 1, 2, 3, 4, 5].map(
+        (i) =>
+          new Phaser.Math.Vector2(
+            8 + Math.cos((i * Math.PI) / 3) * r,
+            8 + Math.sin((i * Math.PI) / 3) * r,
+          ),
+      );
+    g.fillStyle(0x0b1f1e).fillPoints(hex(8), true);
+    g.fillStyle(0x6fd6c8).fillPoints(hex(6.5), true);
+    g.fillStyle(0x2e8f86).fillPoints(hex(3.5), true);
+    g.fillStyle(0xeafffb).fillRect(7, 7, 2, 2);
+  });
+  // Gardien runique : bloc de pierre, rune gravée.
+  shapeTexture(scene, 'runewarden', 22, 22, (g) => {
+    g.fillStyle(0x0e1622).fillRoundedRect(0, 0, 22, 22, 4);
+    g.fillStyle(0x7a9cc6).fillRoundedRect(2, 2, 18, 18, 3);
+    g.fillStyle(0x3d5a80).fillRect(10, 5, 2, 12).fillRect(6, 8, 10, 2);
+    g.fillStyle(0xeaf2ff).fillRect(6, 13, 2, 2).fillRect(14, 13, 2, 2);
+  });
+  // Einherjar (élite) : casque à cornes, visière fine.
+  shapeTexture(scene, 'einherjar', 22, 22, (g) => {
+    g.fillStyle(0x10141f).fillCircle(11, 12, 10);
+    g.fillStyle(0xd0d8ff).fillCircle(11, 12, 8);
+    g.fillStyle(0x8a94c0).fillRect(4, 11, 14, 3);
+    g.fillStyle(0x10141f).fillRect(6, 12, 10, 1);
+    g.fillStyle(0xf2e6c8).fillTriangle(2, 9, 0, 1, 6, 6).fillTriangle(20, 9, 22, 1, 16, 6);
+  });
+
   // Projectile ennemi : losange magenta à cœur blanc (forme + couleur).
   shapeTexture(scene, 'shot', 9, 9, (g) => {
     g.fillStyle(0xff2a6d).fillTriangle(4.5, 0, 9, 4.5, 4.5, 9).fillTriangle(4.5, 0, 0, 4.5, 4.5, 9);

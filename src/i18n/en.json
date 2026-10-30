@@ -183,5 +183,9 @@
   "shop.sold": "Sold",
   "shop.tooPoor": "{cost} ◆ (not enough)",
   "shop.leave": "Continue",
-  "shop.shards": "◆ {count} shards"
+  "shop.shards": "◆ {count} shards",
+  "enemy.wolfbot": "Relay Wolf",
+  "enemy.frostcaster": "Frostcaster",
+  "enemy.runewarden": "Rune Warden",
+  "enemy.einherjar": "Einherjar"
 }

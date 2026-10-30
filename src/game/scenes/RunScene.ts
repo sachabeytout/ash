@@ -250,7 +250,8 @@ export class RunScene extends Phaser.Scene {
       }
       if (e.code === 'KeyG') this.run.superGauge = 1;
       if (e.code === 'KeyM') this.run.shards += 100;
-      if (e.code === 'KeyL') this.spawnWave(['stalker']);
+      if (e.code === 'KeyL') this.spawnWave([getBiome(this.run.biome).elite]);
+      if (e.code === 'KeyY') this.spawnWave(getBiome(this.run.biome).roster.map((r) => r.enemy));
       if (e.code === 'KeyO') {
         this.run.room = getBiome(this.run.biome).rooms + 1;
         this.leaving = true;
@@ -784,10 +785,21 @@ export class RunScene extends Phaser.Scene {
         chilled: isFrozen(e.status, this.sim) || this.sim < e.status.chillUntil,
       });
       const at = { x: e.x, y: e.y };
+      // Bouclier frontal (Einherjar) : le coup est presque entièrement bloqué, sans effet de don.
+      const blocked = e instanceof Enemy && e.blocks(this.player, this.sim);
+      const shieldFactor = blocked ? (e.def.shield?.blocked ?? 1) : 1;
       const { dealt, killed } = applyDamage(
         e.health,
-        step.damage * (1 + this.run.damageBonus) * mult,
+        step.damage * (1 + this.run.damageBonus) * mult * shieldFactor,
       );
+      if (blocked) {
+        e.hit(this.sim, this.player, step.knockback * 0.3);
+        this.juice.burst(e.x, e.y, 0xe8f2ff, 8);
+        this.juice.damageNumber(e.x, e.y - e.radius, dealt, '#9a8fb5');
+        sfx.block();
+        if (killed) this.killEnemy(e);
+        continue;
+      }
       e.hit(this.sim, this.player, step.knockback);
       this.juice.hitstop(killed ? step.hitstopMs + 30 : step.hitstopMs);
       this.juice.shake(step.shake);
@@ -821,6 +833,14 @@ export class RunScene extends Phaser.Scene {
 
   private resolveEnemyAttacks(alive: readonly Enemy[]): void {
     for (const e of alive) {
+      if (e.state === 'attack' && !e.attackLanded && e.def.attack.kind === 'runes') {
+        if (this.player.isInvulnerable(this.sim)) continue;
+        if (e.runeHits(this.player, PLAYER.radius)) {
+          e.attackLanded = true;
+          this.hurtPlayer(e.def.damage, e, e.def.nameKey);
+        }
+        continue;
+      }
       if (e.state === 'attack' && !e.attackLanded && e.def.attack.kind === 'charge') {
         if (this.player.isInvulnerable(this.sim)) continue;
         const reach = e.def.attack.width / 2 + PLAYER.radius;

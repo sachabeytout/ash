@@ -183,5 +183,9 @@
   "shop.sold": "Vendu",
   "shop.tooPoor": "{cost} ◆ (pas assez)",
   "shop.leave": "Continuer",
-  "shop.shards": "◆ {count} éclats"
+  "shop.shards": "◆ {count} éclats",
+  "enemy.wolfbot": "Loup-relais",
+  "enemy.frostcaster": "Givreur",
+  "enemy.runewarden": "Gardien runique",
+  "enemy.einherjar": "Einherjar"
 }
