@@ -19,31 +19,29 @@
   et ramener le chaos dans les mondes.
 - Cette fois, en plus de l'encager, l'Oiseleur a **maudit le héros et sa femme**, parce que c'est elle qui le libérait à chaque fois.
 
+### Lore v0.3 — précisé par l'utilisateur (31/10/2026) ✅
+
+- Le héros se fait appeler **Ash** ; sa femme s'appelle **Anii**.
+- **Apophis** (le serpent du chaos) a fait appel à l'Oiseleur : donnant-donnant, il l'aide contre la femme du héros.
+- **C'est Apophis qui a posé la malédiction.** Les dieux égyptiens connaissent sa magie : ce sont eux qui vont aider
+  Ash à la lever. Il faudra **battre Apophis 10 fois** pour libérer réellement Anii (les 10 victoires).
+- **La cage où Ash se réveille est déjà ouverte** : on découvre plus tard que ce sont les dieux égyptiens qui l'ont ouverte.
+- **L'émotion** : Ash **retrouve la mémoire** pendant qu'Anii **la perd**. Romance tragique, ton inspiré (sans rien
+  reprendre) de Nanatsu no Taizai : des amants maudits qui se retrouvent de vie en vie.
+- **Vraie fin** : Ash et Anii s'embrassent ; de leurs flammes apparaît **le vrai Bennu** ; ils disparaissent peu à
+  peu derrière ce feu, avant de redevenir des cendres.
+
 ### Lore v0.3 — propositions de Claude 🟡 (à valider, voir `docs/QUESTIONS.md` partie B)
 
-- **Le nom** : il se fait appeler **Ash** (la cendre : à chaque monde il renaît de ses cendres) ; Bennu est son nom
-  égyptien. Sa femme reste **Aelia**.
-- **« Sans pouvoir »** : il n'a aucun pouvoir à lui ; il porte ceux qu'on lui confie. C'est la raison des **dons**.
-- **La double malédiction** : Ash renaît toujours… mais dans la cage, et il a **oublié ses vies passées** (elles
-  reviennent au fil des victoires) ; Aelia est changée en **flamme prisonnière des braises** de la Cage : elle lui parle,
-  mais ne peut plus ouvrir la cage, et perd un souvenir chaque nuit.
-- **Le plan de l'Oiseleur** : dans le mythe, le Bennu fait se lever le soleil (l'âme de Râ). Sans lui, la nuit ne
-  finit plus et **Apophis**, le serpent du chaos qui veut avaler le soleil, grandit. L'Oiseleur veut le libérer.
-- **La ville** : **Héliopolis** (la ville du Bennu dans le mythe), version néon, plongée dans une nuit sans fin.
-- **Lieux / boss** : 1. Bas-Fonds d'Héliopolis — **Ammit** ; 2. Le Nil de minuit (eaux gelées sous la lune de
-  Khonsou) — **le Sphinx de givre** ; 3. La Cité des Dieux (temples devenus tours) — **Sekhmet**, rendue folle par
-  l'Oiseleur ; 4. La Volière — **l'Oiseleur** ; vraie fin : **Apophis**.
-- **Dieux et pouvoirs** : feu **Râ** ✅, soin/bouclier **Isis** ✅, eau **Sobek**, glace **Khonsou** (la lune, le
-  froid des nuits du désert), foudre **Seth** (dieu des orages), poison **Serket** (le scorpion), brisement **Montou**
-  (dieu de la guerre), buff **Bastet**, exécution **Anubis**, malédiction **Nephthys** (à la place de Hel).
-- **La Cage** : Thot reste (archiviste) ; Vesper reste (le corbeau de l'Oiseleur) ; le forgeron devient **Ptah**
-  (dieu des artisans) ; le marchand devient **Bès** (dieu nain, jovial, adore les bonnes affaires).
-- **Intrigue sur 10 victoires** : 1 la malédiction se révèle (il renaît dans la cage) · 2 souvenir de la Grèce :
-  Aelia était déjà là · 3 Thot explique le Bennu · 4 Vesper : chaque nuit sans soleil nourrit Apophis · 5 souvenir du
-  Japon ; Ptah forge la Lame de l'Aube · 6 Isis : pour briser la malédiction, il faut retrouver le **vrai nom**
-  d'Aelia · 7 souvenir de Chine : la toute première cage · 8 Aelia retrouve son nom : c'est elle, la flamme qui le
-  rallume à chaque monde · 9 l'Oiseleur révèle son but · 10 vraie fin : Aelia ouvre la cage une dernière fois, le
-  Bennu porte le soleil à travers la Douât, affronte Apophis ; l'aube se lève, et le couple repart vers un autre monde.
+- **« Sans pouvoir »** : Ash n'a aucun pouvoir à lui ; il porte ceux que les dieux lui prêtent (= les **dons**).
+- **Structure d'une run** : 1. Bas-Fonds d'Héliopolis — **Ammit** ; 2. Le Nil de minuit — **le Sphinx de givre** ; 3. La Volière (tour de l'Oiseleur) — **l'Oiseleur** ; 4. La Douât (le monde de la nuit) — **Apophis**. Chaque victoire
+  = Apophis battu une fois = un des **10 sceaux** de la malédiction brisé.
+- **La Cage** : Thot (archiviste), Vesper (corbeau de l'Oiseleur), **Ptah** (forgeron), **Bès** (marchand).
+- **Les 9 dieux** (proposition complète dans `docs/QUESTIONS.md`, 15 quinquies) : Râ (feu), Sobek (eau), Khonsou
+  (glace), Seth (foudre), Serket (poison), Horus (brisement), Bastet (buff), Isis (soin / bouclier), Anubis (exécution).
+- **Fil des 10 victoires** : à chaque sceau brisé, Ash retrouve un souvenir d'une vie passée avec Anii (Grèce, Japon,
+  Chine…) pendant qu'Anii en perd un ; les dieux révèlent peu à peu qu'ils ont ouvert la cage ; l'Oiseleur et Apophis
+  se méfient l'un de l'autre ; à la 10e, la vraie fin.
 - **Skins (plus tard)** : ses incarnations passées — Phénix grec, Hō-ō, Fenghuang.
 
 > Les sections ci-dessous décrivent le lore v0.2 (celui du jeu actuel), à réécrire une fois la v0.3 validée.

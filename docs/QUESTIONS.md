@@ -42,11 +42,10 @@ Dernière mise à jour : 30/10/2026 (version 0.43.0).
 15. La Lame de l'Aube (arme légendaire, 5e victoire) : **attaque puissante = parade puis riposte**. D'accord ?
     15 bis. Les dialogues de la Cage (Aelia, Thot, Vesper, Brokk) : le ton te plaît-il ? Trop longs, trop courts ? Un personnage à changer ?
     15 ter. ✅ **Nouvelle base du lore (31/10)** : dieux uniquement égyptiens ; le héros est un dieu sans pouvoir, appelé « Bennu » ici, qui a déjà sauvé d'autres mythologies (Phénix, Hō-ō, Fenghuang) ; l'Oiseleur est son ennemi de toujours ; il les a maudits, lui et sa femme. Mes propositions pour la suite sont dans `docs/GDD.md` (Lore v0.3).
-    15 quater. Son nom : il se fait appeler **Ash** (Bennu = son nom égyptien), et sa femme reste **Aelia** ? → **proposé : oui**
-    15 quinquies. Les dieux : feu Râ ✅, soin Isis ✅, eau **Sobek**, glace **Khonsou**, foudre **Seth**, poison **Serket**, brisement **Montou**, buff **Bastet**, exécution **Anubis**, malédiction **Nephthys**. D'accord ? → **en attente**
-    15 sexies. Le plan de l'Oiseleur : réveiller **Apophis**, le serpent du chaos, en empêchant le soleil de se lever. Apophis serait le vrai dernier boss (vraie fin). D'accord ? → **en attente**
-    15 septies. Les lieux : Héliopolis la nuit (néon) ; boss Ammit, Sphinx de givre, Sekhmet rendue folle, l'Oiseleur, puis Apophis. Le forgeron devient **Ptah**, le marchand **Bès**. D'accord ? → **en attente**
-    15 octies. La malédiction d'Aelia : changée en flamme dans les braises ; pour la sauver, retrouver son **vrai nom** (idée tirée du mythe d'Isis). D'accord ? → **en attente**
+    15 quater. ✅ Le héros s'appelle **Ash**, sa femme **Anii**. Apophis a fait appel à l'Oiseleur (donnant-donnant) ; la malédiction vient d'Apophis ; les dieux ont ouvert la cage et aideront à lever la malédiction ; battre Apophis 10 fois ; Ash retrouve la mémoire pendant qu'Anii la perd ; vraie fin : le Bennu naît de leurs flammes.
+    15 quinquies. **Les 9 dieux (proposition définitive)** : Râ (feu), Sobek (eau), Khonsou (glace — ou Nout ?), Seth (foudre), Serket (poison), Horus (brisement — ou Montou ?), Bastet (buff), Isis (soin / bouclier), Anubis (exécution). D'accord ? → **en attente**
+    15 sexies. **Structure d'une run** : Ammit → Sphinx de givre → l'Oiseleur → **Apophis** (boss final de chaque run). D'accord ? → **en attente**
+    15 septies. Forgeron **Ptah**, marchand **Bès** (à la place de Brokk et Ratatosk). D'accord ? → **en attente**
 
 ## C. Petites décisions prises par Claude (dis seulement si tu n'es pas d'accord)
 
