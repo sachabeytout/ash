@@ -9,6 +9,45 @@
 
 ## 2. Lore
 
+### Lore v0.3 — la base fixée par l'utilisateur (31/10/2026) ✅
+
+- **Dieux : uniquement égyptiens.**
+- **Le héros est un dieu sans pouvoir** qui n'apparaît que quand une mythologie va mal. Il en a déjà sauvé plusieurs :
+  la grecque (le **Phénix**), la japonaise (**Hō-ō**), la chinoise (**Fenghuang**)… Ici, les dieux égyptiens l'appellent
+  **« Bennu »**, et au début il ne comprend pas pourquoi.
+- **Son ennemi de toujours : l'Oiseleur**, qui cherche sans cesse à le mettre en cage pour pouvoir détruire les dieux
+  et ramener le chaos dans les mondes.
+- Cette fois, en plus de l'encager, l'Oiseleur a **maudit le héros et sa femme**, parce que c'est elle qui le libérait à chaque fois.
+
+### Lore v0.3 — propositions de Claude 🟡 (à valider, voir `docs/QUESTIONS.md` partie B)
+
+- **Le nom** : il se fait appeler **Ash** (la cendre : à chaque monde il renaît de ses cendres) ; Bennu est son nom
+  égyptien. Sa femme reste **Aelia**.
+- **« Sans pouvoir »** : il n'a aucun pouvoir à lui ; il porte ceux qu'on lui confie. C'est la raison des **dons**.
+- **La double malédiction** : Ash renaît toujours… mais dans la cage, et il a **oublié ses vies passées** (elles
+  reviennent au fil des victoires) ; Aelia est changée en **flamme prisonnière des braises** de la Cage : elle lui parle,
+  mais ne peut plus ouvrir la cage, et perd un souvenir chaque nuit.
+- **Le plan de l'Oiseleur** : dans le mythe, le Bennu fait se lever le soleil (l'âme de Râ). Sans lui, la nuit ne
+  finit plus et **Apophis**, le serpent du chaos qui veut avaler le soleil, grandit. L'Oiseleur veut le libérer.
+- **La ville** : **Héliopolis** (la ville du Bennu dans le mythe), version néon, plongée dans une nuit sans fin.
+- **Lieux / boss** : 1. Bas-Fonds d'Héliopolis — **Ammit** ; 2. Le Nil de minuit (eaux gelées sous la lune de
+  Khonsou) — **le Sphinx de givre** ; 3. La Cité des Dieux (temples devenus tours) — **Sekhmet**, rendue folle par
+  l'Oiseleur ; 4. La Volière — **l'Oiseleur** ; vraie fin : **Apophis**.
+- **Dieux et pouvoirs** : feu **Râ** ✅, soin/bouclier **Isis** ✅, eau **Sobek**, glace **Khonsou** (la lune, le
+  froid des nuits du désert), foudre **Seth** (dieu des orages), poison **Serket** (le scorpion), brisement **Montou**
+  (dieu de la guerre), buff **Bastet**, exécution **Anubis**, malédiction **Nephthys** (à la place de Hel).
+- **La Cage** : Thot reste (archiviste) ; Vesper reste (le corbeau de l'Oiseleur) ; le forgeron devient **Ptah**
+  (dieu des artisans) ; le marchand devient **Bès** (dieu nain, jovial, adore les bonnes affaires).
+- **Intrigue sur 10 victoires** : 1 la malédiction se révèle (il renaît dans la cage) · 2 souvenir de la Grèce :
+  Aelia était déjà là · 3 Thot explique le Bennu · 4 Vesper : chaque nuit sans soleil nourrit Apophis · 5 souvenir du
+  Japon ; Ptah forge la Lame de l'Aube · 6 Isis : pour briser la malédiction, il faut retrouver le **vrai nom**
+  d'Aelia · 7 souvenir de Chine : la toute première cage · 8 Aelia retrouve son nom : c'est elle, la flamme qui le
+  rallume à chaque monde · 9 l'Oiseleur révèle son but · 10 vraie fin : Aelia ouvre la cage une dernière fois, le
+  Bennu porte le soleil à travers la Douât, affronte Apophis ; l'aube se lève, et le couple repart vers un autre monde.
+- **Skins (plus tard)** : ses incarnations passées — Phénix grec, Hō-ō, Fenghuang.
+
+> Les sections ci-dessous décrivent le lore v0.2 (celui du jeu actuel), à réécrire une fois la v0.3 validée.
+
 ### Le mythe de l'Aube 🟡
 
 Dans les trois panthéons, le soleil était un oiseau : **l'Aube**, le Phénix-Soleil (les Égyptiens l'appelaient Bénou).

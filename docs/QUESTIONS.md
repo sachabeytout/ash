@@ -41,11 +41,12 @@ Dernière mise à jour : 30/10/2026 (version 0.43.0).
 14. Les étapes de l'histoire sur les 10 victoires (tableau « Arc narratif » du GDD) : ça te va ?
 15. La Lame de l'Aube (arme légendaire, 5e victoire) : **attaque puissante = parade puis riposte**. D'accord ?
     15 bis. Les dialogues de la Cage (Aelia, Thot, Vesper, Brokk) : le ton te plaît-il ? Trop longs, trop courts ? Un personnage à changer ?
-    15 ter. **Les dieux** — ✅ validé : dieux prisonniers de **toutes les cultures** ; feu = **Râ** ; soin = **Isis**.
-    Encore à valider : eau = **Sedna**, foudre = **Raijin**, poison = **Wadjet**, brisement = **Thor**, buff = **Bastet**, glace = **Skadi** (proposés).
-    15 quater. **Anubis et Hel** : les garder ? Proposé : Anubis = **exécution** (achève les ennemis affaiblis), Hel = **malédiction** (les ennemis maudits explosent à leur mort, réactions en chaîne). Leurs dons de soin passeraient à Isis, et le « dégâts reçus en plus » d'Anubis à Thor. → **gardés, recentrés**
-    15 quinquies. **Les dieux-oiseaux** (ton idée) : le Serment de la cage marque chaque dieu captif de traits d'oiseau — Râ tête de faucon, Isis ailes de milan, Skadi plumes de harfang (chouette des neiges), Raijin plumage d'orage, Sedna ailes de pétrel (oiseau des mers), Wadjet cobra ailé, Thor casque et ailes d'aigle, Bastet oreilles de hibou, Anubis cou de vautour, Hel plumes de corneille. Libérés, ils retrouvent leur vraie forme. D'accord ? Un oiseau à changer ? → **en attente**
-    15 sexies. **Le nom du grand méchant** : garder « l'Oiseleur », ou lui donner un nom plus fort ? Propositions : **le Roi sans Ailes** (il n'a jamais pu voler, alors il enferme ceux qui volent), **le Geôlier du Ciel**, ou un nom propre avec « l'Oiseleur » en titre (ex. **Morvhan, l'Oiseleur**). → **en attente (proposé : le Roi sans Ailes)**
+    15 ter. ✅ **Nouvelle base du lore (31/10)** : dieux uniquement égyptiens ; le héros est un dieu sans pouvoir, appelé « Bennu » ici, qui a déjà sauvé d'autres mythologies (Phénix, Hō-ō, Fenghuang) ; l'Oiseleur est son ennemi de toujours ; il les a maudits, lui et sa femme. Mes propositions pour la suite sont dans `docs/GDD.md` (Lore v0.3).
+    15 quater. Son nom : il se fait appeler **Ash** (Bennu = son nom égyptien), et sa femme reste **Aelia** ? → **proposé : oui**
+    15 quinquies. Les dieux : feu Râ ✅, soin Isis ✅, eau **Sobek**, glace **Khonsou**, foudre **Seth**, poison **Serket**, brisement **Montou**, buff **Bastet**, exécution **Anubis**, malédiction **Nephthys**. D'accord ? → **en attente**
+    15 sexies. Le plan de l'Oiseleur : réveiller **Apophis**, le serpent du chaos, en empêchant le soleil de se lever. Apophis serait le vrai dernier boss (vraie fin). D'accord ? → **en attente**
+    15 septies. Les lieux : Héliopolis la nuit (néon) ; boss Ammit, Sphinx de givre, Sekhmet rendue folle, l'Oiseleur, puis Apophis. Le forgeron devient **Ptah**, le marchand **Bès**. D'accord ? → **en attente**
+    15 octies. La malédiction d'Aelia : changée en flamme dans les braises ; pour la sauver, retrouver son **vrai nom** (idée tirée du mythe d'Isis). D'accord ? → **en attente**
 
 ## C. Petites décisions prises par Claude (dis seulement si tu n'es pas d'accord)
 
