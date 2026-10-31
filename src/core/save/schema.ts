@@ -20,11 +20,11 @@ export interface MetaState {
   clears: number;
   /** Niveau de chaque compétence de l'arbre de Thot. */
   skills: Record<string, number>;
-  /** Niveau de forge de chaque arme (Brokk). Ajouté en v2. */
+  /** Niveau de forge de chaque arme (Ptah, ex-Brokk). Ajouté en v2. */
   forge: Partial<Record<WeaponId, number>>;
   /** Morts survenues avec la Bénédiction du Phénix activée (elle se renforce). Ajouté en v2. */
   assistDeaths: number;
-  /** Armes débloquées chez Brokk (en plus des armes de départ). Ajouté en v3. */
+  /** Armes débloquées chez Ptah (ex-Brokk) (en plus des armes de départ). Ajouté en v3. */
   unlocked: WeaponId[];
   /** Dialogues de la Cage déjà entendus. Ajouté en v5. */
   seenDialogues: string[];

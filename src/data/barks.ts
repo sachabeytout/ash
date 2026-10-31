@@ -2,6 +2,7 @@
  * Petites phrases des habitants de la Cage quand Ash passe près d'eux (avec un peu d'humour).
  * Les textes sont dans `src/i18n/` (`bark.<qui>.<n>`) ; `{deaths}` = nombre de renaissances.
  */
+/** Identifiants historiques : `brokk` = Ptah, `aelia` = Anii. */
 export type BarkSpeaker = 'brokk' | 'thot' | 'vesper' | 'aelia';
 
 export const BARKS: Record<BarkSpeaker, number> = {

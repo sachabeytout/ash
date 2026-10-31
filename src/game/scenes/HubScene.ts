@@ -391,9 +391,9 @@ export class HubScene extends Phaser.Scene {
       color: 0xffa040,
       label: t('hub.station.aelia'),
       draw: (g, x, y) => drawBrazier(g, x, y),
-      action: () => this.talkToAelia(),
+      action: () => this.talkToAnii(),
     });
-    // Le brasero d'Aelia brille un peu plus à chaque victoire.
+    // Le brasero d'Anii brille un peu plus à chaque victoire.
     const flame = this.add
       .image(GAME_WIDTH / 2, 210, 'glow')
       .setTint(0xffa040)
@@ -629,8 +629,8 @@ export class HubScene extends Phaser.Scene {
     );
   }
 
-  /** Brasero d'Aelia : un dialogue nouveau s'il y en a un, sinon ses souvenirs. */
-  private talkToAelia(): void {
+  /** Brasero d'Anii : un dialogue nouveau s'il y en a un, sinon ses souvenirs. */
+  private talkToAnii(): void {
     if (this.modal || this.starting) return;
     const last = this.summary
       ? { ...this.summary, atBoss: this.summary.room > getBiome(this.summary.biome).rooms }
@@ -992,11 +992,17 @@ function drawForge(g: Phaser.GameObjects.Graphics, x: number, y: number): void {
   g.fillStyle(0xc0c8d8, 1).fillRect(x - 6, y - 4, 22, 6);
   g.fillTriangle(x + 16, y - 4, x + 22, y - 4, x + 16, y + 2);
   g.fillRect(x + 1, y + 2, 8, 7).fillRect(x - 3, y + 9, 16, 4);
-  // Brokk : trapu, barbe en pointe, tablier.
-  g.fillStyle(0x8a5a2e, 1).fillRect(x - 24, y - 6, 14, 18);
-  g.fillStyle(0xd8a070, 1).fillCircle(x - 17, y - 11, 5);
-  g.fillStyle(0xffe08a, 1).fillTriangle(x - 21, y - 9, x - 13, y - 9, x - 17, y + 2);
-  g.fillStyle(0x3a2a1c, 1).fillRect(x - 22, y + 4, 10, 8);
+  // Ptah, comme on le représente en Égypte : corps serré dans un linceul clair, visage vert,
+  // calotte bleue, barbe droite, et son sceptre tenu droit devant lui.
+  g.fillStyle(0xe8dcc0, 1).fillRoundedRect(x - 23, y - 6, 12, 19, 4);
+  g.lineStyle(1, 0xb8aa88, 1)
+    .lineBetween(x - 22, y, x - 12, y)
+    .lineBetween(x - 22, y + 6, x - 12, y + 6);
+  g.fillStyle(0x5fae7a, 1).fillCircle(x - 17, y - 11, 5);
+  g.fillStyle(0x3a6ad8, 1).fillRoundedRect(x - 22, y - 17, 10, 6, { tl: 4, tr: 4, bl: 0, br: 0 });
+  g.fillStyle(0x3a2a1c, 1).fillRect(x - 15, y - 7, 3, 6);
+  g.lineStyle(2, 0xffe08a, 1).lineBetween(x - 8, y - 15, x - 8, y + 13);
+  g.lineStyle(1.5, 0xffe08a, 1).strokeCircle(x - 8, y - 17, 2.5);
 }
 
 function drawBoard(g: Phaser.GameObjects.Graphics, x: number, y: number): void {

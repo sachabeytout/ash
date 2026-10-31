@@ -385,7 +385,7 @@ export class RunScene extends Phaser.Scene {
   /** Un dieu propose un don : le combat attend. */
   private choosing = false;
   private lastChainSwing = -1;
-  /** Bonus de la forge de Brokk pour l'arme de la run. */
+  /** Bonus de la forge de Ptah pour l'arme de la run. */
   private forge: WeaponBonuses = NO_WEAPON_BONUS;
   private readonly indicatorBuf: Indicator[] = Array.from({ length: POOL_SIZE + 8 }, () => ({
     x: 0,

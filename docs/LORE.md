@@ -174,8 +174,8 @@ qu'un jour, dans un autre monde, une étincelle viendra les rallumer…
 
 ## 10. Ce qui est déjà dans le jeu et devra changer
 
-- **Personnages :** Aelia devient Anii et Brokk devient Ptah (à confirmer). Il faut réécrire les dialogues de la Cage
-  et les textes des Archives.
+- ✅ **Personnages (0.48.0) :** Aelia est devenue Anii, Brokk est devenu Ptah (en attendant ta réponse) ; dialogues de
+  la Cage, répliques, Archives et vraie fin réécrits. Reste à faire : les lieux et les boss (étape 3).
 - **Mondes :** les Bas-Fonds, le Givre-Serveur, l'Olympe Corporatif et la Volière deviennent les 4 lieux ci-dessus.
 - **Boss :**
   - Ammit reste.

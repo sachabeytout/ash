@@ -1,7 +1,7 @@
 import type { WeaponId } from './weapons';
 
 /**
- * Forge de Brokk : chaque arme s'améliore avec les pièces d'arme (progression permanente).
+ * Forge de Ptah : chaque arme s'améliore avec les pièces d'arme (progression permanente).
  * Un niveau = un effet qui s'ajoute aux précédents.
  */
 export type ForgeEffect =
@@ -39,7 +39,7 @@ export const FORGE: Record<WeaponId, readonly ForgeLevel[]> = {
   dawnblade: STANDARD,
 };
 
-/** Armes de départ ; les autres se débloquent chez Brokk contre des pièces d'arme. */
+/** Armes de départ ; les autres se débloquent chez Ptah contre des pièces d'arme. */
 export const STARTING_WEAPONS: readonly WeaponId[] = ['katana', 'twinBlades'];
 export const UNLOCK_COST: Partial<Record<WeaponId, number>> = {
   staff: 3,

@@ -39,8 +39,21 @@ function interpolate(text: string, vars: Vars | undefined): string {
   );
 }
 
+/**
+ * Typographie française : l'espace avant « ? ! : ; » et à l'intérieur des guillemets devient
+ * insécable, pour qu'un retour à la ligne ne laisse jamais un « ? » seul en début de ligne.
+ */
+export function frenchSpacing(text: string): string {
+  return text.replace(/ ([?!:;»])/g, '\u00a0$1').replace(/« /g, '«\u00a0');
+}
+
 /** Traduit une clé. Pour un pluriel, passer `count` dans `vars`. */
 export function translate(dict: Dictionary, locale: Locale, key: string, vars?: Vars): string {
+  const text = translateRaw(dict, locale, key, vars);
+  return locale === 'fr' ? frenchSpacing(text) : text;
+}
+
+function translateRaw(dict: Dictionary, locale: Locale, key: string, vars?: Vars): string {
   const entry = dict[key];
   if (entry === undefined) return key;
   if (typeof entry === 'string') return interpolate(entry, vars);

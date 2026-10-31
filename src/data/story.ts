@@ -1,6 +1,9 @@
 import type { RunSummary } from '../core/run/state';
 
-/** Personnages qui parlent dans la Cage. */
+/**
+ * Personnages qui parlent dans la Cage. Les identifiants sont historiques (gardés pour la sauvegarde) :
+ * `aelia` = Anii (la femme d'Ash), `brokk` = Ptah (le forgeron). Les noms affichés viennent de l'i18n.
+ */
 export type Speaker = 'aelia' | 'thot' | 'vesper' | 'brokk' | 'oiseleur';
 
 export interface SpeakerDef {
@@ -50,8 +53,9 @@ export interface DialogueDef {
 const line = (speaker: Speaker, key: string) => ({ speaker, key });
 
 /**
- * Dialogues de la Cage (lore v0.2, en attente de validation : voir docs/QUESTIONS.md).
- * Chacun n'est dit qu'une fois ; un seul par retour dans la Cage.
+ * Dialogues de la Cage (lore v0.3 : docs/LORE.md). Chacun n'est dit qu'une fois ; un seul par retour
+ * dans la Cage. Les identifiants ne changent pas d'une version à l'autre (ils sont dans la sauvegarde) :
+ * les nouveaux passages ont de nouveaux identifiants (`v3_…`) pour être entendus par tous.
  */
 export const DIALOGUES: readonly DialogueDef[] = [
   // ---------- Premières rencontres ----------
@@ -78,6 +82,25 @@ export const DIALOGUES: readonly DialogueDef[] = [
     condition: { minRuns: 3 },
     priority: 84,
     lines: [line('brokk', 'story.intro_brokk.1'), line('brokk', 'story.intro_brokk.2')],
+  },
+  // ---------- Lore v0.3 : la malédiction d'Anii, Ratatosk, ce que veulent les dieux ----------
+  {
+    id: 'v3_awaken',
+    condition: { minRuns: 2 },
+    priority: 65,
+    lines: [line('aelia', 'story.v3_awaken.1'), line('aelia', 'story.v3_awaken.2')],
+  },
+  {
+    id: 'v3_ratatosk',
+    condition: { minRuns: 2, reachedBiome: 1 },
+    priority: 50,
+    lines: [line('vesper', 'story.v3_ratatosk.1'), line('thot', 'story.v3_ratatosk.2')],
+  },
+  {
+    id: 'v3_ptah',
+    condition: { minRuns: 4 },
+    priority: 38,
+    lines: [line('brokk', 'story.v3_ptah.1'), line('thot', 'story.v3_ptah.2')],
   },
   // ---------- Morts face aux boss ----------
   {
@@ -239,7 +262,7 @@ export const DIALOGUES: readonly DialogueDef[] = [
       ['brokk', 'thot'],
       ['aelia', 'vesper'],
       ['vesper', 'aelia'],
-      ['aelia', 'aelia'],
+      ['aelia', 'thot'],
       ['thot', 'vesper'],
     ];
     const [a, b] = speakers[i] ?? ['aelia', 'aelia'];
@@ -268,6 +291,6 @@ export const DIALOGUES: readonly DialogueDef[] = [
   },
 ];
 
-/** Victoires nécessaires pour la Lame de l'Aube (forgée par Brokk) et pour la vraie fin. */
+/** Victoires nécessaires pour la Lame de l'Aube (nommée par Ptah) et pour la vraie fin. */
 export const DAWNBLADE_VICTORIES = 5;
 export const TRUE_ENDING_VICTORIES = 10;

@@ -25,14 +25,14 @@ describe('histoire', () => {
     }
   });
 
-  it('première visite : Aelia ; puis chaque dialogue n’est dit qu’une fois', () => {
+  it('première visite : Anii ; puis chaque dialogue n’est dit qu’une fois', () => {
     const meta = defaultMeta();
     expect(nextDialogue(meta, undefined)?.id).toBe('intro_aelia');
     markSeen(meta, 'intro_aelia');
     expect(nextDialogue(meta, undefined)).toBeUndefined();
   });
 
-  it('une mort face à Ammit fait parler Aelia d’Ammit', () => {
+  it('une mort face à Ammit fait parler Anii d’Ammit', () => {
     const meta = defaultMeta();
     meta.runs = 1;
     meta.deaths = 1;
@@ -71,6 +71,32 @@ describe('répliques des dieux (0.37.0)', () => {
       for (let n = 1; n <= 4; n++) {
         expect(fr[`${GODS[id].nameKey}.quote.${n}`]).toBeTruthy();
         expect(en[`${GODS[id].nameKey}.quote.${n}`]).toBeTruthy();
+      }
+    }
+  });
+});
+
+describe('lore v0.3 (0.48.0)', () => {
+  it('les nouveaux passages se jouent aussi pour qui a déjà tout entendu avant', () => {
+    const meta = defaultMeta();
+    meta.runs = 20;
+    meta.deaths = 20;
+    meta.seenDialogues = DIALOGUES.filter((d) => !d.id.startsWith('v3_')).map((d) => d.id);
+    const heard: string[] = [];
+    for (let i = 0; i < 5; i++) {
+      const d = nextDialogue(meta, { outcome: 'death', biome: 1, room: 3, atBoss: false });
+      if (!d) break;
+      heard.push(d.id);
+      markSeen(meta, d.id);
+    }
+    expect(heard).toEqual(['v3_awaken', 'v3_ratatosk', 'v3_ptah']);
+  });
+
+  it('plus aucun ancien nom affiché (Aelia, Brokk, Lanterne, Nox)', () => {
+    for (const dict of Object.values(allDictionaries)) {
+      for (const [key, value] of Object.entries(dict)) {
+        if (typeof value !== 'string') continue;
+        expect(value, key).not.toMatch(/Aelia|Brokk|Lanterne|Lantern|\bNox\b/);
       }
     }
   });

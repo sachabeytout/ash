@@ -103,7 +103,7 @@ Retour sur le lore v0.2 toujours attendu (« quand le fond aura avancé »).
 - [x] **Lore approfondi (v0.4, docs seulement)** : `docs/LORE.md`, en attente de validation
 - [x] **0.47.0** : retours de l'utilisateur (coup d'élan, butin en fin de salle, 2 portes, paysage d'office, netteté, Cage, touches…)
 - [x] **0.46.0** : Regard d'Amon (défi, faveur royale) et icônes des dieux d'après leurs représentations
-- [ ] **Lore 2/3** : personnages et dialogues (Ash, Anii, Ratatosk qui a suivi Ash, Ptah ?) — réécriture de l'histoire v0.3
+- [x] **Lore 2/3 (0.48.0)** : personnages et dialogues (Anii, Ptah, Ratatosk, arc des 10 victoires, vraie fin réécrite)
 - [ ] **Lore 3/3** : lieux et boss (Apophis boss final, à battre 10 fois ; vraie fin)
 - [ ] **Plus tard (après le lore)** : skins d'Ash, aspects des armes
 - [ ] **M3** : finitions — coffres et évènements, préréglages de qualité, équilibrage avec la télémétrie, accessibilité

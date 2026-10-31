@@ -12,7 +12,7 @@ const RACK_COLOR = 0xffb02e;
 
 /**
  * Râtelier de la Cage : les 7 armes. Toucher une arme disponible l'équipe ;
- * une arme verrouillée renvoie vers la forge de Brokk.
+ * une arme verrouillée renvoie vers la forge de Ptah.
  */
 export class WeaponPanel {
   private readonly root: Phaser.GameObjects.Container;
@@ -129,7 +129,7 @@ export class WeaponPanel {
 
   private pick(id: WeaponId): void {
     if (!isUnlocked(this.meta, id)) {
-      // Arme verrouillée : direction la forge de Brokk.
+      // Arme verrouillée : direction la forge de Ptah.
       if (UNLOCK_COST[id] === undefined) return;
       this.destroy();
       this.onForge();

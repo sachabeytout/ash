@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { allDictionaries, detectLocale, translate } from '../../src/i18n';
+import { allDictionaries, detectLocale, frenchSpacing, translate } from '../../src/i18n';
 
 describe('i18n', () => {
   const fr = allDictionaries.fr;
@@ -26,5 +26,15 @@ describe('i18n', () => {
     expect(detectLocale(['en-US'])).toBe('en');
     expect(detectLocale(['fr-FR', 'en'])).toBe('fr');
     expect(detectLocale(['de-DE'])).toBe('fr');
+  });
+});
+
+describe('typographie française', () => {
+  it('un « ? » ou un « : » ne se retrouve jamais seul en début de ligne', () => {
+    expect(frenchSpacing('Tu m’entends ? Oui : « vite » !')).toBe(
+      'Tu m’entends\u00a0? Oui\u00a0: «\u00a0vite\u00a0»\u00a0!',
+    );
+    expect(translate({ q: 'Prêt ?' }, 'fr', 'q')).toBe('Prêt\u00a0?');
+    expect(translate({ q: 'Ready ?' }, 'en', 'q')).toBe('Ready ?');
   });
 });

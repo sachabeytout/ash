@@ -5,9 +5,9 @@ import type { RunState } from './state';
 
 /**
  * Salles d'évènement : une par biome, sans combat. Un choix simple, toujours refusable.
- * - Braise d'Aelia : un don contre un peu de vie (jamais mortel).
+ * - Braise d'Anii : un don contre un peu de vie (jamais mortel).
  * - Âme en cage : la libérer donne des PV max (aucun coût).
- * - Enclume de Brokk : affûter l'arme contre des éclats.
+ * - Enclume de Ptah : affûter l'arme contre des éclats.
  * - Puits de Ratatosk : un don contre des éclats.
  * - Autel de Thot : de l'XP contre un peu de vie (jamais mortel).
  */

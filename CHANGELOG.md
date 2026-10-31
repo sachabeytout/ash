@@ -2,6 +2,23 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.48.0 — Anii, Ptah et la nouvelle histoire
+
+L'étape 2 du lore : les personnages et les dialogues suivent maintenant l'histoire que tu as validée. Rien ne change dans les combats.
+
+- **Aelia devient Anii**, ta femme. Elle te parle toujours à travers les braises, mais la malédiction d'Apophis lui fait **perdre ses souvenirs**, un peu plus chaque jour.
+- **Brokk devient Ptah**, le dieu égyptien des artisans. Il ne forge pas les armes, il les **nomme**. Il est redessiné comme en Égypte : linceul clair, visage vert, calotte bleue, barbe droite et sceptre. (C'était l'option recommandée de ta liste de questions ; on peut revenir en arrière.)
+- **Les dialogues de la Cage sont réécrits** :
+  - les dieux t'appellent « Bennu » ;
+  - **l'arc des 10 victoires** suit le lore : à chaque victoire, un anneau d'Apophis se brise, Ash retrouve une vie passée (Grèce, Japon, Chine, l'arbre-monde, la Perse…) et Anii en oublie une ;
+  - les dieux ont ouvert ta cage ; Amon, le roi caché, se révèle à la 8e victoire.
+- **3 nouveaux dialogues** que tu entendras même si tu as déjà tout écouté : Anii qui commence à oublier, Ratatosk qui t'a suivi depuis l'arbre-monde, et ce que veulent les dieux.
+- **La vraie fin est réécrite** : Ash raconte leurs vies à Anii qui a tout oublié, ils s'embrassent, le Bennu naît de leurs flammes, et ils redeviennent cendres pendant que le soleil se lève.
+- Archives, évènements (Braise d'Anii, Enclume de Ptah), Ratatosk et répliques spontanées mis à jour.
+- **Typographie** : un « ? » ou un « : » ne se retrouve plus seul en début de ligne.
+
+**Quoi tester** : rentre dans la Cage quelques fois pour entendre les nouveaux dialogues (Anii, Ratatosk, Ptah), puis relis les fiches d'Anii et de Ptah dans les Archives (onglet Cage).
+
 ## 0.47.0 — Tes retours, d'un coup
 
 **Combat**

@@ -19,7 +19,7 @@ function effectText(descKey: string, effect: ForgeEffect): string {
   return t(descKey as TextKey, { value: Math.round(effect.value * 100) });
 }
 
-/** Forge de Brokk : une ligne par arme, niveau, prochain effet, bouton « Forger ». */
+/** Forge de Ptah : une ligne par arme, niveau, prochain effet, bouton « Forger ». */
 export class ForgePanel {
   private readonly root: Phaser.GameObjects.Container;
   private readonly onKey = (e: KeyboardEvent) => {
@@ -96,7 +96,7 @@ export class ForgePanel {
 
       const unlockCost = UNLOCK_COST[id];
       const cost = !unlocked ? (unlockCost ?? 0) : (next?.cost ?? 0);
-      // La Lame de l'Aube ne s'achète pas : Brokk la forge à la 5e victoire.
+      // La Lame de l'Aube ne s'achète pas : Ptah la nomme à la 5e victoire.
       const possible = unlocked ? next !== undefined : unlockCost !== undefined;
       const affordable = possible && this.meta.weaponParts >= cost;
       const label = !unlocked
