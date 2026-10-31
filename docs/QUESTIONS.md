@@ -66,6 +66,13 @@ Dernière mise à jour : 31/10/2026 (version 0.54.0).
 30. **Le 3e monde devient la Pyramide aux cages (0.54.0)** : l'Oiseleur a volé une pyramide et en a fait sa volière. Ses créatures d'acier restent étrangères ; l'élite devient un **Sphinx enchaîné**. Ça te plaît ? Préfères-tu un 5e monde en plus plutôt qu'un remplacement ? → **remplacement (la run garde 4 mondes)**
 31. **Musique « dans le sable »** que tu aimes : de quel jeu (ou quel monde) s'agit-il ? Je m'inspirerai de son ambiance (tempo, instruments, émotion) sans copier sa mélodie. → **en attendant : ambiance de désert (gammes orientales, bourdon, darbouka, flûte de roseau)**
 
+## E. Dons et amplifications (proposition dans `docs/PROPOSITION-DONS.md`)
+
+32. **18 nouveaux dons** (2 par dieu, chacun avec une mécanique nouvelle) : la liste te plaît ? Un don à retirer ou à changer ? → **en attente (rien codé avant ta réponse)**
+33. **5 amplifications** de plus (Sobek et Isis en reçoivent enfin une) : d'accord ? → **en attente**
+34. **8 duos tirés de la mythologie** (Sobek + Neith sa mère, Râ + Bastet sa fille, Seth qui défend la barque de Râ…) : d'accord ? → **en attente**
+35. Les **dons « légendaires »** : plus tard, quand on aura une idée qui nous est propre ? → **plus tard**
+
 ## C. Petites décisions prises par Claude (dis seulement si tu n'es pas d'accord)
 
 16. Caméra rapprochée (zoom ×2) qui suit Ash. → **gardé**
