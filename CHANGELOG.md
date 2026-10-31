@@ -2,6 +2,32 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.56.0 — Musique égyptienne
+
+Toutes les musiques ont été recomposées avec une couleur égyptienne, toujours fabriquées par le jeu lui-même
+(100 % originales, aucun fichier à télécharger).
+
+- **Nouveaux instruments** :
+  - **darbouka** : le « doum » grave et le « tek » claquant, sur de vrais rythmes orientaux (maqsoum, saïdi, baladi,
+    ayoub) ;
+  - **flûte de roseau (ney)** avec un léger vibrato, qui joue de vraies mélodies ;
+  - **sistre**, le hochet sacré des prêtresses ;
+  - **bourdon** grave tenu, comme le vent du désert ;
+  - **cordes pincées**, façon harpe ou luth.
+- **Gammes orientales** : hijaz et « double harmonique », celles qui sonnent tout de suite « Égypte ».
+- **Un thème par lieu** :
+  - **la Cage** : lente et intime ;
+  - **les Bas-Fonds d'Héliopolis** : la ville de néon, avec une pulsation électronique sous la darbouka ;
+  - **le Nil de minuit** : calme et inquiétant, harpe et flûte ;
+  - **la Pyramide aux cages** : **le thème du désert**, avec la mélodie la plus longue (inspirée de ton envie d'une
+    musique « dans le sable ») ;
+  - **la Douât** : une procession lente et grave ;
+  - **les boss** : la même musique que leur monde, en plus rapide et plus lourde (rythme de transe) ;
+  - **Ratatosk** : reste malicieux, avec une darbouka.
+
+**Quoi tester** : écoute la Cage, puis chaque monde et un boss. L'ambiance égyptienne te plaît ? Un morceau est-il trop
+fort, trop faible ou fatigant à la longue ?
+
 ## 0.55.0 — L'interface à l'égyptienne
 
 Comme tu l'as demandé, toute l'interface prend un style égyptien, en gardant l'ambiance « Égypte de néon et de nuit ».

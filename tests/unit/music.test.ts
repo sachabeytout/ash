@@ -17,6 +17,32 @@ describe('musique', () => {
   });
 });
 
+describe('musique égyptienne', () => {
+  it('darbouka, sistre et mélodies : 16 pas, caractères connus, degrés dans la gamme', () => {
+    for (const [id, track] of Object.entries(TRACKS)) {
+      if (track.darbuka) {
+        expect(track.darbuka, id).toHaveLength(16);
+        expect(track.darbuka, id).toMatch(/^[DTk.]+$/);
+      }
+      if (track.sistrum) expect(track.sistrum, id).toMatch(/^[s.]{16}$/);
+      for (const bar of track.melody ?? []) {
+        expect(bar, id).toHaveLength(16);
+        expect(bar[0], `${id} : une mesure ne commence pas par une tenue`).not.toBe('-');
+        expect(track.scale, id).toBeDefined();
+        for (const ch of bar)
+          if (ch !== '.' && ch !== '-') expect(parseInt(ch, 36), id).toBeLessThan(14);
+      }
+    }
+  });
+
+  it('le thème de chaque monde a une darbouka et une flûte (sauf le Comptoir)', () => {
+    for (const b of BIOMES) {
+      expect(TRACKS[b.music].darbuka, b.id).toBeDefined();
+      expect(TRACKS[b.music].melody, b.id).toBeDefined();
+    }
+  });
+});
+
 describe('musique par biome', () => {
   it('chaque biome a son thème et une version boss dans la même tonalité', () => {
     for (const b of BIOMES) {

@@ -133,6 +133,12 @@ Format : date — décision — raison — validée par l'utilisateur (oui / non
   ils appartiennent à l'Oiseleur, étranger à l'Égypte. Étape d'envoi des captures en CI rendue non bloquante (panne
   réseau de GitHub du 31/10 qui avait bloqué la mise en ligne de la 0.54.0).
 
+- **0.56.0 — Musique égyptienne** : mêmes identifiants de morceaux (`lowtown`, `frost`, `aviary`, `olympus`…), nouveaux
+  instruments synthétisés (darbouka, sistre, ney, bourdon, cordes pincées), gammes hijaz et double harmonique. Le kick
+  électronique reste seulement dans les Bas-Fonds (ville de néon) et sous les boss. Niveaux vérifiés par rendu hors ligne
+  (crête ≤ 0,44 au volume maximal). « Musique dans le sable » de l'utilisateur : jeu d'origine inconnu (question 31),
+  ambiance désert appliquée à la Pyramide.
+
 ## Réponses de l'utilisateur (30/10/2026)
 
 | Sujet         | Décision                                                                                                                                                                                              | Validée        |
