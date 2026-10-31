@@ -12,6 +12,7 @@ import { PLAYER } from '../../data/player';
 import type { WeaponDef } from '../../data/weapons';
 import type { Controls } from '../input/Controls';
 import { bodyOf } from '../physics';
+import { addFlameHair } from '../fx/flameHair';
 
 export interface ActiveSwing {
   step: AttackStep;
@@ -86,9 +87,15 @@ export class Player {
       .setScale(1.6)
       .setBlendMode('ADD');
     this.sprite = scene.physics.add.image(x, y, 'ash').setDepth(10);
-    bodyOf(this.sprite).setCircle(PLAYER.radius, 6 - PLAYER.radius, 14 - PLAYER.radius * 2);
+    // Cercle de collision aux pieds (le haut du dessin, ce sont les cheveux en flamme).
+    bodyOf(this.sprite).setCircle(
+      PLAYER.radius,
+      this.sprite.width / 2 - PLAYER.radius,
+      this.sprite.height - PLAYER.radius * 2,
+    );
     this.sprite.setCollideWorldBounds(true);
     this.pip = scene.add.image(x, y, 'pip').setDepth(11).setAlpha(0.85);
+    addFlameHair(scene, this.sprite, -7);
     this.slash = scene.add.graphics().setDepth(12).setBlendMode('ADD');
   }
 

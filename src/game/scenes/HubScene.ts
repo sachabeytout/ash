@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { addFlameHair } from '../fx/flameHair';
 import { finishRun, runBonuses } from '../../core/meta';
 import { randomSeed } from '../../core/rng';
 import { newRun, summarize, type RunSummary } from '../../core/run/state';
@@ -534,6 +535,7 @@ export class HubScene extends Phaser.Scene {
       .setScale(1.8)
       .setBlendMode('ADD');
     this.ash = this.add.image(x, y, 'ash').setScale(2).setDepth(10);
+    addFlameHair(this, this.ash, -14, 2);
     this.controls = new Controls(this, () => this.time.now);
     // Toucher le sol : Ash y marche.
     this.input.on('pointerup', (p: Phaser.Input.Pointer, over: Phaser.GameObjects.GameObject[]) => {

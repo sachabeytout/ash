@@ -2,6 +2,19 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.53.0 — Ash à l'égyptienne
+
+- **Nouveau look d'Ash**, appliqué d'office partout (combat, Cage, introduction) :
+  - **cheveux en flamme**, du rouge-orangé au jaune, avec de petites braises qui s'en échappent ;
+  - diadème d'or ;
+  - peau bronzée et yeux soulignés de khôl ;
+  - grand collier d'or et de lapis-lazuli ;
+  - son cœur de braise, toujours sur la poitrine ;
+  - pagne de lin blanc, ceinture dorée et sandales.
+- Les autres skins (ses vies passées) sont mis de côté pour l'instant.
+
+**Quoi tester** : regarde Ash dans la Cage et en combat. Le look te plaît ? Les cheveux en flamme se voient bien ?
+
 ## 0.52.0 — Tout rappelle l'Égypte
 
 Comme tu l'as demandé, presque tout ce qui venait d'autres mythologies ou d'une ville moderne est maintenant égyptien. Ash et Anii restent eux-mêmes. Les attaques ne changent pas : seuls les noms et les dessins changent.
