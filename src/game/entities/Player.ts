@@ -315,17 +315,20 @@ export class Player {
   }
 
   /** Grappin : Ash est tiré vers un point (comme un dash, invincible pendant le trajet). */
-  /** Tiré par un ennemi (chaîne de Shezmu) : comme un dash subi, sans effet des dons de dash. */
-  yank(now: number, target: Vec2): void {
+  /**
+   * Tiré par un ennemi (chaîne de Shezmu) jusqu'à `stopAt` de son centre : comme un dash subi,
+   * sans effet des dons de dash.
+   */
+  yank(now: number, target: Vec2, stopAt: number): void {
     const dx = target.x - this.x;
     const dy = target.y - this.y;
     const dist = Math.hypot(dx, dy);
-    if (dist < 30) return;
+    if (dist <= stopAt) return;
     this.state = {
       kind: 'dash',
       startedAt: now,
       dir: { x: dx / dist, y: dy / dist },
-      distance: Math.max(0, dist - 30),
+      distance: dist - stopAt,
     };
   }
 

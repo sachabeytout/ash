@@ -790,7 +790,7 @@ export class RunScene extends Phaser.Scene {
       const dmg = boss.hazardDamage(this.player, PLAYER.radius);
       if (dmg > 0) this.hurtPlayer(dmg, boss, boss.def.nameKey);
       // Chaîne de Shezmu : Ash est tiré jusqu'au boss.
-      if (boss.consumeHook() && boss.alive) this.player.yank(this.sim, boss);
+      if (boss.consumeHook() && boss.alive) this.player.yank(this.sim, boss, boss.radius + 22);
     }
     this.ui.showBoss(boss.alive ? boss.health.hp / boss.health.maxHp : 0, boss.phase);
   }
