@@ -4,6 +4,7 @@ import { HubScene } from './scenes/HubScene';
 import { PauseScene } from './scenes/PauseScene';
 import { ShopScene } from './scenes/ShopScene';
 import { EventScene } from './scenes/EventScene';
+import { AmonScene } from './scenes/AmonScene';
 import { IntroScene } from './scenes/IntroScene';
 import { EndingScene } from './scenes/EndingScene';
 import { RunScene } from './scenes/RunScene';
@@ -43,6 +44,7 @@ export function createGameConfig(parent: string): Phaser.Types.Core.GameConfig {
       PauseScene,
       ShopScene,
       EventScene,
+      AmonScene,
       EndingScene,
       IntroScene,
     ],

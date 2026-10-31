@@ -188,6 +188,11 @@ const MIGRATIONS: Record<number, (save: Raw) => Raw> = {
     }
     return { ...old, version: 15, meta: { ...meta, codex }, run };
   },
+  // v15 → v16 : Regard d'Amon (aucune faveur encore accordée dans la run en cours).
+  15: (old) => {
+    const run = isObject(old.run) ? { ...old.run, amonBiome: -1 } : old.run;
+    return { ...old, version: 16, run };
+  },
 };
 
 function isObject(v: unknown): v is Raw {
@@ -326,6 +331,7 @@ function sanitizeRun(raw: unknown): RunState | null {
     weaponLevel: num(raw.weaponLevel, 0, 0, 20),
     lastBreathUsed: raw.lastBreathUsed === true,
     revivesUsed: Math.floor(num(raw.revivesUsed, 0, 0, 9)),
+    amonBiome: Math.round(num(raw.amonBiome, -1, -1, BIOMES.length - 1)),
     heat: sanitizeHeat(raw.heat),
     eventTaken: Math.round(num(raw.eventTaken, -1, -1, BIOMES.length - 1)),
     kills: Math.floor(num(raw.kills, 0, 0)),

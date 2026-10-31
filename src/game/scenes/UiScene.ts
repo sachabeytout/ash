@@ -10,7 +10,7 @@ import type { Action, Controls } from '../input/Controls';
 import { sfx } from '../audio/sfx';
 import { telemetry } from '../telemetry';
 import { settings } from '../../core/settings';
-import { drawGodIcon } from '../icons';
+import { AMON_COLOR, drawAmonEye, drawGodIcon } from '../icons';
 import { TouchControls } from '../input/TouchControls';
 import { FONT_FAMILY } from '../theme';
 import { viewSize } from '../view';
@@ -48,6 +48,10 @@ export class UiScene extends Phaser.Scene {
   private trial!: Phaser.GameObjects.Text;
   private toastText!: Phaser.GameObjects.Text;
   private trialKey = '';
+  private amon!: Phaser.GameObjects.Container;
+  private amonEye!: Phaser.GameObjects.Graphics;
+  private amonText!: Phaser.GameObjects.Text;
+  private amonKey = '';
   private bannerSub!: Phaser.GameObjects.Text;
   private hint!: Phaser.GameObjects.Container;
   private hintBox!: Phaser.GameObjects.Graphics;
@@ -87,6 +91,13 @@ export class UiScene extends Phaser.Scene {
       .setOrigin(0.5, 0)
       .setVisible(false);
     this.trialKey = '';
+    // Regard d'Amon : œil doré + défi, sous le titre de la salle.
+    this.amonEye = this.add.graphics();
+    this.amonText = this.add
+      .text(10, 0, '', { ...style, fontSize: '10px', color: '#ffd36b' })
+      .setOrigin(0, 0.5);
+    this.amon = this.add.container(0, 0, [this.amonEye, this.amonText]).setVisible(false);
+    this.amonKey = '';
     this.toastText = this.add
       .text(0, 0, '', { ...style, fontSize: '10px', color: '#c8bde6' })
       .setOrigin(0.5, 0)
@@ -157,6 +168,7 @@ export class UiScene extends Phaser.Scene {
     this.hpText.setPosition(12, 29);
     this.room.setPosition(width / 2, 8);
     this.trial.setPosition(width / 2, 24);
+    this.placeAmon();
     this.toastText.setPosition(width / 2, 42);
     this.banner.setPosition(width / 2, height * 0.32);
     this.bannerSub.setPosition(width / 2, height * 0.32 + 22);
@@ -296,6 +308,37 @@ export class UiScene extends Phaser.Scene {
       .setVisible(true)
       .setText(state === 'won' ? t('trial.won') : t(label, { time }))
       .setScale(state === 'running' && seconds <= 10 ? 1.15 : 1);
+  }
+
+  /** Défi d'Amon en cours (null : caché). Un défi raté ferme l'œil puis disparaît. */
+  showAmon(state: 'watching' | 'won' | 'failed' | null, text: string): void {
+    if (!this.amon) return;
+    const key = `${state}:${text}`;
+    if (key === this.amonKey) return;
+    this.amonKey = key;
+    this.tweens.killTweensOf(this.amon);
+    if (state === null) {
+      this.amon.setVisible(false);
+      return;
+    }
+    this.amonEye.clear();
+    drawAmonEye(this.amonEye, 0, 0, 6, AMON_COLOR, state !== 'failed');
+    this.amonText.setText(text).setColor(state === 'failed' ? '#9a8fb5' : '#ffd36b');
+    this.amon.setVisible(true).setAlpha(1);
+    this.placeAmon();
+    if (state === 'won') {
+      this.amon.setScale(1.15);
+      this.tweens.add({ targets: this.amon, scale: 1, duration: 300 });
+    }
+    if (state === 'failed')
+      this.tweens.add({ targets: this.amon, alpha: 0, delay: 2600, duration: 600 });
+  }
+
+  /** Centre l'œil et le texte ensemble sous le titre de la salle. */
+  private placeAmon(): void {
+    if (!this.amon) return;
+    const { width } = viewSize(this);
+    this.amon.setPosition(width / 2 - (this.amonText.width + 10) / 2 + 6, 30);
   }
 
   /** Barre de vie du boss, en haut au centre (marques à 50 % = changement de phase). */

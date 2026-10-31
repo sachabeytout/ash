@@ -124,3 +124,28 @@ export function drawGodIcon(
     }
   }
 }
+
+/** Or d'Amon (le roi caché) : son œil et sa faveur royale. */
+export const AMON_COLOR = 0xffd36b;
+
+/** L'œil d'Amon : amande, pupille et trait en dessous (forme propre, lisible sans la couleur). */
+export function drawAmonEye(
+  g: Phaser.GameObjects.Graphics,
+  x: number,
+  y: number,
+  size: number,
+  color = AMON_COLOR,
+  open = true,
+): void {
+  g.lineStyle(Math.max(1.5, size / 5), color, 1);
+  if (!open) {
+    g.lineBetween(x - size, y, x + size, y);
+    g.lineBetween(x - size * 0.6, y + size * 0.15, x - size * 0.7, y + size * 0.45);
+    g.lineBetween(x + size * 0.6, y + size * 0.15, x + size * 0.7, y + size * 0.45);
+    return;
+  }
+  g.strokeEllipse(x, y, size * 2, size * 1.05);
+  g.fillStyle(color, 1).fillCircle(x, y, size * 0.32);
+  g.lineBetween(x - size * 0.2, y + size * 0.55, x - size * 0.2, y + size * 1.05);
+  g.lineBetween(x - size * 0.2, y + size * 1.05, x + size * 0.45, y + size * 1.2);
+}

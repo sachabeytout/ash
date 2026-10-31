@@ -65,6 +65,8 @@ export interface RunState {
   eventTaken: number;
   /** Renaissances de Thot déjà utilisées pendant cette run. Ajouté en v11. */
   revivesUsed: number;
+  /** Monde où Amon a déjà accordé sa faveur royale (-1 : aucun). Ajouté en v16. */
+  amonBiome: number;
   /** Statistiques pour le récapitulatif de fin de run. Ajoutées en v9. */
   kills: number;
   damageTaken: number;
@@ -134,6 +136,7 @@ export function newRun(
     kills: 0,
     damageTaken: 0,
     revivesUsed: 0,
+    amonBiome: -1,
   };
 }
 
