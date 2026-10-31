@@ -133,42 +133,44 @@ export function ensureGameTextures(scene: Phaser.Scene): void {
     g.fillStyle(0x5a9fae).fillTriangle(4, 8, 10, 2, 12, 10).fillTriangle(4, 36, 10, 42, 12, 34);
   });
 
-  // Givre-Serveur. Loup-relais : tête de loup anguleuse, oreilles en pointe.
+  // Chacal de nuit : museau long vers la droite, deux grandes oreilles dressées.
   shapeTexture(scene, 'wolfbot', 16, 16, (g) => {
-    g.fillStyle(0x0d1424).fillTriangle(0, 3, 16, 8, 0, 13).fillRect(0, 3, 6, 10);
-    g.fillStyle(0x9ab4ff).fillTriangle(1, 4, 14, 8, 1, 12);
-    g.fillStyle(0x5a74c0).fillTriangle(1, 4, 4, 0, 6, 5).fillTriangle(1, 12, 4, 16, 6, 11);
-    g.fillStyle(0xeaf2ff).fillRect(6, 6, 2, 1).fillRect(6, 9, 2, 1);
+    g.fillStyle(0x0d1424).fillEllipse(6, 10, 12, 9).fillTriangle(8, 6, 16, 10, 8, 13);
+    g.fillStyle(0x6a7ab8).fillEllipse(6, 10, 10, 7).fillTriangle(9, 7, 15, 10, 9, 12);
+    g.fillStyle(0x0d1424).fillTriangle(2, 7, 3, 0, 6, 6).fillTriangle(5, 6, 7, 0, 9, 6);
+    g.fillStyle(0x9ab4ff).fillTriangle(3, 6, 3.5, 2, 5, 6).fillTriangle(6, 6, 7, 2, 8, 6);
+    g.fillStyle(0xeaf2ff).fillRect(9, 8, 2, 1);
   });
-  // Givreur : cristal hexagonal, cœur pâle.
+  // Prêtresse du froid : robe sombre à capuche, orbe de glace noire entre les mains.
   shapeTexture(scene, 'frostcaster', 16, 16, (g) => {
-    const hex = (r: number) =>
-      [0, 1, 2, 3, 4, 5].map(
-        (i) =>
-          new Phaser.Math.Vector2(
-            8 + Math.cos((i * Math.PI) / 3) * r,
-            8 + Math.sin((i * Math.PI) / 3) * r,
-          ),
-      );
-    g.fillStyle(0x0b1f1e).fillPoints(hex(8), true);
-    g.fillStyle(0x6fd6c8).fillPoints(hex(6.5), true);
-    g.fillStyle(0x2e8f86).fillPoints(hex(3.5), true);
-    g.fillStyle(0xeafffb).fillRect(7, 7, 2, 2);
+    g.fillStyle(0x0b1f1e).fillTriangle(8, 0, 1, 16, 15, 16);
+    g.fillStyle(0x2e5f86).fillTriangle(8, 2, 3, 15, 13, 15);
+    g.fillStyle(0x0b1f1e).fillCircle(8, 5, 3);
+    g.fillStyle(0xeafffb).fillRect(7, 5, 1, 1).fillRect(9, 5, 1, 1);
+    g.fillStyle(0x6fd6c8).fillCircle(8, 11, 2.5);
+    g.fillStyle(0xeafffb).fillRect(7.5, 10, 1, 1);
   });
-  // Gardien runique : bloc de pierre, rune gravée.
+  // Graveur de hiéroglyphes : bloc de pierre, un œil gravé.
   shapeTexture(scene, 'runewarden', 22, 22, (g) => {
     g.fillStyle(0x0e1622).fillRoundedRect(0, 0, 22, 22, 4);
     g.fillStyle(0x7a9cc6).fillRoundedRect(2, 2, 18, 18, 3);
-    g.fillStyle(0x3d5a80).fillRect(10, 5, 2, 12).fillRect(6, 8, 10, 2);
-    g.fillStyle(0xeaf2ff).fillRect(6, 13, 2, 2).fillRect(14, 13, 2, 2);
+    g.lineStyle(1.5, 0x3d5a80, 1).strokeEllipse(11, 9, 12, 6);
+    g.fillStyle(0x3d5a80).fillCircle(11, 9, 1.8).fillRect(9, 12, 1.5, 4).fillRect(12, 12, 4, 1.5);
+    g.fillStyle(0xeaf2ff).fillRect(6, 16, 2, 2).fillRect(14, 16, 2, 2);
   });
-  // Einherjar (élite) : casque à cornes, visière fine.
+  // Medjay maudit (élite) : ancien garde du pharaon, coiffe rayée qui tombe sur les épaules.
   shapeTexture(scene, 'einherjar', 22, 22, (g) => {
     g.fillStyle(0x10141f).fillCircle(11, 12, 10);
     g.fillStyle(0xd0d8ff).fillCircle(11, 12, 8);
-    g.fillStyle(0x8a94c0).fillRect(4, 11, 14, 3);
-    g.fillStyle(0x10141f).fillRect(6, 12, 10, 1);
-    g.fillStyle(0xf2e6c8).fillTriangle(2, 9, 0, 1, 6, 6).fillTriangle(20, 9, 22, 1, 16, 6);
+    g.fillStyle(0x3a5aa8).fillTriangle(2, 20, 6, 4, 9, 20).fillTriangle(20, 20, 16, 4, 13, 20);
+    g.fillStyle(0xf2e6c8)
+      .fillRect(3, 9, 3, 1.5)
+      .fillRect(3, 14, 3, 1.5)
+      .fillRect(16, 9, 3, 1.5)
+      .fillRect(16, 14, 3, 1.5);
+    g.fillStyle(0x3a5aa8).fillRect(5, 3, 12, 4);
+    g.fillStyle(0xf2e6c8).fillRect(5, 5, 12, 1);
+    g.fillStyle(0x10141f).fillRect(8, 11, 6, 1.5);
   });
 
   // Fenrir-Ω : loup d'acier, crinière givrée, collier à maillons, gueule tournée vers la droite.

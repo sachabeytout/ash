@@ -1885,10 +1885,29 @@ export class RunScene extends Phaser.Scene {
     neon(ARENA.left, ARENA.bottom, n2);
     neon(ARENA.right, ARENA.bottom, n1);
     if (theme.snow) this.addSnow(0xd8f6ff);
+    if (theme.mist) this.addMist();
     if (theme.feathers) this.addSnow(0xd8b8ff, 'feather');
   }
 
-  /** Givre-Serveur : flocons qui tombent doucement (moins nombreux en qualité basse). */
+  /** Nil de minuit : brume froide qui dérive lentement au ras de l'eau. */
+  private addMist(): void {
+    this.add
+      .particles(0, 0, 'glow', {
+        x: { min: ARENA.left - 60, max: ARENA.left },
+        y: { min: ARENA.top + 20, max: ARENA.bottom - 20 },
+        speedX: { min: 6, max: 16 },
+        speedY: { min: -2, max: 2 },
+        lifespan: 26000,
+        frequency: 900 / QUALITY_PARTICLES[settings.quality],
+        scale: { min: 1.6, max: 3 },
+        alpha: { start: 0.14, end: 0 },
+        tint: 0x9ab4ff,
+        blendMode: 'ADD',
+      })
+      .setDepth(2);
+  }
+
+  /** Flocons qui tombent doucement (moins nombreux en qualité basse). */
   private addSnow(tint: number, texture = 'spark'): void {
     this.add
       .particles(0, ARENA.top - 20, texture, {

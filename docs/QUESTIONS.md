@@ -61,6 +61,8 @@ Dernière mise à jour : 30/10/2026 (version 0.44.0).
 26. En **portrait**, le jeu est tourné : dans le bon sens pour toi (tu tournes le téléphone vers la gauche) ?
 27. Les **petits textes** sont-ils enfin nets sur ton iPhone ?
 
+28. **Noms d'armes venus d'autres mythologies** : « Gleipnir » (nordique) et « Disque d'Hélios » (grec). Je propose **Chaîne de Shezmu** et **Disque de Râ**. D'accord ? (rien de changé pour l'instant)
+
 ## C. Petites décisions prises par Claude (dis seulement si tu n'es pas d'accord)
 
 16. Caméra rapprochée (zoom ×2) qui suit Ash. → **gardé**

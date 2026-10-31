@@ -34,8 +34,10 @@ export interface BiomeTheme {
   wall: number;
   wallGlow: number;
   neons: readonly [number, number];
-  /** Flocons qui tombent (Givre-Serveur). */
+  /** Flocons qui tombent. */
   snow: boolean;
+  /** Brume froide qui dérive au ras de l'eau (Nil de minuit). */
+  mist?: boolean;
   /** Plumes qui tombent (Volière). */
   feathers?: boolean;
 }
@@ -93,7 +95,8 @@ export const BIOMES: readonly BiomeDef[] = [
       wall: 0x1c3348,
       wallGlow: 0x8ff0ff,
       neons: [0x8ff0ff, 0x9ab4ff],
-      snow: true,
+      snow: false,
+      mist: true,
     },
   },
   {

@@ -2,6 +2,28 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.49.0 — Les lieux d'Égypte (étape 3a)
+
+- **Monde 1 : Les Bas-Fonds d'Héliopolis.** La ville de néon prend un air égyptien :
+  - les enseignes du mur deviennent des **hiéroglyphes en néon** (ânkh, œil, scarabée, plume de Maât) ;
+  - des **obélisques brisés** et des **jarres** remplacent les poubelles ;
+  - du sable et des éclats de poterie traînent au sol ;
+  - les ennemis travaillent désormais pour les **serviteurs d'Apophis**.
+- **Monde 2 : Le Nil de minuit.** Le datacenter gelé devient un **fleuve noir sous la lune** :
+  - eau qui ondule, reflet de lune, lotus qui flottent ;
+  - colonnes à chapiteau de lotus, papyrus le long des murs, brume froide.
+- **Nouveaux ennemis du Nil** (mêmes attaques, nouveau look et nouveau nom) :
+  - **Chacal de nuit** (avant : Loup-relais) ;
+  - **Prêtresse du froid** (avant : Givreur) ;
+  - **Graveur de hiéroglyphes** (avant : Gardien runique) ;
+  - **Medjay maudit**, un ancien garde du pharaon (avant : Einherjar).
+- **La Volière** : le Héraut et l'Oiseleur ne parlent plus de l'ancien « Serment ».
+- Fiches des Archives mises à jour.
+
+Pas encore changé : le boss du Nil (encore Fenrir, remplacé par Shezmu à l'étape 3b) et l'Olympe (remplacée par la Douât à l'étape 3c).
+
+**Quoi tester** : regarde les deux premiers mondes. L'ambiance égyptienne te plaît ? Reconnais-tu les nouveaux ennemis du Nil ?
+
 ## 0.48.0 — Anii, Ptah et la nouvelle histoire
 
 L'étape 2 du lore : les personnages et les dialogues suivent maintenant l'histoire que tu as validée. Rien ne change dans les combats.

@@ -176,7 +176,7 @@ qu'un jour, dans un autre monde, une étincelle viendra les rallumer…
 
 - ✅ **Personnages (0.48.0) :** Aelia est devenue Anii, Brokk est devenu Ptah (en attendant ta réponse) ; dialogues de
   la Cage, répliques, Archives et vraie fin réécrits. Reste à faire : les lieux et les boss (étape 3).
-- **Mondes :** les Bas-Fonds, le Givre-Serveur, l'Olympe Corporatif et la Volière deviennent les 4 lieux ci-dessus.
+- **Mondes :** ✅ Bas-Fonds d'Héliopolis et Nil de minuit (0.49.0) ; reste l'Olympe → la Douât (étape 3c).
 - **Boss :**
   - Ammit reste.
   - Fenrir-Ω et Talos sont remplacés par Shezmu.
