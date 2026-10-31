@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { drawFrame } from './frame';
 import type { DialogueDef, SpeakerDef } from '../../data/story';
 import { SPEAKERS } from '../../data/story';
 import { t, type TextKey } from '../../i18n';
@@ -78,8 +79,7 @@ export class DialogueBox {
       .setInteractive();
     veil.on('pointerup', () => this.advance());
     const g = scene.add.graphics();
-    g.fillStyle(0x0d0a18, 0.97).fillRoundedRect(left, top, w, h, 10);
-    g.lineStyle(2, speaker.color, 0.85).strokeRoundedRect(left, top, w, h, 10);
+    drawFrame(g, left, top, w, h, speaker.color, 0.97);
     drawPortrait(g, speaker, left + 34, top + 34);
     const name = scene.add.text(left + 64, top + 10, t(speaker.nameKey as TextKey), {
       fontFamily: FONT_FAMILY,

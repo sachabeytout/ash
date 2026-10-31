@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { drawFrame, drawCartoucheRect } from './frame';
 import { heatModifiers, heatTotal, setHeat, type HeatLevels } from '../../core/heat';
 import { HEAT, type HeatDef } from '../../data/heat';
 import { t, type TextKey } from '../../i18n';
@@ -44,8 +45,7 @@ export class HeatPanel {
       .rectangle(cx, cy, cam.displayWidth + 40, cam.displayHeight + 40, 0x07060d, 0.85)
       .setInteractive();
     const frame = scene.add.graphics();
-    frame.fillStyle(0x0d0a18, 0.98).fillRoundedRect(left, top, w, h, 10);
-    frame.lineStyle(2, HEAT_COLOR, 0.85).strokeRoundedRect(left, top, w, h, 10);
+    drawFrame(frame, left, top, w, h, HEAT_COLOR, 0.98);
     this.root.add([veil, frame]);
 
     const total = heatTotal(this.levels);
@@ -111,14 +111,7 @@ export class HeatPanel {
 
   private button(x: number, y: number, label: string, enabled: boolean, onTap: () => void): void {
     const g = this.scene.add.graphics();
-    g.fillStyle(0x07060d, 1).fillRoundedRect(x - 16, y - 12, 32, 24, 6);
-    g.lineStyle(1.5, enabled ? HEAT_COLOR : 0x3a3550, 1).strokeRoundedRect(
-      x - 16,
-      y - 12,
-      32,
-      24,
-      6,
-    );
+    drawCartoucheRect(g, x - 16, y - 12, 32, 24, enabled ? HEAT_COLOR : 0x3a3550);
     const txt = this.scene.add
       .text(x, y, label, {
         fontFamily: FONT_FAMILY,

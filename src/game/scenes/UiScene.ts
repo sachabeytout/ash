@@ -13,7 +13,7 @@ import { telemetry } from '../telemetry';
 import { settings } from '../../core/settings';
 import { AMON_COLOR, drawAmonEye, drawGodIcon } from '../icons';
 import { TouchControls } from '../input/TouchControls';
-import { FONT_FAMILY } from '../theme';
+import { COLORS, FONT_FAMILY } from '../theme';
 import { viewSize } from '../view';
 
 const INDICATOR_POOL = 24;
@@ -199,10 +199,12 @@ export class UiScene extends Phaser.Scene {
     this.hintSkip.setPosition(w / 2 - 8, h - 15);
     this.hintBox
       .clear()
-      .fillStyle(0x07060d, 0.82)
-      .fillRoundedRect(-w / 2, 0, w, h, 8)
-      .lineStyle(1.5, 0xffb02e, 0.9)
-      .strokeRoundedRect(-w / 2, 0, w, h, 8);
+      .fillStyle(COLORS.panel, 0.85)
+      .fillRect(-w / 2, 0, w, h)
+      .lineStyle(1.5, COLORS.goldDim, 0.9)
+      .strokeRect(-w / 2, 0, w, h)
+      .lineStyle(1, 0xffb02e, 0.6)
+      .strokeRect(-w / 2 + 3, 3, w - 6, h - 6);
     // En bas (au-dessus des commandes) quand il faut voir le haut de la salle (portes).
     const { height } = viewSize(this);
     this.hint.setY(low ? height * 0.6 : 50);
@@ -224,7 +226,7 @@ export class UiScene extends Phaser.Scene {
     g.fillStyle(0x07060d, 0.8).fillRect(10, 8, w + 4, 12);
     g.fillStyle(0x3a1d14, 1).fillRect(12, 10, w, 8);
     g.fillStyle(0xff7a2a, 1).fillRect(12, 10, Math.round((w * hp) / maxHp), 8);
-    g.lineStyle(1, 0xffe9d6, 0.6).strokeRect(10, 8, w + 4, 12);
+    g.lineStyle(1, COLORS.goldDim, 0.9).strokeRect(10, 8, w + 4, 12);
     this.hpText.setText(`${hp} / ${maxHp}`);
     // Jauge de Super : barre dorée sous la vie, étoile au bout (pleine quand le Super est prêt).
     const ready = run.superGauge >= 1;

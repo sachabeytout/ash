@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { FONT_FAMILY } from '../theme';
 import { hitFlash } from '../fx/hitFlash';
 import { AFFIXES, type AffixId } from '../../data/affixes';
 import { GODS } from '../../data/gods';
@@ -79,7 +80,7 @@ export class Enemy {
     this.telegraph = scene.add.graphics().setDepth(7);
     this.mark = scene.add
       .text(0, 0, '!', {
-        fontFamily: 'monospace',
+        fontFamily: FONT_FAMILY,
         fontSize: '12px',
         fontStyle: 'bold',
         color: '#ff2a6d',

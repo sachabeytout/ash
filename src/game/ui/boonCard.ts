@@ -32,17 +32,13 @@ export function addBoonMiniCard(
   const color = gods[0]?.color ?? 0xffffff;
   const band = 18;
   const g = scene.add.graphics();
-  g.fillStyle(0x0d0a18, 0.96).fillRoundedRect(x, y, w, h, 6);
+  g.fillStyle(COLORS.panel, 0.96).fillRect(x, y, w, h);
   gods.forEach((god, i) => {
     const bw = w / gods.length;
-    g.fillStyle(god.color, 0.22).fillRoundedRect(x + i * bw, y, bw, band, {
-      tl: i === 0 ? 6 : 0,
-      tr: i === gods.length - 1 ? 6 : 0,
-      bl: 0,
-      br: 0,
-    });
+    g.fillStyle(god.color, 0.22).fillRect(x + i * bw, y, bw, band);
   });
-  g.lineStyle(1.5, color, 0.75).strokeRoundedRect(x, y, w, h, 6);
+  g.lineStyle(1.5, COLORS.goldDim, 0.8).strokeRect(x, y, w, h);
+  g.lineStyle(1, color, 0.6).strokeRect(x + 2, y + 2, w - 4, h - 4);
   gods.forEach((god, i) => drawGodIcon(g, god, x + 11 + i * 14, y + band / 2, 5));
   const iconsW = 6 + gods.length * 14;
   scene.add

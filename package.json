@@ -1,7 +1,7 @@
 {
   "name": "ash",
   "private": true,
-  "version": "0.54.0",
+  "version": "0.55.0",
   "type": "module",
   "engines": {
     "node": ">=24"
@@ -20,6 +20,8 @@
     "icons": "pwa-assets-generator"
   },
   "dependencies": {
+    "@fontsource/marcellus": "^5.3.0",
+    "@fontsource/philosopher": "^5.3.0",
     "phaser": "4.2.1"
   },
   "devDependencies": {

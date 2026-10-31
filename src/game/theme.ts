@@ -9,7 +9,19 @@ export const COLORS = {
   phoenix: 0xff7a2a,
   ember: 0xffb02e,
   text: '#ffe9d6',
-  textDim: '#9a8fb5',
+  /** Texte secondaire : sable (direction artistique égyptienne, 0.55.0). */
+  textDim: '#b8a888',
+  /** Or, lapis-lazuli et turquoise : les couleurs de l'interface égyptienne. */
+  gold: 0xffd36b,
+  goldDim: 0xb8862e,
+  lapis: 0x2a4a9a,
+  turquoise: 0x40d0c0,
+  /** Fond des fenêtres : nuit bleutée. */
+  panel: 0x0b0a12,
 } as const;
 
-export const FONT_FAMILY = '"Courier New", ui-monospace, monospace';
+/**
+ * Police aux allures d'inscription antique (Marcellus), chiffres plus lisibles pris dans Philosopher
+ * (`AshDigits`, chargée dans main.ts). Libres : voir docs/CREDITS.md.
+ */
+export const FONT_FAMILY = '"AshDigits", "Marcellus", Georgia, "Times New Roman", serif';

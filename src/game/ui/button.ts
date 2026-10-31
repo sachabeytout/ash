@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { COLORS, FONT_FAMILY } from '../theme';
+import { drawCartouche } from './frame';
 
 export interface ButtonOptions {
   x: number;
@@ -19,20 +20,12 @@ export interface Button {
   destroy(): void;
 }
 
-/** Bouton néon arrondi, large zone de toucher, survol à la souris. */
+/** Bouton en cartouche égyptien, large zone de toucher, survol à la souris. */
 export function makeButton(scene: Phaser.Scene, o: ButtonOptions): Button {
   const g = scene.add.graphics();
   const draw = (hover: boolean) => {
-    g.clear()
-      .fillStyle(0x07060d, 0.9)
-      .fillRoundedRect(o.x - o.w / 2, o.y - o.h / 2, o.w, o.h, 8);
-    g.lineStyle(2, o.color, hover ? 1 : 0.7).strokeRoundedRect(
-      o.x - o.w / 2,
-      o.y - o.h / 2,
-      o.w,
-      o.h,
-      8,
-    );
+    g.clear();
+    drawCartouche(g, o.x, o.y, o.w, o.h, o.color, hover);
   };
   draw(false);
   const label = scene.add

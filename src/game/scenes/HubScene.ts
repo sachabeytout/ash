@@ -12,7 +12,7 @@ import { WEAPON_ORDER, WEAPONS, type WeaponId } from '../../data/weapons';
 import { t, type TextKey } from '../../i18n';
 import { music } from '../audio/music';
 import { sfx } from '../audio/sfx';
-import { addEmbers, drawCage, ensureTextures } from '../backdrop';
+import { addEmbers, drawCage, drawLotusColumn, ensureTextures } from '../backdrop';
 import { cheatsEnabled } from '../debug/cheats';
 import { openSaveDialog } from '../dom/saveDialog';
 import { session } from '../session';
@@ -112,6 +112,12 @@ export class HubScene extends Phaser.Scene {
     this.scale.on('resize', recenter);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.scale.off('resize', recenter));
 
+    // La Cage de l'Oiseleur (barreaux violets, étrangers) dans une salle égyptienne : colonnes de lotus.
+    const hall = this.add.graphics().setAlpha(0.75);
+    for (const x of [cx - 262, cx + 262]) drawLotusColumn(hall, x, 70, GAME_HEIGHT - 24);
+    hall
+      .lineStyle(2, COLORS.goldDim, 0.5)
+      .lineBetween(cx - 290, GAME_HEIGHT - 22, cx + 290, GAME_HEIGHT - 22);
     drawCage(this, 0.7);
     addEmbers(this);
 

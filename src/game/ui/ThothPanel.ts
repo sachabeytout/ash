@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { drawFrame, drawCartoucheRect } from './frame';
 import { buySkill, nextCost, skillLevel } from '../../core/meta';
 import type { MetaState } from '../../core/save/schema';
 import { SKILLS, type SkillDef } from '../../data/skills';
@@ -49,8 +50,7 @@ export class ThothPanel {
       .rectangle(cx, cy, cam.displayWidth + 40, cam.displayHeight + 40, 0x07060d, 0.85)
       .setInteractive(); // bloque les touches sur la Cage derrière
     const frame = scene.add.graphics();
-    frame.fillStyle(0x0d0a18, 0.98).fillRoundedRect(left, top, w, h, 10);
-    frame.lineStyle(2, THOTH, 0.8).strokeRoundedRect(left, top, w, h, 10);
+    drawFrame(frame, left, top, w, h, THOTH, 0.98);
     this.root.add([veil, frame]);
 
     const text = (
@@ -116,10 +116,7 @@ export class ThothPanel {
       const by = y + 14;
       const affordable = cost !== null && this.meta.xp >= cost;
       const btn = scene.add.graphics();
-      btn.fillStyle(0x07060d, 1).fillRoundedRect(bx - 48, by - 13, 96, 26, 6);
-      btn
-        .lineStyle(2, affordable ? THOTH : 0x3a3550, 1)
-        .strokeRoundedRect(bx - 48, by - 13, 96, 26, 6);
+      drawCartoucheRect(btn, bx - 48, by - 13, 96, 26, affordable ? THOTH : 0x3a3550);
       this.root.add(btn);
       text(
         bx,

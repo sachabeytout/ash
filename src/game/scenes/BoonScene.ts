@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { frieze } from '../ui/frame';
 import { settings } from '../../core/settings';
 import { scaledFontSize } from '../../core/textScale';
 import { mainValue, type BoonOffer } from '../../core/boons/boons';
@@ -182,23 +183,21 @@ export class BoonScene extends Phaser.Scene {
     const color = gods[0]?.color ?? 0xffffff;
     const g = this.add.graphics();
     const draw = (focused: boolean) => {
-      g.clear().fillStyle(0x0d0a18, 0.96).fillRoundedRect(x, y, w, h, 8);
+      g.clear().fillStyle(COLORS.panel, 0.96).fillRect(x, y, w, h);
       // Bandeau du haut aux couleurs du dieu (les duos partagent le bandeau en deux).
       const band = 38;
       gods.forEach((god, i) => {
         const bw = w / gods.length;
-        g.fillStyle(god.color, focused ? 0.3 : 0.18);
-        g.fillRoundedRect(x + i * bw, y, bw, band, {
-          tl: i === 0 ? 8 : 0,
-          tr: i === gods.length - 1 ? 8 : 0,
-          bl: 0,
-          br: 0,
-        });
+        g.fillStyle(god.color, focused ? 0.3 : 0.18).fillRect(x + i * bw, y, bw, band);
       });
-      g.lineStyle(1, color, 0.5).lineBetween(x + 6, y + band, x + w - 6, y + band);
+      // Frise égyptienne sous le bandeau.
+      frieze(g, x + 6, y + band - 1, w - 12);
       // Fin trait entre le titre et l'effet (les cartes se lisent toutes de la même façon).
       g.lineStyle(1, color, 0.25).lineBetween(x + 24, y + 94, x + w - 24, y + 94);
-      g.lineStyle(focused ? 3 : 1.5, color, focused ? 1 : 0.65).strokeRoundedRect(x, y, w, h, 8);
+      // Double filet : or à l'extérieur, couleur du dieu à l'intérieur.
+      g.lineStyle(focused ? 2.5 : 1.5, focused ? COLORS.gold : COLORS.goldDim, focused ? 1 : 0.8);
+      g.strokeRect(x, y, w, h);
+      g.lineStyle(focused ? 2 : 1, color, focused ? 1 : 0.6).strokeRect(x + 3, y + 3, w - 6, h - 6);
       gods.forEach((god, i) =>
         drawGodIcon(g, god, x + w / 2 + (i - (gods.length - 1) / 2) * 26, y + 22, 9),
       );

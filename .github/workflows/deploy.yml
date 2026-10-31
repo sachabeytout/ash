@@ -33,8 +33,10 @@ jobs:
       - run: npm test
       - run: npx playwright install --with-deps chromium
       - run: npm run e2e
+      # Captures pour déboguer : une panne du service d'artefacts de GitHub ne doit pas bloquer la mise en ligne.
       - uses: actions/upload-artifact@v7
         if: always()
+        continue-on-error: true
         with:
           name: captures
           path: tests/e2e/screenshots

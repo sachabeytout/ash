@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { drawCartoucheRect } from '../ui/frame';
 import type { RunState } from '../../core/run/state';
 import { canAfford, price } from '../../core/shop';
 import { SHOP_ITEMS, type ShopItemDef, type ShopItemId } from '../../data/shop';
@@ -83,8 +84,7 @@ export class ShopScene extends Phaser.Scene {
 
     const by = height - 30;
     const g = this.add.graphics();
-    g.fillStyle(0x07060d, 1).fillRoundedRect(cx - 90, by - 17, 180, 34, 8);
-    g.lineStyle(2, 0xffb02e, 0.9).strokeRoundedRect(cx - 90, by - 17, 180, 34, 8);
+    drawCartoucheRect(g, cx - 90, by - 17, 180, 34, 0xffb02e);
     this.add
       .text(cx, by, t('shop.leave'), {
         fontFamily: FONT_FAMILY,
@@ -140,14 +140,7 @@ export class ShopScene extends Phaser.Scene {
         ? t('shop.buy', { cost })
         : t('shop.tooPoor', { cost });
     const by = y + h - 22;
-    g.fillStyle(0x07060d, 1).fillRoundedRect(x + 8, by - 13, w - 16, 26, 6);
-    g.lineStyle(1.5, affordable ? ACCENT : 0x3a3550, 1).strokeRoundedRect(
-      x + 8,
-      by - 13,
-      w - 16,
-      26,
-      6,
-    );
+    drawCartoucheRect(g, x + 8, by - 13, w - 16, 26, affordable ? ACCENT : 0x3a3550);
     text(by - 7, label, 10, affordable ? COLORS.text : COLORS.textDim, affordable);
     text(y + h + 4, `${i + 1}`, 10, COLORS.textDim);
     if (affordable) {

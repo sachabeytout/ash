@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { FONT_FAMILY } from '../theme';
 import { hitFlash } from '../fx/hitFlash';
 import {
   bossPhase,
@@ -121,7 +122,7 @@ export class Boss implements Hittable {
     this.sprite.setCollideWorldBounds(true);
     this.mark = scene.add
       .text(0, 0, '!', {
-        fontFamily: 'monospace',
+        fontFamily: FONT_FAMILY,
         fontSize: '16px',
         fontStyle: 'bold',
         color: '#ff2a6d',

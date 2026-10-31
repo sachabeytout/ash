@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { drawCartouche } from '../ui/frame';
 import type { RunState } from '../../core/run/state';
 import { t } from '../../i18n';
 import { addBoonMiniCard } from '../ui/boonCard';
@@ -103,8 +104,7 @@ export class PauseScene extends Phaser.Scene {
       const w = boons.length ? Math.min(200, listX - 24) : 220;
       const h = 40;
       const g = this.add.graphics();
-      g.fillStyle(0x07060d, 0.95).fillRoundedRect(cx - w / 2, y - h / 2, w, h, 8);
-      g.lineStyle(2, color, 0.9).strokeRoundedRect(cx - w / 2, y - h / 2, w, h, 8);
+      drawCartouche(g, cx, y, w, h, color);
       const txt = this.add
         .text(cx, y, label, {
           fontFamily: FONT_FAMILY,

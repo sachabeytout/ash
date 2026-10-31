@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { drawFrame, drawCartoucheRect } from './frame';
 import {
   CODEX,
   CODEX_SECTIONS,
@@ -85,8 +86,7 @@ export class CodexPanel {
       .rectangle(cx, cy, cam.displayWidth + 40, cam.displayHeight + 40, 0x07060d, 0.85)
       .setInteractive();
     const frame = scene.add.graphics();
-    frame.fillStyle(0x0d0a18, 0.98).fillRoundedRect(left, top, w, h, 10);
-    frame.lineStyle(2, CODEX_COLOR, 0.85).strokeRoundedRect(left, top, w, h, 10);
+    drawFrame(frame, left, top, w, h, CODEX_COLOR, 0.98);
     this.root.add([veil, frame]);
 
     this.text(left + 14, top + 10, t('codex.title'), 15, '#7fffc0', true);
@@ -292,8 +292,7 @@ export class CodexPanel {
       .setLineSpacing(2);
     const by = top + 84 + 200 - 18;
     const g = this.scene.add.graphics();
-    g.fillStyle(0x07060d, 1).fillRoundedRect(dx + dw / 2 - 60, by - 11, 120, 22, 6);
-    g.lineStyle(1.5, CODEX_COLOR, 0.9).strokeRoundedRect(dx + dw / 2 - 60, by - 11, 120, 22, 6);
+    drawCartoucheRect(g, dx + dw / 2 - 60, by - 11, 120, 22, CODEX_COLOR);
     this.root.add(g);
     this.text(dx + dw / 2, by, t('codex.memory.replay'), 10, COLORS.text, true).setOrigin(0.5);
     const zone = this.scene.add

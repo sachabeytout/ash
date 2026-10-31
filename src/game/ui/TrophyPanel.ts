@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { drawFrame } from './frame';
 import type { MetaState } from '../../core/save/schema';
 import { trophyEarned, trophyProgress } from '../../core/trophies';
 import { TROPHIES, type TrophyDef } from '../../data/trophies';
@@ -72,8 +73,7 @@ export class TrophyPanel {
       .rectangle(cx, cy, cam.displayWidth + 40, cam.displayHeight + 40, 0x07060d, 0.85)
       .setInteractive();
     const frame = scene.add.graphics();
-    frame.fillStyle(0x0d0a18, 0.98).fillRoundedRect(left, top, w, h, 10);
-    frame.lineStyle(2, TROPHY_COLOR, 0.85).strokeRoundedRect(left, top, w, h, 10);
+    drawFrame(frame, left, top, w, h, TROPHY_COLOR, 0.98);
     this.root.add([veil, frame]);
 
     const earned = TROPHIES.filter((d) => this.meta.trophies.includes(d.id)).length;

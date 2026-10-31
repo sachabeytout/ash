@@ -19,7 +19,7 @@ const STYLE = `
 .ash-dialog .head button{flex:0 0 auto;min-height:34px}
 .ash-dialog p{margin:4px 0 8px;color:#bdb2d8;font-size:13px}
 .ash-dialog textarea{width:100%;height:50px;box-sizing:border-box;background:#07060d;color:#ffe9d6;
-  border:1px solid #3a2f63;border-radius:6px;font:16px/1.3 ui-monospace,monospace;padding:6px;resize:none}
+  border:1px solid #3a2f63;border-radius:6px;font:16px/1.3 Marcellus,Georgia,serif;padding:6px;resize:none}
 .ash-dialog .row{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 8px}
 .ash-dialog button,.ash-dialog label.btn{flex:1 1 auto;min-height:38px;padding:6px 12px;border-radius:8px;
   border:2px solid #ffb02e;background:#07060d;color:#ffe9d6;font:600 14px system-ui,sans-serif;cursor:pointer;

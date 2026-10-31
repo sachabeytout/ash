@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { drawFrame, drawCartoucheRect } from './frame';
 import {
   forgeLevel,
   isUnlocked,
@@ -51,8 +52,7 @@ export class ForgePanel {
       .rectangle(cx, cy, cam.displayWidth + 40, cam.displayHeight + 40, 0x07060d, 0.85)
       .setInteractive();
     const frame = scene.add.graphics();
-    frame.fillStyle(0x0d0a18, 0.98).fillRoundedRect(left, top, w, h, 10);
-    frame.lineStyle(2, BROKK, 0.8).strokeRoundedRect(left, top, w, h, 10);
+    drawFrame(frame, left, top, w, h, BROKK, 0.98);
     this.root.add([veil, frame]);
 
     this.text(left + 14, top + 10, t('forge.title'), 15, '#ffe08a', true);
@@ -109,10 +109,7 @@ export class ForgePanel {
       const bx = left + w - 72;
       const by = y + 15;
       const btn = scene.add.graphics();
-      btn.fillStyle(0x07060d, 1).fillRoundedRect(bx - 60, by - 13, 120, 26, 6);
-      btn
-        .lineStyle(2, affordable ? BROKK : 0x3a3550, 1)
-        .strokeRoundedRect(bx - 60, by - 13, 120, 26, 6);
+      drawCartoucheRect(btn, bx - 60, by - 13, 120, 26, affordable ? BROKK : 0x3a3550);
       this.root.add(btn);
       this.text(bx, by, label, 11, affordable ? COLORS.text : COLORS.textDim, affordable).setOrigin(
         0.5,

@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { FONT_FAMILY } from '../theme';
 import { QUALITY_PARTICLES, settings } from '../../core/settings';
 import { vibrate } from '../../platform/device';
 
@@ -23,7 +24,7 @@ export class Juice {
       this.numbers.push(
         scene.add
           .text(0, 0, '', {
-            fontFamily: 'monospace',
+            fontFamily: FONT_FAMILY,
             fontSize: '11px',
             fontStyle: 'bold',
             color: '#ffe9d6',

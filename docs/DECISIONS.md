@@ -126,6 +126,13 @@ Format : date — décision — raison — validée par l'utilisateur (oui / non
   intacte). L'Oiseleur, ses créatures d'acier et Vesper restent étrangers à l'Égypte (choix de l'utilisateur) ; l'élite
   devient le Sphinx enchaîné. Plumes qui tombent → grains de sable (`BiomeTheme.sand`).
 
+- **0.55.0 — Direction artistique égyptienne** (demande : « donne une DA égyptienne à tout le jeu ») : remplace le
+  « cyberpunk violet » du brief par une « Égypte de néon et de nuit » (or, lapis, turquoise ; cartouches ; cadres à
+  frise). Police Marcellus (OFL) pour les textes, chiffres pris dans Philosopher (OFL) car ceux de Marcellus se lisent
+  mal (« 1 »/« I », « 0 »/« O ») ; polices incluses dans le jeu (hors ligne). Les barreaux de la Cage restent violets :
+  ils appartiennent à l'Oiseleur, étranger à l'Égypte. Étape d'envoi des captures en CI rendue non bloquante (panne
+  réseau de GitHub du 31/10 qui avait bloqué la mise en ligne de la 0.54.0).
+
 ## Réponses de l'utilisateur (30/10/2026)
 
 | Sujet         | Décision                                                                                                                                                                                              | Validée        |

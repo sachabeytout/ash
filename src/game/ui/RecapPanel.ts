@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { drawFrame } from './frame';
 import type { RunSummary } from '../../core/run/state';
 import { getBiome } from '../../data/biomes';
 import { getBoon } from '../../data/boons';
@@ -51,8 +52,7 @@ export class RecapPanel {
       .setInteractive();
     veil.on('pointerup', () => this.close());
     const frame = scene.add.graphics();
-    frame.fillStyle(0x0d0a18, 0.98).fillRoundedRect(left, top, w, h, 10);
-    frame.lineStyle(2, color, 0.85).strokeRoundedRect(left, top, w, h, 10);
+    drawFrame(frame, left, top, w, h, color, 0.98);
     this.root.add([veil, frame]);
 
     const hex = `#${color.toString(16).padStart(6, '0')}`;

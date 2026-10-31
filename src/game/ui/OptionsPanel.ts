@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { drawFrame, drawCartoucheRect } from './frame';
 import { settings } from '../../core/settings';
 import { detectLocale, setLocale, t, type TextKey } from '../../i18n';
 import { sfx } from '../audio/sfx';
@@ -82,8 +83,7 @@ export class OptionsPanel {
       .rectangle(cx, cy, cam.displayWidth + 40, cam.displayHeight + 40, 0x07060d, 0.88)
       .setInteractive();
     const frame = scene.add.graphics();
-    frame.fillStyle(0x0d0a18, 0.98).fillRoundedRect(left, top, w, h, 10);
-    frame.lineStyle(2, ACCENT, 0.8).strokeRoundedRect(left, top, w, h, 10);
+    drawFrame(frame, left, top, w, h, ACCENT, 0.98);
     this.root.add([veil, frame]);
     // Menu de debug caché : 5 touches rapides sur le titre.
     const title = this.text(left + 14, top + 10, t('options.title'), 15, '#ffb02e', true);
@@ -209,8 +209,7 @@ export class OptionsPanel {
   ): Phaser.GameObjects.Container {
     const c = this.scene.add.container(x, y);
     const g = this.scene.add.graphics();
-    g.fillStyle(0x07060d, 1).fillRoundedRect(-w / 2, -h / 2, w, h, 6);
-    g.lineStyle(1.5, ACCENT, 0.85).strokeRoundedRect(-w / 2, -h / 2, w, h, 6);
+    drawCartoucheRect(g, -w / 2, -h / 2, w, h, ACCENT);
     const txt = this.scene.add
       .text(0, 0, label, { fontFamily: FONT_FAMILY, fontSize: '11px', color: COLORS.text })
       .setOrigin(0.5);

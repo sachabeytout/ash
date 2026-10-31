@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { drawFrame } from '../ui/frame';
 import type { EventCost, EventId } from '../../core/run/events';
 import { t, type TextKey } from '../../i18n';
 import { sfx } from '../audio/sfx';
@@ -48,8 +49,7 @@ export class EventScene extends Phaser.Scene {
     const w = Math.min(440, width - 32);
     const h = 176;
     const g = this.add.graphics();
-    g.fillStyle(0x0d0a18, 0.97).fillRoundedRect(cx - w / 2, cy - h / 2, w, h, 10);
-    g.lineStyle(2, color, 0.9).strokeRoundedRect(cx - w / 2, cy - h / 2, w, h, 10);
+    drawFrame(g, cx - w / 2, cy - h / 2, w, h, color, 0.97);
     drawEventIcon(this.add.graphics(), d.id, cx - w / 2 + 40, cy - h / 2 + 44, 1.4);
 
     const left = cx - w / 2 + 80;

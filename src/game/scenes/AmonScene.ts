@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { drawFrame } from '../ui/frame';
 import { GODS, type GodId } from '../../data/gods';
 import { t, type TextKey } from '../../i18n';
 import { sfx } from '../audio/sfx';
@@ -43,8 +44,7 @@ export class AmonScene extends Phaser.Scene {
     const h = 200;
     const top = cy - h / 2;
     const g = this.add.graphics();
-    g.fillStyle(0x0d0a18, 0.97).fillRoundedRect(cx - w / 2, top, w, h, 10);
-    g.lineStyle(2, AMON_COLOR, 0.9).strokeRoundedRect(cx - w / 2, top, w, h, 10);
+    drawFrame(g, cx - w / 2, top, w, h, AMON_COLOR, 0.97);
     drawAmonEye(this.add.graphics(), cx, top + 22, 11);
     this.add
       .text(cx, top + 42, t('amon.favor.title'), {

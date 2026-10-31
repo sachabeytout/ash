@@ -2,7 +2,8 @@ import Phaser from 'phaser';
 import { t } from '../../i18n';
 import { tryLandscapeFullscreen } from '../../platform/device';
 import { unlockAudio } from '../audio/sfx';
-import { addEmbers, drawCage, ensureTextures } from '../backdrop';
+import { addEmbers, drawCage, drawPyramid, drawWingedSun, ensureTextures } from '../backdrop';
+import { ensureGameTextures } from '../textures';
 import { COLORS, FONT_FAMILY, GAME_HEIGHT, GAME_WIDTH } from '../theme';
 import { markScene } from './markScene';
 import { INTRO_ID } from './IntroScene';
@@ -17,10 +18,13 @@ export class TitleScene extends Phaser.Scene {
 
   create(): void {
     ensureTextures(this);
+    ensureGameTextures(this);
     const cx = GAME_WIDTH / 2;
 
-    drawCage(this, 0.8);
+    drawPyramid(this, 0.9);
+    drawCage(this, 0.55);
     addEmbers(this);
+    drawWingedSun(this.add.graphics(), cx, 62, 1);
 
     const title = this.add
       .text(cx, 120, t('title.name'), {

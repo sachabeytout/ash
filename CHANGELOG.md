@@ -2,6 +2,25 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.55.0 — L'interface à l'égyptienne
+
+Comme tu l'as demandé, toute l'interface prend un style égyptien, en gardant l'ambiance « Égypte de néon et de nuit ».
+
+- **Nouvelle police** aux allures d'inscription antique, à la place de la police « machine à écrire ». Les chiffres
+  viennent d'une deuxième police, plus lisible (« 1 » et « 0 » bien distincts).
+- **Couleurs égyptiennes** : or, lapis-lazuli et turquoise à la place du violet. Les textes secondaires sont couleur
+  sable.
+- **Boutons en cartouche**, l'ovale où l'on écrivait le nom des pharaons.
+- **Fenêtres à cadre doré** (Thot, Ptah, râtelier, Archives, trophées, Balance de Maât, options, dialogues, évènements,
+  Amon…), avec une **frise** de petits blocs lapis, or et turquoise en haut et en bas, comme sur les murs des tombeaux.
+- **Cartes de dons** : double filet doré et frise sous le bandeau du dieu.
+- **Écran titre** : une grande pyramide dorée sous les étoiles, et le **disque solaire ailé** au-dessus du nom ASH.
+- **La Cage** : deux colonnes à chapiteau de lotus. Les barreaux restent violets, car ils appartiennent à l'Oiseleur.
+- Barres de vie et bulles d'aide aux bords dorés.
+
+**Quoi tester** : regarde l'écran titre, la Cage, une fenêtre (Thot), un choix de don et la pause. Le style te plaît ?
+Les textes et les chiffres sont-ils bien lisibles sur ton téléphone ?
+
 ## 0.54.0 — La Pyramide aux cages
 
 Comme tu l'as demandé, un monde en rapport avec les pyramides : **la Volière (3e monde) devient la Pyramide aux cages**.

@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { drawFrame, drawCartoucheRect } from './frame';
 import { summarizeLog } from '../../core/telemetry';
 import { getBiome } from '../../data/biomes';
 import { t, type TextKey } from '../../i18n';
@@ -32,8 +33,7 @@ export class DebugPanel {
       .rectangle(cx, cy, cam.displayWidth + 40, cam.displayHeight + 40, 0x07060d, 0.92)
       .setInteractive();
     const frame = scene.add.graphics();
-    frame.fillStyle(0x0d0a18, 1).fillRoundedRect(left, top, w, h, 10);
-    frame.lineStyle(2, 0x9a8fb5, 0.9).strokeRoundedRect(left, top, w, h, 10);
+    drawFrame(frame, left, top, w, h, 0x9a8fb5, 1);
     this.root.add([veil, frame]);
 
     const log = telemetry.data;
@@ -73,8 +73,7 @@ export class DebugPanel {
 
   private button(x: number, y: number, label: string, onTap: () => void): void {
     const g = this.scene.add.graphics();
-    g.fillStyle(0x07060d, 1).fillRoundedRect(x - 90, y - 13, 180, 26, 6);
-    g.lineStyle(1.5, 0x9a8fb5, 0.9).strokeRoundedRect(x - 90, y - 13, 180, 26, 6);
+    drawCartoucheRect(g, x - 90, y - 13, 180, 26, 0x9a8fb5);
     const txt = this.scene.add
       .text(x, y, label, { fontFamily: FONT_FAMILY, fontSize: '11px', color: COLORS.text })
       .setOrigin(0.5);
