@@ -109,7 +109,11 @@ export interface EnemyDef {
   /** Élite : plus coriace, marqué d'une couronne, rapporte de l'XP. */
   elite?: { xp: number };
   /** Bouclier frontal : les coups venus de face sont presque tous bloqués (il faut le contourner). */
-  shield?: { arcDeg: number; blocked: number };
+  /**
+   * Bouclier frontal : bloque dans cet angle ; `turnRate` = vitesse à laquelle il se retourne
+   * (radians par seconde) : le joueur a le temps de le contourner.
+   */
+  shield?: { arcDeg: number; blocked: number; turnRate: number };
 }
 
 export const ENEMIES: Record<EnemyId, EnemyDef> = {
@@ -256,7 +260,7 @@ export const ENEMIES: Record<EnemyId, EnemyDef> = {
     attack: { kind: 'charge', triggerRange: 140, distance: 150, width: 20 },
     threat: 4,
     elite: { xp: 15 },
-    shield: { arcDeg: 120, blocked: 0.15 },
+    shield: { arcDeg: 100, blocked: 0.15, turnRate: 2.2 },
   },
 
   // ---------- Olympe Corporatif ----------
@@ -413,7 +417,7 @@ export const ENEMIES: Record<EnemyId, EnemyDef> = {
     attack: { kind: 'beam', preferredDistance: 110, length: 280, width: 14 },
     threat: 4,
     elite: { xp: 20 },
-    shield: { arcDeg: 120, blocked: 0.15 },
+    shield: { arcDeg: 100, blocked: 0.15, turnRate: 2.2 },
   },
   // ---------- Soutiens et nouveaux ennemis (0.34.0) ----------
   // Rebouteux : soigne ses alliés (anneau vert qui se remplit). La cible à abattre en premier.

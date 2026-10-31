@@ -149,9 +149,9 @@ export class Controls {
     }
   }
 
-  /** L'aide à la visée s'applique quand aucune visée précise n'est donnée (tactile, manette sans stick droit). */
+  /** L'aide à la visée s'applique quand aucune visée précise n'est donnée (pas de souris ni de stick droit). */
   get wantsAimAssist(): boolean {
-    return (this.lastDevice === 'touch' || this.lastDevice === 'gamepad') && !this.aimDir;
+    return !this.aimDir && !this.mouseWorld;
   }
 
   destroy(): void {

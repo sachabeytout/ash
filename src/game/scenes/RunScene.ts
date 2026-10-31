@@ -486,6 +486,17 @@ export class RunScene extends Phaser.Scene {
       this.shotsP.fire(this.sim, this.player, angle, step, kind, id, charged ? 1.5 : 1);
     };
     this.player.onAttackStart = (power) => this.tutorialEvent({ type: power ? 'power' : 'attack' });
+    this.player.onDashStrike = (power) => {
+      sfx.swing(true);
+      this.juice.shake(0.003, 90);
+      this.juice.burst(this.player.x, this.player.y, 0xffd27a, 10);
+      this.juice.label(
+        this.player.x,
+        this.player.y - 20,
+        t(power ? 'strike.power' : 'strike.attack'),
+        '#ffd27a',
+      );
+    };
     this.applyProfile();
     this.aegisLeft = this.profile.aegis;
     this.player.canSuper = () => superReady(this.run.superGauge) && !this.choosing;
@@ -630,7 +641,7 @@ export class RunScene extends Phaser.Scene {
         this.offerSpark();
       }
       if (e.code === 'KeyG') this.run.superGauge = 1;
-      if (e.code === 'KeyJ' && this.kind === 'combat' && !this.roomCleared) {
+      if (e.code === 'KeyC' && this.kind === 'combat' && !this.roomCleared) {
         // Regard d'Amon sur cette salle (chaque appui change de défi).
         const i = AMON_CHALLENGES.indexOf(this.amon?.challenge ?? 'power');
         this.amon = newAmonWatch(AMON_CHALLENGES[(i + 1) % AMON_CHALLENGES.length] ?? 'untouched');

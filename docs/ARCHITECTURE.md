@@ -35,7 +35,7 @@ par-dessus). Mort ou sortie → `hub` avec un `RunSummary`.
 - Regard d'Amon : logique `src/core/amon.ts` (salle observée, défis, faveur royale, constantes) ; en jeu
   `RunScene.startAmon` / `onAmonEvent` (coups reçus, ennemis vaincus, `hitKind`) / `openRoyalFavor` (dans `clearRoom`) ;
   fenêtre `src/game/scenes/AmonScene.ts`, œil `drawAmonEye` (`src/game/icons.ts`), `UiScene.showAmon`. Sauvegarde v16
-  (`run.amonBiome`). Raccourci de test J : Amon regarde la salle (chaque appui change de défi).
+  (`run.amonBiome`). Raccourci de test C : Amon regarde la salle (chaque appui change de défi).
 - Icônes des dieux : `drawGodIcon` (`src/game/icons.ts`), une forme par `GodDef.icon` (tête + détail du pouvoir).
 - Présentation des boss : `RunScene.presentBoss` (caméra) + `UiScene.bossIntro` (bandes, nom) ; `BOSS_PRESENT_MS`.
 - Trophées : `src/data/trophies.ts` (objectifs, récompenses), `src/core/trophies.ts` (progression, `claimTrophies`

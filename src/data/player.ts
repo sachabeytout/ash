@@ -20,6 +20,9 @@ export const PLAYER = {
   inputBufferMs: 130,
   /** Jauge de Super : elle se remplit en frappant et (plus vite) en étant touché. */
   superGauge: { perDamageDealt: 1 / 240, perDamageTaken: 1 / 45 },
-  /** Aide à la visée (tactile / manette) : cône et portée. */
-  aimAssist: { coneDeg: 70, range: 140 },
+  /**
+   * Visée automatique légère des attaques (pas du dash) : un ennemi tout proche est visé même un peu
+   * de côté (`near`), un ennemi plus loin seulement s'il est à peu près devant (`far`).
+   */
+  aimAssist: { near: { coneDeg: 150, range: 70 }, far: { coneDeg: 70, range: 140 } },
 } as const;

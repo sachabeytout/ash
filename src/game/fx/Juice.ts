@@ -78,4 +78,20 @@ export class Juice {
       onComplete: () => t.setVisible(false),
     });
   }
+
+  /** Petit mot qui s'envole au-dessus d'Ash (nom d'un coup spécial). Utilise la même réserve de textes. */
+  label(x: number, y: number, text: string, color: string): void {
+    const t = this.numbers.find((n) => !n.visible);
+    if (!t) return;
+    t.setText(text).setColor(color).setPosition(x, y).setAlpha(1).setVisible(true);
+    this.scene.tweens.add({
+      targets: t,
+      y: y - 14,
+      alpha: 0,
+      delay: 250,
+      duration: 650,
+      ease: 'Cubic.Out',
+      onComplete: () => t.setVisible(false),
+    });
+  }
 }

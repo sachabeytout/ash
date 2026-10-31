@@ -223,7 +223,10 @@ export class Enemy {
             if (canAttack && now >= this.cooldownUntil && dist < pref + 90)
               this.startTelegraph(now, toTarget);
           }
-          this.facing = toTarget;
+          // Un porteur de bouclier se retourne lentement : on peut le prendre à revers.
+          this.facing = def.shield
+            ? turnToward(this.facing, toTarget, def.shield.turnRate * (dt / 1000))
+            : toTarget;
           break;
         }
         case 'telegraph': {
@@ -379,9 +382,11 @@ export class Enemy {
     const s = this.status;
     const r = this.def.radius;
     if (this.def.shield) {
-      // Bouclier : arc épais devant l'ennemi (on voit de quel côté il protège).
+      // Bouclier : arc épais devant l'ennemi (on voit de quel côté il protège) ; pâle quand la garde
+      // est baissée (juste après une attaque).
       const half = (this.def.shield.arcDeg * Math.PI) / 360;
-      g.lineStyle(3, 0xe8f2ff, frozen ? 0.3 : 0.9).beginPath();
+      const lowered = frozen || this.state === 'recover';
+      g.lineStyle(3, 0xe8f2ff, lowered ? 0.25 : 0.9).beginPath();
       g.arc(this.x, this.y, r + 6, this.facing - half, this.facing + half);
       g.strokePath();
     }
@@ -608,6 +613,8 @@ export class Enemy {
   blocks(from: Vec2, now: number): boolean {
     const shield = this.def.shield;
     if (!shield || isFrozen(this.status, now)) return false;
+    // Garde baissée juste après une attaque : la fenêtre pour frapper.
+    if (this.state === 'recover') return false;
     const toAttacker = Math.atan2(from.y - this.y, from.x - this.x);
     let diff = Math.abs(toAttacker - this.facing) % (Math.PI * 2);
     if (diff > Math.PI) diff = Math.PI * 2 - diff;
@@ -675,4 +682,12 @@ export class Enemy {
         .fillPath();
     }
   }
+}
+
+/** Tourne l'angle `from` vers `to` d'au plus `maxStep` radians (par le plus court chemin). */
+function turnToward(from: number, to: number, maxStep: number): number {
+  let diff = (to - from) % (Math.PI * 2);
+  if (diff > Math.PI) diff -= Math.PI * 2;
+  if (diff < -Math.PI) diff += Math.PI * 2;
+  return Math.abs(diff) <= maxStep ? to : from + Math.sign(diff) * maxStep;
 }

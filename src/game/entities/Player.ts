@@ -5,6 +5,7 @@ import {
   type AttackPhase,
   type AttackStep,
 } from '../../core/combat/attack';
+import { dashStrikeStep, isDashStrike } from '../../core/combat/dashStrike';
 import { nearestInCone, type Vec2 } from '../../core/geometry';
 import { settings } from '../../core/settings';
 import { PLAYER } from '../../data/player';
@@ -50,6 +51,8 @@ export class Player {
   private invulnerableUntil = 0;
   private lastAttack: { index: number; startedAt: number } | null = null;
   private drawnPhase: AttackPhase | null = null;
+  /** Attaque demandée pendant le dash : elle part en coup d'élan dès la fin du dash. */
+  private queuedStrike: 'attack' | 'power' | null = null;
 
   /** Rappels vers la scène (sons, effets). */
   onSwing: (heavy: boolean) => void = () => undefined;
@@ -59,6 +62,8 @@ export class Player {
   onDash: () => void = () => undefined;
   /** Début d'une attaque (normale ou puissante), pour le premier essai guidé. */
   onAttackStart: (power: boolean) => void = () => undefined;
+  /** Coup d'élan (attaque ou puissante enchaînée sur le dash), pour l'effet et le son. */
+  onDashStrike: (power: boolean) => void = () => undefined;
   /** Bonus des dons (Bastet) : vitesse de course, recharge du dash. */
   speedMul = 1;
   dashCooldownMul = 1;
@@ -110,6 +115,7 @@ export class Player {
   revive(now: number, durationMs: number): void {
     this.invulnerableUntil = now + durationMs;
     this.state = { kind: 'free' };
+    this.queuedStrike = null;
   }
 
   /** Parade réussie : Ash est brièvement invincible, la garde se termine. */
@@ -158,7 +164,13 @@ export class Player {
       if (t >= PLAYER.dash.durationMs) {
         this.state = { kind: 'free' };
         this.lastDashEnd = now;
+        const queued = this.queuedStrike;
+        this.queuedStrike = null;
+        if (queued) this.startAttack(now, 0, queued === 'power', controls, enemies);
       } else {
+        // Attaque pendant le dash : gardée pour le coup d'élan de fin de dash.
+        if (buffer.consume('attack', now)) this.queuedStrike = 'attack';
+        else if (buffer.consume('power', now)) this.queuedStrike = 'power';
         const speed =
           (this.state.distance ?? PLAYER.dash.distance) / (PLAYER.dash.durationMs / 1000);
         this.velocity = { x: this.state.dir.x * speed, y: this.state.dir.y * speed };
@@ -235,13 +247,10 @@ export class Player {
     const m = controls.move;
     let angle = Math.hypot(m.x, m.y) > 0.2 ? Math.atan2(m.y, m.x) : this.facing;
     if (settings.aimAssist && controls.wantsAimAssist) {
-      const target = nearestInCone(
-        this,
-        angle,
-        PLAYER.aimAssist.range,
-        PLAYER.aimAssist.coneDeg,
-        enemies,
-      );
+      const { near, far } = PLAYER.aimAssist;
+      const target =
+        nearestInCone(this, angle, near.range, near.coneDeg, enemies) ??
+        nearestInCone(this, angle, far.range, far.coneDeg, enemies);
       if (target) angle = Math.atan2(target.y - this.y, target.x - this.x);
     }
     return angle;
@@ -254,8 +263,12 @@ export class Player {
     controls: Controls,
     enemies: readonly Vec2[],
   ): void {
-    const step = power ? this.weapon.power : this.weapon.combo[index];
-    if (!step) return;
+    const base = power ? this.weapon.power : this.weapon.combo[index];
+    if (!base) return;
+    // Juste après un dash : coup d'élan (plus fort, plus large).
+    const strike = isDashStrike(now, this.lastDashEnd);
+    const step = strike ? dashStrikeStep(base, power) : base;
+    if (strike) this.lastDashEnd = -Infinity;
     this.facing = this.aimAngle(controls, enemies);
     this.state = {
       kind: 'attack',
@@ -268,6 +281,7 @@ export class Player {
     };
     this.drawnPhase = null;
     this.onAttackStart(power);
+    if (strike) this.onDashStrike(power);
     // Anticipation : léger recul et écrasement.
     this.scene.tweens.add({
       targets: this.sprite,
