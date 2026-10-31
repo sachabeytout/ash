@@ -34,7 +34,7 @@
 ### Lore v0.3 — propositions de Claude 🟡 (à valider, voir `docs/QUESTIONS.md` partie B)
 
 - **« Sans pouvoir »** : Ash n'a aucun pouvoir à lui ; il porte ceux que les dieux lui prêtent (= les **dons**).
-- **Structure d'une run** : 1. Bas-Fonds d'Héliopolis — **Ammit** ; 2. Le Nil de minuit — **le Sphinx de givre** ; 3. La Volière (tour de l'Oiseleur) — **l'Oiseleur** ; 4. La Douât (le monde de la nuit) — **Apophis**. Chaque victoire
+- **Structure d'une run** : 1. Bas-Fonds d'Héliopolis — **Ammit** ; 2. Le Nil de minuit — **Shezmu, le Bourreau** (remplace le Sphinx, à confirmer) ; 3. La Volière (tour de l'Oiseleur) — **l'Oiseleur** ; 4. La Douât (le monde de la nuit) — **Apophis**. Chaque victoire
   = Apophis battu une fois = un des **10 sceaux** de la malédiction brisé.
 - **La Cage** : Thot (archiviste), Vesper (corbeau de l'Oiseleur), **Ptah** (forgeron), **Bès** (marchand).
 - **Les 9 dieux** (proposition complète dans `docs/QUESTIONS.md`, 15 quinquies) : Râ (feu), Sobek (eau), Khonsou
