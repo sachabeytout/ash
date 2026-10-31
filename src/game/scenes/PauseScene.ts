@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import type { RunState } from '../../core/run/state';
-import { getBoon } from '../../data/boons';
-import { t, type TextKey } from '../../i18n';
+import { t } from '../../i18n';
+import { addBoonMiniCard } from '../ui/boonCard';
 import { sfx } from '../audio/sfx';
 import { OptionsPanel } from '../ui/OptionsPanel';
 import { COLORS, FONT_FAMILY } from '../theme';
@@ -46,29 +46,61 @@ export class PauseScene extends Phaser.Scene {
       stroke: '#07060d',
       strokeThickness: 3,
     };
-    this.add.text(cx, 34, t('pause.title'), { ...style, fontSize: '22px' }).setOrigin(0.5);
-
-    const boons = this.data_.run.boons
-      .map((b) => getBoon(b.id))
-      .filter((d) => d !== undefined)
-      .map((d) => t(d.nameKey as TextKey));
     this.add
       .text(
-        cx,
-        58,
-        boons.length ? t('pause.boons', { list: boons.join(' · ') }) : t('pause.noBoons'),
+        this.data_.run.boons.length ? Math.min(cx - 60, 250) / 2 + 4 : cx,
+        34,
+        t('pause.title'),
         {
+          ...style,
+          fontSize: '22px',
+        },
+      )
+      .setOrigin(0.5);
+
+    // À gauche les boutons ; à droite les dons obtenus, en petites cartes (effet compris).
+    const boons = this.data_.run.boons;
+    const listX = Math.min(cx - 60, 250);
+    const btnX = boons.length ? listX / 2 + 4 : cx;
+    if (boons.length) {
+      const areaW = width - listX - 16;
+      const top = 62;
+      const areaH = height - top - 26;
+      const cols = boons.length > 8 ? 3 : 2;
+      const rows = Math.ceil(boons.length / cols);
+      const gap = 6;
+      const cardW = (areaW - gap * (cols - 1)) / cols;
+      const cardH = Math.min(70, (areaH - gap * (rows - 1)) / rows);
+      this.add
+        .text(listX, top - 6, t('pause.boonsTitle'), {
           fontFamily: FONT_FAMILY,
           fontSize: '10px',
           color: COLORS.textDim,
-          align: 'center',
-          wordWrap: { width: width - 40 },
-        },
-      )
-      .setOrigin(0.5, 0);
+        })
+        .setOrigin(0, 1);
+      boons.forEach((b, i) =>
+        addBoonMiniCard(
+          this,
+          b,
+          listX + (i % cols) * (cardW + gap),
+          top + Math.floor(i / cols) * (cardH + gap),
+          cardW,
+          cardH,
+        ),
+      );
+    } else {
+      this.add
+        .text(cx, 58, t('pause.noBoons'), {
+          fontFamily: FONT_FAMILY,
+          fontSize: '10px',
+          color: COLORS.textDim,
+        })
+        .setOrigin(0.5, 0);
+    }
 
     const button = (y: number, label: string, color: number, onTap: () => void) => {
-      const w = 220;
+      const cx = btnX;
+      const w = boons.length ? Math.min(200, listX - 24) : 220;
       const h = 40;
       const g = this.add.graphics();
       g.fillStyle(0x07060d, 0.95).fillRoundedRect(cx - w / 2, y - h / 2, w, h, 8);

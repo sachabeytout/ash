@@ -31,6 +31,9 @@ export class TouchControls {
   private joyCenter = { x: 0, y: 0 };
   private shown = false;
   private superGauge = 0;
+  /** Anneau qui pulse autour de la commande à utiliser (premier essai guidé). */
+  private readonly focusRing: Phaser.GameObjects.Graphics;
+  private focus: Action | 'move' | null = null;
 
   constructor(
     private readonly scene: Phaser.Scene,
@@ -66,6 +69,18 @@ export class TouchControls {
       .setDepth(DEPTH);
     this.knob = scene.add.circle(0, 0, 12, 0xffe9d6, 0.35).setDepth(DEPTH);
 
+    this.focusRing = scene.add
+      .graphics()
+      .setDepth(DEPTH + 1)
+      .setVisible(false);
+    scene.tweens.add({
+      targets: this.focusRing,
+      alpha: { from: 1, to: 0.25 },
+      duration: 520,
+      yoyo: true,
+      repeat: -1,
+    });
+
     scene.input.addPointer(2); // joystick + 2 boutons en même temps
     scene.input.on('pointerdown', this.onDown, this);
     scene.input.on('pointermove', this.onMove, this);
@@ -80,6 +95,33 @@ export class TouchControls {
     this.layout();
   }
 
+  /** Les commandes tactiles sont-elles à l'écran (joueur sur téléphone) ? */
+  get visible(): boolean {
+    return this.shown;
+  }
+
+  /** Met en évidence une commande (joystick ou bouton), ou rien. */
+  highlight(target: Action | 'move' | null): void {
+    this.focus = target;
+    this.drawFocus();
+  }
+
+  private drawFocus(): void {
+    const g = this.focusRing.clear();
+    const target = this.focus;
+    if (!target || !this.shown) {
+      g.setVisible(false);
+      return;
+    }
+    g.setVisible(true).lineStyle(3, 0xffe9d6, 1);
+    if (target === 'move') {
+      g.strokeCircle(this.joyCenter.x, this.joyCenter.y, JOY_RADIUS + 8);
+      return;
+    }
+    const b = this.buttons.find((x) => x.action === target);
+    if (b) g.strokeCircle(b.x, b.y, b.radius + 7);
+  }
+
   setSuperGauge(value: number): void {
     if (Math.abs(value - this.superGauge) < 0.01) return;
     this.superGauge = value;
@@ -92,6 +134,7 @@ export class TouchControls {
     const showStick = v && (settings.joystick === 'fixed' || this.joyPointer !== null);
     this.base.setVisible(showStick);
     this.knob.setVisible(showStick);
+    this.drawFocus();
   }
 
   private layout(): void {
@@ -106,6 +149,7 @@ export class TouchControls {
       this.knob.setPosition(this.joyCenter.x, this.joyCenter.y);
     }
     this.drawButtons();
+    this.drawFocus();
   }
 
   private drawButtons(): void {

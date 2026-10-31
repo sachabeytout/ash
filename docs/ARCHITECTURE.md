@@ -1,6 +1,6 @@
 # Architecture (carte du projet)
 
-> Statut 0.42.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
+> Statut 0.43.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
 > combat/attack+health+status+superGauge, boons/boons, run/waves+rewards+state, save/schema+migrations+codec+store),
 > `data/` (player, weapons, enemies, biomes, gods, boons, status, skills, bosses, music, shop), `game/` (scenes Title, Hub,
 > Run, Ui, Boon, Pause, Shop ; entities Player, Enemy, Boss, Hittable ; input Controls, TouchControls ; fx/Juice+Lightning ;
@@ -29,6 +29,13 @@ par-dessus). Mort ou sortie → `hub` avec un `RunSummary`.
   `src/data/barks.ts` + `bark.*` (i18n), `HubScene.addBarker` / `updateBarks`.
 - Arbre de Thot : `src/data/skills.ts` + `src/core/meta.ts` (`runBonuses` → `RunPerks`) ; fenêtre : `src/game/ui/ThothPanel.ts`
   (deux colonnes). Renaissance : `RunScene.hurtPlayer` (`revivesUsed`, sauvegarde v11).
+- Premier essai guidé : `src/core/tutorial.ts` (étapes, pur) ; affiché par `RunScene.updateTutorial` →
+  `UiScene.showHint` (+ `TouchControls.highlight`). Fini/passé → `tutorial_done` dans `seenDialogues`.
+- Pause : petites cartes des dons (`src/game/ui/boonCard.ts`, aussi `RARITY_COLOR`).
+- Présentation des boss : `RunScene.presentBoss` (caméra) + `UiScene.bossIntro` (bandes, nom) ; `BOSS_PRESENT_MS`.
+- Trophées : `src/data/trophies.ts` (objectifs, récompenses), `src/core/trophies.ts` (progression, `claimTrophies`
+  à l'entrée de la Cage), vitrine `src/game/ui/TrophyPanel.ts`. Sauvegarde v14 (`meta.trophies`,
+  `records.bestHeatClear`, `records.variantsBeaten`).
 - Sauvegarde : `src/core/save/` (format v1, migrations, empreinte, copie de secours) ; `src/game/session.ts`
   l'écrit à chaque entrée de salle, après un choix de don, en fin de run et quand l'app passe en arrière-plan.
 - Raccourcis de test (dev ou `?cheats`) : `src/game/debug/cheats.ts`.

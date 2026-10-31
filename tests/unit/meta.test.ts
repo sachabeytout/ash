@@ -113,6 +113,8 @@ describe('Exploits (0.28.0)', () => {
       fastestClearMs: 0,
       totalKills: 0,
       clearsByWeapon: {},
+      bestHeatClear: 0,
+      variantsBeaten: [],
     });
   });
 });

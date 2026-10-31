@@ -89,6 +89,7 @@ import { t, type TextKey } from '../../i18n';
 import { music } from '../audio/music';
 import { sfx } from '../audio/sfx';
 import { Boss } from '../entities/Boss';
+import type { BossDef } from '../../data/bosses';
 import { PlayerShots, type ShotHit } from '../entities/PlayerShots';
 import { DANGER, Enemy } from '../entities/Enemy';
 import type { Hittable } from '../entities/Hittable';
@@ -116,6 +117,16 @@ import { assistReduction, reducedDamage } from '../../core/assist';
 import { NO_WEAPON_BONUS, weaponBonuses, type WeaponBonuses } from '../../core/forge';
 import { SHARD_BOUNTY, type ShopItemId } from '../../data/shop';
 import { TRUE_ENDING_VICTORIES } from '../../data/story';
+import { markSeen } from '../../core/story';
+import { recordVariantBeaten } from '../../core/trophies';
+import {
+  TUTORIAL_ID,
+  newTutorial,
+  stepTutorial,
+  tutorialDone,
+  type TutorialEvent,
+  type TutorialState,
+} from '../../core/tutorial';
 import { QUALITY_PARTICLES, settings } from '../../core/settings';
 import { newAutoQuality } from '../../core/perf';
 import { applyPostFx, autoLowerQuality } from '../fx/postfx';
@@ -167,6 +178,9 @@ interface Door {
   parts: Phaser.GameObjects.GameObject[];
 }
 
+/** Durée de la présentation d'un boss (caméra + nom à l'écran). */
+const BOSS_PRESENT_MS = 2300;
+
 /** Distance au-delà de laquelle un ennemi est « loin » (Artémis). */
 const FAR_DISTANCE = 70;
 /** Flèche d'Artémis (projectile de don : pas d'effets d'arme). */
@@ -191,6 +205,12 @@ const ARROW_STEP: AttackStep = {
   hitstopMs: 0,
   shake: 0,
 };
+
+/**
+ * Premier essai guidé : vit d'une salle à l'autre pendant la toute première run (la scène est
+ * relancée à chaque salle). Null : pas de guide.
+ */
+let tutorial: TutorialState | null = null;
 
 /** Couleurs des effets des dons (côté joueur : jamais le rouge-magenta des dangers). */
 const FX = {
@@ -311,6 +331,8 @@ export class RunScene extends Phaser.Scene {
   private nextWaveAt = 0;
   private doors: Door[] = [];
   private roomCleared = false;
+  private cinematicUntil = 0;
+  private tutorialPos: Vec2 = { x: 0, y: 0 };
   private leaving = false;
   /** Un dieu propose un don : le combat attend. */
   private choosing = false;
@@ -358,6 +380,7 @@ export class RunScene extends Phaser.Scene {
         : null;
     this.survival = null;
     this.darkness = null;
+    this.cinematicUntil = 0;
     this.heat = heatModifiers(this.run.heat);
     this.fountain = null;
     this.trial = null;
@@ -407,6 +430,7 @@ export class RunScene extends Phaser.Scene {
       sfx.dash();
       this.juice.burst(this.player.x, this.player.y, 0xff7a2a, 6);
       this.dashEffects();
+      this.tutorialEvent({ type: 'dash' });
     };
     this.shotsP = new PlayerShots(this, ARENA);
     this.discCharged = false;
@@ -430,6 +454,7 @@ export class RunScene extends Phaser.Scene {
       if (charged) this.discCharged = false;
       this.shotsP.fire(this.sim, this.player, angle, step, kind, id, charged ? 1.5 : 1);
     };
+    this.player.onAttackStart = (power) => this.tutorialEvent({ type: power ? 'power' : 'attack' });
     this.applyProfile();
     this.aegisLeft = this.profile.aegis;
     this.player.canSuper = () => superReady(this.run.superGauge) && !this.choosing;
@@ -440,6 +465,7 @@ export class RunScene extends Phaser.Scene {
       this.juice.shake(0.004, 160);
       this.lightning.ring(this.player, 40, 0xffe08a);
       this.juice.burst(this.player.x, this.player.y, 0xffe08a, 24);
+      this.tutorialEvent({ type: 'super' });
     };
 
     for (let i = 0; i < POOL_SIZE; i++) {
@@ -495,6 +521,58 @@ export class RunScene extends Phaser.Scene {
       this.time.delayedCall(380, () => this.offerSpark());
     }
     if (cheatsEnabled) this.setupCheats();
+    this.startTutorial();
+  }
+
+  // ---------- Premier essai guidé ----------
+
+  private startTutorial(): void {
+    const meta = session.save.meta;
+    if (meta.seenDialogues.includes(TUTORIAL_ID)) tutorial = null;
+    else if (!tutorial && this.run.biome === 0 && this.run.room === 1) tutorial = newTutorial();
+    this.tutorialPos = { x: this.player.x, y: this.player.y };
+    const ui = this.ui;
+    const skip = () => this.endTutorial();
+    ui.events.on('tutorial-skip', skip);
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => ui.events.off('tutorial-skip', skip));
+  }
+
+  private tutorialEvent(e: TutorialEvent): void {
+    if (!tutorial) return;
+    stepTutorial(tutorial, e);
+    if (tutorialDone(tutorial)) this.endTutorial();
+  }
+
+  /** Le guide est fini (ou passé) : il ne reviendra plus. */
+  private endTutorial(): void {
+    if (!tutorial) return;
+    tutorial = null;
+    markSeen(session.save.meta, TUTORIAL_ID);
+    session.commit();
+    this.ui.showHint('', null);
+  }
+
+  private updateTutorial(): void {
+    if (!tutorial) return;
+    const d = Math.hypot(this.player.x - this.tutorialPos.x, this.player.y - this.tutorialPos.y);
+    this.tutorialPos = { x: this.player.x, y: this.player.y };
+    if (d > 0) this.tutorialEvent({ type: 'moved', distance: d });
+    if (superReady(this.run.superGauge)) this.tutorialEvent({ type: 'superReady' });
+    if (!tutorial) return;
+    const step = tutorial.step;
+    if (!step || this.leaving || this.sim < this.cinematicUntil) {
+      this.ui.showHint('', null);
+      return;
+    }
+    const device = this.ui.touchActive
+      ? 'touch'
+      : this.controls.lastDevice === 'gamepad'
+        ? 'pad'
+        : 'keys';
+    const text =
+      step === 'doors' ? t('tutorial.doors') : t(`tutorial.${step}.${device}` as TextKey);
+    const focus = step === 'doors' ? null : step === 'move' ? 'move' : step;
+    this.ui.showHint(text, focus);
   }
 
   private setupCheats(): void {
@@ -550,7 +628,8 @@ export class RunScene extends Phaser.Scene {
   }
 
   private startBoss(): void {
-    const intro = 1900;
+    // Le boss attend la fin de sa présentation avant d'attaquer.
+    const intro = BOSS_PRESENT_MS + 300;
     const def = bossFor(
       session.save.meta,
       getBiome(this.run.biome).boss,
@@ -581,10 +660,34 @@ export class RunScene extends Phaser.Scene {
       sfx.super();
     };
     this.boss = boss;
-    this.time.delayedCall(400, () =>
-      this.ui.showBanner(
+    this.presentBoss(def, boss);
+  }
+
+  /**
+   * Présentation du boss : la caméra glisse jusqu'à lui pendant que son nom s'affiche (bandes
+   * noires), puis revient sur Ash. Ash ne bouge pas pendant ce temps, le boss n'attaque pas.
+   */
+  private presentBoss(def: BossDef, boss: Boss): void {
+    const ms = BOSS_PRESENT_MS;
+    this.cinematicUntil = this.sim + ms;
+    const cam = this.cameras.main;
+    // La caméra quitte Ash le temps de la présentation, puis le retrouve.
+    cam.stopFollow();
+    this.time.delayedCall(250, () => {
+      cam.pan(boss.x, boss.y + 20, 500, 'Sine.easeInOut');
+      sfx.telegraph();
+    });
+    this.time.delayedCall(ms - 600, () =>
+      cam.pan(this.player.x, this.player.y, 450, 'Sine.easeInOut', true, (_c, progress) => {
+        if (progress >= 1) this.followPlayer();
+      }),
+    );
+    this.time.delayedCall(200, () =>
+      this.ui.bossIntro(
         t(def.nameKey as TextKey),
         def.tint !== undefined ? t('boss.variantSub') : t(def.titleKey as TextKey),
+        def.tint ?? getBiome(this.run.biome).theme.wallGlow,
+        ms - 200,
       ),
     );
   }
@@ -607,6 +710,7 @@ export class RunScene extends Phaser.Scene {
     boss.kill();
     recordKill(this.run);
     recordCodex(session.save.meta, `boss.${boss.def.id}`);
+    if (boss.def.tint !== undefined) recordVariantBeaten(session.save.meta, boss.def.id);
     this.run.xp += boss.def.reward.xp;
     this.run.weaponParts += boss.def.reward.weaponParts;
     this.run.shards += SHARD_BOUNTY.boss;
@@ -1223,6 +1327,7 @@ export class RunScene extends Phaser.Scene {
       this.scene.isActive('shop')
     )
       return;
+    this.ui.showHint('', null);
     this.scene.pause();
     this.scene.pause('ui');
     const data: PauseSceneData = {
@@ -1537,6 +1642,7 @@ export class RunScene extends Phaser.Scene {
     const dt = Math.min(delta, 50);
     if (this.choosing) {
       this.ui.showRun(this.run);
+      this.ui.showHint('', null);
       return;
     }
     this.sim += dt;
@@ -1547,7 +1653,9 @@ export class RunScene extends Phaser.Scene {
     this.targets.length = 0;
     this.targets.push(...alive);
     if (this.boss?.alive) this.targets.push(this.boss);
-    if (!this.leaving) this.player.update(this.sim, dt, this.controls, this.targets);
+    // Pendant la présentation d'un boss, Ash attend (les appuis sont ignorés).
+    if (this.sim < this.cinematicUntil) this.controls.buffer.clear();
+    else if (!this.leaving) this.player.update(this.sim, dt, this.controls, this.targets);
 
     this.updateSpawns();
     for (const e of alive) e.update(this.sim, dt, this.player, this.isOnScreen(e));
@@ -1567,6 +1675,7 @@ export class RunScene extends Phaser.Scene {
     this.updateTraps();
     this.updateEvent();
     this.updateChest();
+    this.updateTutorial();
     this.ui.showRun(this.run);
     this.updateIndicators();
   }
@@ -1674,8 +1783,12 @@ export class RunScene extends Phaser.Scene {
       ARENA.width + margin * 2,
       ARENA.height + margin * 2,
     );
-    cam.startFollow(this.player.sprite, true, 0.14, 0.14);
+    this.followPlayer();
     applyPostFx(cam, settings.quality);
+  }
+
+  private followPlayer(): void {
+    this.cameras.main.startFollow(this.player.sprite, true, 0.14, 0.14);
   }
 
   /** Qualité automatique : si le jeu rame, on baisse d'un cran et on le dit discrètement. */
@@ -2198,6 +2311,7 @@ export class RunScene extends Phaser.Scene {
 
   private clearRoom(): void {
     this.roomCleared = true;
+    this.tutorialEvent({ type: 'roomCleared' });
     if (this.kind === 'combat' || this.kind === 'boss') {
       telemetry.room({
         biome: this.run.biome,
@@ -2293,6 +2407,7 @@ export class RunScene extends Phaser.Scene {
       this.takeChest();
       this.leaving = true;
       sfx.door();
+      this.tutorialEvent({ type: 'doorTaken' });
       if (d.reward === 'exit') {
         this.endRun('cleared');
         return;
@@ -2323,6 +2438,8 @@ export class RunScene extends Phaser.Scene {
   }
 
   private endRun(outcome: 'death' | 'cleared', killedBy?: string): void {
+    // Le guide reprend à la run suivante s'il n'est pas fini.
+    this.ui.showHint('', null);
     const summary = summarize(this.run, outcome, killedBy);
     telemetry.runEnd(outcome === 'death' ? killedBy : undefined);
     // La progression est créditée tout de suite : rien n'est perdu si l'app se ferme pendant le fondu.

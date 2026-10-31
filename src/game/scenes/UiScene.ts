@@ -6,7 +6,7 @@ import { getBoon } from '../../data/boons';
 import { GODS } from '../../data/gods';
 import { t, type TextKey } from '../../i18n';
 import { DANGER } from '../entities/Enemy';
-import type { Controls } from '../input/Controls';
+import type { Action, Controls } from '../input/Controls';
 import { sfx } from '../audio/sfx';
 import { telemetry } from '../telemetry';
 import { settings } from '../../core/settings';
@@ -49,6 +49,11 @@ export class UiScene extends Phaser.Scene {
   private toastText!: Phaser.GameObjects.Text;
   private trialKey = '';
   private bannerSub!: Phaser.GameObjects.Text;
+  private hint!: Phaser.GameObjects.Container;
+  private hintBox!: Phaser.GameObjects.Graphics;
+  private hintText!: Phaser.GameObjects.Text;
+  private hintSkip!: Phaser.GameObjects.Text;
+  private hintKey = '';
 
   constructor() {
     super('ui');
@@ -114,6 +119,32 @@ export class UiScene extends Phaser.Scene {
     this.pauseButton = this.add.container(0, 0, [pg, pz]).setDepth(1001);
     this.superWasReady = false;
 
+    // Bulle du premier essai guidé (sous le titre de la salle), avec « Passer l'aide ».
+    this.hintBox = this.add.graphics();
+    this.hintText = this.add
+      .text(0, 0, '', {
+        fontFamily: FONT_FAMILY,
+        fontSize: '11px',
+        color: '#ffe9d6',
+        align: 'center',
+        lineSpacing: 2,
+      })
+      .setOrigin(0.5, 0);
+    this.hintSkip = this.add
+      .text(0, 0, t('tutorial.skip'), {
+        fontFamily: FONT_FAMILY,
+        fontSize: '9px',
+        color: '#c8bde6',
+      })
+      .setOrigin(1, 0)
+      .setInteractive({ useHandCursor: true });
+    this.hintSkip.on('pointerup', () => this.events.emit('tutorial-skip'));
+    this.hint = this.add
+      .container(0, 0, [this.hintBox, this.hintText, this.hintSkip])
+      .setDepth(1002)
+      .setVisible(false);
+    this.hintKey = '';
+
     this.layout();
     this.scale.on('resize', this.layout, this);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () =>
@@ -132,6 +163,41 @@ export class UiScene extends Phaser.Scene {
     this.shards.setPosition(width - 44, 8);
     this.pauseButton.setPosition(width - 20, 20);
     this.hurtOverlay.setSize(width, height);
+    this.hint.setPosition(width / 2, 50);
+  }
+
+  /** Bulle d'aide du premier essai (texte vide : cachée). `focus` : commande tactile à montrer. */
+  showHint(text: string, focus: Action | 'move' | null): void {
+    const key = `${text}|${focus ?? ''}`;
+    if (key === this.hintKey) return;
+    this.hintKey = key;
+    this.touch.highlight(text ? focus : null);
+    if (!text) {
+      this.hint.setVisible(false);
+      return;
+    }
+    const maxW = Math.min(380, viewSize(this).width - 40);
+    this.hintText
+      .setWordWrapWidth(maxW - 24)
+      .setText(text)
+      .setPosition(0, 8);
+    const w = Math.max(200, Math.min(maxW, this.hintText.width + 28));
+    const h = this.hintText.height + 30;
+    this.hintSkip.setPosition(w / 2 - 8, h - 15);
+    this.hintBox
+      .clear()
+      .fillStyle(0x07060d, 0.82)
+      .fillRoundedRect(-w / 2, 0, w, h, 8)
+      .lineStyle(1.5, 0xffb02e, 0.9)
+      .strokeRoundedRect(-w / 2, 0, w, h, 8);
+    this.hint.setVisible(true).setAlpha(0);
+    this.tweens.killTweensOf(this.hint);
+    this.tweens.add({ targets: this.hint, alpha: 1, duration: 220 });
+  }
+
+  /** Le joueur joue-t-il au tactile (commandes à l'écran) ? */
+  get touchActive(): boolean {
+    return this.touch.visible;
   }
 
   showRun(run: RunState): void {
@@ -251,6 +317,72 @@ export class UiScene extends Phaser.Scene {
       obj.setAlpha(0);
       this.tweens.add({ targets: obj, alpha: 1, duration: 250, hold: 1600, yoyo: true });
     }
+  }
+
+  /**
+   * Présentation d'un boss : bandes noires (effet cinéma), nom en grand avec un trait de couleur
+   * qui s'étire, sous-titre. Dure `ms`, puis tout s'efface.
+   */
+  bossIntro(name: string, sub: string, color: number, ms: number): void {
+    const { width, height } = viewSize(this);
+    const barH = Math.round(height * 0.11);
+    const top = this.add.rectangle(0, -barH, width, barH, 0x000000, 1).setOrigin(0).setDepth(1003);
+    const bottom = this.add
+      .rectangle(0, height, width, barH, 0x000000, 1)
+      .setOrigin(0)
+      .setDepth(1003);
+    const y = height * 0.66;
+    const title = this.add
+      .text(width / 2, y, name, {
+        fontFamily: FONT_FAMILY,
+        fontSize: '26px',
+        fontStyle: 'bold',
+        color: '#ffe9d6',
+        stroke: '#07060d',
+        strokeThickness: 5,
+      })
+      .setOrigin(0.5, 1)
+      .setDepth(1004)
+      .setAlpha(0)
+      .setScale(1.25);
+    const line = this.add
+      .rectangle(width / 2, y + 5, Math.min(360, width - 60), 2, color, 1)
+      .setDepth(1004)
+      .setScale(0, 1);
+    const subtitle = this.add
+      .text(width / 2, y + 12, sub, {
+        fontFamily: FONT_FAMILY,
+        fontSize: '12px',
+        color: '#c8bde6',
+        stroke: '#07060d',
+        strokeThickness: 3,
+      })
+      .setOrigin(0.5, 0)
+      .setDepth(1004)
+      .setAlpha(0);
+    this.tweens.add({ targets: top, y: 0, duration: 260, ease: 'Cubic.Out' });
+    this.tweens.add({ targets: bottom, y: height - barH, duration: 260, ease: 'Cubic.Out' });
+    this.tweens.add({
+      targets: title,
+      alpha: 1,
+      scale: 1,
+      duration: 380,
+      delay: 180,
+      ease: 'Back.Out',
+    });
+    this.tweens.add({ targets: line, scaleX: 1, duration: 420, delay: 300, ease: 'Cubic.Out' });
+    this.tweens.add({ targets: subtitle, alpha: 1, duration: 300, delay: 520 });
+    this.time.delayedCall(ms - 320, () => {
+      this.tweens.add({ targets: [title, line, subtitle], alpha: 0, duration: 300 });
+      this.tweens.add({ targets: top, y: -barH, duration: 320, ease: 'Cubic.In' });
+      this.tweens.add({
+        targets: bottom,
+        y: height,
+        duration: 320,
+        ease: 'Cubic.In',
+        onComplete: () => [top, bottom, title, line, subtitle].forEach((o) => o.destroy()),
+      });
+    });
   }
 
   /** Petit message discret sous le titre de la salle (quelques secondes). */

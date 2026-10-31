@@ -1,10 +1,12 @@
 import { DEFAULT_SETTINGS, type Settings } from '../settings';
 import type { WeaponId } from '../../data/weapons';
+import type { BossId } from '../../data/bosses';
+import type { TrophyId } from '../../data/trophies';
 import type { HeatLevels } from '../heat';
 import type { RunState } from '../run/state';
 
 /** Version actuelle du format. Tout changement de format = nouvelle version + migration (voir migrations.ts). */
-export const SAVE_VERSION = 13;
+export const SAVE_VERSION = 14;
 
 /** Progression permanente (conservée entre les runs). */
 export interface MetaState {
@@ -34,6 +36,8 @@ export interface MetaState {
   records: Records;
   /** Arme choisie au râtelier de la Cage. Ajouté en v13. */
   selectedWeapon: WeaponId;
+  /** Trophées obtenus (récompense déjà créditée). Ajouté en v14. */
+  trophies: TrophyId[];
 }
 
 export interface Records {
@@ -44,10 +48,21 @@ export interface Records {
   totalKills: number;
   /** Victoires par arme. */
   clearsByWeapon: Partial<Record<WeaponId, number>>;
+  /** Plus haut total de Mesures d'urgence d'une victoire. Ajouté en v14. */
+  bestHeatClear: number;
+  /** Variantes de boss vaincues. Ajouté en v14. */
+  variantsBeaten: BossId[];
 }
 
 export function emptyRecords(): Records {
-  return { bestRooms: 0, fastestClearMs: 0, totalKills: 0, clearsByWeapon: {} };
+  return {
+    bestRooms: 0,
+    fastestClearMs: 0,
+    totalKills: 0,
+    clearsByWeapon: {},
+    bestHeatClear: 0,
+    variantsBeaten: [],
+  };
 }
 
 export interface SaveData {
@@ -76,6 +91,7 @@ export function defaultMeta(): MetaState {
     codex: {},
     records: emptyRecords(),
     selectedWeapon: 'katana',
+    trophies: [],
   };
 }
 

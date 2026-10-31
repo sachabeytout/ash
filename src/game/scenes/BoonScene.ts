@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { mainValue, type BoonOffer } from '../../core/boons/boons';
-import { getBoon, slotOf, type Rarity } from '../../data/boons';
+import { getBoon, slotOf } from '../../data/boons';
+import { RARITY_COLOR } from '../ui/boonCard';
 import { GODS, type GodId } from '../../data/gods';
 import { t, type TextKey } from '../../i18n';
 import { sfx } from '../audio/sfx';
@@ -20,14 +21,6 @@ const SPARK_COLOR = 0xffc46b;
 
 /** Nombre de répliques par dieu (`god.<id>.quote.<n>` dans les textes). */
 export const GOD_QUOTES = 4;
-
-const RARITY_COLOR: Record<Rarity, string> = {
-  common: '#d6cfe6',
-  rare: '#6fc3ff',
-  epic: '#e08cff',
-  duo: '#ffd36b',
-  amp: '#7fffc0',
-};
 
 /** Évite qu'un appui d'attaque encore en cours choisisse un don par erreur. */
 const INPUT_LOCK_MS = 450;

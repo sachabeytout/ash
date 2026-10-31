@@ -1,6 +1,7 @@
 import { SKILLS, type SkillDef, type SkillEffect } from '../data/skills';
 import type { RunPerks, RunSummary } from './run/state';
 import type { MetaState, SaveData } from './save/schema';
+import { heatTotal } from './heat';
 
 /** Fin de run : la progression permanente est créditée et la run en cours effacée. */
 export function finishRun(save: SaveData, summary: RunSummary): void {
@@ -27,6 +28,7 @@ export function updateRecords(meta: MetaState, summary: RunSummary): void {
     r.fastestClearMs = summary.elapsedMs;
   if (summary.weapon)
     r.clearsByWeapon[summary.weapon] = (r.clearsByWeapon[summary.weapon] ?? 0) + 1;
+  r.bestHeatClear = Math.max(r.bestHeatClear, heatTotal(meta.heat));
 }
 
 export function skillLevel(meta: MetaState, skill: SkillDef): number {

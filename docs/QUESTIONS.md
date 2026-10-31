@@ -3,7 +3,7 @@
 Liste tenue à jour par Claude. Réponds quand tu veux, même en vrac (« 3 : oui, 7 : plutôt la B »).
 En attendant ta réponse, Claude applique **ce qui est indiqué en gras** (toujours modifiable ensuite).
 
-Dernière mise à jour : 30/10/2026 (version 0.42.0).
+Dernière mise à jour : 30/10/2026 (version 0.43.0).
 
 ## A. Ressenti de jeu
 
@@ -41,6 +41,17 @@ Dernière mise à jour : 30/10/2026 (version 0.42.0).
 14. Les étapes de l'histoire sur les 10 victoires (tableau « Arc narratif » du GDD) : ça te va ?
 15. La Lame de l'Aube (arme légendaire, 5e victoire) : **attaque puissante = parade puis riposte**. D'accord ?
     15 bis. Les dialogues de la Cage (Aelia, Thot, Vesper, Brokk) : le ton te plaît-il ? Trop longs, trop courts ? Un personnage à changer ?
+    15 ter. **Les dieux (proposition, rien n'est changé tant que tu n'as pas validé)** — piste : l'Oiseleur, dieu des cages, a enfermé dans sa tour des dieux de **toutes les cultures** ; ils aident Ash pour être libérés. Ça permet de mélanger les mythologies de façon logique, et d'éviter les dieux grecs de l'Olympe (trop proches de Hadès). Pouvoirs demandés → dieu proposé :
+    - Feu → **Pelé** (Hawaï, volcans) ou garder **Râ** (Égypte, soleil)
+    - Eau → **Sedna** (Inuit, déesse de la mer) : ennemis « trempés », qui conduisent la foudre et gèlent plus vite
+    - Glace → **Skadi** (nordique), déjà là
+    - Électricité → **Raijin** (Japon, tambours du tonnerre), à la place de Zeus
+    - Poison → **Wadjet** (Égypte, déesse cobra) : dégâts qui s'accumulent
+    - Brisement → **Thor** (nordique) : son marteau fend l'armure, l'ennemi encaisse plus de dégâts
+    - Buff (attaque, défense, critiques, cadence) → **Bastet** (Égypte), déjà proche
+    - Soin et bouclier (passif) → **Isis** (Égypte, la protectrice) ou **Eir** (nordique, la guérisseuse)
+    - En plus, pour les combinaisons : garder **Anubis** (exécution) et **Hel** (malédiction) ?
+      Ta réponse : cette piste « dieux prisonniers de toutes les cultures » te plaît ? Et pour chaque ligne : d'accord, ou un autre dieu ? → **en attente, rien ne change**
 
 ## C. Petites décisions prises par Claude (dis seulement si tu n'es pas d'accord)
 

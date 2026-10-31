@@ -39,6 +39,9 @@ import { newAutoQuality } from '../../core/perf';
 import { markScene } from './markScene';
 import { Controls } from '../input/Controls';
 import { WeaponPanel } from '../ui/WeaponPanel';
+import { TROPHY_COLOR, TrophyPanel, drawTrophyCup, rewardText } from '../ui/TrophyPanel';
+import { claimTrophies } from '../../core/trophies';
+import type { TrophyDef } from '../../data/trophies';
 import {
   BARK_COOLDOWN_MS,
   BARK_RANGE,
@@ -93,6 +96,9 @@ export class HubScene extends Phaser.Scene {
     ensureGameTextures(this);
     const cx = GAME_WIDTH / 2;
     const meta = session.save.meta;
+    // Trophées gagnés depuis la dernière visite (ou déjà mérités avant leur arrivée) : récompense.
+    const newTrophies = claimTrophies(meta);
+    if (newTrophies.length > 0) session.commit();
 
     this.cameras.main.centerOn(GAME_WIDTH / 2, GAME_HEIGHT / 2);
     const recenter = () => this.cameras.main.centerOn(GAME_WIDTH / 2, GAME_HEIGHT / 2);
@@ -212,6 +218,7 @@ export class HubScene extends Phaser.Scene {
     this.autoQuality = newAutoQuality();
     music.play('hub');
     markScene('hub');
+    this.announceTrophies(newTrophies);
     // Retour de run : d'abord le récapitulatif, puis l'éventuel dialogue.
     if (this.summary?.boons) this.time.delayedCall(500, () => this.openRecap());
     else this.time.delayedCall(650, () => this.playStory());
@@ -333,6 +340,15 @@ export class HubScene extends Phaser.Scene {
       label: t('hub.station.codex'),
       draw: (g, x, y) => drawShelf(g, x, y),
       action: () => this.openCodex(),
+    });
+    this.addStation({
+      id: 'trophies',
+      x: GAME_WIDTH - 238,
+      y: 316,
+      color: TROPHY_COLOR,
+      label: t('hub.station.trophies'),
+      draw: (g, x, y) => drawPedestal(g, x, y),
+      action: () => this.openTrophies(),
     });
     this.addStation({
       id: 'aelia',
@@ -644,6 +660,54 @@ export class HubScene extends Phaser.Scene {
     });
   }
 
+  private openTrophies(): void {
+    if (this.modal || this.starting) return;
+    this.modal = true;
+    sfx.tap();
+    new TrophyPanel(this, session.save.meta, () => {
+      this.modal = false;
+    });
+  }
+
+  /** Un bandeau doré par trophée gagné, l'un après l'autre, en haut de la Cage. */
+  private announceTrophies(list: readonly TrophyDef[]): void {
+    list.forEach((def, i) => {
+      this.time.delayedCall(900 + i * 2600, () => {
+        const text = this.add
+          .text(
+            GAME_WIDTH / 2,
+            86,
+            t('trophy.earned', { name: t(`trophy.${def.id}` as TextKey), reward: rewardText(def) }),
+            {
+              fontFamily: FONT_FAMILY,
+              fontSize: '11px',
+              fontStyle: 'bold',
+              color: '#ffd36b',
+              backgroundColor: '#14101e',
+              padding: { x: 10, y: 6 },
+            },
+          )
+          .setOrigin(0.5)
+          .setDepth(500)
+          .setAlpha(0);
+        const cup = this.add.graphics().setDepth(501).setAlpha(0);
+        drawTrophyCup(cup, GAME_WIDTH / 2 - text.width / 2 - 2, 86, 9, true);
+        sfx.chest();
+        this.tweens.add({
+          targets: [text, cup],
+          alpha: 1,
+          duration: 250,
+          hold: 2000,
+          yoyo: true,
+          onComplete: () => {
+            text.destroy();
+            cup.destroy();
+          },
+        });
+      });
+    });
+  }
+
   private openCodex(): void {
     if (this.modal || this.starting) return;
     this.modal = true;
@@ -854,6 +918,14 @@ function drawTerminal(g: Phaser.GameObjects.Graphics, x: number, y: number): voi
   g.fillStyle(0x3a4a44, 1)
     .fillRect(x - 3, y + 8, 6, 6)
     .fillRect(x - 9, y + 14, 18, 3);
+}
+
+/** Socle des trophées : une coupe dorée sur une colonne. */
+function drawPedestal(g: Phaser.GameObjects.Graphics, x: number, y: number): void {
+  g.fillStyle(0x2a2238, 1).fillRect(x - 10, y - 2, 20, 16);
+  g.lineStyle(1.5, TROPHY_COLOR, 0.7).strokeRect(x - 10, y - 2, 20, 16);
+  g.fillStyle(0x3a3050, 1).fillRect(x - 14, y + 12, 28, 4);
+  drawTrophyCup(g, x, y - 12, 10, true);
 }
 
 function drawShelf(g: Phaser.GameObjects.Graphics, x: number, y: number): void {

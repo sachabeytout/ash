@@ -57,6 +57,8 @@ export class Player {
   onFire: (step: AttackStep, angle: number, kind: ActiveSwing['kind'], id: number) => void = () =>
     undefined;
   onDash: () => void = () => undefined;
+  /** Début d'une attaque (normale ou puissante), pour le premier essai guidé. */
+  onAttackStart: (power: boolean) => void = () => undefined;
   /** Bonus des dons (Bastet) : vitesse de course, recharge du dash. */
   speedMul = 1;
   dashCooldownMul = 1;
@@ -265,6 +267,7 @@ export class Player {
       id: ++swingCounter,
     };
     this.drawnPhase = null;
+    this.onAttackStart(power);
     // Anticipation : léger recul et écrasement.
     this.scene.tweens.add({
       targets: this.sprite,

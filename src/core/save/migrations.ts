@@ -4,6 +4,8 @@ import { HEAT } from '../../data/heat';
 import type { HeatLevels } from '../heat';
 import { WEAPONS, type WeaponId } from '../../data/weapons';
 import { GOD_IDS } from '../../data/gods';
+import { BOSSES, type BossId } from '../../data/bosses';
+import { TROPHIES, type TrophyId } from '../../data/trophies';
 import { getBoon } from '../../data/boons';
 import { DEFAULT_SETTINGS, type Settings } from '../settings';
 import { NO_PERKS, type RunState } from '../run/state';
@@ -105,6 +107,20 @@ const MIGRATIONS: Record<number, (save: Raw) => Raw> = {
     const meta = isObject(old.meta) ? old.meta : {};
     return { ...old, version: 13, meta: { ...meta, selectedWeapon: 'katana' } };
   },
+  // v13 → v14 : trophées (aucun encore remis : ils seront comptés sur la progression existante).
+  13: (old) => {
+    const meta = isObject(old.meta) ? old.meta : {};
+    const records = isObject(meta.records) ? meta.records : {};
+    return {
+      ...old,
+      version: 14,
+      meta: {
+        ...meta,
+        trophies: [],
+        records: { ...records, bestHeatClear: 0, variantsBeaten: [] },
+      },
+    };
+  },
 };
 
 function isObject(v: unknown): v is Raw {
@@ -175,6 +191,15 @@ function sanitizeMeta(raw: unknown): MetaState {
       typeof m.selectedWeapon === 'string' && m.selectedWeapon in WEAPONS
         ? (m.selectedWeapon as WeaponId)
         : 'katana',
+    trophies: Array.isArray(m.trophies)
+      ? [
+          ...new Set(
+            m.trophies.filter(
+              (id): id is TrophyId => typeof id === 'string' && TROPHIES.some((t) => t.id === id),
+            ),
+          ),
+        ]
+      : [],
   };
 }
 
@@ -262,6 +287,14 @@ function sanitizeRecords(raw: unknown): Records {
     fastestClearMs: Math.floor(num(r.fastestClearMs, 0, 0)),
     totalKills: Math.floor(num(r.totalKills, 0, 0)),
     clearsByWeapon: byWeapon,
+    bestHeatClear: Math.floor(num(r.bestHeatClear, 0, 0, 99)),
+    variantsBeaten: Array.isArray(r.variantsBeaten)
+      ? [
+          ...new Set(
+            r.variantsBeaten.filter((id): id is BossId => typeof id === 'string' && id in BOSSES),
+          ),
+        ]
+      : [],
   };
 }
 

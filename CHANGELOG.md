@@ -2,6 +2,15 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.43.0 — Guide, trophées et boss mis en scène
+
+- **Premier essai guidé** : pendant ta toute première partie, de petites bulles montrent les gestes au bon moment : bouger, attaquer, esquiver, attaque puissante, Super, choisir une porte. Sur téléphone, le bouton à utiliser est entouré. Chaque bulle disparaît dès que le geste est fait. « Passer l'aide » l'arrête définitivement.
+- **Menu pause** : tes dons s'affichent en petites cartes aux couleurs des dieux, avec leur effet exact, leur rareté et l'action concernée.
+- **Présentation des boss** : à l'arrivée du boss, des bandes noires apparaissent comme au cinéma, la caméra glisse jusqu'à lui et son nom s'affiche en grand. Puis le combat commence (personne ne peut frapper pendant ce temps).
+- **Trophées** : 16 grands objectifs sur plusieurs parties, par exemple gagner avec chaque arme, battre les versions dangereuses des boss, accepter un don de chaque dieu, gagner en moins de 25 minutes ou avec des Mesures d'urgence. Chacun rapporte de l'XP et/ou des pièces d'arme, données automatiquement en revenant dans la Cage. **Ta progression passée compte déjà.** Nouveau socle doré « Trophées » dans la Cage (en bas à droite).
+
+**Quoi tester** : en revenant dans la Cage, combien de trophées as-tu déjà ? Les objectifs te donnent-ils envie de refaire des parties ? La présentation du boss est-elle trop longue ?
+
 ## 0.42.0 — Des textes nets
 
 - **Tout est plus net, surtout les textes** : avant, le jeu était dessiné en petit (360 pixels de haut) puis agrandi par l'écran, d'où l'effet flou. Maintenant il est dessiné directement à la résolution de ton écran (jusqu'à 3 fois plus fin sur iPhone). Les traits, les cercles et les effets sont aussi plus fins ; les personnages gardent leur style pixel.
