@@ -85,37 +85,42 @@ export function ensureGameTextures(scene: Phaser.Scene): void {
   });
 
   // Ennemis : corps froids (bleu, sarcelle, violet), yeux pâles. Le rouge est réservé aux dangers.
+  // Pilleur de tombes : capuche pointue, visage dans l'ombre, petite dague.
   shapeTexture(scene, 'prowler', 16, 16, (g) => {
-    g.fillStyle(0x10142a).fillCircle(8, 8, 8);
-    g.fillStyle(0x6b8cff).fillCircle(8, 8, 6.5);
-    g.fillStyle(0x3a4fa8).fillTriangle(2, 4, 5, 0, 7, 4).fillTriangle(9, 4, 11, 0, 14, 4);
-    g.fillStyle(0xe8f0ff).fillRect(5, 7, 2, 2).fillRect(9, 7, 2, 2);
+    g.fillStyle(0x10142a).fillCircle(8, 9, 7).fillTriangle(1, 9, 8, 0, 15, 9);
+    g.fillStyle(0x6b8cff).fillCircle(8, 9, 5.5).fillTriangle(3, 9, 8, 2, 13, 9);
+    g.fillStyle(0x10142a).fillRect(4, 7, 8, 4);
+    g.fillStyle(0xe8f0ff).fillRect(5, 8, 2, 1.5).fillRect(9, 8, 2, 1.5);
+    g.fillStyle(0xd8d0c0).fillTriangle(13, 12, 16, 15, 12, 14);
   });
+  // Statue-sentinelle : tête de pierre coiffée du némès, yeux qui s'allument avant le tir.
   shapeTexture(scene, 'gunner', 14, 14, (g) => {
-    g.fillStyle(0x0c1f1c).fillRect(0, 2, 14, 10);
-    g.fillStyle(0x4de1c1).fillRect(1, 3, 12, 8);
-    g.fillStyle(0x0c1f1c).fillCircle(7, 7, 3.2);
-    g.fillStyle(0xe8fffb).fillCircle(7, 7, 1.6);
-    g.fillStyle(0x2a8f7c)
-      .fillRect(0, 0, 3, 3)
-      .fillRect(11, 0, 3, 3)
-      .fillRect(0, 11, 3, 3)
-      .fillRect(11, 11, 3, 3);
+    g.fillStyle(0x0c1f1c).fillRect(0, 2, 14, 12).fillRect(2, 0, 10, 3);
+    g.fillStyle(0x4de1c1).fillRect(1, 3, 12, 10).fillRect(3, 1, 8, 3);
+    g.fillStyle(0x2a8f7c).fillRect(1, 3, 2, 10).fillRect(11, 3, 2, 10);
+    g.fillStyle(0x0c1f1c).fillRect(4, 6, 6, 2);
+    g.fillStyle(0xe8fffb).fillRect(4.5, 6.5, 2, 1).fillRect(7.5, 6.5, 2, 1);
+    g.fillStyle(0x2a8f7c).fillRect(6, 10, 2, 3);
   });
+  // Colosse de granit : bloc de pierre taillé, coiffe de pharaon, barbe droite.
   shapeTexture(scene, 'brute', 26, 26, (g) => {
-    g.fillStyle(0x160f26).fillCircle(13, 13, 13);
-    g.fillStyle(0x9a6bff).fillCircle(13, 13, 11);
-    g.fillStyle(0x5d3fa8).fillRect(4, 5, 18, 5);
+    g.fillStyle(0x160f26).fillRoundedRect(1, 3, 24, 23, 6);
+    g.fillStyle(0x9a6bff).fillRoundedRect(3, 5, 20, 19, 5);
+    g.fillStyle(0x5d3fa8).fillRect(7, 0, 12, 7);
+    g.fillStyle(0x9a6bff).fillRect(9, 1, 8, 5);
     g.fillStyle(0xf2eaff).fillRect(8, 11, 3, 3).fillRect(15, 11, 3, 3);
-    g.fillStyle(0x5d3fa8).fillRect(6, 18, 14, 3);
+    g.fillStyle(0x5d3fa8).fillRect(5, 17, 16, 2).fillRect(11, 19, 4, 4);
+    g.fillStyle(0x7a54d8).fillRect(4, 8, 1, 10).fillRect(21, 8, 1, 10);
   });
 
-  // Élite (Traqueur) : losange pâle à lames latérales, œil unique.
+  // Élite (Chasseur d'Apophis) : losange à lames latérales, capuchon de cobra, œil unique.
   shapeTexture(scene, 'stalker', 22, 22, (g) => {
     g.fillStyle(0x140f24).fillTriangle(11, 0, 22, 11, 11, 22).fillTriangle(11, 0, 0, 11, 11, 22);
     g.fillStyle(0xb8a8ff).fillTriangle(11, 2, 20, 11, 11, 20).fillTriangle(11, 2, 2, 11, 11, 20);
     g.fillStyle(0x6d5cc8).fillRect(3, 10, 16, 2);
-    g.fillStyle(0xf6f2ff).fillCircle(11, 9, 2.2);
+    g.fillStyle(0x140f24).fillEllipse(11, 7, 8, 9);
+    g.fillStyle(0x6d5cc8).fillEllipse(11, 7, 6, 7);
+    g.fillStyle(0xf6f2ff).fillCircle(11, 8, 1.8);
   });
 
   // Ammit : crinière sombre, corps violet, gueule de crocodile tournée vers la droite (retournée selon la visée).
@@ -262,16 +267,20 @@ export function ensureGameTextures(scene: Phaser.Scene): void {
   });
 
   // La Volière. Moineau d'acier : petit triangle aux ailes repliées.
+  // Hirondelle d'acier : ailes en flèche, queue fourchue.
   shapeTexture(scene, 'sparrow', 12, 10, (g) => {
     g.fillStyle(0x10121e).fillTriangle(0, 0, 12, 5, 0, 10);
-    g.fillStyle(0xb8c8ff).fillTriangle(1, 1, 10, 5, 1, 9);
-    g.fillStyle(0xf2f6ff).fillRect(5, 4, 2, 2);
+    g.fillStyle(0xb8c8ff).fillTriangle(2, 2, 10, 5, 2, 8);
+    g.fillStyle(0x10121e).fillTriangle(0, 3, 3, 5, 0, 7);
+    g.fillStyle(0xf2f6ff).fillRect(6, 4, 2, 2);
   });
-  // Corbeau-sentinelle : silhouette en éventail, œil unique.
+  // Vautour-sentinelle : larges ailes, tête nue et pâle, bec crochu.
   shapeTexture(scene, 'crow', 18, 14, (g) => {
-    g.fillStyle(0x0e0b18).fillTriangle(0, 7, 18, 0, 18, 14);
+    g.fillStyle(0x0e0b18).fillTriangle(0, 7, 18, 0, 18, 14).fillTriangle(0, 0, 10, 7, 0, 14);
     g.fillStyle(0x8f86c8).fillTriangle(2, 7, 17, 1, 17, 13);
-    g.fillStyle(0xf6f2ff).fillCircle(12, 7, 1.8);
+    g.fillStyle(0xe8dcc8).fillCircle(13, 7, 3);
+    g.fillStyle(0xffe08a).fillTriangle(15, 6, 18, 7, 15, 8);
+    g.fillStyle(0x0e0b18).fillCircle(13, 6.5, 1);
   });
   // Geôlier : cage portative (barreaux) autour d'un œil.
   shapeTexture(scene, 'jailer', 22, 22, (g) => {
@@ -280,36 +289,48 @@ export function ensureGameTextures(scene: Phaser.Scene): void {
     g.fillStyle(0x4a3a78).fillRect(5, 3, 2, 16).fillRect(10, 3, 2, 16).fillRect(15, 3, 2, 16);
     g.fillStyle(0xf6f2ff).fillCircle(11, 11, 2.5);
   });
-  // Rebouteux (soutien) : rond vert, croix claire.
+  // Embaumeur (soutien) : masque de chacal, bandelettes, ânkh de vie.
   shapeTexture(scene, 'mender', 16, 16, (g) => {
-    g.fillStyle(0x0c1a12).fillCircle(8, 8, 8);
-    g.fillStyle(0x7fe0a0).fillCircle(8, 8, 6.5);
-    g.fillStyle(0xf0fff4).fillRect(7, 3, 2, 10).fillRect(3, 7, 10, 2);
+    g.fillStyle(0x0c1a12)
+      .fillCircle(8, 9, 7)
+      .fillTriangle(3, 6, 4, 0, 7, 5)
+      .fillTriangle(9, 5, 12, 0, 13, 6);
+    g.fillStyle(0x7fe0a0).fillCircle(8, 9, 5.5);
+    g.lineStyle(1, 0xd8f0dc, 1).lineBetween(3, 8, 13, 7).lineBetween(3, 11, 13, 12);
+    g.fillStyle(0xf0fff4).fillRect(7.5, 9, 1, 4).fillRect(6, 10, 4, 1);
+    g.lineStyle(1, 0xf0fff4, 1).strokeCircle(8, 7.5, 1.5);
   });
-  // Porte-bouclier (soutien) : carré bleu clair, écusson.
+  // Porteur d'amulettes (soutien) : plaque bleu clair, œil oudjat protecteur.
   shapeTexture(scene, 'warder', 16, 16, (g) => {
     g.fillStyle(0x0c1424).fillRoundedRect(0, 0, 16, 16, 3);
     g.fillStyle(0x9ec8ff).fillRoundedRect(1.5, 1.5, 13, 13, 3);
-    g.fillStyle(0x24406a).fillTriangle(4, 4, 12, 4, 8, 13);
-    g.fillStyle(0xe8f4ff).fillRect(7, 5, 2, 5);
+    g.lineStyle(1.5, 0x24406a, 1).strokeEllipse(8, 7, 10, 5);
+    g.fillStyle(0x24406a).fillCircle(8, 7, 1.6).fillRect(6, 9, 1.5, 4).fillRect(9, 10, 4, 1.5);
   });
-  // Sauteur : losange aux pattes repliées.
+  // Sauterelle : long corps, grandes pattes arrière, antennes.
   shapeTexture(scene, 'leaper', 18, 18, (g) => {
-    g.fillStyle(0x140f24).fillTriangle(9, 0, 18, 9, 9, 18).fillTriangle(9, 0, 0, 9, 9, 18);
-    g.fillStyle(0xb0a0ff).fillTriangle(9, 2, 16, 9, 9, 16).fillTriangle(9, 2, 2, 9, 9, 16);
-    g.fillStyle(0x5a4a9a).fillRect(1, 13, 5, 2).fillRect(12, 13, 5, 2);
-    g.fillStyle(0xf4f0ff).fillRect(6, 7, 2, 2).fillRect(10, 7, 2, 2);
+    g.fillStyle(0x140f24).fillEllipse(9, 9, 8, 15);
+    g.fillStyle(0xb0a0ff).fillEllipse(9, 9, 6, 13);
+    g.fillStyle(0x5a4a9a).fillTriangle(4, 10, 0, 17, 3, 17).fillTriangle(14, 10, 18, 17, 15, 17);
+    g.lineStyle(1, 0x5a4a9a, 1).lineBetween(8, 2, 5, 0).lineBetween(10, 2, 13, 0);
+    g.fillStyle(0xf4f0ff).fillRect(7, 4, 1.5, 1.5).fillRect(9.5, 4, 1.5, 1.5);
   });
-  // Diffuseur : octogone hérissé de huit bouches.
+  // Scarabée cracheur : carapace en deux élytres, pattes, huit bouches tout autour.
   shapeTexture(scene, 'diffuser', 18, 18, (g) => {
-    g.fillStyle(0x0a1820).fillCircle(9, 9, 9);
-    g.fillStyle(0x60d0ff).fillCircle(9, 9, 7);
+    g.fillStyle(0x0a1820).fillEllipse(9, 10, 14, 16).fillCircle(9, 3, 3);
+    g.fillStyle(0x60d0ff).fillEllipse(9, 10, 12, 14);
+    g.lineStyle(1, 0x0a1820, 1).lineBetween(9, 4, 9, 17);
+    g.lineStyle(1, 0x0a1820, 1)
+      .lineBetween(3, 8, 0, 6)
+      .lineBetween(15, 8, 18, 6)
+      .lineBetween(3, 12, 0, 13)
+      .lineBetween(15, 12, 18, 13);
     g.fillStyle(0x0a1820);
     for (let i = 0; i < 8; i++) {
       const a = (i * Math.PI) / 4;
-      g.fillCircle(9 + Math.cos(a) * 6, 9 + Math.sin(a) * 6, 1.3);
+      g.fillCircle(9 + Math.cos(a) * 5, 10 + Math.sin(a) * 5.5, 1);
     }
-    g.fillStyle(0xe8f8ff).fillCircle(9, 9, 2.2);
+    g.fillStyle(0xe8f8ff).fillCircle(9, 3, 1.4);
   });
   // Héraut du Serment (élite) : visage sous un voile, auréole.
   shapeTexture(scene, 'herald', 22, 22, (g) => {

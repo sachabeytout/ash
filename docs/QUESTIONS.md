@@ -61,7 +61,8 @@ Dernière mise à jour : 30/10/2026 (version 0.44.0).
 26. En **portrait**, le jeu est tourné : dans le bon sens pour toi (tu tournes le téléphone vers la gauche) ?
 27. Les **petits textes** sont-ils enfin nets sur ton iPhone ?
 
-28. **Noms d'armes venus d'autres mythologies** : « Gleipnir » (nordique) et « Disque d'Hélios » (grec). Je propose **Chaîne de Shezmu** et **Disque de Râ**. D'accord ? (rien de changé pour l'instant)
+28. **Noms d'armes venus d'autres mythologies** : « Gleipnir » (nordique) et « Disque d'Hélios » (grec). Je propose **Chaîne de Shezmu** et **Disque de Râ**. → ✅ **fait (0.52.0)**, avec tout le reste renommé à l'égyptienne
+29. **Vesper** (le corbeau de l'Oiseleur) et les **Épreuves de Vesper** gardent ce nom (latin) : veux-tu un nom égyptien pour lui aussi ?
 
 ## C. Petites décisions prises par Claude (dis seulement si tu n'es pas d'accord)
 

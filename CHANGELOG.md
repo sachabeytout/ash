@@ -2,6 +2,41 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.52.0 — Tout rappelle l'Égypte
+
+Comme tu l'as demandé, presque tout ce qui venait d'autres mythologies ou d'une ville moderne est maintenant égyptien. Ash et Anii restent eux-mêmes. Les attaques ne changent pas : seuls les noms et les dessins changent.
+
+- **Armes** :
+  - Katana → **Khépesh**, l'épée en faucille des soldats égyptiens ;
+  - Doubles lames → **Dagues de fer céleste**, en fer tombé du ciel comme la dague de Toutânkhamon ;
+  - Bâton à pierre → **Sceptre ouas**, le sceptre des dieux ;
+  - Arbalète → **Arc du désert** ;
+  - Disque d'Hélios → **Disque de Râ** ;
+  - Gleipnir → **Chaîne de Shezmu**.
+- **Ennemis renommés et redessinés** :
+  - **Pilleur de tombes** (encapuchonné, avec sa dague) ;
+  - **Statue-sentinelle** (tête de pierre coiffée du némès) ;
+  - **Colosse de granit** ;
+  - **Chasseur d'Apophis** (capuchon de cobra) ;
+  - **Sauterelle**, comme les plaies d'Égypte ;
+  - **Embaumeur** (masque de chacal et ânkh) ;
+  - **Porteur d'amulettes** (œil oudjat) ;
+  - **Scarabée cracheur** ;
+  - dans la Volière, **Hirondelle d'acier** et **Vautour-sentinelle**.
+- **Mesures d'urgence → Balance de Maât**, avec de nouveaux noms :
+  - Chairs embaumées ;
+  - Hordes de l'Isfet ;
+  - Crocs d'Apophis ;
+  - Vent du désert ;
+  - Disette du Nil ;
+  - Nuit sans sommeil.
+- **Phénix → Bennu** : Bénédiction du Bennu (assistance), Étincelle du Bennu, plume du Bennu pour la Lame de l'Aube.
+- **Objets et pièges** : Pierre runique → **Pierre de Ptah** ; Explosif → **Jarre ardente**.
+- **Trophées** : Habitué du Nil, Fléau de l'Isfet, Sous le regard de Maât.
+- Fiches des Archives réécrites.
+
+**Quoi tester** : ouvre le râtelier, la Balance de Maât et les Archives. Un nom te semble-t-il encore « pas égyptien » ?
+
 ## 0.51.0 — La Douât et Apophis (étape 3c)
 
 L'histoire est maintenant entièrement dans le jeu.

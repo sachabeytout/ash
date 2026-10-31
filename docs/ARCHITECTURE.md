@@ -1,6 +1,6 @@
 # Architecture (carte du projet)
 
-> Statut 0.51.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
+> Statut 0.52.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
 > combat/attack+health+status+superGauge, boons/boons, run/waves+rewards+state, save/schema+migrations+codec+store),
 > `data/` (player, weapons, enemies, biomes, gods, boons, status, skills, bosses, music, shop), `game/` (scenes Title, Hub,
 > Run, Ui, Boon, Pause, Shop ; entities Player, Enemy, Boss, Hittable ; input Controls, TouchControls ; fx/Juice+Lightning ;
@@ -81,7 +81,7 @@ par-dessus). Mort ou sortie → `hub` avec un `RunSummary`.
 - Marchand : articles dans `src/data/shop.ts`, achat dans `src/core/shop.ts`, écran `src/game/scenes/ShopScene.ts`.
 - Forge de Brokk : paliers dans `src/data/forge.ts`, logique `src/core/forge.ts`, fenêtre `src/game/ui/ForgePanel.ts` ;
   le niveau est figé dans la run (`weaponLevel`) et appliqué par `RunScene.weaponMultiplier`.
-- Bénédiction du Phénix : `src/core/assist.ts` (réglage `assist`, compteur `meta.assistDeaths`).
+- Bénédiction du Bennu (ex-Phénix) : `src/core/assist.ts` (réglage `assist`, compteur `meta.assistDeaths`).
 - Sauvegarde **v2** (forge, assistance) : migration 1 → 2 dans `src/core/save/migrations.ts`.
 - Attaques d'ennemis : melee, shot (éventail), charge (enchaînée avec `repeat`), runes, beam (rayon).
 - Armes à distance : `AttackStep.projectile` / `.zone` (`src/core/combat/attack.ts`) ; la scène les lance via
@@ -98,7 +98,7 @@ par-dessus). Mort ou sortie → `hub` avec un `RunSummary`.
   (`nextDialogue`, `markSeen`, sauvegarde v5 `seenDialogues`), affichage `src/game/ui/DialogueBox.ts` (Cage).
   Vraie fin : `src/game/scenes/EndingScene.ts` (10e victoire). Lame de l'Aube : `dawnblade` (garde = `AttackStep.parry`,
   `Player.isParrying` → `RunScene.parry`), débloquée à 5 victoires (`isUnlocked`).
-- Mesures d'urgence : valeurs dans `src/data/heat.ts`, calculs `src/core/heat.ts` (`heatModifiers`), fenêtre
+- Balance de Maât (ex-« Mesures d'urgence », identifiants `heat`) : valeurs dans `src/data/heat.ts`, calculs `src/core/heat.ts` (`heatModifiers`), fenêtre
   `src/game/ui/HeatPanel.ts` (Cage) ; appliquées dans `RunScene` (PV/vitesse des ennemis, dégâts reçus, budget des
   vagues, prix du marchand) et `summarize` (récompense). Sauvegarde v6 (`meta.heat`, `run.heat`).
 - Fontaines : `BiomeDef.fountainRooms` → `roomKind` = `fountain` ; `drinkFountain` (`src/core/run/state.ts`),
@@ -116,7 +116,7 @@ par-dessus). Mort ou sortie → `hub` avec un `RunSummary`.
   (`killEnemy`, `defeatBoss`, `onBoonPicked`).
 - Récapitulatif de fin de run : compteurs `recordKill` / `recordDamage` et champs du `RunSummary`
   (`src/core/run/state.ts`, sauvegarde v9), fenêtre `src/game/ui/RecapPanel.ts` ouverte par `HubScene.openRecap`.
-- Étincelle du Phénix : récompense `spark` (`src/core/run/rewards.ts`, exclue sans don améliorable),
+- Étincelle du Bennu (ex-Phénix) : récompense `spark` (`src/core/run/rewards.ts`, exclue sans don améliorable),
   `rollUpgrades` / `upgradableBoons` (`src/core/boons/boons.ts`), `upgradeBoon` et `pendingSpark` (sauvegarde v10,
   `src/core/run/state.ts`) ; choix via `BoonScene` en mode `upgrade` (`RunScene.offerSpark`).
 - Taille du texte : `src/core/textScale.ts` (`scaledFontSize`), crochet sur `scene.add.text` dans
