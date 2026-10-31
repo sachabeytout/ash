@@ -52,7 +52,7 @@ import {
 import { rollDoors, type DoorReward, type RewardKind } from '../../core/run/rewards';
 import {
   afterBoss,
-  applyReward,
+  takeRoomReward,
   drinkFountain,
   chooseBoon,
   roomKind,
@@ -300,6 +300,15 @@ export class RunScene extends Phaser.Scene {
     g: Phaser.GameObjects.Graphics;
     glow: Phaser.GameObjects.Image;
   } | null = null;
+  /** Butin de fin de salle à ramasser (la suite : faveur d'Amon ou portes). */
+  private loot: {
+    x: number;
+    y: number;
+    parts: Phaser.GameObjects.GameObject[];
+    then: () => void;
+  } | null = null;
+  /** Ce qui vient après le choix d'un don ramassé en fin de salle. */
+  private afterChoice: (() => void) | null = null;
   /** Regard d'Amon : le défi de la salle (null : Amon ne regarde pas). */
   private amon: AmonWatch | null = null;
   /** Type du coup en cours de résolution (pour savoir si un ennemi tombe sous l'attaque puissante). */
@@ -416,6 +425,8 @@ export class RunScene extends Phaser.Scene {
     this.fountain = null;
     this.trial = null;
     this.chest = null;
+    this.loot = null;
+    this.afterChoice = null;
     this.eventSpot = null;
     this.blasts = [];
     this.spikeTraps = [];
@@ -619,6 +630,8 @@ export class RunScene extends Phaser.Scene {
   }
 
   private setupCheats(): void {
+    // Accès pour les tests automatiques (raccourcis de test seulement).
+    (window as unknown as { __run?: RunScene }).__run = this;
     this.input.keyboard?.on('keydown', (e: KeyboardEvent) => {
       if (this.choosing || this.leaving) return;
       if (e.code === 'KeyB') {
@@ -1407,6 +1420,7 @@ export class RunScene extends Phaser.Scene {
     if (!first) {
       this.run.pendingSpark = false;
       this.choosing = false;
+      this.runAfterChoice();
       return;
     }
     const data: BoonSceneData = {
@@ -1423,6 +1437,7 @@ export class RunScene extends Phaser.Scene {
         this.juice.burst(this.player.x, this.player.y, 0xffc46b, 28);
         sfx.spark();
         markScene('run');
+        this.runAfterChoice();
       },
     };
     this.scene.launch('boon', data);
@@ -1438,6 +1453,7 @@ export class RunScene extends Phaser.Scene {
     if (offers.length === 0) {
       this.run.pendingBoon = null;
       this.choosing = false;
+      this.runAfterChoice();
       return;
     }
     const data: BoonSceneData = { god, offers, onPick: (offer) => this.onBoonPicked(offer) };
@@ -1457,6 +1473,7 @@ export class RunScene extends Phaser.Scene {
     this.juice.burst(this.player.x, this.player.y, GODS[getBoonGod(offer)].color, 24);
     if (this.shopOpen) this.time.delayedCall(250, () => this.openShop());
     else markScene('run');
+    this.runAfterChoice();
   }
 
   /** Effets appliqués à un ennemi touché par une action (attaque, puissante, dash). */
@@ -1769,6 +1786,7 @@ export class RunScene extends Phaser.Scene {
     this.updateTraps();
     this.updateEvent();
     this.updateChest();
+    this.updateLoot();
     this.updateTutorial();
     this.ui.showRun(this.run);
     this.updateIndicators();
@@ -2429,7 +2447,6 @@ export class RunScene extends Phaser.Scene {
 
   private clearRoom(): void {
     this.roomCleared = true;
-    this.tutorialEvent({ type: 'roomCleared' });
     if (this.kind === 'combat' || this.kind === 'boss') {
       telemetry.room({
         biome: this.run.biome,
@@ -2447,11 +2464,11 @@ export class RunScene extends Phaser.Scene {
     if (this.kind === 'boss' || this.kind === 'shop') {
       // Après le boss : biome suivant s'il existe ; après le marchand : salle 1.
       const last = this.kind === 'boss' && this.run.biome + 1 >= BIOMES.length;
-      this.addDoor(last ? 'exit' : 'next', ARENA.centerX);
+      this.afterLoot(() => this.addDoor(last ? 'exit' : 'next', ARENA.centerX));
       return;
     }
     if (this.run.room >= biome.rooms) {
-      this.addDoor('boss', ARENA.centerX);
+      this.afterLoot(() => this.addDoor('boss', ARENA.centerX));
       return;
     }
     if (this.trial?.state === 'running') {
@@ -2469,15 +2486,85 @@ export class RunScene extends Phaser.Scene {
       this.juice.damageNumber(this.player.x, this.player.y - 14, CHALLENGE_SHARDS, '#7fe7ff');
     }
     const doors = rollDoors(this.rng, DOOR_COUNT, biome.pantheon, exclude);
-    // Regard d'Amon réussi : faveur royale avant l'apparition des portes.
-    if (this.amon && amonRoomCleared(this.amon) === 'won') {
-      this.refreshAmon();
-      this.run.amonBiome = this.run.biome;
-      this.openRoyalFavor(doors);
+    // Regard d'Amon : le défi se juge maintenant ; la faveur royale vient après le butin.
+    const favor = this.amon !== null && amonRoomCleared(this.amon) === 'won';
+    this.refreshAmon();
+    if (favor) this.run.amonBiome = this.run.biome;
+    this.afterLoot(() => (favor ? this.openRoyalFavor(doors) : this.placeDoors(doors)));
+  }
+
+  // ---------- Butin de fin de salle ----------
+
+  /**
+   * La récompense de la porte choisie tombe à la fin de la salle ; les portes suivantes
+   * n'apparaissent qu'une fois ce butin ramassé (et le don choisi, s'il y en a un).
+   */
+  private afterLoot(then: () => void): void {
+    const reward = this.run.roomReward;
+    if (!reward) {
+      then();
       return;
     }
-    this.refreshAmon();
-    this.placeDoors(doors);
+    const x = ARENA.centerX;
+    const y = ARENA.centerY + 44;
+    const god = reward.god ? GODS[reward.god] : undefined;
+    const color = god?.color ?? REWARD_STYLE[reward.kind].color;
+    const glow = this.add
+      .image(x, y, 'glow')
+      .setTint(color)
+      .setAlpha(0.7)
+      .setScale(1.3)
+      .setBlendMode('ADD')
+      .setDepth(3);
+    const ring = this.add.graphics().setDepth(4);
+    ring.fillStyle(0x07060d, 0.9).fillCircle(x, y, 14);
+    ring.lineStyle(2, color, 1).strokeCircle(x, y, 14);
+    const icon = this.add.graphics().setDepth(5);
+    if (god) drawGodIcon(icon, god, x, y, 8);
+    else drawRewardIcon(icon, reward.kind, x, y, color);
+    this.tweens.add({ targets: glow, scale: 1.7, duration: 700, yoyo: true, repeat: -1 });
+    this.tweens.add({ targets: [ring, icon], y: -3, duration: 700, yoyo: true, repeat: -1 });
+    this.juice.burst(x, y, color, 18);
+    sfx.chest();
+    this.loot = { x, y, parts: [glow, ring, icon], then };
+  }
+
+  private updateLoot(): void {
+    const l = this.loot;
+    if (!l || this.leaving || this.choosing) return;
+    if (Math.hypot(this.player.x - l.x, this.player.y - l.y) > 22) return;
+    this.loot = null;
+    l.parts.forEach((p) => p.destroy());
+    this.juice.burst(l.x, l.y, 0xffe9d6, 16);
+    const reward = takeRoomReward(this.run);
+    if (reward?.kind === 'boon' && this.run.pendingBoon) {
+      this.choosing = true;
+      this.afterChoice = l.then;
+      this.offerBoon();
+      return;
+    }
+    if (reward?.kind === 'spark' && this.run.pendingSpark) {
+      this.choosing = true;
+      this.afterChoice = l.then;
+      this.offerSpark();
+      return;
+    }
+    if (reward) this.showRewardGain(reward.kind);
+    l.then();
+  }
+
+  /** Ce que rapporte un butin simple (éclats, XP, pièces, affûtage), affiché au-dessus d'Ash. */
+  private showRewardGain(kind: RewardKind): void {
+    sfx.boonTaken();
+    const label = t(REWARD_STYLE[kind].label);
+    this.juice.label(this.player.x, this.player.y - 20, label, '#ffe9d6');
+  }
+
+  /** Après le choix d'un don (ou d'une Étincelle) ramassé en fin de salle : les portes. */
+  private runAfterChoice(): void {
+    const next = this.afterChoice;
+    this.afterChoice = null;
+    next?.();
   }
 
   private placeDoors(doors: readonly DoorReward[]): void {
@@ -2590,6 +2677,7 @@ export class RunScene extends Phaser.Scene {
     this.tweens.add({ targets: glow, scale: 1.5, duration: 900, yoyo: true, repeat: -1 });
     this.doors.push({ reward, x, y, parts: [frame, icon, glow, text] });
     sfx.door();
+    if (this.doors.length === 1) this.tutorialEvent({ type: 'roomCleared' });
   }
 
   private checkDoors(): void {
@@ -2608,7 +2696,8 @@ export class RunScene extends Phaser.Scene {
       if (d.reward === 'next' && this.kind === 'boss') afterBoss(this.run, BIOMES.length);
       else if (d.reward === 'next' || d.reward === 'boss') this.run.room += 1;
       else {
-        applyReward(this.run, d.reward.kind, d.reward.god);
+        // La récompense tombera à la fin de la prochaine salle.
+        this.run.roomReward = d.reward;
         this.run.room += 1;
       }
       this.cameras.main.fadeOut(300, 7, 6, 13);

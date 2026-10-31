@@ -4,7 +4,7 @@ import type { GodId } from '../../data/gods';
 import type { WeaponId } from '../../data/weapons';
 import { mainValue, takeBoon, type BoonOffer, type OwnedBoon } from '../boons/boons';
 import { heatModifiers, type HeatLevels } from '../heat';
-import type { RewardKind } from './rewards';
+import type { DoorReward, RewardKind } from './rewards';
 import { specialRooms } from './special';
 
 /** Bonus permanents (arbre de Thot) figés au début de la run. */
@@ -67,6 +67,8 @@ export interface RunState {
   revivesUsed: number;
   /** Monde où Amon a déjà accordé sa faveur royale (-1 : aucun). Ajouté en v16. */
   amonBiome: number;
+  /** Récompense de la porte choisie : elle tombe à la fin de cette salle (null : aucune). Ajouté en v17. */
+  roomReward: DoorReward | null;
   /** Statistiques pour le récapitulatif de fin de run. Ajoutées en v9. */
   kills: number;
   damageTaken: number;
@@ -137,6 +139,7 @@ export function newRun(
     damageTaken: 0,
     revivesUsed: 0,
     amonBiome: -1,
+    roomReward: null,
   };
 }
 
@@ -162,6 +165,17 @@ export function applyReward(run: RunState, reward: RewardKind, god?: GodId): voi
       run.pendingSpark = true;
       break;
   }
+}
+
+/**
+ * Salle terminée : Ash ramasse la récompense de la porte qu'il avait choisie. Un don ou une
+ * Étincelle reste à choisir (`pendingBoon` / `pendingSpark`) ; le reste est crédité tout de suite.
+ */
+export function takeRoomReward(run: RunState): DoorReward | null {
+  const reward = run.roomReward;
+  run.roomReward = null;
+  if (reward) applyReward(run, reward.kind, reward.god);
+  return reward;
 }
 
 /** Étincelle : le don gagne un cran de rareté (un don de vie agrandit la barre de la différence). */

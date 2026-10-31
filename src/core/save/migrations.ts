@@ -3,7 +3,8 @@ import { CODEX_KEYS } from '../codex';
 import { HEAT } from '../../data/heat';
 import type { HeatLevels } from '../heat';
 import { WEAPONS, type WeaponId } from '../../data/weapons';
-import { GOD_IDS } from '../../data/gods';
+import { GOD_IDS, type GodId } from '../../data/gods';
+import { REWARD_KINDS, type RewardKind } from '../run/rewards';
 import { BOSSES, type BossId } from '../../data/bosses';
 import { TROPHIES, type TrophyId } from '../../data/trophies';
 import { getBoon } from '../../data/boons';
@@ -193,6 +194,11 @@ const MIGRATIONS: Record<number, (save: Raw) => Raw> = {
     const run = isObject(old.run) ? { ...old.run, amonBiome: -1 } : old.run;
     return { ...old, version: 16, run };
   },
+  // v16 → v17 : la récompense d'une porte tombe en fin de salle (rien en attente pour la run en cours).
+  16: (old) => {
+    const run = isObject(old.run) ? { ...old.run, roomReward: null } : old.run;
+    return { ...old, version: 17, run };
+  },
 };
 
 function isObject(v: unknown): v is Raw {
@@ -293,6 +299,14 @@ function sanitizeForge(raw: unknown): MetaState['forge'] {
   return forge;
 }
 
+function sanitizeReward(raw: unknown): RunState['roomReward'] {
+  if (!isObject(raw) || !(REWARD_KINDS as readonly unknown[]).includes(raw.kind)) return null;
+  const kind = raw.kind as RewardKind;
+  const god = (GOD_IDS as readonly unknown[]).includes(raw.god) ? (raw.god as GodId) : undefined;
+  if (kind === 'boon') return { kind, god: god ?? 'ra' };
+  return { kind };
+}
+
 function sanitizeRun(raw: unknown): RunState | null {
   if (!isObject(raw)) return null;
   if (typeof raw.weapon !== 'string' || !(raw.weapon in WEAPONS)) return null;
@@ -332,6 +346,7 @@ function sanitizeRun(raw: unknown): RunState | null {
     lastBreathUsed: raw.lastBreathUsed === true,
     revivesUsed: Math.floor(num(raw.revivesUsed, 0, 0, 9)),
     amonBiome: Math.round(num(raw.amonBiome, -1, -1, BIOMES.length - 1)),
+    roomReward: sanitizeReward(raw.roomReward),
     heat: sanitizeHeat(raw.heat),
     eventTaken: Math.round(num(raw.eventTaken, -1, -1, BIOMES.length - 1)),
     kills: Math.floor(num(raw.kills, 0, 0)),
