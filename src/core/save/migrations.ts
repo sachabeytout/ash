@@ -246,6 +246,20 @@ const MIGRATIONS: Record<number, (save: Raw) => Raw> = {
       run,
     };
   },
+  // v19 → v20 : les amplifications deviennent des dons passifs normaux ; leur rareté « amp » devient « commun ».
+  19: (old) => {
+    const run = isObject(old.run)
+      ? {
+          ...old.run,
+          boons: Array.isArray(old.run.boons)
+            ? old.run.boons.map((b: unknown) =>
+                isObject(b) && b.rarity === 'amp' ? { ...b, rarity: 'common' } : b,
+              )
+            : old.run.boons,
+        }
+      : old.run;
+    return { ...old, version: 20, run };
+  },
 };
 
 function isObject(v: unknown): v is Raw {
@@ -364,7 +378,7 @@ function sanitizeRun(raw: unknown): RunState | null {
           isObject(b) &&
           typeof b.id === 'string' &&
           getBoon(b.id) !== undefined &&
-          ['common', 'rare', 'epic', 'duo', 'amp'].includes(String(b.rarity)),
+          ['common', 'rare', 'epic', 'duo'].includes(String(b.rarity)),
       )
     : [];
   const perks = isObject(raw.perks) ? raw.perks : {};

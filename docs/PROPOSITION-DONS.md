@@ -1,6 +1,22 @@
-# Proposition : plus de dons et d'amplifications
+# Dons des dieux : plan validé par l'utilisateur
 
-Statut : **proposition de Claude, à valider par l'utilisateur** (rien n'est encore dans le jeu).
+## Décision de l'utilisateur (01/11/2026)
+
+- **4 dons d'action par dieu** : attaque, attaque spéciale (puissante), dash et **Super**.
+- **Plus d'amplifications** : elles deviennent des **dons passifs** ordinaires.
+- **Beaucoup de dons passifs** qui agissent sur l'attaque, l'attaque spéciale, le dash ou le Super **sans prendre leur
+  case** (pas d'échange) : « plus de dons, pas d'amplifications, des passifs, pour un max de fun ».
+
+## Avancement
+
+- [x] **Lot 1 (0.57.0)** : case Super (9 dons de Super), Isis reçoit un don d'attaque et de dash, les 8 amplifications
+      deviennent des passifs (avec rareté).
+- [ ] **Lot 2** : nouveaux passifs qui agissent sur les actions sans prendre leur case (2 à 3 par dieu).
+- [ ] **Lot 3** : duos tirés de la mythologie.
+
+---
+
+## Proposition d'origine (31/10, avant la décision)
 
 ## Ce qui existe (0.56.0)
 

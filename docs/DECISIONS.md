@@ -139,6 +139,12 @@ Format : date — décision — raison — validée par l'utilisateur (oui / non
   (crête ≤ 0,44 au volume maximal). « Musique dans le sable » de l'utilisateur : jeu d'origine inconnu (question 31),
   ambiance désert appliquée à la Pyramide.
 
+- **0.57.0 — Dons (décision de l'utilisateur)** : 4 dons d'action par dieu (attaque, spéciale, dash, Super), plus
+  d'amplifications (devenues passifs avec rareté), beaucoup de passifs qui agissent sur les actions sans prendre leur
+  case (lot 2). Choix de Claude : les dons de Super réutilisent les effets existants (brûlure, trempé, givre, foudre,
+  venin, exécution, critique, soin, bouclier) pour rester lisibles ; Isis reçoit attaque (bouclier qui se recharge) et
+  dash (bouclier) ; les passifs de renfort gardent leur condition (n'apparaissent que si le don renforcé est possédé).
+
 ## Réponses de l'utilisateur (30/10/2026)
 
 | Sujet         | Décision                                                                                                                                                                                              | Validée        |

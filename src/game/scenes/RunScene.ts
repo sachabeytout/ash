@@ -1666,6 +1666,8 @@ export class RunScene extends Phaser.Scene {
     const fx = this.profile.on.dash;
     const at = { x: this.player.x, y: this.player.y };
     if (fx.deflect) this.deflectShots(at, fx.deflect);
+    // Envol du milan (Isis) : le dash protège.
+    if (fx.barrier) this.barrier = Math.max(this.barrier, fx.barrier);
     if (fx.arrows) this.fireArrows(fx.arrows, -1);
     if (fx.shockwave) {
       const wave = fx.shockwave;
@@ -2178,7 +2180,7 @@ export class RunScene extends Phaser.Scene {
       from: Vec2;
     },
   ): void {
-    const fx: HitEffects = hit.kind === 'super' ? {} : this.profile.on[hit.kind];
+    const fx: HitEffects = this.profile.on[hit.kind];
     // Un seul éclair en chaîne par coup, même si le coup touche plusieurs ennemis.
     const firstHit = this.lastChainSwing !== hit.id;
     this.lastChainSwing = hit.id;

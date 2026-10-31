@@ -2,6 +2,30 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.57.0 — Dons de Super, fin des amplifications
+
+Comme tu l'as demandé, chaque dieu a maintenant **4 dons d'action : attaque, attaque spéciale, dash et Super**.
+
+- **9 dons de Super** (nouvelle case « Super », avec la couleur du dieu sur le bouton) :
+  - Râ – **Disque solaire** : ton Super brûle les ennemis ;
+  - Sobek – **Déluge du Nil** : il les trempe ;
+  - Khonsou – **Éclipse** : il les gèle très vite ;
+  - Seth – **Tempête du désert** : la foudre frappe chaque ennemi touché ;
+  - Serket – **Sept scorpions** : il empoisonne ;
+  - Anubis – **Jugement d'Osiris** : il exécute les ennemis affaiblis ;
+  - Bastet – **Fureur de Sekhmet** : coups critiques (Sekhmet est la forme lionne de Bastet) ;
+  - Isis – **Ailes protectrices** : il te soigne ;
+  - Neith – **Égide de Neith** : il te donne un bouclier.
+- **Isis** a enfin un don d'attaque (**Voile d'Isis**, un petit bouclier) et un don de dash (**Envol du milan** : Isis
+  prenait la forme de cet oiseau pour protéger les siens).
+- **Plus d'amplifications** : les 8 anciennes deviennent des **dons passifs** comme les autres, et elles ont maintenant
+  une rareté (rare, épique = plus fort). Ta run en cours est conservée.
+- Prochaine étape : **beaucoup de nouveaux passifs** qui agissent sur l'attaque, la spéciale, le dash ou le Super sans
+  prendre leur case.
+
+**Quoi tester** : prends un don de Super et lance ton Super. L'effet se voit bien ? Le bouton du Super porte bien la
+couleur du dieu ?
+
 ## 0.56.0 — Musique égyptienne
 
 Toutes les musiques ont été recomposées avec une couleur égyptienne, toujours fabriquées par le jeu lui-même

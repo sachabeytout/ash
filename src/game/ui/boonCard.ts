@@ -11,7 +11,6 @@ export const RARITY_COLOR: Record<Rarity, string> = {
   rare: '#6fc3ff',
   epic: '#e08cff',
   duo: '#ffd36b',
-  amp: '#7fffc0',
 };
 
 /**

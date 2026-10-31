@@ -63,18 +63,31 @@ describe('données des dons', () => {
     }
   });
 
-  it('chaque dieu a au moins 4 dons ; il existe des duos et des amplifications', () => {
+  it('chaque dieu a un don par action (attaque, puissante, dash, Super) ; il existe des duos et des passifs', () => {
     const normal = BOONS.filter((b) => b.kind === 'normal');
     for (const god of GOD_IDS) {
       expect(normal.filter((b) => b.gods.includes(god)).length, god).toBeGreaterThanOrEqual(4);
     }
     expect(BOONS.filter((b) => b.kind === 'duo').length).toBeGreaterThanOrEqual(4);
-    expect(BOONS.filter((b) => b.kind === 'amp').length).toBeGreaterThanOrEqual(4);
+    for (const god of GOD_IDS) {
+      for (const slot of ['attack', 'power', 'dash', 'super'] as const) {
+        expect(
+          BOONS.some(
+            (b) => b.kind === 'normal' && b.gods.includes(god) && slotOf(b.effect) === slot,
+          ),
+          `${god} ${slot}`,
+        ).toBe(true);
+      }
+      expect(
+        BOONS.some((b) => b.gods.includes(god) && slotOf(b.effect) === 'passive'),
+        `${god} passif`,
+      ).toBe(true);
+    }
   });
 
   it('chaque action a au plus un don par dieu (sinon le choix serait confus)', () => {
     for (const god of GOD_IDS) {
-      for (const slot of ['attack', 'power', 'dash'] as const) {
+      for (const slot of ['attack', 'power', 'dash', 'super'] as const) {
         const n = BOONS.filter(
           (b) => b.kind === 'normal' && b.gods.includes(god) && slotOf(b.effect) === slot,
         ).length;
@@ -134,7 +147,7 @@ describe('choix des dons', () => {
 
   it('chaque action n’a qu’un don dans le profil', () => {
     for (const b of BOONS)
-      expect(['attack', 'power', 'dash', 'passive']).toContain(slotOf(b.effect));
+      expect(['attack', 'power', 'dash', 'super', 'passive']).toContain(slotOf(b.effect));
   });
 });
 
@@ -384,15 +397,30 @@ describe('nouvelles amplifications (0.25.0)', () => {
       { id: 'anubis_weigh', rarity: 'common' },
       { id: 'serket_power', rarity: 'common' },
       { id: 'serket_dash', rarity: 'common' },
-      { id: 'amp_arc', rarity: 'amp' },
-      { id: 'amp_winter', rarity: 'amp' },
-      { id: 'amp_scales', rarity: 'amp' },
-      { id: 'amp_plague', rarity: 'amp' },
+      { id: 'amp_arc', rarity: 'common' },
+      { id: 'amp_winter', rarity: 'common' },
+      { id: 'amp_scales', rarity: 'common' },
+      { id: 'amp_plague', rarity: 'common' },
     ]);
     expect(amped.on.attack.chain?.bounces).toBe((base.on.attack.chain?.bounces ?? 0) + 2);
     expect(amped.on.power.chill).toBe((base.on.power.chill ?? 0) + 1);
     expect(amped.on.attack.execute).toBeCloseTo((base.on.attack.execute ?? 0) + 0.05);
     expect(amped.on.power.venom?.dps).toBeGreaterThan(base.on.power.venom?.dps ?? 0);
+  });
+
+  it('les anciens renforts grandissent avec la rareté (ce sont des dons passifs normaux)', () => {
+    const arc = (rarity: 'common' | 'epic') =>
+      buildProfile([
+        { id: 'seth_attack', rarity: 'common' },
+        { id: 'amp_arc', rarity },
+      ]).on.attack.chain?.bounces ?? 0;
+    expect(arc('epic')).toBeGreaterThan(arc('common'));
+  });
+
+  it('un don de Super agit sur les coups du Super', () => {
+    const p = buildProfile([{ id: 'ra_super', rarity: 'common' }]);
+    expect(p.on.super.burn?.dps).toBeGreaterThan(0);
+    expect(p.on.attack.burn).toBeUndefined();
   });
 });
 

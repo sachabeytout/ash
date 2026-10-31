@@ -112,6 +112,8 @@ Retour sur le lore v0.2 toujours attendu (« quand le fond aura avancé »).
 - [x] **0.54.0** : la Pyramide aux cages remplace la Volière (3e monde) ; Sphinx enchaîné — demandé par l'utilisateur
 - [x] **0.55.0** : direction artistique égyptienne de toute l'interface (police, cartouches, cadres à frise, cartes, titre, Cage) — demandé
 - [x] **0.56.0** : musique égyptienne par monde (darbouka, sistre, ney, bourdon, gammes orientales ; Pyramide = thème du désert) — demandé
-- [ ] **Ensuite** : réfléchir avec l'utilisateur à plus de dons et d'amplifications (proposition à valider) — demandé
+- [x] **0.57.0** : dons de Super (un par dieu), Isis complétée, amplifications → dons passifs (sauvegarde v20) — demandé
+- [ ] **0.58.0** : nouveaux passifs qui agissent sur les actions sans prendre leur case — demandé
+- [ ] **0.59.0** : duos tirés de la mythologie
 - [ ] **Plus tard** : aspects des armes ; autres skins d'Ash mis de côté (demande de l'utilisateur)
 - [ ] **M3** : finitions — coffres et évènements, préréglages de qualité, équilibrage avec la télémétrie, accessibilité

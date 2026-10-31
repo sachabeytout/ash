@@ -227,3 +227,24 @@ describe('la Douât et Apophis (v18 → v19)', () => {
     expect(inAviary.run?.biome).toBe(2);
   });
 });
+
+describe('les amplifications deviennent des passifs (v19 → v20)', () => {
+  it('une run en cours garde ses dons ; la rareté « amp » devient « commun »', () => {
+    const save = migrate({
+      version: 19,
+      meta: {},
+      settings: {},
+      run: {
+        ...newRun(3, 'katana', 50, 0, 'ra'),
+        boons: [
+          { id: 'seth_attack', rarity: 'rare' },
+          { id: 'amp_arc', rarity: 'amp' },
+        ],
+      },
+    });
+    expect(save.run?.boons).toEqual([
+      { id: 'seth_attack', rarity: 'rare' },
+      { id: 'amp_arc', rarity: 'common' },
+    ]);
+  });
+});

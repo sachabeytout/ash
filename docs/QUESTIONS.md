@@ -68,9 +68,9 @@ Dernière mise à jour : 31/10/2026 (version 0.54.0).
 
 ## E. Dons et amplifications (proposition dans `docs/PROPOSITION-DONS.md`)
 
-32. **18 nouveaux dons** (2 par dieu, chacun avec une mécanique nouvelle) : la liste te plaît ? Un don à retirer ou à changer ? → **en attente (rien codé avant ta réponse)**
-33. **5 amplifications** de plus (Sobek et Isis en reçoivent enfin une) : d'accord ? → **en attente**
-34. **8 duos tirés de la mythologie** (Sobek + Neith sa mère, Râ + Bastet sa fille, Seth qui défend la barque de Râ…) : d'accord ? → **en attente**
+32. **18 nouveaux dons** → ✅ **ta décision** : 4 dons d'action par dieu (attaque, spéciale, dash, **Super**), plus d'amplifications, beaucoup de passifs qui agissent sur les actions sans prendre leur case. Lot 1 fait (0.57.0).
+33. ✅ Plus d'amplifications : ce sont maintenant des dons passifs (0.57.0).
+34. **8 duos tirés de la mythologie** (Sobek + Neith sa mère, Râ + Bastet sa fille, Seth qui défend la barque de Râ…) → **appliqués au lot 3, dis-moi si tu n'en veux pas**
 35. Les **dons « légendaires »** : plus tard, quand on aura une idée qui nous est propre ? → **plus tard**
 
 ## C. Petites décisions prises par Claude (dis seulement si tu n'es pas d'accord)

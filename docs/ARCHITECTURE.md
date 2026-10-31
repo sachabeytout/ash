@@ -1,6 +1,6 @@
 # Architecture (carte du projet)
 
-> Statut 0.56.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
+> Statut 0.57.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
 > combat/attack+health+status+superGauge, boons/boons, run/waves+rewards+state, save/schema+migrations+codec+store),
 > `data/` (player, weapons, enemies, biomes, gods, boons, status, skills, bosses, music, shop), `game/` (scenes Title, Hub,
 > Run, Ui, Boon, Pause, Shop ; entities Player, Enemy, Boss, Hittable ; input Controls, TouchControls ; fx/Juice+Lightning ;
@@ -17,7 +17,10 @@ par-dessus). Mort ou sortie → `hub` avec un `RunSummary`.
 
 ### Dons, Super, sauvegarde, Thot (où régler quoi)
 
-- Dons (valeurs, raretés, duo, amplification) : `src/data/boons.ts` ; dieux : `src/data/gods.ts`.
+- Dons (valeurs, raretés, duo) : `src/data/boons.ts` ; dieux : `src/data/gods.ts`. Cases : attaque, puissante, dash,
+  **Super** (0.57.0 : `on: 'super'`, appliqué par `RunScene.resolveWeaponHit` via `profile.on.super`) et passifs (se
+  cumulent). Plus d'amplifications : les anciennes `amp_*` sont des passifs normaux (`requiresAny` évite un passif
+  inutile), sauvegarde v20 (rareté `amp` → `common`).
 - Brûlure / givre / gel : `src/data/status.ts` + `src/core/combat/status.ts`.
 - Tirage des dons et profil de combat : `src/core/boons/boons.ts` ; effets en jeu : `RunScene` (section « Dons »).
 - Super : `super` dans `src/data/weapons.ts` ; remplissage de la jauge : `PLAYER.superGauge` (`src/data/player.ts`).

@@ -1,7 +1,7 @@
 import type { GodId } from './gods';
 
 /** Action à laquelle un don s'attache. Un seul don par action ; les dons passifs se cumulent. */
-export type BoonSlot = 'attack' | 'power' | 'dash' | 'passive';
+export type BoonSlot = 'attack' | 'power' | 'dash' | 'super' | 'passive';
 export type Trigger = Exclude<BoonSlot, 'passive'>;
 
 export type BoonEffect =
@@ -28,7 +28,7 @@ export type BoonEffect =
   | { type: 'retaliate'; damage: number; range: number }
   /** Duo Râ + Khonsou : un ennemi gelé qui brûle explose. */
   | { type: 'thermalShock'; damage: number; radius: number }
-  /** Amplification : la brûlure dure plus longtemps. */
+  /** Passif : la brûlure dure plus longtemps. */
   | { type: 'burnDuration'; bonus: number }
   // ---------- Anubis : fêlure et exécution ; Isis : soin ----------
   /** Exécute un ennemi (hors boss) sous ce pourcentage de vie. */
@@ -73,9 +73,9 @@ export type BoonEffect =
   | { type: 'lifeOnHit'; on: Trigger; amount: number }
   /** Une fois par run, un coup mortel laisse Ash en vie. */
   | { type: 'lastBreath'; hp: number }
-  // ---------- Duos et amplifications ----------
+  // ---------- Duos et passifs de renfort ----------
   | { type: 'stormStun'; durationMs: number }
-  /** Amplifications : rebonds d'éclair, charges de givre, seuil d'exécution, flèches, malédiction. */
+  /** Passifs de renfort : rebonds d'éclair, charges de givre, seuil d'exécution, flèches, malédiction. */
   | { type: 'chainBounces'; bonus: number }
   | { type: 'chillStacks'; bonus: number }
   | { type: 'executeBonus'; bonus: number }
@@ -95,12 +95,13 @@ export type BoonEffect =
   | { type: 'stunDuration'; bonus: number }
   /** Isis : chaque salle terminée rend des PV. */
   | { type: 'roomHeal'; amount: number }
-  /** Amplification de Serket : venin plus fort. */
+  /** Passif de Serket : venin plus fort. */
   | { type: 'venomPotency'; bonus: number }
   /** Duo Seth + Sobek : chaque éclair frappe aussi tous les ennemis trempés. */
   | { type: 'conduct'; damage: number };
 
-export type BoonKind = 'normal' | 'duo' | 'amp';
+/** Depuis la 0.57.0, les anciennes amplifications sont des dons passifs normaux (avec rareté). */
+export type BoonKind = 'normal' | 'duo';
 
 export interface BoonDef {
   id: string;
@@ -111,11 +112,11 @@ export interface BoonDef {
   /** Description avec la variable {value} (valeur principale, selon la rareté). */
   descKey: string;
   effect: BoonEffect;
-  /** Amplification : n'apparaît que si l'un de ces dons est déjà obtenu. */
+  /** Passif qui renforce un autre don : n'apparaît que si l'un de ces dons est déjà obtenu (jamais inutile). */
   requiresAny?: readonly string[];
 }
 
-export type Rarity = 'common' | 'rare' | 'epic' | 'duo' | 'amp';
+export type Rarity = 'common' | 'rare' | 'epic' | 'duo';
 
 /** Multiplicateur de la valeur principale selon la rareté. */
 export const RARITY_POWER: Record<Rarity, number> = {
@@ -123,7 +124,6 @@ export const RARITY_POWER: Record<Rarity, number> = {
   rare: 1.5,
   epic: 2,
   duo: 1,
-  amp: 1,
 };
 
 /** Chances de rareté d'un don normal (le reste est commun). */
@@ -384,6 +384,22 @@ export const BOONS: readonly BoonDef[] = [
     effect: { type: 'healOnKill', amount: 2 },
   },
   {
+    id: 'isis_attack',
+    gods: ['isis'],
+    kind: 'normal',
+    nameKey: 'boon.isis_attack',
+    descKey: 'boon.isis_attack.desc',
+    effect: { type: 'barrier', on: 'attack', amount: 3 },
+  },
+  {
+    id: 'isis_dash',
+    gods: ['isis'],
+    kind: 'normal',
+    nameKey: 'boon.isis_dash',
+    descKey: 'boon.isis_dash.desc',
+    effect: { type: 'barrier', on: 'dash', amount: 6 },
+  },
+  {
     id: 'isis_power',
     gods: ['isis'],
     kind: 'normal',
@@ -505,11 +521,84 @@ export const BOONS: readonly BoonDef[] = [
     descKey: 'boon.duo_embalm.desc',
     effect: { type: 'embalm', amount: 3 },
   },
-  // ---------- Amplifications (renforcent un don déjà obtenu) ----------
+  // ---------- Dons de Super (0.57.0) : un par dieu, la case « Super » ----------
+  {
+    id: 'ra_super',
+    gods: ['ra'],
+    kind: 'normal',
+    nameKey: 'boon.ra_super',
+    descKey: 'boon.ra_super.desc',
+    effect: { type: 'burn', on: 'super', dps: 10, durationMs: 4000 },
+  },
+  {
+    id: 'sobek_super',
+    gods: ['sobek'],
+    kind: 'normal',
+    nameKey: 'boon.sobek_super',
+    descKey: 'boon.sobek_super.desc',
+    effect: { type: 'soak', on: 'super', slow: 0.4, durationMs: 5000 },
+  },
+  {
+    id: 'khonsou_super',
+    gods: ['khonsou'],
+    kind: 'normal',
+    nameKey: 'boon.khonsou_super',
+    descKey: 'boon.khonsou_super.desc',
+    effect: { type: 'chill', on: 'super', stacks: 3 },
+  },
+  {
+    id: 'seth_super',
+    gods: ['seth'],
+    kind: 'normal',
+    nameKey: 'boon.seth_super',
+    descKey: 'boon.seth_super.desc',
+    effect: { type: 'bolt', on: 'super', damage: 12, radius: 34 },
+  },
+  {
+    id: 'serket_super',
+    gods: ['serket'],
+    kind: 'normal',
+    nameKey: 'boon.serket_super',
+    descKey: 'boon.serket_super.desc',
+    effect: { type: 'venom', on: 'super', stacks: 4, dps: 2 },
+  },
+  {
+    id: 'anubis_super',
+    gods: ['anubis'],
+    kind: 'normal',
+    nameKey: 'boon.anubis_super',
+    descKey: 'boon.anubis_super.desc',
+    effect: { type: 'execute', on: 'super', threshold: 20 },
+  },
+  {
+    id: 'bastet_super',
+    gods: ['bastet'],
+    kind: 'normal',
+    nameKey: 'boon.bastet_super',
+    descKey: 'boon.bastet_super.desc',
+    effect: { type: 'crit', on: 'super', chance: 35 },
+  },
+  {
+    id: 'isis_super',
+    gods: ['isis'],
+    kind: 'normal',
+    nameKey: 'boon.isis_super',
+    descKey: 'boon.isis_super.desc',
+    effect: { type: 'lifeOnHit', on: 'super', amount: 1 },
+  },
+  {
+    id: 'neith_super',
+    gods: ['neith'],
+    kind: 'normal',
+    nameKey: 'boon.neith_super',
+    descKey: 'boon.neith_super.desc',
+    effect: { type: 'barrier', on: 'super', amount: 12 },
+  },
+  // ---------- Passifs qui renforcent un don déjà obtenu (anciennes « amplifications ») ----------
   {
     id: 'amp_noon',
     gods: ['ra'],
-    kind: 'amp',
+    kind: 'normal',
     nameKey: 'boon.amp_noon',
     descKey: 'boon.amp_noon.desc',
     effect: { type: 'burnDuration', bonus: 0.5 },
@@ -518,7 +607,7 @@ export const BOONS: readonly BoonDef[] = [
   {
     id: 'amp_winter',
     gods: ['khonsou'],
-    kind: 'amp',
+    kind: 'normal',
     nameKey: 'boon.amp_winter',
     descKey: 'boon.amp_winter.desc',
     effect: { type: 'chillStacks', bonus: 1 },
@@ -527,7 +616,7 @@ export const BOONS: readonly BoonDef[] = [
   {
     id: 'amp_arc',
     gods: ['seth'],
-    kind: 'amp',
+    kind: 'normal',
     nameKey: 'boon.amp_arc',
     descKey: 'boon.amp_arc.desc',
     effect: { type: 'chainBounces', bonus: 2 },
@@ -536,7 +625,7 @@ export const BOONS: readonly BoonDef[] = [
   {
     id: 'amp_thunder',
     gods: ['seth'],
-    kind: 'amp',
+    kind: 'normal',
     nameKey: 'boon.amp_thunder',
     descKey: 'boon.amp_thunder.desc',
     effect: { type: 'stunDuration', bonus: 0.5 },
@@ -545,7 +634,7 @@ export const BOONS: readonly BoonDef[] = [
   {
     id: 'amp_plague',
     gods: ['serket'],
-    kind: 'amp',
+    kind: 'normal',
     nameKey: 'boon.amp_plague',
     descKey: 'boon.amp_plague.desc',
     effect: { type: 'venomPotency', bonus: 0.5 },
@@ -554,7 +643,7 @@ export const BOONS: readonly BoonDef[] = [
   {
     id: 'amp_scales',
     gods: ['anubis'],
-    kind: 'amp',
+    kind: 'normal',
     nameKey: 'boon.amp_scales',
     descKey: 'boon.amp_scales.desc',
     effect: { type: 'executeBonus', bonus: 5 },
@@ -563,7 +652,7 @@ export const BOONS: readonly BoonDef[] = [
   {
     id: 'amp_claws',
     gods: ['bastet'],
-    kind: 'amp',
+    kind: 'normal',
     nameKey: 'boon.amp_claws',
     descKey: 'boon.amp_claws.desc',
     effect: { type: 'critDamage', bonus: 0.5 },
@@ -572,7 +661,7 @@ export const BOONS: readonly BoonDef[] = [
   {
     id: 'amp_aegis',
     gods: ['neith'],
-    kind: 'amp',
+    kind: 'normal',
     nameKey: 'boon.amp_aegis',
     descKey: 'boon.amp_aegis.desc',
     effect: { type: 'aegisCharge', charges: 1 },

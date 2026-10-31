@@ -51,7 +51,7 @@ export function rollUpgrades(rng: Rng, owned: readonly OwnedBoon[], count = 3): 
   return offers;
 }
 
-/** Duos et amplifications sortent plus souvent quand ils sont possibles (on veut les voir). */
+/** Les duos sortent plus souvent quand ils sont possibles (on veut les voir). */
 const SPECIAL_WEIGHT = 3;
 
 function ownsGod(owned: readonly OwnedBoon[], god: GodId): boolean {
@@ -142,7 +142,7 @@ export function mainValue(effect: BoonEffect, rarity: Rarity): number {
     case 'roomHeal':
       return Math.round(effect.amount * p);
     case 'venomPotency':
-      return Math.round(effect.bonus * 100);
+      return Math.round(effect.bonus * p * 100);
     case 'conduct':
       return Math.round(effect.damage * p);
     case 'chill':
@@ -190,14 +190,14 @@ export function mainValue(effect: BoonEffect, rarity: Rarity): number {
     case 'stormStun':
     case 'critStun':
       return effect.durationMs;
-    // Amplifications à paliers fixes (pas de rareté).
+    // Passifs de renfort (anciennes amplifications) : ils grandissent aussi avec la rareté.
     case 'chainBounces':
     case 'chillStacks':
     case 'executeBonus':
     case 'arrowCount':
-      return effect.bonus;
+      return Math.round(effect.bonus * p);
     case 'curseDamage':
-      return Math.round(effect.bonus * 100);
+      return Math.round(effect.bonus * p * 100);
     case 'aegisStorm':
       return Math.round(effect.damage * p);
     case 'blackSun':
@@ -273,7 +273,7 @@ export interface CombatProfile {
 
 export function buildProfile(owned: readonly OwnedBoon[]): CombatProfile {
   const profile: CombatProfile = {
-    on: { attack: {}, power: {}, dash: {} },
+    on: { attack: {}, power: {}, dash: {}, super: {} },
     vsBurning: 0,
     vsChilled: 0,
     vsStunned: 0,

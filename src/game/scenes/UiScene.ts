@@ -270,11 +270,16 @@ export class UiScene extends Phaser.Scene {
     if (key === this.boonKey) return;
     this.boonKey = key;
     // Badge du dieu sur chaque bouton tactile concerné.
-    const godOf = (slot: 'attack' | 'power' | 'dash') => {
+    const godOf = (slot: 'attack' | 'power' | 'dash' | 'super') => {
       const id = slotGod(run.boons, slot);
       return id ? GODS[id] : undefined;
     };
-    this.touch.setGods({ attack: godOf('attack'), power: godOf('power'), dash: godOf('dash') });
+    this.touch.setGods({
+      attack: godOf('attack'),
+      power: godOf('power'),
+      dash: godOf('dash'),
+      super: godOf('super'),
+    });
     const g = this.boonIcons.clear();
     run.boons.forEach((owned, i) => {
       const def = getBoon(owned.id);
