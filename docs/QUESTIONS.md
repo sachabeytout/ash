@@ -46,7 +46,7 @@ Dernière mise à jour : 30/10/2026 (version 0.44.0).
     15 quinquies. ✅ **Les 9 dieux (0.44.0)** : Râ (feu), Sobek (eau), Khonsou (glace), Seth (foudre), Serket (poison), Anubis (brisement + exécution), Bastet (force), Isis (soin), Neith (bouclier).
     15 sexies. **Structure d'une run** : Ammit → Sphinx de givre → l'Oiseleur → **Apophis** (boss final de chaque run, à battre 10 fois). D'accord ? → **en attente**
     15 septies. ✅ Le marchand reste **Ratatosk** (il a suivi Ash depuis le monde scandinave ; Ash se souvient un peu de lui). Le forgeron Brokk devient **Ptah** (dieu égyptien des artisans) ? → **en attente**
-    15 octies. **Amon** (idée de l'utilisateur, rien dans le jeu) : proposé comme **le roi caché** qui a ouvert la cage en secret (révélé tard dans l'histoire), et en jeu une **porte dorée rare « Faveur d'Amon »** qui renforce les dons des autres dieux ; Amon-Râ en récompense spéciale. Pas un 10e dieu à dons normaux. → **en attente**
+    15 octies. **Amon** (idée de l'utilisateur, rien dans le jeu) : proposé comme **le roi caché** qui a ouvert la cage en secret (révélé tard dans l'histoire). En jeu, pour ne pas ressembler au Chaos de Hadès (porte rare, malédiction puis bonus) : **le Regard d'Amon** — à chaque run, un défi discret (ex. finir une salle sans être touché) ; s'il est réussi, Amon offre une **faveur royale** à la fin de la salle (ex. choisir le dieu de la prochaine porte). Aucune porte, aucun coût. → **en attente**
 
 ## C. Petites décisions prises par Claude (dis seulement si tu n'es pas d'accord)
 
