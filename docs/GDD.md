@@ -33,6 +33,9 @@
 
 ### Lore v0.3 — propositions de Claude 🟡 (à valider, voir `docs/QUESTIONS.md` partie B)
 
+> **Version approfondie (v0.4) : `docs/LORE.md`** (cycle des vies, pacte d'Apophis, 10 anneaux, rôle de chaque dieu,
+> habitants de la Cage, mondes et boss, les 10 victoires). Elle complète et précise la liste ci-dessous.
+
 - **« Sans pouvoir »** : Ash n'a aucun pouvoir à lui ; il porte ceux que les dieux lui prêtent (= les **dons**).
 - **Structure d'une run** : 1. Bas-Fonds d'Héliopolis — **Ammit** ; 2. Le Nil de minuit — **Shezmu, le Bourreau** (validé : lames en arc, chaînes qui tirent vers son pressoir, phase 2 le pressoir écrase le sol) ; 3. La Volière (tour de l'Oiseleur) — **l'Oiseleur** ; 4. La Douât (le monde de la nuit) — **Apophis**. Chaque victoire
   = Apophis battu une fois = un des **10 sceaux** de la malédiction brisé.

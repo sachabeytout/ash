@@ -137,7 +137,7 @@ par-dessus). Mort ou sortie → `hub` avec un `RunSummary`.
 .
 ├── CLAUDE.md                 règles de travail (lu à chaque session)
 ├── CHANGELOG.md              nouveautés en français simple pour l'utilisateur
-├── docs/                     BRIEF (figé), GDD, ARCHITECTURE, ROADMAP, DECISIONS, CREDITS
+├── docs/                     BRIEF (figé), GDD, LORE (histoire détaillée), ARCHITECTURE, ROADMAP, DECISIONS, CREDITS
 ├── index.html                page unique, meta viewport / safe-area / anti-zoom
 ├── public/                   icônes PWA, assets statiques non traités par Vite
 ├── src/

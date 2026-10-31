@@ -99,6 +99,8 @@ Retour sur le lore v0.2 toujours attendu (« quand le fond aura avancé »).
 - [x] **M6.10 (0.42.0)** : rendu à la résolution de l'écran (textes nets) + petits textes +10 % — demandé par l'utilisateur
 - [x] **M6.11 (0.43.0)** : premier essai guidé, cartes des dons en pause, présentation des boss, 16 trophées — demandé par l'utilisateur
 - [x] **Lore 1/3 (0.44.0)** : les 9 dieux égyptiens et leurs dons (eau et venin nouveaux)
+- [x] **Lore approfondi (v0.4, docs seulement)** : `docs/LORE.md`, en attente de validation
+- [ ] **Regard d'Amon** : base prête (logique, fenêtre, œil), reste à le brancher dans les salles
 - [ ] **Lore 2/3** : personnages et dialogues (Ash, Anii, Ratatosk qui a suivi Ash, Ptah ?) — réécriture de l'histoire v0.3
 - [ ] **Lore 3/3** : lieux et boss (Apophis boss final, à battre 10 fois ; vraie fin)
 - [ ] **Plus tard (après le lore)** : skins d'Ash, aspects des armes
