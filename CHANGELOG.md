@@ -2,6 +2,27 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.46.0 — Le Regard d'Amon et de vrais visages pour les dieux
+
+- **Le Regard d'Amon** : une fois par monde, Amon, le roi caché, t'observe pendant une salle de combat. Un **œil doré** apparaît en haut de l'écran avec son défi :
+  - finir la salle **sans être touché** ;
+  - vaincre **3 ennemis en 3 secondes** ;
+  - vaincre **3 ennemis avec l'attaque puissante** (compteur 1/3, 2/3, 3/3).
+- **Réussi** : à la fin de la salle, la fenêtre **« Faveur royale »** s'ouvre. Tu choisis l'un des 3 dieux proposés, et il t'attend derrière la porte de don de la sortie.
+- **Raté** : l'œil se ferme, sans aucune perte. Amon te regardera de nouveau dans une salle suivante du même monde.
+- **Nouvelles icônes des dieux** : chacun a maintenant le visage de sa vraie représentation égyptienne, avec un détail de son pouvoir :
+  - Râ : tête de faucon et disque solaire en flammes ;
+  - Sobek : tête de crocodile sur des vagues ;
+  - Khonsou : faucon coiffé de la lune, avec glaçons et cristal de givre ;
+  - Seth : l'animal de Seth et un éclair ;
+  - Serket : déesse coiffée d'un scorpion, avec une goutte de venin ;
+  - Anubis : tête de chacal fendue (le brisement) ;
+  - Bastet : tête de chatte et coups de griffe ;
+  - Isis : déesse coiffée du trône, l'ânkh (souffle de vie) devant le visage ;
+  - Neith : son bouclier aux flèches croisées.
+
+**Quoi tester** : reconnais-tu chaque dieu à son icône (portes, choix de don, pause) ? As-tu croisé l'œil d'Amon dans un monde ? Les défis sont-ils trop durs ou trop faciles ?
+
 ## 0.45.0 — Fidèles à la mythologie
 
 J'ai relu tous les textes des dieux et corrigé ce qui ne collait pas à la vraie mythologie égyptienne :

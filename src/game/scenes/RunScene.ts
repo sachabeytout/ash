@@ -102,7 +102,7 @@ import type { Hittable } from '../entities/Hittable';
 import { Player } from '../entities/Player';
 import { Juice } from '../fx/Juice';
 import { Lightning } from '../fx/Lightning';
-import { drawGodIcon } from '../icons';
+import { AMON_COLOR, drawGodIcon } from '../icons';
 import type { BoonSceneData } from './BoonScene';
 import type { PauseSceneData } from './PauseScene';
 import { drawRatatosk, type ShopSceneData } from './ShopScene';
@@ -145,6 +145,22 @@ import { ensureGameTextures } from '../textures';
 import { FONT_FAMILY } from '../theme';
 import { RENDER_SCALE, SCENE_ZOOM } from '../view';
 import { markScene } from './markScene';
+import type { AmonSceneData } from './AmonScene';
+import {
+  AMON_CHALLENGES,
+  AMON_FRENZY_KILLS,
+  AMON_FRENZY_MS,
+  AMON_POWER_KILLS,
+  amonChallengeFor,
+  amonEvent,
+  amonGods,
+  amonRoomCleared,
+  amonStartRoom,
+  applyRoyalFavor,
+  newAmonWatch,
+  type AmonEvent,
+  type AmonWatch,
+} from '../../core/amon';
 
 /** Arène de combat (coordonnées du monde). La caméra la centre, la largeur d'écran varie selon le téléphone. */
 const ARENA = new Phaser.Geom.Rectangle(40, 34, 560, 300);
@@ -282,6 +298,10 @@ export class RunScene extends Phaser.Scene {
     g: Phaser.GameObjects.Graphics;
     glow: Phaser.GameObjects.Image;
   } | null = null;
+  /** Regard d'Amon : le défi de la salle (null : Amon ne regarde pas). */
+  private amon: AmonWatch | null = null;
+  /** Type du coup en cours de résolution (pour savoir si un ennemi tombe sous l'attaque puissante). */
+  private hitKind: 'attack' | 'power' | 'super' | null = null;
   /** Épreuve de Vesper : salle chronométrée (le chrono part à la première vague). */
   private trial: {
     limitMs: number;
@@ -505,6 +525,7 @@ export class RunScene extends Phaser.Scene {
     if (this.kind === 'combat' && trialRoom(this.run.seed, this.run.biome, biome) === this.run.room)
       this.startTrial(biome);
     if (this.challenge) this.startChallenge(biome);
+    this.startAmon(biome);
     if (this.kind === 'boss') this.startBoss();
     if (this.kind === 'fountain') this.startFountain();
     if (this.kind === 'event') this.startEvent();
@@ -607,6 +628,12 @@ export class RunScene extends Phaser.Scene {
         this.offerSpark();
       }
       if (e.code === 'KeyG') this.run.superGauge = 1;
+      if (e.code === 'KeyJ' && this.kind === 'combat' && !this.roomCleared) {
+        // Regard d'Amon sur cette salle (chaque appui change de défi).
+        const i = AMON_CHALLENGES.indexOf(this.amon?.challenge ?? 'power');
+        this.amon = newAmonWatch(AMON_CHALLENGES[(i + 1) % AMON_CHALLENGES.length] ?? 'untouched');
+        this.refreshAmon();
+      }
       if (e.code === 'KeyI') {
         this.run.room += 1;
         this.leaving = true;
@@ -2007,7 +2034,29 @@ export class RunScene extends Phaser.Scene {
    * Un coup d'arme touche une cible (corps à corps, projectile ou zone) : bouclier, bonus, dégâts,
    * ressenti, jauge de Super, puis effets des dons de l'action (attaque, puissante).
    */
+  /** Un coup d'arme (attaque, puissante, Super) touche un ennemi. */
   private weaponHit(
+    e: Hittable,
+    hit: {
+      damage: number;
+      kind: 'attack' | 'power' | 'super';
+      knockback: number;
+      hitstopMs: number;
+      shake: number;
+      heavy: boolean;
+      id: number;
+      from: Vec2;
+    },
+  ): void {
+    this.hitKind = hit.kind;
+    try {
+      this.resolveWeaponHit(e, hit);
+    } finally {
+      this.hitKind = null;
+    }
+  }
+
+  private resolveWeaponHit(
     e: Hittable,
     hit: {
       damage: number;
@@ -2130,6 +2179,7 @@ export class RunScene extends Phaser.Scene {
     }
     if (!(e instanceof Enemy)) return;
     recordKill(this.run);
+    this.onAmonEvent({ type: 'kill', at: this.sim, power: this.hitKind === 'power' });
     if (e.affix) {
       this.run.shards += AFFIX_BOUNTY;
       if (e.affix === 'volatile') this.armBlast(e.x, e.y);
@@ -2322,6 +2372,7 @@ export class RunScene extends Phaser.Scene {
     const { dealt, killed } = applyDamage(health, reducedDamage(amount, reduction));
     this.run.hp = health.hp;
     recordDamage(this.run, dealt);
+    if (dealt > 0) this.onAmonEvent({ type: 'hurt' });
     this.run.superGauge = gainSuper(this.run.superGauge, 0, dealt);
     this.player.takeHit(this.sim, from);
     this.juice.hitstop(70);
@@ -2406,10 +2457,85 @@ export class RunScene extends Phaser.Scene {
       this.juice.damageNumber(this.player.x, this.player.y - 14, CHALLENGE_SHARDS, '#7fe7ff');
     }
     const three = this.challenge === 'survival' || this.challenge === 'champion';
-    const [a, b, c] = rollDoors(this.rng, three ? 3 : 2, biome.pantheon, exclude);
+    const doors = rollDoors(this.rng, three ? 3 : 2, biome.pantheon, exclude);
+    // Regard d'Amon réussi : faveur royale avant l'apparition des portes.
+    if (this.amon && amonRoomCleared(this.amon) === 'won') {
+      this.refreshAmon();
+      this.run.amonBiome = this.run.biome;
+      this.openRoyalFavor(doors);
+      return;
+    }
+    this.refreshAmon();
+    this.placeDoors(doors);
+  }
+
+  private placeDoors(doors: readonly DoorReward[]): void {
+    const [a, b, c] = doors;
     if (a) this.addDoor(a, ARENA.centerX - 120);
     if (b) this.addDoor(b, ARENA.centerX + 120);
     if (c) this.addDoor(c, ARENA.centerX);
+  }
+
+  // ---------- Regard d'Amon ----------
+
+  /** Amon observe certaines salles de combat (une faveur par monde, sans coût). */
+  private startAmon(biome: BiomeDef): void {
+    const challenge = this.kind === 'combat' ? amonChallengeFor(this.run, biome) : null;
+    this.amon = challenge ? newAmonWatch(challenge) : null;
+    if (!this.amon) return;
+    // La première fois dans ce monde : la règle en grand ; ensuite, un simple rappel.
+    const first = amonStartRoom(this.run.seed, this.run.biome, biome) === this.run.room;
+    this.time.delayedCall(900, () => {
+      this.refreshAmon();
+      if (first) this.ui.showBanner(t('amon.watch'), t('amon.rule'));
+      else this.ui.toast(t('amon.watch'));
+    });
+  }
+
+  private amonText(): string {
+    const w = this.amon;
+    if (!w) return '';
+    if (w.state === 'won') return t('amon.won');
+    if (w.state === 'failed') return t('amon.failed');
+    return t(`amon.challenge.${w.challenge}` as TextKey, {
+      kills: w.challenge === 'power' ? AMON_POWER_KILLS : AMON_FRENZY_KILLS,
+      seconds: AMON_FRENZY_MS / 1000,
+      n: w.powerKills,
+    });
+  }
+
+  private refreshAmon(): void {
+    this.ui.showAmon(this.amon?.state ?? null, this.amonText());
+  }
+
+  private onAmonEvent(e: AmonEvent): void {
+    const w = this.amon;
+    if (!w || w.state !== 'watching') return;
+    if (!amonEvent(w, e)) return;
+    this.refreshAmon();
+    // amonEvent vient de changer l'état : on le relit.
+    if ((w.state as AmonWatch['state']) === 'won') {
+      sfx.spark();
+      this.juice.burst(this.player.x, this.player.y, AMON_COLOR, 18);
+    }
+  }
+
+  /** Faveur royale : Ash choisit le dieu qui l'attend derrière la porte de don. */
+  private openRoyalFavor(doors: readonly DoorReward[]): void {
+    const data: AmonSceneData = {
+      gods: amonGods(this.run.seed, this.run.biome, this.run.room),
+      onPick: (god) => {
+        this.choosing = false;
+        markScene('run');
+        this.placeDoors(applyRoyalFavor(doors, god));
+      },
+    };
+    this.choosing = true;
+    sfx.spark();
+    this.time.delayedCall(700, () => {
+      this.scene.launch('amon', data);
+      this.scene.bringToTop('amon');
+    });
   }
 
   private addDoor(reward: DoorReward | SpecialDoor, x: number): void {

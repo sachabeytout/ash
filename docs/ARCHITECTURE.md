@@ -1,6 +1,6 @@
 # Architecture (carte du projet)
 
-> Statut 0.45.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
+> Statut 0.46.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
 > combat/attack+health+status+superGauge, boons/boons, run/waves+rewards+state, save/schema+migrations+codec+store),
 > `data/` (player, weapons, enemies, biomes, gods, boons, status, skills, bosses, music, shop), `game/` (scenes Title, Hub,
 > Run, Ui, Boon, Pause, Shop ; entities Player, Enemy, Boss, Hittable ; input Controls, TouchControls ; fx/Juice+Lightning ;
@@ -32,8 +32,11 @@ par-dessus). Mort ou sortie → `hub` avec un `RunSummary`.
 - Premier essai guidé : `src/core/tutorial.ts` (étapes, pur) ; affiché par `RunScene.updateTutorial` →
   `UiScene.showHint` (+ `TouchControls.highlight`). Fini/passé → `tutorial_done` dans `seenDialogues`.
 - Pause : petites cartes des dons (`src/game/ui/boonCard.ts`, aussi `RARITY_COLOR`).
-- Regard d'Amon (en cours, pas encore branché) : logique `src/core/amon.ts` (salle observée, défis, faveur royale),
-  fenêtre `src/game/scenes/AmonScene.ts`, œil `drawAmonEye` (`src/game/icons.ts`), `UiScene.showAmon`. Sauvegarde v16 (`run.amonBiome`).
+- Regard d'Amon : logique `src/core/amon.ts` (salle observée, défis, faveur royale, constantes) ; en jeu
+  `RunScene.startAmon` / `onAmonEvent` (coups reçus, ennemis vaincus, `hitKind`) / `openRoyalFavor` (dans `clearRoom`) ;
+  fenêtre `src/game/scenes/AmonScene.ts`, œil `drawAmonEye` (`src/game/icons.ts`), `UiScene.showAmon`. Sauvegarde v16
+  (`run.amonBiome`). Raccourci de test J : Amon regarde la salle (chaque appui change de défi).
+- Icônes des dieux : `drawGodIcon` (`src/game/icons.ts`), une forme par `GodDef.icon` (tête + détail du pouvoir).
 - Présentation des boss : `RunScene.presentBoss` (caméra) + `UiScene.bossIntro` (bandes, nom) ; `BOSS_PRESENT_MS`.
 - Trophées : `src/data/trophies.ts` (objectifs, récompenses), `src/core/trophies.ts` (progression, `claimTrophies`
   à l'entrée de la Cage), vitrine `src/game/ui/TrophyPanel.ts`. Sauvegarde v14 (`meta.trophies`,

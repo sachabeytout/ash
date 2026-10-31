@@ -15,8 +15,17 @@ export interface GodDef {
   color: number;
   /** Variante claire de la couleur, pour les textes (chiffres de dégâts) sur fond sombre. */
   text: string;
-  /** Forme de l'icône (lisible sans les couleurs). */
-  icon: 'sun' | 'wave' | 'moon' | 'bolt' | 'scorpion' | 'jackal' | 'cat' | 'ankh' | 'shield';
+  /** Icône : la représentation du dieu + un détail de son pouvoir (lisible sans les couleurs). */
+  icon:
+    | 'falconSun'
+    | 'crocodile'
+    | 'falconMoon'
+    | 'sethAnimal'
+    | 'scorpionCrown'
+    | 'jackal'
+    | 'cat'
+    | 'throne'
+    | 'shield';
   pantheon: Pantheon;
 }
 
@@ -34,14 +43,14 @@ function god(id: GodId, color: number, text: string, icon: GodDef['icon']): GodD
 
 /** Les 9 dieux : un pouvoir chacun (feu, eau, glace, foudre, poison, brisement, force, soin, bouclier). */
 export const GODS: Record<GodId, GodDef> = {
-  ra: god('ra', 0xff4a14, '#ff8a5c', 'sun'),
-  sobek: god('sobek', 0x3f7bff, '#8cb0ff', 'wave'),
-  khonsou: god('khonsou', 0x8ff0ff, '#c8f8ff', 'moon'),
-  seth: god('seth', 0xffe03a, '#fff07a', 'bolt'),
-  serket: god('serket', 0xc6ff3a, '#e2ff8a', 'scorpion'),
+  ra: god('ra', 0xff4a14, '#ff8a5c', 'falconSun'),
+  sobek: god('sobek', 0x3f7bff, '#8cb0ff', 'crocodile'),
+  khonsou: god('khonsou', 0x8ff0ff, '#c8f8ff', 'falconMoon'),
+  seth: god('seth', 0xffe03a, '#fff07a', 'sethAnimal'),
+  serket: god('serket', 0xc6ff3a, '#e2ff8a', 'scorpionCrown'),
   anubis: god('anubis', 0x8a4dff, '#c0a0ff', 'jackal'),
   bastet: god('bastet', 0xd89a50, '#f0c890', 'cat'),
-  isis: god('isis', 0x3ddc84, '#8cf0b8', 'ankh'),
+  isis: god('isis', 0x3ddc84, '#8cf0b8', 'throne'),
   neith: god('neith', 0xc8d8ff, '#e8eeff', 'shield'),
 };
 

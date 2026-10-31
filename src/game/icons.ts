@@ -1,7 +1,93 @@
 import Phaser from 'phaser';
 import type { GodDef } from '../data/gods';
 
-/** Icône d'un dieu (soleil, vague, lune, éclair, scorpion, chacal, chat, ânkh, bouclier) : la forme suffit à les distinguer. */
+type Pt = readonly [number, number];
+
+/** Tête de faucon de profil, bec crochu vers la droite (Râ, Khonsou). */
+// prettier-ignore
+const FALCON: readonly Pt[] = [
+  [-0.5, 1], [-0.6, 0.35], [-0.5, 0], [-0.3, -0.18], [0, -0.24], [0.3, -0.18], [0.55, -0.02],
+  [0.78, 0.2], [0.8, 0.42], [0.7, 0.56], [0.66, 0.38], [0.52, 0.3], [0.3, 0.36], [0.22, 0.6],
+  [0.15, 1],
+];
+/** Tête de crocodile de profil, long museau vers la droite (Sobek). */
+const CROCODILE: readonly Pt[] = [
+  [-0.95, 0],
+  [-0.7, -0.2],
+  [-0.45, -0.4],
+  [-0.25, -0.38],
+  [-0.1, -0.18],
+  [0.4, -0.12],
+  [0.88, -0.08],
+  [0.98, 0.05],
+  [0.9, 0.18],
+  [0.3, 0.22],
+  [-0.3, 0.35],
+  [-0.95, 0.4],
+];
+/** Animal de Seth : museau long et courbé, oreilles dressées au bout carré. */
+const SETH_ANIMAL: readonly Pt[] = [
+  [-0.5, 1],
+  [-0.55, 0.3],
+  [-0.4, -0.05],
+  [-0.42, -0.72],
+  [-0.54, -0.92],
+  [-0.22, -0.92],
+  [-0.28, -0.72],
+  [-0.25, -0.1],
+  [-0.15, -0.12],
+  [-0.12, -0.7],
+  [-0.22, -0.88],
+  [0.1, -0.88],
+  [0.02, -0.7],
+  [0, -0.1],
+  [0.35, 0],
+  [0.65, 0.15],
+  [0.8, 0.35],
+  [0.72, 0.45],
+  [0.55, 0.32],
+  [0.25, 0.35],
+  [0.1, 0.55],
+  [0.05, 1],
+];
+/** Tête de chacal de profil : deux grandes oreilles pointues, museau fin (Anubis). */
+const JACKAL: readonly Pt[] = [
+  [-0.45, 1],
+  [-0.5, 0.3],
+  [-0.45, -0.1],
+  [-0.52, -0.95],
+  [-0.2, -0.3],
+  [-0.12, -0.95],
+  [0.08, -0.22],
+  [0.45, -0.05],
+  [0.92, 0.12],
+  [0.92, 0.25],
+  [0.4, 0.32],
+  [0.15, 0.5],
+  [0.05, 1],
+];
+/** Tête de déesse de profil, perruque égyptienne (Serket, Isis) ; la coiffe se pose au-dessus. */
+const GODDESS: readonly Pt[] = [
+  [-0.55, 0.95],
+  [-0.62, 0.2],
+  [-0.5, -0.15],
+  [-0.2, -0.3],
+  [0.15, -0.28],
+  [0.3, -0.12],
+  [0.33, 0],
+  [0.48, 0.2],
+  [0.35, 0.26],
+  [0.38, 0.36],
+  [0.28, 0.48],
+  [0.14, 0.58],
+  [0.12, 0.95],
+];
+
+/**
+ * Icône d'un dieu : sa représentation égyptienne (tête de faucon, de crocodile, de chacal…) avec un
+ * détail de son pouvoir (flammes, eau, givre, éclair, venin, fêlure, griffes, ânkh, flèches).
+ * La forme suffit à reconnaître chaque dieu, sans la couleur.
+ */
 export function drawGodIcon(
   g: Phaser.GameObjects.Graphics,
   god: GodDef,
@@ -10,116 +96,279 @@ export function drawGodIcon(
   size: number,
   color = god.color,
 ): void {
-  g.fillStyle(color, 1).lineStyle(Math.max(1.5, size / 6), color, 1);
+  const dark = 0x07060d;
+  const thin = Math.max(1, size / 7);
+  const v = (px: number, py: number) => new Phaser.Math.Vector2(x + px * size, y + py * size);
+  const fill = (pts: readonly Pt[], c = color) =>
+    g.fillStyle(c, 1).fillPoints(
+      pts.map(([px, py]) => v(px, py)),
+      true,
+    );
+  const line = (pts: readonly Pt[], c = color, w = thin) =>
+    g.lineStyle(w, c, 1).strokePoints(
+      pts.map(([px, py]) => v(px, py)),
+      false,
+    );
+  const dot = (px: number, py: number, r: number, c = color) =>
+    g.fillStyle(c, 1).fillCircle(x + px * size, y + py * size, r * size);
+  const eye = (px: number, py: number) =>
+    g.fillStyle(dark, 1).fillEllipse(x + px * size, y + py * size, size * 0.2, size * 0.13);
+
   switch (god.icon) {
-    case 'sun': {
-      g.fillCircle(x, y, size * 0.42);
-      for (let i = 0; i < 8; i++) {
-        const a = (i * Math.PI) / 4;
-        g.lineBetween(
-          x + Math.cos(a) * size * 0.6,
-          y + Math.sin(a) * size * 0.6,
-          x + Math.cos(a) * size * 0.95,
-          y + Math.sin(a) * size * 0.95,
-        );
+    case 'falconSun': {
+      // Râ : tête de faucon coiffée du disque solaire, d'où jaillissent des flammes.
+      for (const a of [-150, -90, -30]) {
+        const r = (a * Math.PI) / 180;
+        const side = 0.22;
+        fill([
+          [Math.cos(r - side) * 0.3, -0.6 + Math.sin(r - side) * 0.3],
+          [Math.cos(r) * 0.68, -0.6 + Math.sin(r) * 0.68],
+          [Math.cos(r + side) * 0.3, -0.6 + Math.sin(r + side) * 0.3],
+        ]);
+      }
+      dot(0, -0.6, 0.33);
+      fill(FALCON);
+      eye(0.26, 0.08);
+      line(
+        [
+          [0.22, 0.14],
+          [0.12, 0.5],
+        ],
+        dark,
+      );
+      break;
+    }
+    case 'falconMoon': {
+      // Khonsou : faucon coiffé du croissant et du disque de lune ; givre (cristal, glaçons).
+      dot(-0.05, -0.55, 0.38);
+      dot(-0.05, -0.72, 0.32, dark);
+      dot(-0.05, -0.64, 0.17);
+      fill(FALCON);
+      eye(0.26, 0.08);
+      line(
+        [
+          [0.22, 0.14],
+          [0.12, 0.5],
+        ],
+        dark,
+      );
+      fill([
+        [0.6, 0.48],
+        [0.7, 0.5],
+        [0.66, 0.74],
+      ]);
+      fill([
+        [0.26, 0.46],
+        [0.36, 0.46],
+        [0.31, 0.7],
+      ]);
+      // Cristal de givre (six branches fines).
+      for (const a of [0, 60, 120]) {
+        const r = (a * Math.PI) / 180;
+        const dx = Math.cos(r) * 0.26;
+        const dy = Math.sin(r) * 0.26;
+        // prettier-ignore
+        line([[0.72 - dx, -0.7 - dy], [0.72 + dx, -0.7 + dy]], color, Math.max(1, size / 12));
       }
       break;
     }
-    case 'bolt': {
-      const s = size;
-      const pts = [
-        [0.15, -1],
-        [-0.55, 0.1],
-        [-0.05, 0.1],
-        [-0.2, 1],
-        [0.55, -0.15],
-        [0.05, -0.15],
-        [0.3, -1],
-      ].map(([px, py]) => new Phaser.Math.Vector2(x + (px ?? 0) * s, y + (py ?? 0) * s));
-      g.fillPoints(pts, true);
+    case 'crocodile': {
+      // Sobek : tête de crocodile au-dessus de l'eau.
+      fill(CROCODILE);
+      eye(-0.32, -0.22);
+      line(
+        [
+          [-0.25, 0.12],
+          [0.88, 0.06],
+        ],
+        dark,
+      );
+      dot(0.86, -0.12, 0.08);
+      line([
+        [-0.9, 0.72],
+        [-0.6, 0.56],
+        [-0.3, 0.72],
+        [0, 0.56],
+        [0.3, 0.72],
+        [0.6, 0.56],
+        [0.9, 0.72],
+      ]);
+      break;
+    }
+    case 'sethAnimal': {
+      // Seth : l'animal de Seth, et un éclair.
+      fill(SETH_ANIMAL);
+      eye(-0.08, 0.12);
+      fill([
+        [0.62, -0.95],
+        [0.4, -0.5],
+        [0.58, -0.5],
+        [0.45, -0.1],
+        [0.88, -0.62],
+        [0.68, -0.62],
+        [0.84, -0.95],
+      ]);
+      break;
+    }
+    case 'scorpionCrown': {
+      // Serket : déesse coiffée d'un scorpion, une goutte de venin au bout du dard.
+      fill(GODDESS);
+      eye(0.18, 0.08);
+      line(
+        [
+          [0.05, -0.27],
+          [0, 0.2],
+          [-0.05, 0.95],
+        ],
+        dark,
+      );
+      g.fillStyle(color, 1).fillEllipse(x - size * 0.05, y - size * 0.48, size * 0.7, size * 0.26);
+      line([
+        [0.25, -0.5],
+        [0.5, -0.66],
+      ]);
+      dot(0.55, -0.7, 0.09);
+      line([
+        [-0.38, -0.5],
+        [-0.58, -0.7],
+        [-0.5, -0.92],
+        [-0.25, -0.98],
+      ]);
+      fill([
+        [-0.28, -1.05],
+        [-0.1, -0.95],
+        [-0.28, -0.88],
+      ]);
+      dot(-0.05, -0.76, 0.07);
+      fill([
+        [-0.11, -0.78],
+        [0.01, -0.78],
+        [-0.05, -0.9],
+      ]);
       break;
     }
     case 'jackal': {
-      // Tête de chacal : museau pointu, deux grandes oreilles.
-      g.fillTriangle(
-        x - size * 0.6,
-        y - size * 0.1,
-        x - size * 0.35,
-        y - size,
-        x - size * 0.1,
-        y - size * 0.2,
+      // Anubis : tête de chacal, fendue d'une fêlure (le brisement).
+      fill(JACKAL);
+      eye(0.12, 0.05);
+      line(
+        [
+          [-0.28, -0.22],
+          [-0.12, 0.08],
+          [-0.3, 0.36],
+          [-0.16, 0.68],
+        ],
+        dark,
       );
-      g.fillTriangle(
-        x + size * 0.6,
-        y - size * 0.1,
-        x + size * 0.35,
-        y - size,
-        x + size * 0.1,
-        y - size * 0.2,
-      );
-      g.fillTriangle(x - size * 0.6, y - size * 0.2, x + size * 0.6, y - size * 0.2, x, y + size);
       break;
     }
     case 'cat': {
-      // Œil de chat : amande, pupille fendue.
-      g.fillEllipse(x, y, size * 1.9, size * 1.1);
-      g.fillStyle(0x07060d, 1).fillRect(x - size * 0.08, y - size * 0.45, size * 0.16, size * 0.9);
+      // Bastet : tête de chatte de face, et trois coups de griffe (la force).
+      dot(-0.28, 0.18, 0.58);
+      fill([
+        [-0.78, -0.05],
+        [-0.72, -0.82],
+        [-0.38, -0.36],
+      ]);
+      fill([
+        [-0.18, -0.36],
+        [0.16, -0.82],
+        [0.22, -0.05],
+      ]);
+      g.fillStyle(dark, 1)
+        .fillEllipse(x - size * 0.5, y + size * 0.1, size * 0.26, size * 0.13)
+        .fillEllipse(x - size * 0.06, y + size * 0.1, size * 0.26, size * 0.13);
+      fill(
+        [
+          [-0.36, 0.3],
+          [-0.2, 0.3],
+          [-0.28, 0.4],
+        ],
+        dark,
+      );
+      // prettier-ignore
+      line([[0.4, -0.72], [0.52, -0.3], [0.48, 0.05]]);
+      // prettier-ignore
+      line([[0.62, -0.78], [0.74, -0.36], [0.7, 0]]);
+      // prettier-ignore
+      line([[0.84, -0.72], [0.96, -0.3], [0.92, 0.05]]);
+      break;
+    }
+    case 'throne': {
+      // Isis : déesse coiffée du trône (son nom), l'ânkh (le souffle de vie) devant le visage.
+      fill(GODDESS);
+      eye(0.18, 0.08);
+      line(
+        [
+          [0.05, -0.27],
+          [0, 0.2],
+          [-0.05, 0.95],
+        ],
+        dark,
+      );
+      fill([
+        [-0.35, -0.32],
+        [-0.35, -0.98],
+        [-0.14, -0.98],
+        [-0.14, -0.6],
+        [0.22, -0.6],
+        [0.22, -0.32],
+      ]);
+      g.lineStyle(thin, color, 1).strokeEllipse(
+        x + size * 0.74,
+        y - size * 0.02,
+        size * 0.26,
+        size * 0.34,
+      );
+      line([
+        [0.56, 0.2],
+        [0.92, 0.2],
+      ]);
+      line([
+        [0.74, 0.15],
+        [0.74, 0.68],
+      ]);
       break;
     }
     case 'shield': {
-      // Bouclier rond à umbo.
-      g.strokeCircle(x, y, size * 0.85);
-      g.fillCircle(x, y, size * 0.35);
-      break;
-    }
-    case 'moon': {
-      // Croissant de lune.
-      g.fillCircle(x, y, size * 0.85);
-      g.fillStyle(0x07060d, 1).fillCircle(x + size * 0.38, y - size * 0.15, size * 0.7);
-      break;
-    }
-    case 'scorpion': {
-      // Scorpion de Serket : corps, deux pinces, queue qui remonte en arc jusqu'au dard.
-      const v = (px: number, py: number) => new Phaser.Math.Vector2(x + px * size, y + py * size);
-      g.fillEllipse(x - size * 0.1, y + size * 0.35, size * 0.6, size * 0.8);
-      g.lineBetween(x - size * 0.25, y + size * 0.1, x - size * 0.7, y - size * 0.25);
-      g.lineBetween(x + size * 0.05, y + size * 0.1, x + size * 0.15, y - size * 0.3);
-      g.fillCircle(x - size * 0.75, y - size * 0.35, size * 0.18);
-      g.fillCircle(x + size * 0.15, y - size * 0.42, size * 0.15);
-      g.strokePoints([v(0, 0.7), v(0.5, 0.55), v(0.7, 0.05), v(0.6, -0.45), v(0.3, -0.75)], false);
-      g.fillTriangle(
-        x + size * 0.38,
-        y - size * 0.92,
-        x + size * 0.38,
-        y - size * 0.55,
-        x + size * 0.08,
-        y - size * 0.7,
+      // Neith : son emblème, le bouclier aux deux flèches croisées.
+      line([
+        [-0.8, -0.8],
+        [0.8, 0.8],
+      ]);
+      line([
+        [0.8, -0.8],
+        [-0.8, 0.8],
+      ]);
+      fill([
+        [-0.95, -0.95],
+        [-0.58, -0.82],
+        [-0.82, -0.58],
+      ]);
+      fill([
+        [0.95, -0.95],
+        [0.82, -0.58],
+        [0.58, -0.82],
+      ]);
+      line([
+        [-0.92, 0.66],
+        [-0.8, 0.8],
+        [-0.66, 0.92],
+      ]);
+      line([
+        [0.92, 0.66],
+        [0.8, 0.8],
+        [0.66, 0.92],
+      ]);
+      g.fillStyle(color, 1).fillEllipse(x, y, size * 0.95, size * 1.35);
+      g.lineStyle(thin, dark, 1).strokeEllipse(x, y, size * 0.6, size * 1);
+      line(
+        [
+          [-0.3, 0],
+          [0.3, 0],
+        ],
+        dark,
       );
-      break;
-    }
-    case 'wave': {
-      // Vague de Sobek : deux crêtes qui s'enroulent (lignes brisées, lisibles en petit).
-      const v = (px: number, py: number) => new Phaser.Math.Vector2(x + px * size, y + py * size);
-      for (const dy of [-0.35, 0.35]) {
-        g.strokePoints(
-          [
-            v(-0.9, dy + 0.2),
-            v(-0.55, dy - 0.25),
-            v(-0.15, dy + 0.2),
-            v(0.25, dy - 0.25),
-            v(0.65, dy + 0.2),
-            v(0.9, dy),
-          ],
-          false,
-        );
-      }
-      break;
-    }
-    case 'ankh': {
-      // Ânkh d'Isis : boucle, barre, tige.
-      g.strokeEllipse(x, y - size * 0.45, size * 0.7, size * 0.9);
-      g.lineBetween(x - size * 0.6, y + size * 0.05, x + size * 0.6, y + size * 0.05);
-      g.lineBetween(x, y, x, y + size);
       break;
     }
   }

@@ -80,7 +80,7 @@ export class AmonScene extends Phaser.Scene {
         card.strokeRoundedRect(x - cardW / 2, cardY - cardH / 2, cardW, cardH, 8);
       };
       draw(false);
-      drawGodIcon(this.add.graphics(), god, x, cardY - 12, 11);
+      drawGodIcon(this.add.graphics(), god, x, cardY - 12, 15);
       this.add
         .text(x, cardY + 12, t(god.nameKey as TextKey), {
           fontFamily: FONT_FAMILY,
