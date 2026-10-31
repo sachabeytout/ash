@@ -13,6 +13,12 @@ import {
 } from '../../src/core/boons/boons';
 import { rollDoorRewards } from '../../src/core/run/rewards';
 import {
+  tickVenom,
+  lightningFactor,
+  isSoaked,
+  isPoisoned,
+  applyVenom,
+  applySoak,
   applyBurn,
   applyChill,
   applyCurse,
@@ -100,9 +106,9 @@ describe('choix des dons', () => {
   it('le duo exige des dons des deux dieux', () => {
     const duo = must(getBoon('duo_thermal'));
     expect(isEligible(duo, own('ra_attack'), 'ra')).toBe(false);
-    expect(isEligible(duo, own('ra_attack', 'skadi_dash'), 'ra')).toBe(true);
-    expect(isEligible(duo, own('ra_attack', 'skadi_dash'), 'skadi')).toBe(true);
-    expect(isEligible(duo, own('ra_attack', 'skadi_dash'), 'zeus')).toBe(false);
+    expect(isEligible(duo, own('ra_attack', 'khonsou_dash'), 'ra')).toBe(true);
+    expect(isEligible(duo, own('ra_attack', 'khonsou_dash'), 'khonsou')).toBe(true);
+    expect(isEligible(duo, own('ra_attack', 'khonsou_dash'), 'seth')).toBe(false);
   });
 
   it("l'amplification exige un don de brûlure", () => {
@@ -112,17 +118,17 @@ describe('choix des dons', () => {
   });
 
   it('un nouveau don sur la même action remplace l’ancien', () => {
-    const offer = rollOffer(createRng(3), own('zeus_attack'), 'ra', 5);
+    const offer = rollOffer(createRng(3), own('seth_attack'), 'ra', 5);
     const raAttack = offer.find((o) => o.id === 'ra_attack');
-    expect(raAttack?.replaces).toBe('zeus_attack');
-    const owned = takeBoon(own('zeus_attack', 'ra_eye'), must(raAttack));
+    expect(raAttack?.replaces).toBe('seth_attack');
+    const owned = takeBoon(own('seth_attack', 'ra_eye'), must(raAttack));
     expect(owned.map((o) => o.id).sort()).toEqual(['ra_attack', 'ra_eye']);
   });
 
   it('les raretés sont toutes atteignables', () => {
     const seen = new Set<string>();
     for (let seed = 0; seed < 300; seed++)
-      rollOffer(createRng(seed), [], 'zeus').forEach((o) => seen.add(o.rarity));
+      rollOffer(createRng(seed), [], 'seth').forEach((o) => seen.add(o.rarity));
     expect([...seen].sort()).toEqual(['common', 'epic', 'rare']);
   });
 
@@ -146,7 +152,7 @@ describe('profil de combat', () => {
   });
 
   it('bonus de dégâts contre les ennemis qui brûlent ou sont givrés', () => {
-    const p = buildProfile(own('ra_eye', 'skadi_heart'));
+    const p = buildProfile(own('ra_eye', 'khonsou_heart'));
     expect(damageMultiplier(p, { burning: false, chilled: false })).toBe(1);
     expect(damageMultiplier(p, { burning: true, chilled: true })).toBeCloseTo(1.35);
   });
@@ -189,18 +195,18 @@ describe('états : brûlure et givre', () => {
 
 describe('run et dons', () => {
   it('la run commence par un don à choisir', () => {
-    const run = newRun(1, 'katana', 50, 0, 'skadi');
-    expect(run.pendingBoon).toBe('skadi');
-    const [first] = rollOffer(createRng(1), run.boons, 'skadi');
+    const run = newRun(1, 'katana', 50, 0, 'khonsou');
+    expect(run.pendingBoon).toBe('khonsou');
+    const [first] = rollOffer(createRng(1), run.boons, 'khonsou');
     chooseBoon(run, must(first));
     expect(run.pendingBoon).toBeNull();
     expect(run.boons).toHaveLength(1);
   });
 
-  it('Feu du foyer agrandit la vie', () => {
-    const run = newRun(1, 'katana', 50, 0, 'ra');
+  it('Neuf vies (Bastet) agrandit la vie', () => {
+    const run = newRun(1, 'katana', 50, 0, 'bastet');
     run.hp = 30;
-    chooseBoon(run, { id: 'ra_hearth', rarity: 'common' });
+    chooseBoon(run, { id: 'bastet_lives', rarity: 'common' });
     expect(run.maxHp).toBe(65);
     expect(run.hp).toBe(45);
   });
@@ -216,28 +222,29 @@ describe('run et dons', () => {
 
 describe('nouveaux dieux : profil et états', () => {
   it('Anubis : seuils d’exécution ; Bastet : critiques et vitesse', () => {
-    const p = buildProfile(own('anubis_attack', 'anubis_power', 'bastet_swift', 'bastet_dash'));
-    expect(p.on.attack.execute).toBeCloseTo(0.1);
+    const p = buildProfile(own('anubis_weigh', 'anubis_power', 'bastet_swift', 'bastet_dash'));
+    // Pesée des âmes (passif, 8 %) s'ajoute à l'attaque ; la puissante garde le plus haut (20 %).
+    expect(p.on.attack.execute).toBeCloseTo(0.08);
     expect(p.on.power.execute).toBeCloseTo(0.2);
     expect(p.speed).toBeCloseTo(0.08);
     expect(p.on.dash.dashCooldown).toBeCloseTo(0.25);
   });
 
-  it('Athéna : égide + amplification ; Thor : l’amplification allonge l’étourdissement', () => {
-    const p = buildProfile(own('athena_aegis', 'amp_aegis', 'thor_power', 'amp_thunder'));
+  it('Neith : égide + amplification ; Seth : l’amplification allonge l’étourdissement', () => {
+    const p = buildProfile(own('neith_aegis', 'amp_aegis', 'seth_dash', 'amp_thunder'));
     expect(p.aegis).toBe(2);
-    expect(p.on.power.stun?.chance).toBe(1);
-    expect(p.on.power.stun?.durationMs).toBe(Math.round(700 * 1.5));
+    expect(p.on.dash.stun?.chance).toBe(1);
+    expect(p.on.dash.stun?.durationMs).toBe(Math.round(600 * 1.5));
   });
 
   it('les bonus de dégâts se cumulent selon l’état de la cible', () => {
-    const p = buildProfile(own('thor_wrath', 'artemis_mark'));
+    const p = buildProfile(own('sobek_flood', 'serket_toxin'));
     expect(
       damageMultiplier(p, {
         burning: false,
         chilled: false,
-        stunned: true,
-        far: true,
+        soaked: true,
+        poisoned: true,
         judged: 0.25,
       }),
     ).toBeCloseTo(1.65);
@@ -259,13 +266,12 @@ describe('nouveaux dieux : profil et états', () => {
     expect(isCursed(s, 100)).toBe(true);
   });
 
-  it('chaque biome favorise son panthéon', () => {
+  it('tous les dieux sont égyptiens et peuvent être tirés', () => {
     const rng = createRng(11);
-    let norse = 0;
-    for (let i = 0; i < 900; i++) if (GODS[rollGod(rng, 'norse')].pantheon === 'norse') norse++;
-    // 3 dieux à poids 3 contre 6 à poids 1 : 60 % attendus.
-    expect(norse / 900).toBeGreaterThan(0.5);
-    expect(norse / 900).toBeLessThan(0.7);
+    const seen = new Set<string>();
+    for (let i = 0; i < 400; i++) seen.add(rollGod(rng));
+    expect(seen.size).toBe(GOD_IDS.length);
+    for (const id of GOD_IDS) expect(GODS[id].pantheon).toBe('egypt');
   });
 });
 
@@ -307,20 +313,20 @@ describe('Étincelle du Phénix', () => {
 
 describe('nouveaux duos (0.24.0)', () => {
   it('chaque duo n’est proposé qu’avec un don de chacun de ses deux dieux', () => {
-    const duos: [string, OwnedBoon[], 'ra' | 'athena' | 'bastet'][] = [
+    const duos: [string, OwnedBoon[], 'ra' | 'neith' | 'seth'][] = [
       [
         'duo_aegis_storm',
         [
-          { id: 'athena_aegis', rarity: 'common' },
-          { id: 'zeus_attack', rarity: 'common' },
+          { id: 'neith_aegis', rarity: 'common' },
+          { id: 'seth_attack', rarity: 'common' },
         ],
-        'athena',
+        'neith',
       ],
       [
         'duo_black_sun',
         [
           { id: 'ra_attack', rarity: 'common' },
-          { id: 'hel_attack', rarity: 'common' },
+          { id: 'serket_attack', rarity: 'common' },
         ],
         'ra',
       ],
@@ -328,9 +334,17 @@ describe('nouveaux duos (0.24.0)', () => {
         'duo_embalm',
         [
           { id: 'ra_attack', rarity: 'common' },
-          { id: 'anubis_attack', rarity: 'common' },
+          { id: 'isis_soul', rarity: 'common' },
         ],
         'ra',
+      ],
+      [
+        'duo_storm',
+        [
+          { id: 'seth_attack', rarity: 'common' },
+          { id: 'sobek_attack', rarity: 'common' },
+        ],
+        'seth',
       ],
     ];
     for (const [id, owned, god] of duos) {
@@ -358,29 +372,27 @@ describe('nouveaux duos (0.24.0)', () => {
 describe('nouvelles amplifications (0.25.0)', () => {
   it('chaque amplification renforce le don de son dieu', () => {
     const base = buildProfile([
-      { id: 'zeus_attack', rarity: 'common' },
-      { id: 'skadi_power', rarity: 'common' },
-      { id: 'anubis_attack', rarity: 'common' },
-      { id: 'artemis_dash', rarity: 'common' },
-      { id: 'hel_attack', rarity: 'common' },
+      { id: 'seth_attack', rarity: 'common' },
+      { id: 'khonsou_power', rarity: 'common' },
+      { id: 'anubis_weigh', rarity: 'common' },
+      { id: 'serket_power', rarity: 'common' },
+      { id: 'serket_dash', rarity: 'common' },
     ]);
     const amped = buildProfile([
-      { id: 'zeus_attack', rarity: 'common' },
-      { id: 'skadi_power', rarity: 'common' },
-      { id: 'anubis_attack', rarity: 'common' },
-      { id: 'artemis_dash', rarity: 'common' },
-      { id: 'hel_attack', rarity: 'common' },
+      { id: 'seth_attack', rarity: 'common' },
+      { id: 'khonsou_power', rarity: 'common' },
+      { id: 'anubis_weigh', rarity: 'common' },
+      { id: 'serket_power', rarity: 'common' },
+      { id: 'serket_dash', rarity: 'common' },
       { id: 'amp_arc', rarity: 'amp' },
       { id: 'amp_winter', rarity: 'amp' },
       { id: 'amp_scales', rarity: 'amp' },
-      { id: 'amp_quiver', rarity: 'amp' },
       { id: 'amp_plague', rarity: 'amp' },
     ]);
     expect(amped.on.attack.chain?.bounces).toBe((base.on.attack.chain?.bounces ?? 0) + 2);
     expect(amped.on.power.chill).toBe((base.on.power.chill ?? 0) + 1);
     expect(amped.on.attack.execute).toBeCloseTo((base.on.attack.execute ?? 0) + 0.05);
-    expect(amped.on.dash.arrows?.count).toBe((base.on.dash.arrows?.count ?? 0) + 1);
-    expect(amped.on.attack.curse?.damage).toBeGreaterThan(base.on.attack.curse?.damage ?? 0);
+    expect(amped.on.power.venom?.dps).toBeGreaterThan(base.on.power.venom?.dps ?? 0);
   });
 });
 
@@ -435,5 +447,47 @@ describe('couleurs des dieux', () => {
     ];
     expect(slotGod(owned, 'attack')).toBe(attack.gods[0]);
     expect(slotGod(owned, 'dash')).toBe(dash.gods[0]);
+  });
+});
+
+describe('eau de Sobek et venin de Serket', () => {
+  it('un ennemi trempé est ralenti, conduit la foudre et gèle deux fois plus vite', () => {
+    const s = newStatus();
+    applySoak(s, 0, 0.2, 3000);
+    expect(isSoaked(s, 1000)).toBe(true);
+    expect(speedFactor(s, 1000)).toBeCloseTo(0.8);
+    expect(lightningFactor(s, 1000)).toBe(STATUS.soak.lightningMultiplier);
+    applyChill(s, 1000, 1);
+    expect(s.chill).toBe(STATUS.soak.chillMultiplier);
+    expect(isSoaked(s, 3500)).toBe(false);
+    expect(lightningFactor(s, 3500)).toBe(1);
+  });
+
+  it('le venin s’accumule (plafonné) et fait des dégâts dans le temps', () => {
+    const s = newStatus();
+    applyVenom(s, 0, 3, 2);
+    applyVenom(s, 100, 3, 2);
+    expect(s.venomStacks).toBe(6);
+    applyVenom(s, 200, 10, 2);
+    expect(s.venomStacks).toBe(STATUS.venom.maxStacks);
+    let total = 0;
+    for (let t = 0; t <= 1200; t += 100) total += tickVenom(s, t);
+    // 8 doses × 2 dégâts/s pendant ~1 s.
+    expect(total).toBeGreaterThanOrEqual(14);
+    expect(total).toBeLessThanOrEqual(18);
+    expect(isPoisoned(s, 1200)).toBe(true);
+    tickVenom(s, 200 + STATUS.venom.durationMs + 1);
+    expect(isPoisoned(s, 200 + STATUS.venom.durationMs + 1)).toBe(false);
+  });
+
+  it('les dons d’eau, de venin et de soin remplissent le profil', () => {
+    const p = buildProfile(
+      own('sobek_attack', 'serket_power', 'amp_plague', 'isis_dew', 'duo_storm'),
+    );
+    expect(p.on.attack.soak?.slow).toBeCloseTo(0.2);
+    expect(p.on.power.venom?.stacks).toBe(3);
+    expect(p.on.power.venom?.dps).toBeCloseTo(3);
+    expect(p.roomHeal).toBe(4);
+    expect(p.conduct).toBe(10);
   });
 });

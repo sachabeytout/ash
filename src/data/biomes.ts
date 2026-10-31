@@ -86,7 +86,6 @@ export const BIOMES: readonly BiomeDef[] = [
     fountainRooms: [6],
     elite: 'einherjar',
     boss: 'fenrir',
-    pantheon: 'norse',
     music: 'frost',
     bossMusic: 'frostBoss',
     theme: {
@@ -115,7 +114,6 @@ export const BIOMES: readonly BiomeDef[] = [
     fountainRooms: [6],
     elite: 'minotaur',
     boss: 'talos',
-    pantheon: 'greece',
     music: 'olympus',
     bossMusic: 'olympusBoss',
     theme: {

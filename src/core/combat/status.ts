@@ -1,6 +1,9 @@
 import { STATUS } from '../../data/status';
 
-/** États d'un ennemi : brûlure (dégâts dans le temps) et givre (ralentit, puis gèle sur place). */
+/**
+ * États d'un ennemi : brûlure (Râ), givre puis gel (Khonsou), trempé (Sobek), venin (Serket), étourdi (Seth),
+ * fêlé (Anubis : dégâts reçus augmentés), affaibli (Neith), piqué (Serket : explose à sa mort).
+ */
 export interface StatusState {
   burnDps: number;
   burnUntil: number;
@@ -12,18 +15,27 @@ export interface StatusState {
   frozenUntil: number;
   /** Le choc thermique a déjà explosé pendant ce gel (une seule fois par gel). */
   shocked: boolean;
-  /** Étourdi (Thor) : l'ennemi s'arrête, sans immunité ensuite. */
+  /** Étourdi (Seth) : l'ennemi s'arrête, sans immunité ensuite. */
   stunUntil: number;
-  /** Jugé (Anubis) : dégâts reçus augmentés. */
+  /** Fêlé (Anubis, brisement) : dégâts reçus augmentés. */
   judgedUntil: number;
   judgedBonus: number;
-  /** Affaibli (Athéna) : ses dégâts sont réduits. */
+  /** Affaibli (Neith) : ses dégâts sont réduits. */
   weakenUntil: number;
   weaken: number;
-  /** Maudit (Hel) : explose à sa mort. */
+  /** Piqué (dard de Serket) : explose à sa mort. */
   cursedUntil: number;
   curseDamage: number;
   curseRadius: number;
+  /** Trempé (Sobek) : ralenti, conduit la foudre, gèle plus vite. */
+  soakUntil: number;
+  soakSlow: number;
+  /** Venin (Serket) : doses cumulées, dégâts par seconde et par dose. */
+  venomStacks: number;
+  venomDps: number;
+  venomUntil: number;
+  venomCarry: number;
+  nextVenomTick: number;
 }
 
 export function newStatus(): StatusState {
@@ -44,6 +56,13 @@ export function newStatus(): StatusState {
     cursedUntil: 0,
     curseDamage: 0,
     curseRadius: 0,
+    soakUntil: 0,
+    soakSlow: 0,
+    venomStacks: 0,
+    venomDps: 0,
+    venomUntil: 0,
+    venomCarry: 0,
+    nextVenomTick: 0,
   };
 }
 
@@ -70,7 +89,7 @@ export function applyBurn(s: StatusState, now: number, dps: number, durationMs: 
 export function applyChill(s: StatusState, now: number, stacks: number): boolean {
   if (now < s.frozenUntil + STATUS.chill.immuneAfterThawMs) return false;
   if (now >= s.chillUntil) s.chill = 0;
-  s.chill += stacks;
+  s.chill += isSoaked(s, now) ? stacks * STATUS.soak.chillMultiplier : stacks;
   s.chillUntil = now + STATUS.chill.durationMs;
   if (s.chill < STATUS.chill.freezeAt) return false;
   s.chill = 0;
@@ -82,8 +101,60 @@ export function applyChill(s: StatusState, now: number, stacks: number): boolean
 /** Multiplicateur de vitesse (0 = gelé sur place). */
 export function speedFactor(s: StatusState, now: number): number {
   if (isFrozen(s, now)) return 0;
-  if (now >= s.chillUntil) return 1;
-  return Math.max(0.2, 1 - s.chill * STATUS.chill.slowPerStack);
+  const soak = isSoaked(s, now) ? 1 - s.soakSlow : 1;
+  if (now >= s.chillUntil) return soak;
+  return Math.max(0.2, (1 - s.chill * STATUS.chill.slowPerStack) * soak);
+}
+
+export function isSoaked(s: StatusState, now: number): boolean {
+  return now < s.soakUntil;
+}
+
+/** Trempé : garde le plus fort ralentissement et repousse la fin. */
+export function applySoak(s: StatusState, now: number, slow: number, durationMs: number): void {
+  s.soakSlow = isSoaked(s, now) ? Math.max(s.soakSlow, slow) : slow;
+  s.soakUntil = Math.max(s.soakUntil, now + durationMs);
+}
+
+/** Multiplicateur des dégâts de foudre (un ennemi trempé conduit l'électricité). */
+export function lightningFactor(s: StatusState, now: number): number {
+  return isSoaked(s, now) ? STATUS.soak.lightningMultiplier : 1;
+}
+
+export function isPoisoned(s: StatusState, now: number): boolean {
+  return now < s.venomUntil && s.venomStacks > 0;
+}
+
+/** Ajoute des doses de venin (plafonnées) ; la dose la plus forte donne les dégâts par dose. */
+export function applyVenom(s: StatusState, now: number, stacks: number, dpsPerStack: number): void {
+  if (!isPoisoned(s, now)) {
+    s.venomStacks = 0;
+    s.venomDps = 0;
+    s.venomCarry = 0;
+    s.nextVenomTick = now + STATUS.venom.tickMs;
+  }
+  s.venomStacks = Math.min(STATUS.venom.maxStacks, s.venomStacks + stacks);
+  s.venomDps = Math.max(s.venomDps, dpsPerStack);
+  s.venomUntil = now + STATUS.venom.durationMs;
+}
+
+/** Fait avancer le venin. Renvoie les dégâts à infliger maintenant. */
+export function tickVenom(s: StatusState, now: number): number {
+  if (s.venomStacks <= 0) return 0;
+  while (now >= s.nextVenomTick && s.nextVenomTick <= s.venomUntil) {
+    s.venomCarry += (s.venomStacks * s.venomDps * STATUS.venom.tickMs) / 1000;
+    s.nextVenomTick += STATUS.venom.tickMs;
+  }
+  let damage = 0;
+  if (s.venomCarry >= 1) {
+    damage = Math.floor(s.venomCarry);
+    s.venomCarry -= damage;
+  }
+  if (now >= s.venomUntil) {
+    s.venomStacks = 0;
+    s.venomCarry = 0;
+  }
+  return damage;
 }
 
 /** Fait avancer la brûlure. Renvoie les dégâts à infliger maintenant (0 la plupart du temps). */

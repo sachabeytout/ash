@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import type { GodDef } from '../data/gods';
 
-/** Icône d'un dieu : soleil (Râ), éclair (Zeus), flocon (Skadi). La forme suffit à les distinguer. */
+/** Icône d'un dieu (soleil, vague, lune, éclair, scorpion, chacal, chat, ânkh, bouclier) : la forme suffit à les distinguer. */
 export function drawGodIcon(
   g: Phaser.GameObjects.Graphics,
   god: GodDef,
@@ -78,36 +78,48 @@ export function drawGodIcon(
       g.fillStyle(0x07060d, 1).fillCircle(x + size * 0.38, y - size * 0.15, size * 0.7);
       break;
     }
-    case 'hammer': {
-      // Marteau : tête rectangulaire, manche.
-      g.fillRect(x - size * 0.8, y - size * 0.8, size * 1.6, size * 0.6);
-      g.fillRect(x - size * 0.15, y - size * 0.2, size * 0.3, size * 1.1);
+    case 'scorpion': {
+      // Scorpion de Serket : corps, deux pinces, queue qui remonte en arc jusqu'au dard.
+      const v = (px: number, py: number) => new Phaser.Math.Vector2(x + px * size, y + py * size);
+      g.fillEllipse(x - size * 0.1, y + size * 0.35, size * 0.6, size * 0.8);
+      g.lineBetween(x - size * 0.25, y + size * 0.1, x - size * 0.7, y - size * 0.25);
+      g.lineBetween(x + size * 0.05, y + size * 0.1, x + size * 0.15, y - size * 0.3);
+      g.fillCircle(x - size * 0.75, y - size * 0.35, size * 0.18);
+      g.fillCircle(x + size * 0.15, y - size * 0.42, size * 0.15);
+      g.strokePoints([v(0, 0.7), v(0.5, 0.55), v(0.7, 0.05), v(0.6, -0.45), v(0.3, -0.75)], false);
+      g.fillTriangle(
+        x + size * 0.38,
+        y - size * 0.92,
+        x + size * 0.38,
+        y - size * 0.55,
+        x + size * 0.08,
+        y - size * 0.7,
+      );
       break;
     }
-    case 'veil': {
-      // Voile de Hel : demi-visage (moitié pleine, moitié vide).
-      g.strokeCircle(x, y, size * 0.8);
-      g.beginPath();
-      g.slice(x, y, size * 0.8, Math.PI / 2, (Math.PI * 3) / 2, false);
-      g.fillPath();
+    case 'wave': {
+      // Vague de Sobek : deux crêtes qui s'enroulent (lignes brisées, lisibles en petit).
+      const v = (px: number, py: number) => new Phaser.Math.Vector2(x + px * size, y + py * size);
+      for (const dy of [-0.35, 0.35]) {
+        g.strokePoints(
+          [
+            v(-0.9, dy + 0.2),
+            v(-0.55, dy - 0.25),
+            v(-0.15, dy + 0.2),
+            v(0.25, dy - 0.25),
+            v(0.65, dy + 0.2),
+            v(0.9, dy),
+          ],
+          false,
+        );
+      }
       break;
     }
-    case 'flake': {
-      for (let i = 0; i < 3; i++) {
-        const a = (i * Math.PI) / 3;
-        const dx = Math.cos(a) * size;
-        const dy = Math.sin(a) * size;
-        g.lineBetween(x - dx, y - dy, x + dx, y + dy);
-      }
-      for (let i = 0; i < 6; i++) {
-        const a = (i * Math.PI) / 3;
-        const bx = x + Math.cos(a) * size * 0.6;
-        const by = y + Math.sin(a) * size * 0.6;
-        for (const side of [-1, 1]) {
-          const b = a + side * 0.7;
-          g.lineBetween(bx, by, bx + Math.cos(b) * size * 0.3, by + Math.sin(b) * size * 0.3);
-        }
-      }
+    case 'ankh': {
+      // Ânkh d'Isis : boucle, barre, tige.
+      g.strokeEllipse(x, y - size * 0.45, size * 0.7, size * 0.9);
+      g.lineBetween(x - size * 0.6, y + size * 0.05, x + size * 0.6, y + size * 0.05);
+      g.lineBetween(x, y, x, y + size);
       break;
     }
   }

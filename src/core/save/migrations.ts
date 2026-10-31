@@ -31,6 +31,45 @@ export class NewerSaveError extends Error {
  * Migrations : `MIGRATIONS[n]` transforme une sauvegarde de version n en version n + 1.
  * Ne jamais modifier une migration existante ; en ajouter une nouvelle à chaque changement de format.
  */
+/** v14 → v15 : les 9 dieux deviennent égyptiens ; chaque ancien don devient son équivalent (null : retiré). */
+const BOON_RENAMES: Record<string, string | null> = {
+  ra_hearth: 'bastet_lives',
+  zeus_attack: 'seth_attack',
+  zeus_power: 'seth_power',
+  zeus_dash: 'seth_dash',
+  zeus_riposte: 'seth_riposte',
+  skadi_attack: 'khonsou_attack',
+  skadi_power: 'khonsou_power',
+  skadi_dash: 'khonsou_dash',
+  skadi_heart: 'khonsou_heart',
+  anubis_attack: 'anubis_weigh',
+  anubis_soul: 'isis_soul',
+  athena_aegis: 'neith_aegis',
+  athena_attack: 'neith_attack',
+  athena_power: 'neith_power',
+  athena_dash: 'neith_dash',
+  artemis_attack: null,
+  artemis_power: null,
+  artemis_dash: null,
+  artemis_mark: null,
+  thor_attack: null,
+  thor_power: 'seth_dash',
+  thor_dash: 'sobek_dash',
+  thor_wrath: null,
+  hel_attack: 'serket_attack',
+  hel_power: 'isis_power',
+  hel_dash: 'serket_dash',
+  hel_last: 'isis_last',
+};
+const GOD_RENAMES: Record<string, string> = {
+  zeus: 'seth',
+  skadi: 'khonsou',
+  thor: 'sobek',
+  hel: 'serket',
+  athena: 'neith',
+  artemis: 'isis',
+};
+
 const MIGRATIONS: Record<number, (save: Raw) => Raw> = {
   // v0 : progression sans numéro de version (forme { xp, weaponParts, deaths, clears }).
   0: (old) => ({
@@ -120,6 +159,34 @@ const MIGRATIONS: Record<number, (save: Raw) => Raw> = {
         records: { ...records, bestHeatClear: 0, variantsBeaten: [] },
       },
     };
+  },
+  // v14 → v15 : dieux égyptiens (dons de la run en cours, dieu en attente, fiches des Archives).
+  14: (old) => {
+    const meta = isObject(old.meta) ? old.meta : {};
+    const codex: Raw = {};
+    if (isObject(meta.codex)) {
+      for (const [key, n] of Object.entries(meta.codex)) {
+        const god = /^god\.(\w+)$/.exec(key)?.[1];
+        const renamed = god && GOD_RENAMES[god] ? `god.${GOD_RENAMES[god]}` : key;
+        codex[renamed] = num(codex[renamed]) + num(n);
+      }
+    }
+    let run = old.run;
+    if (isObject(run)) {
+      const seen = new Set<string>();
+      const boons = Array.isArray(run.boons)
+        ? run.boons.flatMap((b: unknown) => {
+            if (!isObject(b) || typeof b.id !== 'string') return [];
+            const id = b.id in BOON_RENAMES ? BOON_RENAMES[b.id] : b.id;
+            if (!id || seen.has(id)) return [];
+            seen.add(id);
+            return [{ ...b, id }];
+          })
+        : [];
+      const pending = typeof run.pendingBoon === 'string' ? run.pendingBoon : null;
+      run = { ...run, boons, pendingBoon: pending ? (GOD_RENAMES[pending] ?? pending) : null };
+    }
+    return { ...old, version: 15, meta: { ...meta, codex }, run };
   },
 };
 

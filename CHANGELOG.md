@@ -2,6 +2,24 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.44.0 — Les 9 dieux d'Égypte
+
+- **Les dieux sont maintenant tous égyptiens**, chacun avec un seul pouvoir bien à lui :
+  - **Râ** : le feu (les ennemis brûlent).
+  - **Sobek** (nouveau) : l'eau. Les ennemis **trempés** sont ralentis, prennent **plus de foudre** et **gèlent deux fois plus vite**. Son dash lance une vague.
+  - **Khonsou** : la glace (givre, puis gel).
+  - **Seth** : la foudre (éclairs en chaîne, foudre qui tombe, son dash étourdit).
+  - **Serket** (nouvelle) : le poison. Chaque coup ajoute des **doses de venin** qui s'accumulent (jusqu'à 8). Son dash « pique » : l'ennemi explose à sa mort.
+  - **Anubis** : le brisement (il **fêle l'armure** : l'ennemi prend plus de dégâts) et l'exécution.
+  - **Bastet** : la force (critiques, vitesse, vie).
+  - **Isis** (nouvelle) : le soin (vie rendue par ennemi vaincu, par salle, seconde vie).
+  - **Neith** (nouvelle) : le bouclier (égide, rempart, projectiles détruits).
+- Nouvelles combinaisons, par exemple **Seth + Sobek** : chaque éclair frappe tous les ennemis trempés.
+- Les dieux t'appellent maintenant **« Bennu »** dans leurs répliques.
+- Ta progression est gardée : une partie en cours garde ses dons, convertis vers les nouveaux dieux.
+
+**Quoi tester** : essaie de combiner Sobek (eau) avec Seth (foudre) ou Khonsou (glace). Le venin de Serket est-il visible et assez fort ? Reconnais-tu chaque dieu à sa couleur et à son symbole ?
+
 ## 0.43.0 — Guide, trophées et boss mis en scène
 
 - **Premier essai guidé** : pendant ta toute première partie, de petites bulles montrent les gestes au bon moment : bouger, attaquer, esquiver, attaque puissante, Super, choisir une porte. Sur téléphone, le bouton à utiliser est entouré. Chaque bulle disparaît dès que le geste est fait. « Passer l'aide » l'arrête définitivement.

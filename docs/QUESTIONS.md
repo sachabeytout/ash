@@ -3,7 +3,7 @@
 Liste tenue à jour par Claude. Réponds quand tu veux, même en vrac (« 3 : oui, 7 : plutôt la B »).
 En attendant ta réponse, Claude applique **ce qui est indiqué en gras** (toujours modifiable ensuite).
 
-Dernière mise à jour : 30/10/2026 (version 0.43.0).
+Dernière mise à jour : 30/10/2026 (version 0.44.0).
 
 ## A. Ressenti de jeu
 
@@ -43,9 +43,9 @@ Dernière mise à jour : 30/10/2026 (version 0.43.0).
     15 bis. Les dialogues de la Cage (Aelia, Thot, Vesper, Brokk) : le ton te plaît-il ? Trop longs, trop courts ? Un personnage à changer ?
     15 ter. ✅ **Nouvelle base du lore (31/10)** : dieux uniquement égyptiens ; le héros est un dieu sans pouvoir, appelé « Bennu » ici, qui a déjà sauvé d'autres mythologies (Phénix, Hō-ō, Fenghuang) ; l'Oiseleur est son ennemi de toujours ; il les a maudits, lui et sa femme. Mes propositions pour la suite sont dans `docs/GDD.md` (Lore v0.3).
     15 quater. ✅ Le héros s'appelle **Ash**, sa femme **Anii**. Apophis a fait appel à l'Oiseleur (donnant-donnant) ; la malédiction vient d'Apophis ; les dieux ont ouvert la cage et aideront à lever la malédiction ; battre Apophis 10 fois ; Ash retrouve la mémoire pendant qu'Anii la perd ; vraie fin : le Bennu naît de leurs flammes.
-    15 quinquies. **Les 9 dieux (proposition définitive)** : Râ (feu), Sobek (eau), Khonsou (glace — ou Nout ?), Seth (foudre), Serket (poison), Horus (brisement — ou Montou ?), Bastet (buff), Isis (soin / bouclier), Anubis (exécution). D'accord ? → **en attente**
-    15 sexies. **Structure d'une run** : Ammit → Sphinx de givre → l'Oiseleur → **Apophis** (boss final de chaque run). D'accord ? → **en attente**
-    15 septies. Forgeron **Ptah**, marchand **Bès** (à la place de Brokk et Ratatosk). D'accord ? → **en attente**
+    15 quinquies. ✅ **Les 9 dieux (0.44.0)** : Râ (feu), Sobek (eau), Khonsou (glace), Seth (foudre), Serket (poison), Anubis (brisement + exécution), Bastet (force), Isis (soin), Neith (bouclier).
+    15 sexies. **Structure d'une run** : Ammit → Sphinx de givre → l'Oiseleur → **Apophis** (boss final de chaque run, à battre 10 fois). D'accord ? → **en attente**
+    15 septies. ✅ Le marchand reste **Ratatosk** (il a suivi Ash depuis le monde scandinave ; Ash se souvient un peu de lui). Le forgeron Brokk devient **Ptah** (dieu égyptien des artisans) ? → **en attente**
 
 ## C. Petites décisions prises par Claude (dis seulement si tu n'es pas d'accord)
 

@@ -16,6 +16,12 @@ import {
   applyBurn,
   applyChill,
   applyCurse,
+  applySoak,
+  applyVenom,
+  isPoisoned,
+  isSoaked,
+  lightningFactor,
+  tickVenom,
   applyJudge,
   applyStun,
   applyWeaken,
@@ -215,15 +221,18 @@ let tutorial: TutorialState | null = null;
 /** Couleurs des effets des dons (côté joueur : jamais le rouge-magenta des dangers). */
 const FX = {
   burn: GODS.ra.color,
-  zap: GODS.zeus.color,
-  ice: GODS.skadi.color,
-  thunder: GODS.thor.color,
+  zap: GODS.seth.color,
+  ice: GODS.khonsou.color,
+  thunder: GODS.seth.color,
+  water: GODS.sobek.color,
+  venom: GODS.serket.color,
   burnText: GODS.ra.text,
-  zapText: GODS.zeus.text,
-  thunderText: GODS.thor.text,
+  zapText: GODS.seth.text,
+  waterText: GODS.sobek.text,
+  venomText: GODS.serket.text,
   critText: GODS.bastet.text,
-  heal: '#9dffb0',
-  arrowText: GODS.artemis.text,
+  heal: GODS.isis.text,
+  arrowText: GODS.neith.text,
 } as const;
 
 /** Portes sans récompense : sortie de la run, boss, biome suivant / reprise après le marchand. */
@@ -572,7 +581,7 @@ export class RunScene extends Phaser.Scene {
     const text =
       step === 'doors' ? t('tutorial.doors') : t(`tutorial.${step}.${device}` as TextKey);
     const focus = step === 'doors' ? null : step === 'move' ? 'move' : step;
-    this.ui.showHint(text, focus);
+    this.ui.showHint(text, focus, step === 'doors');
   }
 
   private setupCheats(): void {
@@ -1422,6 +1431,8 @@ export class RunScene extends Phaser.Scene {
       sfx.freeze();
       this.juice.burst(e.x, e.y, FX.ice, 10);
     }
+    if (fx.soak) applySoak(e.status, this.sim, fx.soak.slow, fx.soak.durationMs);
+    if (fx.venom) applyVenom(e.status, this.sim, fx.venom.stacks, fx.venom.dps);
     if (fx.judge) applyJudge(e.status, this.sim, fx.judge.bonus, fx.judge.durationMs);
     if (fx.weaken) applyWeaken(e.status, this.sim, fx.weaken.reduction, fx.weaken.durationMs);
     if (fx.curse) applyCurse(e.status, this.sim, fx.curse.damage, fx.curse.radius);
@@ -1429,7 +1440,7 @@ export class RunScene extends Phaser.Scene {
     this.checkThermalShock(e);
   }
 
-  /** Étourdit (Thor) ; sur un boss, ce n'est qu'un court sursaut. */
+  /** Étourdit (Seth) ; sur un boss, ce n'est qu'un court sursaut. */
   private stun(e: Hittable, durationMs: number): void {
     applyStun(e.status, this.sim, e === this.boss ? Math.min(durationMs, 400) : durationMs);
     this.juice.burst(e.x, e.y - e.radius, FX.thunder, 6);
@@ -1454,11 +1465,13 @@ export class RunScene extends Phaser.Scene {
       chilled: isFrozen(e.status, this.sim) || this.sim < e.status.chillUntil,
       stunned: isStunned(e.status, this.sim),
       far: Math.hypot(e.x - this.player.x, e.y - this.player.y) > FAR_DISTANCE,
+      soaked: isSoaked(e.status, this.sim),
+      poisoned: isPoisoned(e.status, this.sim),
       judged: judgedBonus(e.status, this.sim),
     };
   }
 
-  /** Flèches d'Artémis : vers les ennemis visibles les plus proches. */
+  /** Flèches croisées de Neith : vers les ennemis visibles les plus proches. */
   private fireArrows(arrows: NonNullable<HitEffects['arrows']>, id: number): void {
     const visible = this.targets
       .filter((t) => t.alive && this.isOnScreen(t))
@@ -1522,22 +1535,44 @@ export class RunScene extends Phaser.Scene {
       hit.add(next);
       this.lightning.zap(current, next, FX.zap);
       current = { x: next.x, y: next.y };
-      this.damageEnemy(next, chain.damage, FX.zapText);
+      this.damageEnemy(next, this.lightningDamage(next, chain.damage), FX.zapText);
       if (this.profile.stormStun) this.stun(next, this.profile.stormStun);
     }
-    if (hit.size > 1) sfx.zap();
+    if (hit.size > 1) {
+      sfx.zap();
+      this.conductLightning(current, hit);
+    }
+  }
+
+  /** Un ennemi trempé (Sobek) conduit la foudre : il en prend plus. */
+  private lightningDamage(e: Hittable, damage: number): number {
+    return Math.round(damage * lightningFactor(e.status, this.sim));
+  }
+
+  /** Duo Seth + Sobek : l'éclair se propage à tous les ennemis trempés. */
+  private conductLightning(from: Vec2, already: ReadonlySet<Hittable>): void {
+    const damage = this.profile.conduct;
+    if (damage <= 0) return;
+    for (const e of this.targets) {
+      if (!e.alive || already.has(e) || !isSoaked(e.status, this.sim)) continue;
+      this.lightning.zap(from, e, FX.water);
+      this.damageEnemy(e, this.lightningDamage(e, damage), FX.zapText);
+    }
   }
 
   /** La foudre tombe sur un point et touche tout autour. */
   private lightningBolt(at: { x: number; y: number }, damage: number, radius: number): void {
     this.lightning.bolt(at, radius, FX.zap);
     sfx.zap();
+    const hit = new Set<Hittable>();
     for (const e of this.targets) {
       if (!e.alive) continue;
       if (Math.hypot(e.x - at.x, e.y - at.y) > radius + e.radius) continue;
-      this.damageEnemy(e, damage, FX.zapText);
+      hit.add(e);
+      this.damageEnemy(e, this.lightningDamage(e, damage), FX.zapText);
       if (this.profile.stormStun) this.stun(e, this.profile.stormStun);
     }
+    this.conductLightning(at, hit);
   }
 
   private dashEffects(): void {
@@ -1547,29 +1582,42 @@ export class RunScene extends Phaser.Scene {
     if (fx.arrows) this.fireArrows(fx.arrows, -1);
     if (fx.shockwave) {
       const wave = fx.shockwave;
-      this.lightning.ring(at, wave.radius, FX.thunder);
+      this.lightning.ring(at, wave.radius, FX.water);
       this.juice.shake(0.003);
       for (const e of this.targets) {
         if (!e.alive) continue;
         if (Math.hypot(e.x - at.x, e.y - at.y) > wave.radius + e.radius) continue;
-        this.damageEnemy(e, wave.damage, FX.thunderText);
+        this.damageEnemy(e, wave.damage, FX.waterText);
         if (e.alive) e.hit(this.sim, at, wave.knockback);
       }
     }
-    if (fx.burn || fx.chill || fx.judge || fx.curse || fx.weaken || fx.stun) {
+    if (
+      fx.burn ||
+      fx.chill ||
+      fx.judge ||
+      fx.curse ||
+      fx.weaken ||
+      fx.stun ||
+      fx.soak ||
+      fx.venom
+    ) {
       const color = fx.burn
         ? FX.burn
-        : fx.chill
-          ? FX.ice
-          : fx.judge
-            ? GODS.anubis.color
-            : fx.curse
-              ? GODS.hel.color
-              : fx.stun
-                ? FX.thunder
-                : fx.weaken
-                  ? GODS.athena.color
-                  : 0xffffff;
+        : fx.soak
+          ? FX.water
+          : fx.venom
+            ? FX.venom
+            : fx.chill
+              ? FX.ice
+              : fx.judge
+                ? GODS.anubis.color
+                : fx.curse
+                  ? GODS.serket.color
+                  : fx.stun
+                    ? FX.thunder
+                    : fx.weaken
+                      ? GODS.neith.color
+                      : 0xffffff;
       this.lightning.ring(at, DASH_AURA_RADIUS, color);
       for (const e of this.targets) {
         if (!e.alive) continue;
@@ -1588,11 +1636,11 @@ export class RunScene extends Phaser.Scene {
     for (const s of this.shots) {
       if (!s.sprite.active) continue;
       if (Math.hypot(s.sprite.x - at.x, s.sprite.y - at.y) > radius) continue;
-      this.juice.burst(s.sprite.x, s.sprite.y, GODS.athena.color, 6);
+      this.juice.burst(s.sprite.x, s.sprite.y, GODS.neith.color, 6);
       s.sprite.setActive(false).setVisible(false);
       bodyOf(s.sprite).enable = false;
     }
-    this.lightning.ring(at, radius, GODS.athena.color);
+    this.lightning.ring(at, radius, GODS.neith.color);
   }
 
   private nearestEnemy(at: { x: number; y: number }, range: number): Hittable | undefined {
@@ -1623,10 +1671,16 @@ export class RunScene extends Phaser.Scene {
   private updateBurns(): void {
     for (const e of this.targets) {
       if (!e.alive) continue;
-      const dmg = tickBurn(e.status, this.sim);
-      if (dmg <= 0) continue;
-      const { dealt, killed } = applyDamage(e.health, dmg);
-      this.juice.damageNumber(e.x, e.y - e.radius, dealt, FX.burnText);
+      const burn = tickBurn(e.status, this.sim);
+      const venom = tickVenom(e.status, this.sim);
+      if (burn <= 0 && venom <= 0) continue;
+      const { dealt, killed } = applyDamage(e.health, burn + venom);
+      this.juice.damageNumber(
+        e.x,
+        e.y - e.radius,
+        dealt,
+        burn >= venom ? FX.burnText : FX.venomText,
+      );
       if (killed) this.killEnemy(e);
     }
   }
@@ -2100,8 +2154,8 @@ export class RunScene extends Phaser.Scene {
 
   /** Malédiction de Hel : l'ennemi maudit explose à sa mort. */
   private curseExplosion(c: { damage: number; radius: number; x: number; y: number }): void {
-    this.lightning.ring(c, c.radius, GODS.hel.color);
-    this.juice.burst(c.x, c.y, GODS.hel.color, 14);
+    this.lightning.ring(c, c.radius, GODS.serket.color);
+    this.juice.burst(c.x, c.y, GODS.serket.color, 14);
     sfx.explode();
     for (const other of this.targets) {
       if (!other.alive) continue;
@@ -2238,8 +2292,8 @@ export class RunScene extends Phaser.Scene {
     if (this.aegisLeft > 0) {
       this.aegisLeft--;
       this.player.takeHit(this.sim, from);
-      this.lightning.ring(this.player, 22, GODS.athena.color);
-      this.juice.burst(this.player.x, this.player.y, GODS.athena.color, 12);
+      this.lightning.ring(this.player, 22, GODS.neith.color);
+      this.juice.burst(this.player.x, this.player.y, GODS.neith.color, 12);
       sfx.block();
       // Duo « Égide orageuse » : la foudre part de l'ennemi le plus proche et rebondit.
       const storm = this.profile.aegisStorm;
@@ -2255,7 +2309,7 @@ export class RunScene extends Phaser.Scene {
       const absorbed = Math.min(this.barrier, amount);
       this.barrier -= absorbed;
       amount -= absorbed;
-      this.juice.burst(this.player.x, this.player.y, GODS.athena.color, 6);
+      this.juice.burst(this.player.x, this.player.y, GODS.neith.color, 6);
       if (amount <= 0) {
         this.player.takeHit(this.sim, from);
         sfx.block();
@@ -2280,8 +2334,8 @@ export class RunScene extends Phaser.Scene {
       // Hel : « Dernier souffle », une fois par run.
       this.run.lastBreathUsed = true;
       this.run.hp = Math.min(this.run.maxHp, this.profile.lastBreath);
-      this.ui.showBanner(t('boon.hel_last'), '');
-      this.juice.burst(this.player.x, this.player.y, GODS.hel.color, 30);
+      this.ui.showBanner(t('boon.isis_last'), '');
+      this.juice.burst(this.player.x, this.player.y, GODS.isis.color, 30);
       return;
     }
     if (killed && this.run.revivesUsed < this.run.perks.revives) {
@@ -2323,6 +2377,8 @@ export class RunScene extends Phaser.Scene {
     sfx.clear();
     const healed = onRoomCleared(this.run);
     if (healed > 0) this.juice.damageNumber(this.player.x, this.player.y - 12, healed, FX.heal);
+    // Isis : chaque salle terminée rend un peu de vie.
+    if (this.profile.roomHeal > 0 && this.kind !== 'shop') this.healPlayer(this.profile.roomHeal);
     const biome = getBiome(this.run.biome);
     if (this.kind === 'boss' || this.kind === 'shop') {
       // Après le boss : biome suivant s'il existe ; après le marchand : salle 1.

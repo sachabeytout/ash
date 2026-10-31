@@ -138,73 +138,25 @@ L'Oiseleur le laisse s'évader, encore et encore.
 | 6   | **Gleipnir** (chaîne de plasma)  | **Grappin** : attire les petits ennemis, ou tire Ash vers les gros. Contrôle de foule et mobilité.                                      |
 | 7   | **Lame de l'Aube** — légendaire  | **Chevalier** : épée longue + garde. Lente et lourde ; la puissante = **parade** puis riposte dévastatrice. Débloquée à la 5e victoire. |
 
-## 4. Dieux 🟡 (3 par panthéon ; les 9 sont en jeu depuis la 0.10.0)
+## 4. Dieux ✅ (9 dieux égyptiens depuis la 0.44.0 — valeurs : `src/data/boons.ts`)
 
-> **Refonte en cours (validée en partie le 31/10/2026)** : les dieux deviennent des prisonniers de l'Oiseleur venus de
-> **toutes les cultures**, marqués de traits d'oiseau. Pouvoirs voulus : feu (**Râ** ✅), eau, glace, électricité, poison,
-> brisement (baisse la défense), buff (stats, critiques), soin / bouclier (**Isis** ✅). Propositions et questions :
-> `docs/QUESTIONS.md` (15 ter à 15 sexies). Le tableau ci-dessous décrit le jeu actuel.
+| Dieu    | Pouvoir               | Ce qu'il fait                                                                  |
+| ------- | --------------------- | ------------------------------------------------------------------------------ |
+| Râ      | Feu                   | Brûlure (dégâts dans le temps)                                                 |
+| Sobek   | Eau                   | Trempé : ralenti ; conduit la foudre (×1,5) ; gèle deux fois plus vite ; vague |
+| Khonsou | Glace                 | Givre qui ralentit, puis gel sur place                                         |
+| Seth    | Foudre                | Éclairs en chaîne, foudre qui tombe, étourdissement, riposte                   |
+| Serket  | Poison                | Doses de venin cumulées (8 max) ; dard : l'ennemi explose à sa mort            |
+| Anubis  | Brisement + exécution | Fêlure (dégâts reçus augmentés) ; exécute les ennemis affaiblis                |
+| Bastet  | Force                 | Critiques, vitesse, recharge du dash, PV max                                   |
+| Isis    | Soin                  | Vie par ennemi vaincu, par coup puissant, par salle ; seconde vie              |
+| Neith   | Bouclier              | Égide (bloque un coup), rempart, affaiblissement, destruction des projectiles  |
 
-| Dieu    | Panthéon | Identité mécanique                       | M1  |
-| ------- | -------- | ---------------------------------------- | --- |
-| Râ      | égyptien | Brûlure (dégâts dans le temps)           | ✅  |
-| Anubis  | égyptien | Jugement : exécute les ennemis affaiblis |     |
-| Bastet  | égyptien | Vitesse, coups critiques                 |     |
-| Zeus    | grec     | Foudre en chaîne                         | ✅  |
-| Athéna  | grec     | Bouclier, renvoi des projectiles         |     |
-| Artémis | grec     | Distance, ciblage                        |     |
-| Skadi   | nordique | Gel (ralentit puis immobilise)           | ✅  |
-| Thor    | nordique | Étourdissement, recul violent            |     |
-| Hel     | nordique | Vol de vie, malédiction                  |     |
-
-Duos : Râ + Skadi = **Choc thermique** ; Zeus + Thor = **Tempête d'Asgard** ; Anubis + Hel = **Jugement dernier** ; Bastet + Artémis = **Chasse nocturne** ; Athéna + Zeus = **Égide orageuse** ; Râ + Hel = **Soleil noir** ; Bastet + Thor = **Griffes du tonnerre** ; Râ + Anubis = **Embaumement** (0.24.0).
-Amplifications : **Soleil de midi** (Râ), **Égide renforcée** (Athéna), **Mjölnir chargé** (Thor), **Griffes affûtées** (Bastet), **Arc supérieur** (Zeus), **Hiver profond** (Skadi), **Plume de Maât** (Anubis), **Carquois d'argent** (Artémis), **Fléau** (Hel).
-
-### Dons des 6 autres dieux (0.10.0)
-
-| Dieu    | Attaque                  | Puissante              | Dash                       | Passif                 |
-| ------- | ------------------------ | ---------------------- | -------------------------- | ---------------------- |
-| Anubis  | Exécution < 10 %         | Exécution < 20 %       | Jugement (+25 % de dégâts) | Soin à chaque ennemi   |
-| Bastet  | Critique 10 %            | Critique 20 %          | Recharge du dash −25 %     | Vitesse +8 %           |
-| Athéna  | Affaiblit (−20 % dégâts) | Bouclier de 6 PV       | Détruit les projectiles    | Égide (1 coup / salle) |
-| Artémis | 1 flèche                 | 3 flèches              | 3 flèches                  | +15 % contre les loin  |
-| Thor    | Étourdit (12 %)          | Étourdit (700 ms)      | Onde qui repousse          | +25 % contre étourdis  |
-| Hel     | Maudit (explosion)       | Soin par ennemi touché | Maudit autour              | Dernier souffle        |
-
-Duos : Tempête d'Asgard (Zeus + Thor), Jugement dernier (Anubis + Hel), Chasse nocturne (Bastet + Artémis).
-Amplifications : Égide renforcée, Mjölnir chargé, Griffes affûtées.
-
-### Dons M1 (0.3.0) — valeurs : `src/data/boons.ts`
-
-| Dieu  | Attaque          | Puissante          | Dash            | Passifs                                                |
-| ----- | ---------------- | ------------------ | --------------- | ------------------------------------------------------ |
-| Râ    | Frappe solaire   | Lance du zénith    | Envol embrasé   | Œil de Râ (+dégâts sur brûlés), Feu du foyer (+PV max) |
-| Zeus  | Arc électrique   | Foudre descendante | Pas de tonnerre | Riposte orageuse (foudre quand on est touché)          |
-| Skadi | Morsure du givre | Avalanche          | Pas de neige    | Cœur d'hiver (+dégâts sur givrés)                      |
-
-Super : Katana = **Taille de l'Aube** ; Doubles lames = **Tempête de lames**.
-Arbre de Thot (M1) : Mémoire du feu, Lame affûtée, Braises vivaces, Faveur divine, Étincelle.
-
-### Ammit, la Dévoreuse (boss 1, 0.4.0) — valeurs : `src/data/bosses.ts`
-
-Gardienne des Bas-Fonds : crinière sombre, gueule de crocodile. Elle pèse les âmes de ceux qui s'évadent.
-
-| Attaque      | Télégraphe                                   | Esquive                          |
-| ------------ | -------------------------------------------- | -------------------------------- |
-| Morsure      | Cône rouge devant la gueule                  | Sortir du cône ou dash           |
-| Charge       | Bande rouge au sol (trajectoire)             | Se décaler sur le côté           |
-| Onde de choc | Cercle qui se resserre, puis anneau qui part | S'éloigner, ou traverser en dash |
-| Invocation   | Cercle bleu pulsant (phase 2)                | Abattre les deux Rôdeurs         |
-
-Phase 2 à 50 % : tempo +20 %, double onde, invocations. Élite du biome 1 : **le Traqueur** (charge en ligne droite).
-
-### Le Givre-Serveur (biome 2, 0.5.0)
-
-Ennemis : **Loup-relais** (meute rapide), **Givreur** (3 éclats en éventail), **Gardien runique** (cercles qui explosent).
-Élite : **l'Einherjar** (bouclier frontal, on le prend à revers). Marchand avant le biome : **Ratatosk, le Coursier**.
-
-**Fenrir-Ω, le Loup enchaîné** : morsure, charge, **bond** (cercle d'atterrissage figé avant le saut), **pluie de glace**
-(cercles à flocon, dont un sous Ash). Phase 2 : il brise une chaîne et appelle deux Loups-relais.
+Duos : Râ + Khonsou **Choc thermique** ; Seth + Sobek **Crue orageuse** ; Anubis + Serket **Jugement du scorpion** ;
+Bastet + Neith **Chasse de Saïs** ; Neith + Seth **Égide orageuse** ; Râ + Serket **Venin ardent** ; Bastet + Seth
+**Griffes du tonnerre** ; Râ + Isis **Flamme guérisseuse**.
+Amplifications : Soleil de midi (Râ), Nuit sans fin (Khonsou), Arc supérieur et Tonnerre prolongé (Seth), Venin
+concentré (Serket), Plume de Maât (Anubis), Griffes affûtées (Bastet), Égide renforcée (Neith).
 
 ## 5. Systèmes nommés 🟡
 

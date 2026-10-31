@@ -11,6 +11,8 @@ import type { Health } from '../../core/combat/health';
 import {
   isBurning,
   isFrozen,
+  isPoisoned,
+  isSoaked,
   isStunned,
   newStatus,
   speedFactor,
@@ -648,9 +650,28 @@ export class Boss implements Hittable {
     const r = this.def.radius;
     if (frozen) g.lineStyle(2, 0xd8fbff, 0.9).strokeCircle(this.x, this.y, r + 4);
     if (now < this.status.chillUntil && this.status.chill > 0) {
-      g.fillStyle(GODS.skadi.color, 1);
+      g.fillStyle(GODS.khonsou.color, 1);
       for (let i = 0; i < this.status.chill; i++)
         g.fillRect(this.x - r + i * 5, this.y + r + 4, 3, 3);
+    }
+    if (isSoaked(this.status, now)) {
+      // Trempé (Sobek) : gouttes qui tombent de chaque côté.
+      g.fillStyle(GODS.sobek.color, 0.95);
+      const drip = (now / 12) % 6;
+      for (const ox of [-r - 3, r + 3]) {
+        const dx = this.x + ox;
+        const dy = this.y - 2 + drip;
+        g.fillTriangle(dx - 2, dy, dx + 2, dy, dx, dy - 4).fillCircle(dx, dy, 2);
+      }
+    }
+    if (isPoisoned(this.status, now)) {
+      // Venin (Serket) : une petite goutte par dose, en arc sous l'ennemi.
+      g.fillStyle(GODS.serket.color, 0.95);
+      const n = this.status.venomStacks;
+      for (let i = 0; i < n; i++) {
+        const a = Math.PI * (0.15 + (0.7 * (i + 0.5)) / n);
+        g.fillCircle(this.x + Math.cos(a) * (r + 5), this.y + Math.sin(a) * (r + 5), 1.6);
+      }
     }
     if (isBurning(this.status, now)) {
       g.fillStyle(GODS.ra.color, 0.9);

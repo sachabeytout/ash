@@ -167,8 +167,8 @@ export class UiScene extends Phaser.Scene {
   }
 
   /** Bulle d'aide du premier essai (texte vide : cachée). `focus` : commande tactile à montrer. */
-  showHint(text: string, focus: Action | 'move' | null): void {
-    const key = `${text}|${focus ?? ''}`;
+  showHint(text: string, focus: Action | 'move' | null, low = false): void {
+    const key = `${text}|${focus ?? ''}|${low}`;
     if (key === this.hintKey) return;
     this.hintKey = key;
     this.touch.highlight(text ? focus : null);
@@ -190,6 +190,9 @@ export class UiScene extends Phaser.Scene {
       .fillRoundedRect(-w / 2, 0, w, h, 8)
       .lineStyle(1.5, 0xffb02e, 0.9)
       .strokeRoundedRect(-w / 2, 0, w, h, 8);
+    // En bas (au-dessus des commandes) quand il faut voir le haut de la salle (portes).
+    const { height } = viewSize(this);
+    this.hint.setY(low ? height * 0.6 : 50);
     this.hint.setVisible(true).setAlpha(0);
     this.tweens.killTweensOf(this.hint);
     this.tweens.add({ targets: this.hint, alpha: 1, duration: 220 });

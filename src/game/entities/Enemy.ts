@@ -8,6 +8,8 @@ import {
   isBurning,
   isCursed,
   isFrozen,
+  isPoisoned,
+  isSoaked,
   isStunned,
   newStatus,
   speedFactor,
@@ -398,19 +400,19 @@ export class Enemy {
       g.fillTriangle(this.x + 2, cy, this.x + 4, cy - 5, this.x + 6, cy);
     }
     if (frozen) {
-      g.fillStyle(GODS.skadi.color, 0.28).lineStyle(1.5, 0xd8fbff, 0.95);
+      g.fillStyle(GODS.khonsou.color, 0.28).lineStyle(1.5, 0xd8fbff, 0.95);
       this.hex.forEach((p, i) => {
         const a = Math.PI / 6 + (i * Math.PI) / 3;
         p.set(this.x + Math.cos(a) * (r + 4), this.y + Math.sin(a) * (r + 4));
       });
       g.fillPoints(this.hex, true).strokePoints(this.hex, true);
     } else if (now < s.chillUntil && s.chill > 0) {
-      g.fillStyle(GODS.skadi.color, 1);
+      g.fillStyle(GODS.khonsou.color, 1);
       for (let i = 0; i < s.chill; i++) g.fillRect(this.x - r + i * 4, this.y + r + 3, 2, 2);
     }
     if (stunned) {
       // Étoiles qui tournent au-dessus de la tête (Thor).
-      g.fillStyle(GODS.thor.color, 1);
+      g.fillStyle(GODS.seth.color, 1);
       for (let i = 0; i < 3; i++) {
         const a = now / 200 + (i * Math.PI * 2) / 3;
         const sx = this.x + Math.cos(a) * (r + 2);
@@ -427,7 +429,7 @@ export class Enemy {
     }
     if (isCursed(s, now)) {
       // Malédiction : petit voile sombre sous l'ennemi.
-      g.lineStyle(1.5, GODS.hel.color, 0.9).strokeEllipse(this.x, this.y + r + 2, r * 2 + 4, 5);
+      g.lineStyle(1.5, GODS.serket.color, 0.9).strokeEllipse(this.x, this.y + r + 2, r * 2 + 4, 5);
     }
     if (now < s.judgedUntil) {
       // Jugé : plume de Maât (trait vertical) au-dessus.
@@ -442,9 +444,28 @@ export class Enemy {
       // Affaibli (Athéna) : petit bouclier fendu à gauche de la tête.
       const wx = this.x - r - 4;
       const wy = this.y - r - 2;
-      g.lineStyle(1.5, GODS.athena.color, 0.95);
+      g.lineStyle(1.5, GODS.neith.color, 0.95);
       g.strokeTriangle(wx - 3, wy - 3, wx + 3, wy - 3, wx, wy + 3);
       g.lineBetween(wx, wy - 3, wx, wy + 1);
+    }
+    if (isSoaked(s, now)) {
+      // Trempé (Sobek) : gouttes qui tombent de chaque côté.
+      g.fillStyle(GODS.sobek.color, 0.95);
+      const drip = (now / 12) % 6;
+      for (const ox of [-r - 3, r + 3]) {
+        const dx = this.x + ox;
+        const dy = this.y - 2 + drip;
+        g.fillTriangle(dx - 2, dy, dx + 2, dy, dx, dy - 4).fillCircle(dx, dy, 2);
+      }
+    }
+    if (isPoisoned(s, now)) {
+      // Venin (Serket) : une petite goutte par dose, en arc sous l'ennemi.
+      g.fillStyle(GODS.serket.color, 0.95);
+      const n = s.venomStacks;
+      for (let i = 0; i < n; i++) {
+        const a = Math.PI * (0.15 + (0.7 * (i + 0.5)) / n);
+        g.fillCircle(this.x + Math.cos(a) * (r + 5), this.y + Math.sin(a) * (r + 5), 1.6);
+      }
     }
     if (isBurning(s, now)) {
       g.fillStyle(GODS.ra.color, 0.9);

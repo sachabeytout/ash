@@ -135,6 +135,16 @@ export function mainValue(effect: BoonEffect, rarity: Rarity): number {
   switch (effect.type) {
     case 'burn':
       return Math.round(effect.dps * p);
+    case 'soak':
+      return Math.round(effect.slow * p * 100);
+    case 'venom':
+      return Math.round(effect.stacks * p);
+    case 'roomHeal':
+      return Math.round(effect.amount * p);
+    case 'venomPotency':
+      return Math.round(effect.bonus * 100);
+    case 'conduct':
+      return Math.round(effect.damage * p);
     case 'chill':
       return Math.round(effect.stacks * p);
     case 'chain':
@@ -160,6 +170,7 @@ export function mainValue(effect: BoonEffect, rarity: Rarity): number {
     case 'lifeOnHit':
       return Math.round(effect.amount * p);
     case 'execute':
+    case 'executeAll':
     case 'judgementDay':
       return Math.round(effect.threshold * p);
     case 'crit':
@@ -200,6 +211,10 @@ export function mainValue(effect: BoonEffect, rarity: Rarity): number {
 
 export interface HitEffects {
   burn?: { dps: number; durationMs: number };
+  /** Trempé : ralentissement (0,2 = −20 %) et durée. */
+  soak?: { slow: number; durationMs: number };
+  /** Doses de venin ajoutées et dégâts par seconde de chaque dose. */
+  venom?: { stacks: number; dps: number };
   chill?: number;
   chain?: { damage: number; bounces: number; range: number };
   bolt?: { damage: number; radius: number };
@@ -226,6 +241,12 @@ export interface CombatProfile {
   vsChilled: number;
   vsStunned: number;
   vsFar: number;
+  vsSoaked: number;
+  vsPoisoned: number;
+  /** PV rendus à chaque salle terminée (Isis). */
+  roomHeal: number;
+  /** Duo Seth + Sobek : dégâts de foudre sur tous les ennemis trempés à chaque éclair. */
+  conduct: number;
   retaliate?: { damage: number; range: number };
   thermalShock?: { damage: number; radius: number };
   healOnKill: number;
@@ -236,7 +257,7 @@ export interface CombatProfile {
   critAll: number;
   aegis: number;
   lastBreath: number;
-  /** Les éclairs de Zeus étourdissent (ms, duo). */
+  /** Les éclairs étourdissent (ms ; ancien duo, plus offert). */
   stormStun: number;
   /** Les explosions de malédiction exécutent sous ce seuil (duo). */
   judgementDay: number;
@@ -257,6 +278,10 @@ export function buildProfile(owned: readonly OwnedBoon[]): CombatProfile {
     vsChilled: 0,
     vsStunned: 0,
     vsFar: 0,
+    vsSoaked: 0,
+    vsPoisoned: 0,
+    roomHeal: 0,
+    conduct: 0,
     healOnKill: 0,
     speed: 0,
     critDamage: 0,
@@ -270,6 +295,8 @@ export function buildProfile(owned: readonly OwnedBoon[]): CombatProfile {
     embalm: 0,
   };
   let burnDurationBonus = 0;
+  let venomPotency = 0;
+  let executeAll = 0;
   let stunDurationBonus = 0;
   const amp = { bounces: 0, chill: 0, execute: 0, arrows: 0, curse: 0 };
   for (const o of owned) {
@@ -284,6 +311,21 @@ export function buildProfile(owned: readonly OwnedBoon[]): CombatProfile {
       case 'chill':
         profile.on[e.on].chill = v;
         break;
+      case 'soak':
+        profile.on[e.on].soak = { slow: v / 100, durationMs: e.durationMs };
+        break;
+      case 'venom':
+        profile.on[e.on].venom = { stacks: v, dps: e.dps };
+        break;
+      case 'roomHeal':
+        profile.roomHeal += v;
+        break;
+      case 'venomPotency':
+        venomPotency += v / 100;
+        break;
+      case 'conduct':
+        profile.conduct = v;
+        break;
       case 'chain':
         profile.on[e.on].chain = { damage: v, bounces: e.bounces, range: e.range };
         break;
@@ -294,6 +336,8 @@ export function buildProfile(owned: readonly OwnedBoon[]): CombatProfile {
         if (e.status === 'burning') profile.vsBurning += v / 100;
         else if (e.status === 'chilled') profile.vsChilled += v / 100;
         else if (e.status === 'stunned') profile.vsStunned += v / 100;
+        else if (e.status === 'soaked') profile.vsSoaked += v / 100;
+        else if (e.status === 'poisoned') profile.vsPoisoned += v / 100;
         else profile.vsFar += v / 100;
         break;
       case 'maxHp':
@@ -309,6 +353,9 @@ export function buildProfile(owned: readonly OwnedBoon[]): CombatProfile {
         break;
       case 'execute':
         profile.on[e.on].execute = v / 100;
+        break;
+      case 'executeAll':
+        executeAll = Math.max(executeAll, v / 100);
         break;
       case 'judge':
         profile.on[e.on].judge = { bonus: v / 100, durationMs: e.durationMs };
@@ -403,11 +450,17 @@ export function buildProfile(owned: readonly OwnedBoon[]): CombatProfile {
         break;
     }
   }
+  if (executeAll > 0) {
+    for (const fx of [profile.on.attack, profile.on.power])
+      fx.execute = Math.max(fx.execute ?? 0, executeAll);
+  }
   for (const fx of Object.values(profile.on)) {
     if (fx.burn && burnDurationBonus > 0)
       fx.burn.durationMs = Math.round(fx.burn.durationMs * (1 + burnDurationBonus));
     if (fx.stun && stunDurationBonus > 0)
       fx.stun.durationMs = Math.round(fx.stun.durationMs * (1 + stunDurationBonus));
+    if (fx.venom && venomPotency > 0)
+      fx.venom.dps = Math.round(fx.venom.dps * (1 + venomPotency) * 10) / 10;
     if (fx.chain) fx.chain.bounces += amp.bounces;
     if (fx.chill) fx.chill += amp.chill;
     if (fx.execute) fx.execute += amp.execute;
@@ -425,11 +478,15 @@ export function damageMultiplier(
     chilled: boolean;
     stunned?: boolean;
     far?: boolean;
+    soaked?: boolean;
+    poisoned?: boolean;
     judged?: number;
   },
 ): number {
   return (
     1 +
+    (target.soaked ? profile.vsSoaked : 0) +
+    (target.poisoned ? profile.vsPoisoned : 0) +
     (target.burning ? profile.vsBurning : 0) +
     (target.chilled ? profile.vsChilled : 0) +
     (target.stunned ? profile.vsStunned : 0) +

@@ -25,9 +25,9 @@ function sampleSave() {
   const save = defaultSave();
   save.meta.xp = 120;
   save.meta.skills = { thoth_vigor: 2 };
-  save.run = newRun(42, 'twinBlades', 50, 1000, 'zeus');
+  save.run = newRun(42, 'twinBlades', 50, 1000, 'seth');
   save.run.room = 4;
-  save.run.boons = [{ id: 'zeus_attack', rarity: 'rare' }];
+  save.run.boons = [{ id: 'seth_attack', rarity: 'rare' }];
   save.run.superGauge = 0.5;
   return save;
 }
@@ -154,5 +154,36 @@ describe('fin de run', () => {
     expect(save.meta.deaths).toBe(1);
     expect(save.meta.runs).toBe(1);
     expect(save.run).toBeNull();
+  });
+});
+
+describe('dieux égyptiens (v14 → v15)', () => {
+  it('les dons d’une run en cours et les fiches des Archives suivent les nouveaux dieux', () => {
+    const save = migrate({
+      version: 14,
+      meta: { codex: { 'god.zeus': 3, 'god.thor': 1, 'god.ra': 2, 'enemy.prowler': 5 } },
+      settings: {},
+      run: {
+        ...newRun(7, 'katana', 50, 0, 'ra'),
+        pendingBoon: 'skadi',
+        boons: [
+          { id: 'zeus_attack', rarity: 'rare' },
+          { id: 'thor_power', rarity: 'common' },
+          { id: 'zeus_dash', rarity: 'common' },
+          { id: 'artemis_mark', rarity: 'common' },
+          { id: 'ra_attack', rarity: 'epic' },
+        ],
+      },
+    });
+    expect(save.meta.codex['god.seth']).toBe(3);
+    expect(save.meta.codex['god.sobek']).toBe(1);
+    expect(save.meta.codex['god.ra']).toBe(2);
+    expect(save.meta.codex['enemy.prowler']).toBe(5);
+    expect(save.run?.pendingBoon).toBe('khonsou');
+    expect(save.run?.boons).toEqual([
+      { id: 'seth_attack', rarity: 'rare' },
+      { id: 'seth_dash', rarity: 'common' },
+      { id: 'ra_attack', rarity: 'epic' },
+    ]);
   });
 });

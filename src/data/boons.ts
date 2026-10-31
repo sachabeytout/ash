@@ -13,18 +13,28 @@ export type BoonEffect =
   | { type: 'chain'; on: Trigger; damage: number; bounces: number; range: number }
   /** Foudre qui tombe sur la cible et touche autour d'elle. */
   | { type: 'bolt'; on: Trigger; damage: number; radius: number }
-  /** Dégâts en plus contre les ennemis qui brûlent / sont givrés / étourdis / loin d'Ash. */
-  | { type: 'damageVs'; status: 'burning' | 'chilled' | 'stunned' | 'far'; bonus: number }
+  /** Trempé (Sobek) : ralenti ; conduit la foudre et gèle plus vite (voir data/status). */
+  | { type: 'soak'; on: Trigger; slow: number; durationMs: number }
+  /** Venin (Serket) : doses cumulées, chacune fait `dps` dégâts par seconde. */
+  | { type: 'venom'; on: Trigger; stacks: number; dps: number }
+  /** Dégâts en plus contre les ennemis qui brûlent / givrés / étourdis / loin / trempés / empoisonnés. */
+  | {
+      type: 'damageVs';
+      status: 'burning' | 'chilled' | 'stunned' | 'far' | 'soaked' | 'poisoned';
+      bonus: number;
+    }
   | { type: 'maxHp'; amount: number }
   /** Quand Ash est touché, la foudre frappe l'ennemi le plus proche. */
   | { type: 'retaliate'; damage: number; range: number }
-  /** Duo Râ + Skadi : un ennemi gelé qui brûle explose. */
+  /** Duo Râ + Khonsou : un ennemi gelé qui brûle explose. */
   | { type: 'thermalShock'; damage: number; radius: number }
   /** Amplification : la brûlure dure plus longtemps. */
   | { type: 'burnDuration'; bonus: number }
-  // ---------- Anubis : jugement ----------
+  // ---------- Anubis : fêlure et exécution ; Isis : soin ----------
   /** Exécute un ennemi (hors boss) sous ce pourcentage de vie. */
   | { type: 'execute'; on: Trigger; threshold: number }
+  /** Passif : l'attaque et l'attaque puissante exécutent sous ce pourcentage de vie. */
+  | { type: 'executeAll'; threshold: number }
   /** Le dash « juge » les ennemis proches : ils subissent plus de dégâts un moment. */
   | { type: 'judge'; on: Trigger; bonus: number; durationMs: number }
   | { type: 'healOnKill'; amount: number }
@@ -34,7 +44,7 @@ export type BoonEffect =
   | { type: 'dashCooldown'; on: Trigger; bonus: number }
   | { type: 'speed'; bonus: number }
   | { type: 'critDamage'; bonus: number }
-  // ---------- Athéna : protection ----------
+  // ---------- Neith : protection ----------
   /** Égide : les premiers coups reçus dans chaque salle sont bloqués. */
   | { type: 'aegis'; charges: number }
   /** Les ennemis touchés font moins de dégâts un moment. */
@@ -43,10 +53,10 @@ export type BoonEffect =
   | { type: 'barrier'; on: Trigger; amount: number }
   /** Le dash détruit les projectiles ennemis proches. */
   | { type: 'deflect'; on: Trigger; radius: number }
-  // ---------- Artémis : chasse ----------
+  // ---------- Neith : flèches croisées ----------
   /** Des flèches partent vers les ennemis les plus proches. */
   | { type: 'arrows'; on: Trigger; damage: number; count: number }
-  // ---------- Thor : choc ----------
+  // ---------- Seth / Sobek : choc ----------
   /** Étourdit (l'ennemi s'arrête) ; `scales` dit si la rareté augmente la chance ou la durée. */
   | {
       type: 'stun';
@@ -57,7 +67,7 @@ export type BoonEffect =
     }
   /** Onde autour d'Ash : dégâts et recul. */
   | { type: 'shockwave'; on: Trigger; damage: number; radius: number; knockback: number }
-  // ---------- Hel : malédiction ----------
+  // ---------- Serket (dard) / Isis (soin) ----------
   /** Maudit : à sa mort, l'ennemi explose et blesse ses voisins. */
   | { type: 'curse'; on: Trigger; damage: number; radius: number }
   | { type: 'lifeOnHit'; on: Trigger; amount: number }
@@ -71,18 +81,24 @@ export type BoonEffect =
   | { type: 'executeBonus'; bonus: number }
   | { type: 'arrowCount'; bonus: number }
   | { type: 'curseDamage'; bonus: number }
-  /** Duo Athéna + Zeus : quand l'égide bloque un coup, la foudre frappe en chaîne. */
+  /** Duo Neith + Seth : quand l'égide bloque un coup, la foudre frappe en chaîne. */
   | { type: 'aegisStorm'; damage: number }
-  /** Duo Râ + Hel : les explosions de malédiction enflamment les ennemis touchés. */
+  /** Duo Râ + Serket : les explosions du dard enflamment les ennemis touchés. */
   | { type: 'blackSun'; dps: number; durationMs: number }
-  /** Duo Bastet + Thor : les coups critiques étourdissent. */
+  /** Duo Bastet + Seth : les coups critiques étourdissent. */
   | { type: 'critStun'; durationMs: number }
-  /** Duo Râ + Anubis : un ennemi qui brûle soigne Ash en mourant. */
+  /** Duo Râ + Isis : un ennemi qui brûle soigne Ash en mourant. */
   | { type: 'embalm'; amount: number }
   | { type: 'judgementDay'; threshold: number }
   | { type: 'nightHunt'; chance: number }
   | { type: 'aegisCharge'; charges: number }
-  | { type: 'stunDuration'; bonus: number };
+  | { type: 'stunDuration'; bonus: number }
+  /** Isis : chaque salle terminée rend des PV. */
+  | { type: 'roomHeal'; amount: number }
+  /** Amplification de Serket : venin plus fort. */
+  | { type: 'venomPotency'; bonus: number }
+  /** Duo Seth + Sobek : chaque éclair frappe aussi tous les ennemis trempés. */
+  | { type: 'conduct'; damage: number };
 
 export type BoonKind = 'normal' | 'duo' | 'amp';
 
@@ -119,7 +135,7 @@ export const DASH_AURA_RADIUS = 34;
 export const DASH_BOLT_RANGE = 110;
 
 export const BOONS: readonly BoonDef[] = [
-  // ---------- Râ : brûlure ----------
+  // ---------- Râ : le feu (brûlure) ----------
   {
     id: 'ra_attack',
     gods: ['ra'],
@@ -152,106 +168,146 @@ export const BOONS: readonly BoonDef[] = [
     descKey: 'boon.ra_eye.desc',
     effect: { type: 'damageVs', status: 'burning', bonus: 0.2 },
   },
+  // ---------- Sobek : l'eau (trempé : ralenti, conduit la foudre, gèle plus vite) ----------
   {
-    id: 'ra_hearth',
-    gods: ['ra'],
+    id: 'sobek_attack',
+    gods: ['sobek'],
     kind: 'normal',
-    nameKey: 'boon.ra_hearth',
-    descKey: 'boon.ra_hearth.desc',
-    effect: { type: 'maxHp', amount: 15 },
-  },
-  // ---------- Zeus : foudre en chaîne ----------
-  {
-    id: 'zeus_attack',
-    gods: ['zeus'],
-    kind: 'normal',
-    nameKey: 'boon.zeus_attack',
-    descKey: 'boon.zeus_attack.desc',
-    effect: { type: 'chain', on: 'attack', damage: 6, bounces: 2, range: 70 },
+    nameKey: 'boon.sobek_attack',
+    descKey: 'boon.sobek_attack.desc',
+    effect: { type: 'soak', on: 'attack', slow: 0.2, durationMs: 3000 },
   },
   {
-    id: 'zeus_power',
-    gods: ['zeus'],
+    id: 'sobek_power',
+    gods: ['sobek'],
     kind: 'normal',
-    nameKey: 'boon.zeus_power',
-    descKey: 'boon.zeus_power.desc',
-    effect: { type: 'bolt', on: 'power', damage: 14, radius: 26 },
+    nameKey: 'boon.sobek_power',
+    descKey: 'boon.sobek_power.desc',
+    effect: { type: 'soak', on: 'power', slow: 0.35, durationMs: 4000 },
   },
   {
-    id: 'zeus_dash',
-    gods: ['zeus'],
+    id: 'sobek_dash',
+    gods: ['sobek'],
     kind: 'normal',
-    nameKey: 'boon.zeus_dash',
-    descKey: 'boon.zeus_dash.desc',
-    effect: { type: 'bolt', on: 'dash', damage: 12, radius: 22 },
+    nameKey: 'boon.sobek_dash',
+    descKey: 'boon.sobek_dash.desc',
+    effect: { type: 'shockwave', on: 'dash', damage: 10, radius: 38, knockback: 200 },
   },
   {
-    id: 'zeus_riposte',
-    gods: ['zeus'],
+    id: 'sobek_flood',
+    gods: ['sobek'],
     kind: 'normal',
-    nameKey: 'boon.zeus_riposte',
-    descKey: 'boon.zeus_riposte.desc',
-    effect: { type: 'retaliate', damage: 20, range: 140 },
+    nameKey: 'boon.sobek_flood',
+    descKey: 'boon.sobek_flood.desc',
+    effect: { type: 'damageVs', status: 'soaked', bonus: 0.2 },
   },
-  // ---------- Skadi : gel ----------
+  // ---------- Khonsou : la glace (givre, puis gel) ----------
   {
-    id: 'skadi_attack',
-    gods: ['skadi'],
+    id: 'khonsou_attack',
+    gods: ['khonsou'],
     kind: 'normal',
-    nameKey: 'boon.skadi_attack',
-    descKey: 'boon.skadi_attack.desc',
+    nameKey: 'boon.khonsou_attack',
+    descKey: 'boon.khonsou_attack.desc',
     effect: { type: 'chill', on: 'attack', stacks: 1 },
   },
   {
-    id: 'skadi_power',
-    gods: ['skadi'],
+    id: 'khonsou_power',
+    gods: ['khonsou'],
     kind: 'normal',
-    nameKey: 'boon.skadi_power',
-    descKey: 'boon.skadi_power.desc',
+    nameKey: 'boon.khonsou_power',
+    descKey: 'boon.khonsou_power.desc',
     effect: { type: 'chill', on: 'power', stacks: 3 },
   },
   {
-    id: 'skadi_dash',
-    gods: ['skadi'],
+    id: 'khonsou_dash',
+    gods: ['khonsou'],
     kind: 'normal',
-    nameKey: 'boon.skadi_dash',
-    descKey: 'boon.skadi_dash.desc',
+    nameKey: 'boon.khonsou_dash',
+    descKey: 'boon.khonsou_dash.desc',
     effect: { type: 'chill', on: 'dash', stacks: 2 },
   },
   {
-    id: 'skadi_heart',
-    gods: ['skadi'],
+    id: 'khonsou_heart',
+    gods: ['khonsou'],
     kind: 'normal',
-    nameKey: 'boon.skadi_heart',
-    descKey: 'boon.skadi_heart.desc',
+    nameKey: 'boon.khonsou_heart',
+    descKey: 'boon.khonsou_heart.desc',
     effect: { type: 'damageVs', status: 'chilled', bonus: 0.15 },
   },
-  // ---------- Duo et amplification ----------
+  // ---------- Seth : la foudre (éclairs en chaîne, étourdissement) ----------
   {
-    id: 'duo_thermal',
-    gods: ['ra', 'skadi'],
-    kind: 'duo',
-    nameKey: 'boon.duo_thermal',
-    descKey: 'boon.duo_thermal.desc',
-    effect: { type: 'thermalShock', damage: 30, radius: 44 },
+    id: 'seth_attack',
+    gods: ['seth'],
+    kind: 'normal',
+    nameKey: 'boon.seth_attack',
+    descKey: 'boon.seth_attack.desc',
+    effect: { type: 'chain', on: 'attack', damage: 6, bounces: 2, range: 70 },
   },
   {
-    id: 'amp_noon',
-    gods: ['ra'],
-    kind: 'amp',
-    nameKey: 'boon.amp_noon',
-    descKey: 'boon.amp_noon.desc',
-    effect: { type: 'burnDuration', bonus: 0.5 },
-    requiresAny: ['ra_attack', 'ra_power', 'ra_dash'],
+    id: 'seth_power',
+    gods: ['seth'],
+    kind: 'normal',
+    nameKey: 'boon.seth_power',
+    descKey: 'boon.seth_power.desc',
+    effect: { type: 'bolt', on: 'power', damage: 14, radius: 26 },
   },
-  // ---------- Anubis : jugement ----------
   {
-    id: 'anubis_attack',
+    id: 'seth_dash',
+    gods: ['seth'],
+    kind: 'normal',
+    nameKey: 'boon.seth_dash',
+    descKey: 'boon.seth_dash.desc',
+    effect: { type: 'stun', on: 'dash', chance: 100, durationMs: 600, scales: 'duration' },
+  },
+  {
+    id: 'seth_riposte',
+    gods: ['seth'],
+    kind: 'normal',
+    nameKey: 'boon.seth_riposte',
+    descKey: 'boon.seth_riposte.desc',
+    effect: { type: 'retaliate', damage: 20, range: 140 },
+  },
+  // ---------- Serket : le poison (doses de venin cumulées) ----------
+  {
+    id: 'serket_attack',
+    gods: ['serket'],
+    kind: 'normal',
+    nameKey: 'boon.serket_attack',
+    descKey: 'boon.serket_attack.desc',
+    effect: { type: 'venom', on: 'attack', stacks: 1, dps: 2 },
+  },
+  {
+    id: 'serket_power',
+    gods: ['serket'],
+    kind: 'normal',
+    nameKey: 'boon.serket_power',
+    descKey: 'boon.serket_power.desc',
+    effect: { type: 'venom', on: 'power', stacks: 3, dps: 2 },
+  },
+  {
+    id: 'serket_dash',
+    gods: ['serket'],
+    kind: 'normal',
+    nameKey: 'boon.serket_dash',
+    descKey: 'boon.serket_dash.desc',
+    effect: { type: 'curse', on: 'dash', damage: 15, radius: 36 },
+  },
+  {
+    id: 'serket_toxin',
+    gods: ['serket'],
+    kind: 'normal',
+    nameKey: 'boon.serket_toxin',
+    descKey: 'boon.serket_toxin.desc',
+    effect: { type: 'damageVs', status: 'poisoned', bonus: 0.2 },
+  },
+  // ---------- Anubis : le brisement (fêlure) et l'exécution ----------
+  {
+    id: 'anubis_break',
     gods: ['anubis'],
     kind: 'normal',
-    nameKey: 'boon.anubis_attack',
-    descKey: 'boon.anubis_attack.desc',
-    effect: { type: 'execute', on: 'attack', threshold: 10 },
+    nameKey: 'boon.anubis_break',
+    descKey: 'boon.anubis_break.desc',
+    effect: { type: 'judge', on: 'attack', bonus: 0.15, durationMs: 4000 },
   },
   {
     id: 'anubis_power',
@@ -270,14 +326,14 @@ export const BOONS: readonly BoonDef[] = [
     effect: { type: 'judge', on: 'dash', bonus: 0.25, durationMs: 4000 },
   },
   {
-    id: 'anubis_soul',
+    id: 'anubis_weigh',
     gods: ['anubis'],
     kind: 'normal',
-    nameKey: 'boon.anubis_soul',
-    descKey: 'boon.anubis_soul.desc',
-    effect: { type: 'healOnKill', amount: 2 },
+    nameKey: 'boon.anubis_weigh',
+    descKey: 'boon.anubis_weigh.desc',
+    effect: { type: 'executeAll', threshold: 8 },
   },
-  // ---------- Bastet : vitesse, critiques ----------
+  // ---------- Bastet : la force (critiques, vitesse, vie) ----------
   {
     id: 'bastet_attack',
     gods: ['bastet'],
@@ -310,150 +366,100 @@ export const BOONS: readonly BoonDef[] = [
     descKey: 'boon.bastet_swift.desc',
     effect: { type: 'speed', bonus: 0.08 },
   },
-  // ---------- Athéna : protection ----------
   {
-    id: 'athena_aegis',
-    gods: ['athena'],
+    id: 'bastet_lives',
+    gods: ['bastet'],
     kind: 'normal',
-    nameKey: 'boon.athena_aegis',
-    descKey: 'boon.athena_aegis.desc',
-    effect: { type: 'aegis', charges: 1 },
+    nameKey: 'boon.bastet_lives',
+    descKey: 'boon.bastet_lives.desc',
+    effect: { type: 'maxHp', amount: 15 },
+  },
+  // ---------- Isis : le soin ----------
+  {
+    id: 'isis_soul',
+    gods: ['isis'],
+    kind: 'normal',
+    nameKey: 'boon.isis_soul',
+    descKey: 'boon.isis_soul.desc',
+    effect: { type: 'healOnKill', amount: 2 },
   },
   {
-    id: 'athena_attack',
-    gods: ['athena'],
+    id: 'isis_power',
+    gods: ['isis'],
     kind: 'normal',
-    nameKey: 'boon.athena_attack',
-    descKey: 'boon.athena_attack.desc',
-    effect: { type: 'weaken', on: 'attack', reduction: 0.2, durationMs: 4000 },
-  },
-  {
-    id: 'athena_power',
-    gods: ['athena'],
-    kind: 'normal',
-    nameKey: 'boon.athena_power',
-    descKey: 'boon.athena_power.desc',
-    effect: { type: 'barrier', on: 'power', amount: 6 },
-  },
-  {
-    id: 'athena_dash',
-    gods: ['athena'],
-    kind: 'normal',
-    nameKey: 'boon.athena_dash',
-    descKey: 'boon.athena_dash.desc',
-    effect: { type: 'deflect', on: 'dash', radius: 40 },
-  },
-  // ---------- Artémis : chasse ----------
-  {
-    id: 'artemis_attack',
-    gods: ['artemis'],
-    kind: 'normal',
-    nameKey: 'boon.artemis_attack',
-    descKey: 'boon.artemis_attack.desc',
-    effect: { type: 'arrows', on: 'attack', damage: 5, count: 1 },
-  },
-  {
-    id: 'artemis_power',
-    gods: ['artemis'],
-    kind: 'normal',
-    nameKey: 'boon.artemis_power',
-    descKey: 'boon.artemis_power.desc',
-    effect: { type: 'arrows', on: 'power', damage: 9, count: 3 },
-  },
-  {
-    id: 'artemis_dash',
-    gods: ['artemis'],
-    kind: 'normal',
-    nameKey: 'boon.artemis_dash',
-    descKey: 'boon.artemis_dash.desc',
-    effect: { type: 'arrows', on: 'dash', damage: 8, count: 3 },
-  },
-  {
-    id: 'artemis_mark',
-    gods: ['artemis'],
-    kind: 'normal',
-    nameKey: 'boon.artemis_mark',
-    descKey: 'boon.artemis_mark.desc',
-    effect: { type: 'damageVs', status: 'far', bonus: 0.15 },
-  },
-  // ---------- Thor : choc ----------
-  {
-    id: 'thor_attack',
-    gods: ['thor'],
-    kind: 'normal',
-    nameKey: 'boon.thor_attack',
-    descKey: 'boon.thor_attack.desc',
-    effect: { type: 'stun', on: 'attack', chance: 12, durationMs: 800, scales: 'chance' },
-  },
-  {
-    id: 'thor_power',
-    gods: ['thor'],
-    kind: 'normal',
-    nameKey: 'boon.thor_power',
-    descKey: 'boon.thor_power.desc',
-    effect: { type: 'stun', on: 'power', chance: 100, durationMs: 700, scales: 'duration' },
-  },
-  {
-    id: 'thor_dash',
-    gods: ['thor'],
-    kind: 'normal',
-    nameKey: 'boon.thor_dash',
-    descKey: 'boon.thor_dash.desc',
-    effect: { type: 'shockwave', on: 'dash', damage: 10, radius: 38, knockback: 200 },
-  },
-  {
-    id: 'thor_wrath',
-    gods: ['thor'],
-    kind: 'normal',
-    nameKey: 'boon.thor_wrath',
-    descKey: 'boon.thor_wrath.desc',
-    effect: { type: 'damageVs', status: 'stunned', bonus: 0.25 },
-  },
-  // ---------- Hel : malédiction ----------
-  {
-    id: 'hel_attack',
-    gods: ['hel'],
-    kind: 'normal',
-    nameKey: 'boon.hel_attack',
-    descKey: 'boon.hel_attack.desc',
-    effect: { type: 'curse', on: 'attack', damage: 12, radius: 36 },
-  },
-  {
-    id: 'hel_power',
-    gods: ['hel'],
-    kind: 'normal',
-    nameKey: 'boon.hel_power',
-    descKey: 'boon.hel_power.desc',
+    nameKey: 'boon.isis_power',
+    descKey: 'boon.isis_power.desc',
     effect: { type: 'lifeOnHit', on: 'power', amount: 1 },
   },
   {
-    id: 'hel_dash',
-    gods: ['hel'],
+    id: 'isis_dew',
+    gods: ['isis'],
     kind: 'normal',
-    nameKey: 'boon.hel_dash',
-    descKey: 'boon.hel_dash.desc',
-    effect: { type: 'curse', on: 'dash', damage: 15, radius: 36 },
+    nameKey: 'boon.isis_dew',
+    descKey: 'boon.isis_dew.desc',
+    effect: { type: 'roomHeal', amount: 4 },
   },
   {
-    id: 'hel_last',
-    gods: ['hel'],
+    id: 'isis_last',
+    gods: ['isis'],
     kind: 'normal',
-    nameKey: 'boon.hel_last',
-    descKey: 'boon.hel_last.desc',
+    nameKey: 'boon.isis_last',
+    descKey: 'boon.isis_last.desc',
     effect: { type: 'lastBreath', hp: 10 },
   },
-  // ---------- Duos ----------
+  // ---------- Neith : le bouclier ----------
+  {
+    id: 'neith_aegis',
+    gods: ['neith'],
+    kind: 'normal',
+    nameKey: 'boon.neith_aegis',
+    descKey: 'boon.neith_aegis.desc',
+    effect: { type: 'aegis', charges: 1 },
+  },
+  {
+    id: 'neith_attack',
+    gods: ['neith'],
+    kind: 'normal',
+    nameKey: 'boon.neith_attack',
+    descKey: 'boon.neith_attack.desc',
+    effect: { type: 'weaken', on: 'attack', reduction: 0.2, durationMs: 4000 },
+  },
+  {
+    id: 'neith_power',
+    gods: ['neith'],
+    kind: 'normal',
+    nameKey: 'boon.neith_power',
+    descKey: 'boon.neith_power.desc',
+    effect: { type: 'barrier', on: 'power', amount: 6 },
+  },
+  {
+    id: 'neith_dash',
+    gods: ['neith'],
+    kind: 'normal',
+    nameKey: 'boon.neith_dash',
+    descKey: 'boon.neith_dash.desc',
+    effect: { type: 'deflect', on: 'dash', radius: 40 },
+  },
+  // ---------- Duos (deux dieux) ----------
+  {
+    id: 'duo_thermal',
+    gods: ['ra', 'khonsou'],
+    kind: 'duo',
+    nameKey: 'boon.duo_thermal',
+    descKey: 'boon.duo_thermal.desc',
+    effect: { type: 'thermalShock', damage: 30, radius: 44 },
+  },
   {
     id: 'duo_storm',
-    gods: ['zeus', 'thor'],
+    gods: ['seth', 'sobek'],
     kind: 'duo',
     nameKey: 'boon.duo_storm',
     descKey: 'boon.duo_storm.desc',
-    effect: { type: 'stormStun', durationMs: 500 },
+    effect: { type: 'conduct', damage: 10 },
   },
   {
     id: 'duo_judgement',
-    gods: ['anubis', 'hel'],
+    gods: ['anubis', 'serket'],
     kind: 'duo',
     nameKey: 'boon.duo_judgement',
     descKey: 'boon.duo_judgement.desc',
@@ -461,7 +467,7 @@ export const BOONS: readonly BoonDef[] = [
   },
   {
     id: 'duo_hunt',
-    gods: ['bastet', 'artemis'],
+    gods: ['bastet', 'neith'],
     kind: 'duo',
     nameKey: 'boon.duo_hunt',
     descKey: 'boon.duo_hunt.desc',
@@ -469,7 +475,7 @@ export const BOONS: readonly BoonDef[] = [
   },
   {
     id: 'duo_aegis_storm',
-    gods: ['athena', 'zeus'],
+    gods: ['neith', 'seth'],
     kind: 'duo',
     nameKey: 'boon.duo_aegis_storm',
     descKey: 'boon.duo_aegis_storm.desc',
@@ -477,7 +483,7 @@ export const BOONS: readonly BoonDef[] = [
   },
   {
     id: 'duo_black_sun',
-    gods: ['ra', 'hel'],
+    gods: ['ra', 'serket'],
     kind: 'duo',
     nameKey: 'boon.duo_black_sun',
     descKey: 'boon.duo_black_sun.desc',
@@ -485,7 +491,7 @@ export const BOONS: readonly BoonDef[] = [
   },
   {
     id: 'duo_thunder_claws',
-    gods: ['bastet', 'thor'],
+    gods: ['bastet', 'seth'],
     kind: 'duo',
     nameKey: 'boon.duo_thunder_claws',
     descKey: 'boon.duo_thunder_claws.desc',
@@ -493,30 +499,66 @@ export const BOONS: readonly BoonDef[] = [
   },
   {
     id: 'duo_embalm',
-    gods: ['ra', 'anubis'],
+    gods: ['ra', 'isis'],
     kind: 'duo',
     nameKey: 'boon.duo_embalm',
     descKey: 'boon.duo_embalm.desc',
     effect: { type: 'embalm', amount: 3 },
   },
-  // ---------- Amplifications ----------
+  // ---------- Amplifications (renforcent un don déjà obtenu) ----------
   {
-    id: 'amp_aegis',
-    gods: ['athena'],
+    id: 'amp_noon',
+    gods: ['ra'],
     kind: 'amp',
-    nameKey: 'boon.amp_aegis',
-    descKey: 'boon.amp_aegis.desc',
-    effect: { type: 'aegisCharge', charges: 1 },
-    requiresAny: ['athena_aegis'],
+    nameKey: 'boon.amp_noon',
+    descKey: 'boon.amp_noon.desc',
+    effect: { type: 'burnDuration', bonus: 0.5 },
+    requiresAny: ['ra_attack', 'ra_power', 'ra_dash'],
+  },
+  {
+    id: 'amp_winter',
+    gods: ['khonsou'],
+    kind: 'amp',
+    nameKey: 'boon.amp_winter',
+    descKey: 'boon.amp_winter.desc',
+    effect: { type: 'chillStacks', bonus: 1 },
+    requiresAny: ['khonsou_attack', 'khonsou_power', 'khonsou_dash'],
+  },
+  {
+    id: 'amp_arc',
+    gods: ['seth'],
+    kind: 'amp',
+    nameKey: 'boon.amp_arc',
+    descKey: 'boon.amp_arc.desc',
+    effect: { type: 'chainBounces', bonus: 2 },
+    requiresAny: ['seth_attack'],
   },
   {
     id: 'amp_thunder',
-    gods: ['thor'],
+    gods: ['seth'],
     kind: 'amp',
     nameKey: 'boon.amp_thunder',
     descKey: 'boon.amp_thunder.desc',
     effect: { type: 'stunDuration', bonus: 0.5 },
-    requiresAny: ['thor_attack', 'thor_power'],
+    requiresAny: ['seth_dash'],
+  },
+  {
+    id: 'amp_plague',
+    gods: ['serket'],
+    kind: 'amp',
+    nameKey: 'boon.amp_plague',
+    descKey: 'boon.amp_plague.desc',
+    effect: { type: 'venomPotency', bonus: 0.5 },
+    requiresAny: ['serket_attack', 'serket_power'],
+  },
+  {
+    id: 'amp_scales',
+    gods: ['anubis'],
+    kind: 'amp',
+    nameKey: 'boon.amp_scales',
+    descKey: 'boon.amp_scales.desc',
+    effect: { type: 'executeBonus', bonus: 5 },
+    requiresAny: ['anubis_weigh', 'anubis_power'],
   },
   {
     id: 'amp_claws',
@@ -528,49 +570,13 @@ export const BOONS: readonly BoonDef[] = [
     requiresAny: ['bastet_attack', 'bastet_power'],
   },
   {
-    id: 'amp_arc',
-    gods: ['zeus'],
+    id: 'amp_aegis',
+    gods: ['neith'],
     kind: 'amp',
-    nameKey: 'boon.amp_arc',
-    descKey: 'boon.amp_arc.desc',
-    effect: { type: 'chainBounces', bonus: 2 },
-    requiresAny: ['zeus_attack'],
-  },
-  {
-    id: 'amp_winter',
-    gods: ['skadi'],
-    kind: 'amp',
-    nameKey: 'boon.amp_winter',
-    descKey: 'boon.amp_winter.desc',
-    effect: { type: 'chillStacks', bonus: 1 },
-    requiresAny: ['skadi_attack', 'skadi_power', 'skadi_dash'],
-  },
-  {
-    id: 'amp_scales',
-    gods: ['anubis'],
-    kind: 'amp',
-    nameKey: 'boon.amp_scales',
-    descKey: 'boon.amp_scales.desc',
-    effect: { type: 'executeBonus', bonus: 5 },
-    requiresAny: ['anubis_attack', 'anubis_power'],
-  },
-  {
-    id: 'amp_quiver',
-    gods: ['artemis'],
-    kind: 'amp',
-    nameKey: 'boon.amp_quiver',
-    descKey: 'boon.amp_quiver.desc',
-    effect: { type: 'arrowCount', bonus: 1 },
-    requiresAny: ['artemis_attack', 'artemis_power', 'artemis_dash'],
-  },
-  {
-    id: 'amp_plague',
-    gods: ['hel'],
-    kind: 'amp',
-    nameKey: 'boon.amp_plague',
-    descKey: 'boon.amp_plague.desc',
-    effect: { type: 'curseDamage', bonus: 0.5 },
-    requiresAny: ['hel_attack', 'hel_dash'],
+    nameKey: 'boon.amp_aegis',
+    descKey: 'boon.amp_aegis.desc',
+    effect: { type: 'aegisCharge', charges: 1 },
+    requiresAny: ['neith_aegis'],
   },
 ];
 

@@ -1,11 +1,12 @@
 export type GodId =
-  'ra' | 'zeus' | 'skadi' | 'anubis' | 'bastet' | 'athena' | 'artemis' | 'thor' | 'hel';
-export type Pantheon = 'egypt' | 'greece' | 'norse';
+  'ra' | 'sobek' | 'khonsou' | 'seth' | 'serket' | 'anubis' | 'bastet' | 'isis' | 'neith';
+/** Tous les dieux sont égyptiens (lore v0.3) ; le type reste pour d'éventuels ajouts. */
+export type Pantheon = 'egypt';
 
 export interface GodDef {
   id: GodId;
   nameKey: string;
-  /** Titre court affiché sous le nom (« Soleil d'Égypte »…). */
+  /** Titre court affiché sous le nom (« Soleil d'Égypte — le feu »…). */
   titleKey: string;
   /**
    * Couleur du dieu, reprise par tout ce qui lui appartient (cartes, effets, états, flèches…).
@@ -15,92 +16,33 @@ export interface GodDef {
   /** Variante claire de la couleur, pour les textes (chiffres de dégâts) sur fond sombre. */
   text: string;
   /** Forme de l'icône (lisible sans les couleurs). */
-  icon: 'sun' | 'bolt' | 'flake' | 'jackal' | 'cat' | 'shield' | 'moon' | 'hammer' | 'veil';
+  icon: 'sun' | 'wave' | 'moon' | 'bolt' | 'scorpion' | 'jackal' | 'cat' | 'ankh' | 'shield';
   pantheon: Pantheon;
 }
 
+function god(id: GodId, color: number, text: string, icon: GodDef['icon']): GodDef {
+  return {
+    id,
+    nameKey: `god.${id}`,
+    titleKey: `god.${id}.title`,
+    color,
+    text,
+    icon,
+    pantheon: 'egypt',
+  };
+}
+
+/** Les 9 dieux : un pouvoir chacun (feu, eau, glace, foudre, poison, brisement, force, soin, bouclier). */
 export const GODS: Record<GodId, GodDef> = {
-  ra: {
-    id: 'ra',
-    nameKey: 'god.ra',
-    titleKey: 'god.ra.title',
-    color: 0xff4a14,
-    text: '#ff8a5c',
-    icon: 'sun',
-    pantheon: 'egypt',
-  },
-  zeus: {
-    id: 'zeus',
-    nameKey: 'god.zeus',
-    titleKey: 'god.zeus.title',
-    color: 0xffe03a,
-    text: '#fff07a',
-    icon: 'bolt',
-    pantheon: 'greece',
-  },
-  skadi: {
-    id: 'skadi',
-    nameKey: 'god.skadi',
-    titleKey: 'god.skadi.title',
-    color: 0x8ff0ff,
-    text: '#c8f8ff',
-    icon: 'flake',
-    pantheon: 'norse',
-  },
-  anubis: {
-    id: 'anubis',
-    nameKey: 'god.anubis',
-    titleKey: 'god.anubis.title',
-    color: 0x3ddc84,
-    text: '#8cf0b8',
-    icon: 'jackal',
-    pantheon: 'egypt',
-  },
-  bastet: {
-    id: 'bastet',
-    nameKey: 'god.bastet',
-    titleKey: 'god.bastet.title',
-    color: 0xc6ff3a,
-    text: '#e2ff8a',
-    icon: 'cat',
-    pantheon: 'egypt',
-  },
-  athena: {
-    id: 'athena',
-    nameKey: 'god.athena',
-    titleKey: 'god.athena.title',
-    color: 0xd89a50,
-    text: '#f0c890',
-    icon: 'shield',
-    pantheon: 'greece',
-  },
-  artemis: {
-    id: 'artemis',
-    nameKey: 'god.artemis',
-    titleKey: 'god.artemis.title',
-    color: 0xc8d8ff,
-    text: '#e8eeff',
-    icon: 'moon',
-    pantheon: 'greece',
-  },
-  thor: {
-    id: 'thor',
-    nameKey: 'god.thor',
-    titleKey: 'god.thor.title',
-    color: 0x3f7bff,
-    text: '#8cb0ff',
-    icon: 'hammer',
-    pantheon: 'norse',
-  },
-  hel: {
-    id: 'hel',
-    nameKey: 'god.hel',
-    titleKey: 'god.hel.title',
-    color: 0x8a4dff,
-    text: '#c0a0ff',
-    icon: 'veil',
-    pantheon: 'norse',
-  },
+  ra: god('ra', 0xff4a14, '#ff8a5c', 'sun'),
+  sobek: god('sobek', 0x3f7bff, '#8cb0ff', 'wave'),
+  khonsou: god('khonsou', 0x8ff0ff, '#c8f8ff', 'moon'),
+  seth: god('seth', 0xffe03a, '#fff07a', 'bolt'),
+  serket: god('serket', 0xc6ff3a, '#e2ff8a', 'scorpion'),
+  anubis: god('anubis', 0x8a4dff, '#c0a0ff', 'jackal'),
+  bastet: god('bastet', 0xd89a50, '#f0c890', 'cat'),
+  isis: god('isis', 0x3ddc84, '#8cf0b8', 'ankh'),
+  neith: god('neith', 0xc8d8ff, '#e8eeff', 'shield'),
 };
 
 export const GOD_IDS = Object.keys(GODS) as GodId[];
