@@ -143,23 +143,33 @@ L'Oiseleur le laisse s'évader, encore et encore.
 
 ## 4. Dieux ✅ (9 dieux égyptiens depuis la 0.44.0 — valeurs : `src/data/boons.ts`)
 
-| Dieu    | Pouvoir               | Ce qu'il fait                                                                  |
-| ------- | --------------------- | ------------------------------------------------------------------------------ |
-| Râ      | Feu                   | Brûlure (dégâts dans le temps)                                                 |
-| Sobek   | Eau                   | Trempé : ralenti ; conduit la foudre (×1,5) ; gèle deux fois plus vite ; vague |
-| Khonsou | Glace                 | Givre qui ralentit, puis gel sur place                                         |
-| Seth    | Foudre                | Éclairs en chaîne, foudre qui tombe, étourdissement, riposte                   |
-| Serket  | Poison                | Doses de venin cumulées (8 max) ; dard : l'ennemi explose à sa mort            |
-| Anubis  | Brisement + exécution | Fêlure (dégâts reçus augmentés) ; exécute les ennemis affaiblis                |
-| Bastet  | Force                 | Critiques, vitesse, recharge du dash, PV max                                   |
-| Isis    | Soin                  | Vie par ennemi vaincu, par coup puissant, par salle ; seconde vie              |
-| Neith   | Bouclier              | Égide (bloque un coup), rempart, affaiblissement, destruction des projectiles  |
+| Dieu    | Pouvoir               | Ce qu'il fait                                                                            |
+| ------- | --------------------- | ---------------------------------------------------------------------------------------- |
+| Râ      | Feu                   | Brûlure (dégâts dans le temps)                                                           |
+| Sobek   | Eau                   | Trempé : ralenti ; conduit la foudre (×1,5) ; gèle deux fois plus vite ; vague           |
+| Khonsou | Glace                 | Givre qui ralentit, puis gel sur place                                                   |
+| Seth    | Foudre                | Éclairs en chaîne, foudre qui tombe, étourdissement, riposte                             |
+| Serket  | Poison                | Doses de venin cumulées (8 max) ; dard : l'ennemi explose à sa mort                      |
+| Anubis  | Brisement + exécution | Fêlure (dégâts reçus augmentés) ; exécute les ennemis affaiblis                          |
+| Bastet  | Force                 | Critiques, vitesse, recharge du dash, PV max                                             |
+| Isis    | Soin                  | Vie par ennemi vaincu, par coup puissant, par salle ; seconde vie                        |
+| Neith   | Bouclier              | Bouclier de Saïs (bloque un coup), rempart, affaiblissement, destruction des projectiles |
 
 Duos : Râ + Khonsou **Choc thermique** ; Seth + Sobek **Crue orageuse** ; Anubis + Serket **Jugement du scorpion** ;
-Bastet + Neith **Chasse de Saïs** ; Neith + Seth **Égide orageuse** ; Râ + Serket **Venin ardent** ; Bastet + Seth
+Bastet + Neith **Chasse de Saïs** ; Neith + Seth **Bouclier d'orage** ; Râ + Serket **Venin ardent** ; Bastet + Seth
 **Griffes du tonnerre** ; Râ + Isis **Flamme guérisseuse**.
 Amplifications : Soleil de midi (Râ), Nuit sans fin (Khonsou), Arc supérieur et Tonnerre prolongé (Seth), Venin
-concentré (Serket), Plume de Maât (Anubis), Griffes affûtées (Bastet), Égide renforcée (Neith).
+concentré (Serket), Plume de Maât (Anubis), Griffes affûtées (Bastet), Bouclier renforcé (Neith).
+
+**Fidélité à la mythologie (0.45.0)** : vérifiée dieu par dieu.
+
+- Anubis tient la balance où l'on pèse le cœur (ce n'est pas lui qui juge : c'est Osiris) ; Ammit dévore les cœurs
+  trop lourds (elle ne les pèse pas).
+- Seth défend la barque de Râ contre Apophis ; Serket protège des piqûres et aide à lier Apophis.
+- Isis a reconstitué Osiris et a arraché à Râ son nom secret ; Neith, dame de Saïs, déesse de la guerre et du tissage.
+- Khonsou (« le voyageur ») est la lune ; sa glace est une **invention du jeu** : l'Égypte n'a pas de dieu du froid,
+  on la rattache au froid des nuits du désert.
+- Mots grecs ou modernes retirés : « Égide » devient **Bouclier de Saïs** ; « Neuf vies » devient **Gardienne de Bubastis**.
 
 ## 5. Systèmes nommés 🟡
 

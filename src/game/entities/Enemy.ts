@@ -411,7 +411,7 @@ export class Enemy {
       for (let i = 0; i < s.chill; i++) g.fillRect(this.x - r + i * 4, this.y + r + 3, 2, 2);
     }
     if (stunned) {
-      // Étoiles qui tournent au-dessus de la tête (Thor).
+      // Étoiles qui tournent au-dessus de la tête (Seth).
       g.fillStyle(GODS.seth.color, 1);
       for (let i = 0; i < 3; i++) {
         const a = now / 200 + (i * Math.PI * 2) / 3;
@@ -441,7 +441,7 @@ export class Enemy {
       );
     }
     if (now < s.weakenUntil) {
-      // Affaibli (Athéna) : petit bouclier fendu à gauche de la tête.
+      // Affaibli (Neith) : petit bouclier fendu à gauche de la tête.
       const wx = this.x - r - 4;
       const wy = this.y - r - 2;
       g.lineStyle(1.5, GODS.neith.color, 0.95);

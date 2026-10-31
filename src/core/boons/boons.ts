@@ -261,7 +261,7 @@ export interface CombatProfile {
   stormStun: number;
   /** Les explosions de malédiction exécutent sous ce seuil (duo). */
   judgementDay: number;
-  /** Foudre en chaîne quand l'égide bloque (dégâts, duo). */
+  /** Foudre en chaîne quand le Bouclier de Saïs bloque (dégâts, duo). */
   aegisStorm: number;
   /** Les explosions de malédiction enflamment (duo). */
   blackSun?: { dps: number; durationMs: number };

@@ -57,7 +57,7 @@ export interface RunState {
   perks: RunPerks;
   /** Niveau de forge de l'arme, figé au début de la run. */
   weaponLevel: number;
-  /** « Dernier souffle » de Hel déjà utilisé pendant cette run. */
+  /** « Seconde vie » d'Isis déjà utilisée pendant cette run. */
   lastBreathUsed: boolean;
   /** Mesures d'urgence actives pour cette run (figées au départ). */
   heat: HeatLevels;

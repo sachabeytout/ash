@@ -45,7 +45,7 @@ export type BoonEffect =
   | { type: 'speed'; bonus: number }
   | { type: 'critDamage'; bonus: number }
   // ---------- Neith : protection ----------
-  /** Égide : les premiers coups reçus dans chaque salle sont bloqués. */
+  /** Bouclier de Saïs : les premiers coups reçus dans chaque salle sont bloqués. */
   | { type: 'aegis'; charges: number }
   /** Les ennemis touchés font moins de dégâts un moment. */
   | { type: 'weaken'; on: Trigger; reduction: number; durationMs: number }
@@ -81,7 +81,7 @@ export type BoonEffect =
   | { type: 'executeBonus'; bonus: number }
   | { type: 'arrowCount'; bonus: number }
   | { type: 'curseDamage'; bonus: number }
-  /** Duo Neith + Seth : quand l'égide bloque un coup, la foudre frappe en chaîne. */
+  /** Duo Neith + Seth : quand le Bouclier de Saïs bloque un coup, la foudre frappe en chaîne. */
   | { type: 'aegisStorm'; damage: number }
   /** Duo Râ + Serket : les explosions du dard enflamment les ennemis touchés. */
   | { type: 'blackSun'; dps: number; durationMs: number }

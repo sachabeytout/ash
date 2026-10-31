@@ -187,9 +187,9 @@ interface Door {
 /** Durée de la présentation d'un boss (caméra + nom à l'écran). */
 const BOSS_PRESENT_MS = 2300;
 
-/** Distance au-delà de laquelle un ennemi est « loin » (Artémis). */
+/** Distance au-delà de laquelle un ennemi est « loin » (effet `far`, aucun don actuel). */
 const FAR_DISTANCE = 70;
-/** Flèche d'Artémis (projectile de don : pas d'effets d'arme). */
+/** Flèche de don (projectile sans effets d'arme ; aucun don actuel ne la lance). */
 const ARROW = {
   damage: 5,
   speed: 380,
@@ -265,7 +265,7 @@ export class RunScene extends Phaser.Scene {
   private shotsP!: PlayerShots;
   /** Disque rattrapé : le prochain lancer frappe plus fort. */
   private discCharged = false;
-  /** Égide d'Athéna (coups bloqués restants dans la salle) et bouclier en PV. */
+  /** Bouclier de Saïs de Neith (coups bloqués restants dans la salle) et bouclier en PV. */
   private aegisLeft = 0;
   /** Identifiants des ripostes (négatifs : distincts des coups normaux). */
   private parryId = 0;
@@ -1497,7 +1497,7 @@ export class RunScene extends Phaser.Scene {
     }
   }
 
-  /** Duo Râ + Skadi : un ennemi gelé qui brûle explose (une fois par gel). */
+  /** Duo Râ + Khonsou : un ennemi gelé qui brûle explose (une fois par gel). */
   private checkThermalShock(e: Hittable): void {
     const shock = this.profile.thermalShock;
     if (!shock || !e.alive || e.status.shocked) return;
@@ -1631,7 +1631,7 @@ export class RunScene extends Phaser.Scene {
     }
   }
 
-  /** Athéna : le dash détruit les projectiles ennemis proches. */
+  /** Neith : le dash détruit les projectiles ennemis proches. */
   private deflectShots(at: Vec2, radius: number): void {
     for (const s of this.shots) {
       if (!s.sprite.active) continue;
@@ -2152,7 +2152,7 @@ export class RunScene extends Phaser.Scene {
     if (cursed) this.curseExplosion(curse);
   }
 
-  /** Malédiction de Hel : l'ennemi maudit explose à sa mort. */
+  /** Dard d'adieu de Serket : l'ennemi maudit explose à sa mort. */
   private curseExplosion(c: { damage: number; radius: number; x: number; y: number }): void {
     this.lightning.ring(c, c.radius, GODS.serket.color);
     this.juice.burst(c.x, c.y, GODS.serket.color, 14);
@@ -2286,7 +2286,7 @@ export class RunScene extends Phaser.Scene {
     }
     // Mesure « Surveillance » : les ennemis frappent plus fort.
     amount = Math.round(amount * this.heat.enemyDamage);
-    // Athéna : un ennemi affaibli frappe moins fort ; l'égide bloque ; le bouclier absorbe.
+    // Neith : un ennemi affaibli frappe moins fort ; le Bouclier de Saïs bloque ; le bouclier absorbe.
     if (from instanceof Enemy)
       amount = Math.max(1, Math.round(amount * weakenFactor(from.status, this.sim)));
     if (this.aegisLeft > 0) {
@@ -2295,7 +2295,7 @@ export class RunScene extends Phaser.Scene {
       this.lightning.ring(this.player, 22, GODS.neith.color);
       this.juice.burst(this.player.x, this.player.y, GODS.neith.color, 12);
       sfx.block();
-      // Duo « Égide orageuse » : la foudre part de l'ennemi le plus proche et rebondit.
+      // Duo « Bouclier d'orage » : la foudre part de l'ennemi le plus proche et rebondit.
       const storm = this.profile.aegisStorm;
       const near = storm ? this.nearestEnemy(this.player, 160) : undefined;
       if (near) {
@@ -2331,7 +2331,7 @@ export class RunScene extends Phaser.Scene {
     sfx.hurt();
     this.ui.flashHurt();
     if (killed && this.profile.lastBreath > 0 && !this.run.lastBreathUsed) {
-      // Hel : « Dernier souffle », une fois par run.
+      // Isis : « Seconde vie », une fois par run.
       this.run.lastBreathUsed = true;
       this.run.hp = Math.min(this.run.maxHp, this.profile.lastBreath);
       this.ui.showBanner(t('boon.isis_last'), '');

@@ -337,7 +337,7 @@ export function ensureGameTextures(scene: Phaser.Scene): void {
     g.fillStyle(0xff9f6a).fillRect(0, 1, 9, 2);
     g.fillStyle(0xfff2d0).fillTriangle(8, 0, 12, 2, 8, 4);
   });
-  // Flèche d'Artémis : argent de lune, avec empennage (forme distincte du carreau).
+  // Flèche de don : argent de lune, avec empennage (forme distincte du carreau).
   shapeTexture(scene, 'p_arrow', 14, 6, (g) => {
     g.fillStyle(GODS.neith.color).fillRect(2, 2, 9, 2);
     g.fillStyle(0xffffff).fillTriangle(10, 0, 14, 3, 10, 6);

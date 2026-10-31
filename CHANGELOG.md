@@ -2,6 +2,26 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.45.0 — Fidèles à la mythologie
+
+J'ai relu tous les textes des dieux et corrigé ce qui ne collait pas à la vraie mythologie égyptienne :
+
+- **Anubis** n'est pas le juge des morts (c'est Osiris) : il est le **gardien de la balance** où l'on pèse le **cœur**. Son don « Pesée des âmes » devient **Pesée du cœur**.
+- **Ammit** ne pèse pas les cœurs : elle **dévore** ceux que la balance a jugés trop lourds. Sa fiche la décrit enfin comme dans les textes (tête de crocodile, corps de lion, croupe d'hippopotame).
+- **Neith** : « Égide » est un mot grec. Ses dons deviennent **Bouclier de Saïs**, **Bouclier renforcé** et **Bouclier d'orage**.
+- **Bastet** : « Neuf vies » est un dicton moderne. Le don devient **Gardienne de Bubastis** (sa ville sacrée).
+- **Sobek** : « Le crocodile du Nil ».
+- Les fiches des dieux (Archives de Thot) racontent maintenant de **vrais faits** :
+  - Seth défend la barque de Râ contre Apophis ;
+  - Isis a reconstitué Osiris et a arraché à Râ son nom secret ;
+  - le nom de Khonsou veut dire « le voyageur » ;
+  - Sobek était vénéré au Fayoum.
+- Quelques répliques ajustées (Anubis pèse les **cœurs**, Thot tient les registres).
+
+Rien ne change dans les combats.
+
+**Quoi tester** : ouvre les Archives de Thot, onglet Dieux. Les fiches te plaisent-elles ? Une réplique sonne-t-elle faux ?
+
 ## 0.44.0 — Les 9 dieux d'Égypte
 
 - **Les dieux sont maintenant tous égyptiens**, chacun avec un seul pouvoir bien à lui :
