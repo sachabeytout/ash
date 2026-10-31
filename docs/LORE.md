@@ -8,7 +8,11 @@
 
 ## 1. L'idée en une phrase
 
-**Ash est la cendre, Anii est l'étincelle. Séparés, ils ne sont rien. Ensemble, ils deviennent le Bennu, l'oiseau de feu qui fait se lever le soleil.** 🟡
+**Ash est la cendre, Anii est l'étincelle. Ensemble, ils sont la libération : le renouveau.** ✅
+
+Le Bennu qui naît de leurs flammes à la fin **n'est pas un nouveau dieu qu'ils deviennent**. C'est un **symbole** : la
+preuve que tout peut renaître, un espoir et une solution pour l'Égypte et pour tous les mondes. Le symbole prend la
+forme d'un dieu, mais ce qui compte, c'est ce qu'il apporte. ✅
 
 C'est pour ça qu'Ash est un dieu « sans pouvoir » ✅ : son vrai pouvoir n'existe qu'avec Anii. Seul, il ne sait faire
 qu'une chose : **renaître**. Les autres pouvoirs, ce sont les dieux qui les lui prêtent (les dons).
@@ -158,9 +162,10 @@ rien perdre : c'est **le Livre d'Anii**.
 1. Le dernier anneau se brise. Anii est libre, mais elle ne sait plus qui est Ash.
 2. Il lui parle et lui raconte toutes leurs vies, comme elle l'a toujours fait pour lui. Les rôles sont inversés.
 3. Elle ne se souvient de rien, mais elle l'embrasse quand même.
-4. Leurs flammes se mêlent, et **le vrai Bennu** apparaît du feu.
+4. Leurs flammes se mêlent, et **le vrai Bennu** apparaît du feu : pas un dieu de plus, mais le **symbole du
+   renouveau**, le signe que le monde peut renaître.
 5. Ash et Anii disparaissent peu à peu derrière ce feu, avant de **redevenir des cendres**.
-6. Le Bennu pousse un cri, Râ retrouve son âme, et le soleil se lève sur l'Égypte.
+6. Le Bennu pousse un cri : l'espoir revient. Râ retrouve ses forces, et le soleil se lève sur l'Égypte.
 
 **Après la fin 🟡 :** les cendres restent dans la cage. On peut continuer à jouer avec les Mesures d'urgence. Peut-être
 qu'un jour, dans un autre monde, une étincelle viendra les rallumer…
