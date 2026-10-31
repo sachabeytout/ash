@@ -42,7 +42,7 @@ export interface DoorReward {
   god?: GodId;
 }
 
-/** Les dieux du panthéon du biome sortent 3 fois plus souvent (nordiques au Givre-Serveur…). */
+/** Les dieux du panthéon du biome sortent 3 fois plus souvent (aujourd'hui tous égyptiens : sans effet). */
 const FAVORED_WEIGHT = 3;
 
 export function rollGod(rng: Rng, favored?: Pantheon): GodId {

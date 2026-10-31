@@ -116,14 +116,14 @@ export const DIALOGUES: readonly DialogueDef[] = [
     lines: [line('vesper', 'story.boss_fenrir.1')],
   },
   {
-    id: 'boss_talos',
-    condition: { diedToBossOf: 2 },
+    id: 'boss_talos', // Apophis (identifiant historique)
+    condition: { diedToBossOf: 3 },
     priority: 70,
     lines: [line('brokk', 'story.boss_talos.1')],
   },
   {
     id: 'boss_oiseleur',
-    condition: { diedToBossOf: 3 },
+    condition: { diedToBossOf: 2 },
     priority: 70,
     lines: [line('aelia', 'story.boss_oiseleur.1'), line('vesper', 'story.boss_oiseleur.2')],
   },
@@ -135,14 +135,14 @@ export const DIALOGUES: readonly DialogueDef[] = [
     lines: [line('aelia', 'story.reach_frost.1')],
   },
   {
-    id: 'reach_olympus',
-    condition: { reachedBiome: 2 },
+    id: 'reach_olympus', // la Douât (identifiant historique)
+    condition: { reachedBiome: 3 },
     priority: 61,
     lines: [line('thot', 'story.reach_olympus.1')],
   },
   {
     id: 'reach_aviary',
-    condition: { reachedBiome: 3 },
+    condition: { reachedBiome: 2 },
     priority: 62,
     lines: [line('vesper', 'story.reach_aviary.1')],
   },

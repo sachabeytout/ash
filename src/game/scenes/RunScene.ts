@@ -207,7 +207,7 @@ const BOSS_PRESENT_MS = 2300;
 const FLOOR_COLOR: Record<BiomeDef['theme']['floor'], number> = {
   floor: 0x110e1e,
   floorIce: 0x0d1828,
-  floorMarble: 0x1a160e,
+  floorMarble: 0x140a18,
   floorAviary: 0x130f1d,
   floorRoots: 0x20160e,
 };

@@ -195,48 +195,64 @@ export function ensureGameTextures(scene: Phaser.Scene): void {
     g.fillStyle(0x0b0a10).fillRect(39, 23, 8, 1.5);
   });
 
-  // Olympe Corporatif. Hoplite-Sécurité : casque à crête, lance pointée vers la droite.
+  // Momie de garde (Douât) : tête bandée, yeux sombres, lance pointée vers la droite.
   shapeTexture(scene, 'hoplite', 22, 16, (g) => {
     g.fillStyle(0x1a1610).fillCircle(8, 8, 8);
-    g.fillStyle(0xe8d9a8).fillCircle(8, 8, 6.5);
-    g.fillStyle(0x9a8450).fillRect(2, 2, 12, 3);
-    g.fillStyle(0x1a1610).fillRect(5, 7, 6, 2);
-    g.fillStyle(0xc8c8d0).fillRect(12, 7, 9, 2);
-    g.fillStyle(0xf2f2f8).fillTriangle(19, 5, 22, 8, 19, 11);
+    g.fillStyle(0xe8dcc0).fillCircle(8, 8, 6.5);
+    g.lineStyle(1, 0xb8aa88, 1)
+      .lineBetween(2, 5, 14, 4)
+      .lineBetween(2, 9, 14, 10)
+      .lineBetween(3, 12, 13, 13);
+    g.fillStyle(0x1a1610).fillRect(5, 6, 2, 2).fillRect(9, 6, 2, 2);
+    g.fillStyle(0xc8a050).fillRect(12, 7, 9, 2);
+    g.fillStyle(0xffe08a).fillTriangle(19, 5, 22, 8, 19, 11);
   });
-  // Harpie-drone : ailes de verre en V, œil central.
+  // Ba égaré (Douât) : oiseau à tête humaine, l'âme d'un mort qui erre.
   shapeTexture(scene, 'harpy', 18, 14, (g) => {
-    g.fillStyle(0x0d1820).fillTriangle(0, 0, 9, 9, 0, 14).fillTriangle(18, 0, 9, 9, 18, 14);
-    g.fillStyle(0x9fe0ff).fillTriangle(1, 2, 8, 8, 1, 12).fillTriangle(17, 2, 10, 8, 17, 12);
-    g.fillStyle(0xf2fbff).fillCircle(9, 8, 2.5);
+    g.fillStyle(0x140f1c).fillTriangle(0, 0, 9, 9, 0, 14).fillTriangle(18, 0, 9, 9, 18, 14);
+    g.fillStyle(0xc8a0ff).fillTriangle(1, 2, 8, 8, 1, 12).fillTriangle(17, 2, 10, 8, 17, 12);
+    g.fillStyle(0xd8a070).fillCircle(9, 7, 3);
+    g.fillStyle(0x2a2048).fillRect(7, 4, 4, 2);
+    g.fillStyle(0x140f1c).fillRect(8, 7, 1, 1).fillRect(10, 7, 1, 1);
   });
-  // Oracle : visage voilé dans un cercle de lumière, œil-lentille.
+  // Prophète de l'Isfet (Douât) : visage voilé, œil-lentille, serpent dressé sur le front.
   shapeTexture(scene, 'oracle', 16, 16, (g) => {
     g.fillStyle(0x140f24).fillCircle(8, 8, 8);
-    g.fillStyle(0xc8b8ff).fillCircle(8, 8, 6.5);
-    g.fillStyle(0x6a58b8).fillRect(3, 9, 10, 4);
+    g.fillStyle(0xb8a0e8).fillCircle(8, 8, 6.5);
+    g.fillStyle(0x4a3478).fillRect(3, 9, 10, 4);
     g.fillStyle(0xffffff).fillCircle(8, 6, 2);
+    g.fillStyle(0xffb02e).fillRect(7.5, 0, 1, 3).fillRect(7, 0, 2, 1);
   });
-  // Minotaure-Ω (élite) : tête de taureau, cornes dorées.
+  // Gardien des portes (élite, Douât) : tête sombre, yeux de braise, deux lames croisées au-dessus.
   shapeTexture(scene, 'minotaur', 26, 24, (g) => {
     g.fillStyle(0x1a120c).fillCircle(13, 13, 11);
-    g.fillStyle(0xd8b48a).fillCircle(13, 13, 9);
-    g.fillStyle(0xffe08a).fillTriangle(2, 10, 0, 0, 7, 6).fillTriangle(24, 10, 26, 0, 19, 6);
-    g.fillStyle(0x8a6a48).fillRoundedRect(8, 15, 10, 6, 2);
-    g.fillStyle(0x1a120c).fillRect(10, 17, 2, 2).fillRect(14, 17, 2, 2);
-    g.fillStyle(0xf6f2ff).fillRect(8, 10, 3, 2).fillRect(15, 10, 3, 2);
+    g.fillStyle(0x4a3858).fillCircle(13, 13, 9);
+    g.fillStyle(0xffe08a).fillTriangle(1, 1, 4, 0, 13, 10).fillTriangle(25, 1, 22, 0, 13, 10);
+    g.fillStyle(0x1a120c).fillRoundedRect(8, 15, 10, 6, 2);
+    g.fillStyle(0xffb02e).fillRect(8, 11, 3, 2).fillRect(15, 11, 3, 2);
   });
-  // Talos : colosse de bronze, visière lumineuse (les yeux tournés vers la droite).
-  shapeTexture(scene, 'talos', 56, 52, (g) => {
-    g.fillStyle(0x16100a).fillRoundedRect(4, 2, 46, 48, 10);
-    g.fillStyle(0xb8864a).fillRoundedRect(6, 4, 42, 44, 9);
-    g.fillStyle(0x8a5e30).fillRect(10, 30, 34, 6).fillRect(24, 8, 6, 40);
-    g.fillStyle(0x16100a).fillRect(30, 14, 18, 8);
-    g.fillStyle(0xffe08a).fillRect(32, 16, 14, 4);
-    g.fillStyle(0xd8a868).fillCircle(10, 10, 4).fillCircle(10, 42, 4);
-    g.fillStyle(0xffe08a).fillRect(50, 17, 6, 2);
+  // Apophis : le grand serpent enroulé (anneaux d'écailles sombres), tête dressée vers la droite,
+  // œil d'or, crochets. Jamais le rouge des dangers.
+  shapeTexture(scene, 'apophis', 56, 52, (g) => {
+    g.fillStyle(0x0c0812).fillCircle(24, 28, 23);
+    g.fillStyle(0x3a2458).fillCircle(24, 28, 21);
+    g.fillStyle(0x2a1840).fillCircle(24, 28, 15);
+    g.fillStyle(0x3a2458).fillCircle(24, 28, 10);
+    g.fillStyle(0x2a1840).fillCircle(24, 28, 5);
+    g.lineStyle(1, 0x8a6ab8, 0.8)
+      .strokeCircle(24, 28, 18)
+      .strokeCircle(24, 28, 12.5)
+      .strokeCircle(24, 28, 7.5);
+    // Cou et tête.
+    g.fillStyle(0x0c0812).fillRoundedRect(30, 8, 12, 22, 5);
+    g.fillStyle(0x3a2458).fillRoundedRect(31, 9, 10, 20, 4);
+    g.fillStyle(0x0c0812).fillRoundedRect(34, 2, 22, 14, 6);
+    g.fillStyle(0x4a3070).fillRoundedRect(35, 3, 20, 12, 5);
+    g.fillStyle(0xffe08a).fillEllipse(44, 7, 6, 4);
+    g.fillStyle(0x0c0812).fillRect(43.5, 5.5, 1, 3);
+    g.fillStyle(0xf6f2ff).fillTriangle(50, 14, 52, 14, 51, 18).fillTriangle(46, 14, 48, 14, 47, 17);
   });
-  // Sol de l'Olympe : marbre sombre, veines dorées, joints de verre.
+  // Sol de la Douât (texture de réserve ; le sol affiché est uni).
   shapeTexture(scene, 'floorMarble', 32, 32, (g) => {
     g.fillStyle(0x15120c).fillRect(0, 0, 32, 32);
     g.fillStyle(0x1c1810).fillRect(1, 1, 30, 30);
@@ -375,7 +391,7 @@ export function ensureGameTextures(scene: Phaser.Scene): void {
     g.fillStyle(0xffffff).fillRect(3, 3, 3, 3);
   });
 
-  // Sol du Givre-Serveur : dalles bleu nuit, joints givrés, petites LED de serveur.
+  // Sol du Nil de minuit (texture de réserve ; le sol affiché est uni).
   shapeTexture(scene, 'floorIce', 32, 32, (g) => {
     g.fillStyle(0x0a1220).fillRect(0, 0, 32, 32);
     g.fillStyle(0x0e1a2c).fillRect(1, 1, 30, 30);

@@ -1,4 +1,4 @@
-import { AMMIT, OISELEUR, SHEZMU, TALOS, type BossDef, type BossId } from './bosses';
+import { AMMIT, APOPHIS, OISELEUR, SHEZMU, type BossDef, type BossId } from './bosses';
 
 /**
  * Variantes des boss : débloquées après la première victoire contre le boss, puis tirées au hasard
@@ -51,29 +51,7 @@ export const BOSS_VARIANTS: Record<BossId, BossDef> = {
     reward: { xp: Math.round(SHEZMU.reward.xp * 1.3), weaponParts: SHEZMU.reward.weaponParts + 1 },
   },
 
-  // Talos en surchauffe : il bondit malgré son poids et frappe au corps à corps.
-  talos: {
-    ...TALOS,
-    nameKey: 'boss.talos.variant',
-    maxHp: Math.round(TALOS.maxHp * 1.15),
-    tint: 0xffb070,
-    weights: {
-      1: { sweep: 3, quake: 2, icefall: 2, charge: 1, bite: 2 },
-      2: { sweep: 3, quake: 2, icefall: 2, charge: 1, bite: 2, leap: 2, summon: 1 },
-    },
-    bite: {
-      telegraphMs: 750,
-      activeMs: 150,
-      recoveryMs: 700,
-      damage: 16,
-      range: 62,
-      arcDeg: 120,
-      lunge: 18,
-    },
-    leap: { telegraphMs: 1000, activeMs: 480, recoveryMs: 950, damage: 18, radius: 48 },
-    reward: { xp: Math.round(TALOS.reward.xp * 1.3), weaponParts: TALOS.reward.weaponParts + 1 },
-  },
-  // L'Oiseleur au Serment brisé : il frappe de près et appelle plus d'oiseaux.
+  // L'Oiseleur implacable : il frappe de près et appelle plus d'oiseaux.
   oiseleur: {
     ...OISELEUR,
     nameKey: 'boss.oiseleur.variant',
@@ -96,6 +74,23 @@ export const BOSS_VARIANTS: Record<BossId, BossDef> = {
     reward: {
       xp: Math.round(OISELEUR.reward.xp * 1.3),
       weaponParts: OISELEUR.reward.weaponParts + 1,
+    },
+  },
+  // Apophis, Dévoreur du soleil : ses anneaux attirent Ash, et il bondit sur sa proie.
+  apophis: {
+    ...APOPHIS,
+    nameKey: 'boss.apophis.variant',
+    maxHp: Math.round(APOPHIS.maxHp * 1.15),
+    tint: 0xd8b8ff,
+    weights: {
+      1: { bite: 3, sweep: 2, charge: 2, quake: 1, hook: 2 },
+      2: { bite: 2, sweep: 2, charge: 2, quake: 2, icefall: 2, hook: 2, leap: 1, summon: 1 },
+    },
+    hook: { telegraphMs: 850, activeMs: 300, recoveryMs: 750, damage: 9, distance: 230, width: 20 },
+    leap: { telegraphMs: 1000, activeMs: 480, recoveryMs: 950, damage: 18, radius: 48 },
+    reward: {
+      xp: Math.round(APOPHIS.reward.xp * 1.3),
+      weaponParts: APOPHIS.reward.weaponParts + 1,
     },
   },
 };

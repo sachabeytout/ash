@@ -184,8 +184,8 @@ export const ENEMIES: Record<EnemyId, EnemyDef> = {
     elite: { xp: 15 },
   },
 
-  // ---------- Givre-Serveur ----------
-  // Loup-relais : rapide et fragile, chasse en meute, morsure bondissante.
+  // ---------- Le Nil de minuit (identifiants historiques) ----------
+  // Chacal de nuit : rapide et fragile, chasse en meute, morsure bondissante.
   wolfbot: {
     id: 'wolfbot',
     nameKey: 'enemy.wolfbot',
@@ -202,7 +202,7 @@ export const ENEMIES: Record<EnemyId, EnemyDef> = {
     attack: { kind: 'melee', triggerRange: 50, range: 26, arcDeg: 90, lunge: 40 },
     threat: 1,
   },
-  // Givreur : trois éclats de glace en éventail.
+  // Prêtresse du froid : trois éclats de glace en éventail.
   frostcaster: {
     id: 'frostcaster',
     nameKey: 'enemy.frostcaster',
@@ -226,7 +226,7 @@ export const ENEMIES: Record<EnemyId, EnemyDef> = {
     },
     threat: 2,
   },
-  // Gardien runique : lent et solide, ses runes explosent sous les pieds.
+  // Graveur de hiéroglyphes : lent et solide, ses glyphes explosent sous les pieds.
   runewarden: {
     id: 'runewarden',
     nameKey: 'enemy.runewarden',
@@ -243,7 +243,7 @@ export const ENEMIES: Record<EnemyId, EnemyDef> = {
     attack: { kind: 'runes', triggerRange: 170, count: 3, radius: 18, spread: 34 },
     threat: 3,
   },
-  // Élite : l'Einherjar, guerrier au bouclier. De face, presque invulnérable ; il faut le prendre à revers.
+  // Élite : le Medjay maudit, garde au bouclier. De face, presque invulnérable ; il faut le prendre à revers.
   einherjar: {
     id: 'einherjar',
     nameKey: 'enemy.einherjar',
@@ -263,8 +263,8 @@ export const ENEMIES: Record<EnemyId, EnemyDef> = {
     shield: { arcDeg: 100, blocked: 0.15, turnRate: 2.2 },
   },
 
-  // ---------- Olympe Corporatif ----------
-  // Hoplite-Sécurité : estoc de lance long et étroit (on l'esquive sur le côté).
+  // ---------- La Douât (identifiants historiques) ----------
+  // Momie de garde : estoc de lance long et étroit (on l'esquive sur le côté).
   hoplite: {
     id: 'hoplite',
     nameKey: 'enemy.hoplite',
@@ -281,7 +281,7 @@ export const ENEMIES: Record<EnemyId, EnemyDef> = {
     attack: { kind: 'melee', triggerRange: 64, range: 62, arcDeg: 30, lunge: 30 },
     threat: 2,
   },
-  // Harpie-drone : pique en ligne droite sur une courte distance.
+  // Ba égaré : pique en ligne droite sur une courte distance.
   harpy: {
     id: 'harpy',
     nameKey: 'enemy.harpy',
@@ -298,7 +298,7 @@ export const ENEMIES: Record<EnemyId, EnemyDef> = {
     attack: { kind: 'charge', triggerRange: 120, distance: 120, width: 14 },
     threat: 1,
   },
-  // Oracle : rayon laser annoncé par une ligne fine.
+  // Prophète de l'Isfet : rayon annoncé par une ligne fine.
   oracle: {
     id: 'oracle',
     nameKey: 'enemy.oracle',
@@ -315,7 +315,7 @@ export const ENEMIES: Record<EnemyId, EnemyDef> = {
     attack: { kind: 'beam', preferredDistance: 130, length: 260, width: 12 },
     threat: 2,
   },
-  // Élite : le Minotaure-Ω enchaîne trois charges ; chacune est réannoncée.
+  // Élite : le Gardien des portes enchaîne trois charges ; chacune est réannoncée.
   minotaur: {
     id: 'minotaur',
     nameKey: 'enemy.minotaur',
@@ -400,7 +400,7 @@ export const ENEMIES: Record<EnemyId, EnemyDef> = {
     attack: { kind: 'runes', triggerRange: 170, count: 2, radius: 24, spread: 40 },
     threat: 3,
   },
-  // Élite : le Héraut du Serment. Bouclier de face, rayon annoncé : on le contourne entre deux rayons.
+  // Élite : le Héraut de l'Oiseleur. Bouclier de face, rayon annoncé : on le contourne entre deux rayons.
   herald: {
     id: 'herald',
     nameKey: 'enemy.herald',

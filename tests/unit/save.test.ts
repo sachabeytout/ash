@@ -205,3 +205,25 @@ describe('Shezmu remplace Fenrir (v17 → v18)', () => {
     expect(save.meta.records.variantsBeaten).toEqual(['shezmu', 'ammit']);
   });
 });
+
+describe('la Douât et Apophis (v18 → v19)', () => {
+  it('une run dans l’Olympe continue dans la Douât, une run dans la Volière reste dans la Volière', () => {
+    const inOlympus = migrate({
+      version: 18,
+      meta: { codex: { 'boss.talos': 1 }, records: { variantsBeaten: ['talos'] } },
+      settings: {},
+      run: { ...newRun(3, 'katana', 50, 0, 'ra'), biome: 2, room: 4, eventTaken: 2 },
+    });
+    expect(inOlympus.run?.biome).toBe(3);
+    expect(inOlympus.run?.eventTaken).toBe(3);
+    expect(inOlympus.meta.codex['boss.apophis']).toBe(1);
+    expect(inOlympus.meta.records.variantsBeaten).toEqual(['apophis']);
+    const inAviary = migrate({
+      version: 18,
+      meta: {},
+      settings: {},
+      run: { ...newRun(3, 'katana', 50, 0, 'ra'), biome: 3, room: 2 },
+    });
+    expect(inAviary.run?.biome).toBe(2);
+  });
+});

@@ -176,11 +176,7 @@ qu'un jour, dans un autre monde, une étincelle viendra les rallumer…
 
 - ✅ **Personnages (0.48.0) :** Aelia est devenue Anii, Brokk est devenu Ptah (en attendant ta réponse) ; dialogues de
   la Cage, répliques, Archives et vraie fin réécrits. Reste à faire : les lieux et les boss (étape 3).
-- **Mondes :** ✅ Bas-Fonds d'Héliopolis et Nil de minuit (0.49.0) ; reste l'Olympe → la Douât (étape 3c).
-- **Boss :**
-  - Ammit reste.
-  - Fenrir-Ω et Talos sont remplacés par Shezmu.
-  - L'Oiseleur reste.
-  - Apophis est ajouté comme boss final.
+- **Mondes :** ✅ Bas-Fonds d'Héliopolis, Nil de minuit (0.49.0), Volière en 3e, Douât en 4e (0.51.0).
+- **Boss :** ✅ Ammit, Shezmu (0.50.0), l'Oiseleur, Apophis boss final (0.51.0).
 - **Mythe de l'Aube, Nox, Consortium, Serment des dieux, Lanterne :** l'ancien lore v0.2 est remplacé par ce document.
 - Le jeu garde son **style néon** : l'Égypte d'ASH est une Égypte de néon et de nuit, où le soleil ne se lève presque plus.

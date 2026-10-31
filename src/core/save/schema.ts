@@ -6,7 +6,7 @@ import type { HeatLevels } from '../heat';
 import type { RunState } from '../run/state';
 
 /** Version actuelle du format. Tout changement de format = nouvelle version + migration (voir migrations.ts). */
-export const SAVE_VERSION = 18;
+export const SAVE_VERSION = 19;
 
 /** Progression permanente (conservée entre les runs). */
 export interface MetaState {

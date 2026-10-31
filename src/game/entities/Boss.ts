@@ -611,7 +611,7 @@ export class Boss implements Hittable {
             g.lineBetween(z.x - r * 0.26, z.y + r * 0.05, z.x, z.y - r * 0.45);
             g.lineBetween(z.x + r * 0.26, z.y + r * 0.05, z.x, z.y - r * 0.45);
           } else if (this.attack === 'icefall' && def.icefall?.glyph === 'cross') {
-            // Croix de débris (Talos).
+            // Croix de débris (Ammit l'Affamée).
             g.lineBetween(z.x - r * 0.45, z.y - r * 0.45, z.x + r * 0.45, z.y + r * 0.45);
             g.lineBetween(z.x - r * 0.45, z.y + r * 0.45, z.x + r * 0.45, z.y - r * 0.45);
           } else if (this.attack === 'icefall') {

@@ -217,6 +217,35 @@ const MIGRATIONS: Record<number, (save: Raw) => Raw> = {
       meta: { ...meta, codex, records: { ...records, variantsBeaten: beaten } },
     };
   },
+  // v18 → v19 : la Volière devient le 3e monde, la Douât (Apophis) remplace l'Olympe (Talos) en 4e.
+  // Une run en cours garde son monde ; la fiche et la variante battue de Talos passent à Apophis.
+  18: (old) => {
+    const meta = isObject(old.meta) ? old.meta : {};
+    const codex = isObject(meta.codex) ? { ...meta.codex } : {};
+    if (typeof codex['boss.talos'] === 'number') {
+      codex['boss.apophis'] = num(codex['boss.apophis']) + codex['boss.talos'];
+      delete codex['boss.talos'];
+    }
+    const records = isObject(meta.records) ? meta.records : {};
+    const beaten = Array.isArray(records.variantsBeaten)
+      ? records.variantsBeaten.map((id) => (id === 'talos' ? 'apophis' : id))
+      : records.variantsBeaten;
+    const swap = (b: unknown) => (b === 2 ? 3 : b === 3 ? 2 : b);
+    const run = isObject(old.run)
+      ? {
+          ...old.run,
+          biome: swap(old.run.biome),
+          eventTaken: swap(old.run.eventTaken),
+          amonBiome: swap(old.run.amonBiome),
+        }
+      : old.run;
+    return {
+      ...old,
+      version: 19,
+      meta: { ...meta, codex, records: { ...records, variantsBeaten: beaten } },
+      run,
+    };
+  },
 };
 
 function isObject(v: unknown): v is Raw {

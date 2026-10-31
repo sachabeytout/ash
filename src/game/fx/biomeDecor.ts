@@ -44,11 +44,11 @@ export function drawBiomeDecor(
     case 'frostserver':
       frostserver(ctx);
       break;
-    case 'olympus':
-      olympus(ctx);
-      break;
     case 'aviary':
       aviary(ctx);
+      break;
+    case 'douat':
+      douat(ctx);
       break;
   }
 }
@@ -227,59 +227,65 @@ function frostserver({ scene, floor, wall, arena, rng, spot, topSlots }: DecorCo
   }
 }
 
-// ---------- L'Olympe Corporatif : tours de verre ----------
-function olympus({ scene, floor, wall, arena, rng, spot, topSlots }: DecorContext): void {
-  // Tapis pourpre de l'entrée jusqu'à la porte, liseré doré.
-  const cx = arena.centerX;
-  floor.fillStyle(0x2a1a40, 0.55).fillRect(cx - 14, arena.top + 30, 28, arena.height - 30);
-  floor.lineStyle(1, 0xc8a050, 0.4).lineBetween(cx - 14, arena.top + 30, cx - 14, arena.bottom);
-  floor.lineBetween(cx + 14, arena.top + 30, cx + 14, arena.bottom);
-  // Colonnes de marbre et baies vitrées sur le mur du haut.
-  topSlots.forEach((x, i) => {
-    if (i % 2 === 0) {
-      wall.fillStyle(0xd8d0c0, 1).fillRect(x - 5, arena.top + 2, 10, 16);
-      wall
-        .fillStyle(0xb8b0a0, 1)
-        .fillRect(x - 7, arena.top + 2, 14, 3)
-        .fillRect(x - 7, arena.top + 16, 14, 3);
-      wall.lineStyle(1, 0xa89880, 1).lineBetween(x - 2, arena.top + 5, x - 2, arena.top + 16);
-      wall.lineBetween(x + 2, arena.top + 5, x + 2, arena.top + 16);
-    } else {
-      wall.fillStyle(0x7fb8e0, 0.25).fillRect(x - 14, arena.top + 2, 28, 14);
-      wall.lineStyle(1, 0xc8e8ff, 0.5).strokeRect(x - 14, arena.top + 2, 28, 14);
-      wall.lineStyle(1, 0xffffff, 0.3).lineBetween(x - 10, arena.top + 14, x - 2, arena.top + 4);
-    }
+// ---------- La Douât : le monde de la nuit, ses portes gardées et ses lacs de feu ----------
+function douat({ scene, floor, wall, arena, rng, spot, topSlots }: DecorContext): void {
+  // Portes de la nuit (pylônes) le long du mur du haut, un œil gravé au-dessus.
+  topSlots.forEach((x) => {
+    wall
+      .fillStyle(0x24142c, 1)
+      .fillTriangle(x - 13, arena.top + 18, x - 7, arena.top + 2, x - 3, arena.top + 18);
+    wall.fillTriangle(x + 13, arena.top + 18, x + 7, arena.top + 2, x + 3, arena.top + 18);
+    wall.fillStyle(0x07060d, 1).fillRect(x - 3, arena.top + 8, 6, 10);
+    wall.lineStyle(1, 0xffb02e, 0.7).strokeEllipse(x, arena.top + 5, 8, 3.5);
+    wall.fillStyle(0xffb02e, 0.9).fillCircle(x, arena.top + 5, 1);
+    blink(scene, x, arena.top + 5, 0xffb02e, 0.5, rng, true);
   });
-  // Incrustations dorées (cercles) au sol.
+  // Lacs de feu (orange, jamais le rouge des dangers), bordés de pierre.
   for (let i = 0; i < 3; i++) {
     const p = spot();
-    floor.lineStyle(1, 0xc8a050, 0.45).strokeCircle(p.x, p.y, 14).strokeCircle(p.x, p.y, 9);
+    const w = 26 + rng.int(0, 16);
+    floor.fillStyle(0x1a1018, 1).fillEllipse(p.x, p.y, w + 6, (w + 6) * 0.45);
+    floor.fillStyle(0xff8a2a, 0.35).fillEllipse(p.x, p.y, w, w * 0.4);
+    floor.fillStyle(0xffd27a, 0.35).fillEllipse(p.x - w * 0.15, p.y - 1, w * 0.35, w * 0.1);
+    blink(scene, p.x, p.y, 0xff8a2a, 0.9, rng);
   }
-  // Oliviers en pot dans les coins du bas.
-  for (const x of [arena.left + 16, arena.right - 16]) {
-    const y = arena.bottom - 16;
-    wall.fillStyle(0x8a6040, 1).fillRect(x - 6, y - 2, 12, 9);
-    wall
-      .fillStyle(0x5a7a40, 1)
-      .fillCircle(x - 4, y - 7, 5)
-      .fillCircle(x + 4, y - 8, 5)
-      .fillCircle(x, y - 12, 5);
+  // Traces sinueuses du serpent dans la poussière.
+  for (let i = 0; i < 2; i++) {
+    const a = spot(40);
+    floor.lineStyle(3, 0x1e1222, 1).beginPath();
+    floor.moveTo(a.x, a.y);
+    for (let k = 1; k <= 6; k++) floor.lineTo(a.x + k * 10, a.y + Math.sin(k * 1.3) * 7);
+    floor.strokePath();
   }
-  // Poussière dorée qui flotte.
+  // Étoiles du plafond de la nuit, reflétées au sol.
+  for (let i = 0; i < 10; i++) {
+    const p = spot(16);
+    floor.fillStyle(0xd8c8ff, 0.25 + rng.next() * 0.3).fillRect(p.x, p.y, 1.5, 1.5);
+  }
+  // Colonnes de hiéroglyphes sur les murs latéraux.
+  for (const x of [arena.left + 7, arena.right - 7]) {
+    for (let k = 0; k < 6; k++) {
+      const y = arena.top + 40 + k * 40;
+      wall.lineStyle(1, 0x6a4a7a, 0.8);
+      if (k % 3 === 0) wall.strokeEllipse(x, y, 6, 3);
+      else if (k % 3 === 1) wall.lineBetween(x - 3, y, x + 3, y).lineBetween(x, y - 3, x, y + 3);
+      else wall.strokeCircle(x, y, 2.5);
+    }
+  }
+  // Braises qui montent des lacs de feu.
   scene.add
     .particles(0, 0, 'spark', {
       x: { min: arena.left, max: arena.right },
-      y: { min: arena.top, max: arena.bottom },
-      speedY: { min: -6, max: -2 },
+      y: { min: arena.top + 30, max: arena.bottom },
+      speedY: { min: -14, max: -5 },
       speedX: { min: -3, max: 3 },
-      lifespan: 6000,
-      frequency: 260 / QUALITY_PARTICLES[settings.quality],
-      scale: { min: 0.2, max: 0.4 },
-      alpha: { start: 0, end: 0.5, ease: 'Sine.InOut' },
-      tint: 0xffe08a,
+      lifespan: 4000,
+      frequency: 320 / QUALITY_PARTICLES[settings.quality],
+      scale: { min: 0.2, max: 0.45 },
+      alpha: { start: 0.6, end: 0 },
+      tint: 0xffb02e,
     })
     .setDepth(1.4);
-  void rng;
 }
 
 // ---------- La Volière : sommet de la tour ----------

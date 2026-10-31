@@ -2,6 +2,30 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.51.0 — La Douât et Apophis (étape 3c)
+
+L'histoire est maintenant entièrement dans le jeu.
+
+- **Nouvel ordre des mondes** : Bas-Fonds d'Héliopolis, puis Nil de minuit, puis **la Volière** (qui passe en 3e position), puis **la Douât**.
+- **La Douât remplace l'Olympe.** C'est le monde de la nuit, que la barque de Râ ne traverse plus : portes gardées où brille un œil, lacs de feu, traces du serpent dans la poussière, braises qui montent et hiéroglyphes sur les murs. Ce monde compte 8 salles.
+- **Nouveaux ennemis de la Douât** (mêmes attaques que ceux de l'Olympe, nouveau look et nouveau nom) :
+  - **Ba égaré** : l'âme d'un mort, un oiseau à tête humaine ;
+  - **Momie de garde** ;
+  - **Prophète de l'Isfet** ;
+  - **Gardien des portes** (élite, deux lames croisées).
+- **Apophis, le boss final**, remplace Talos. C'est le grand serpent enroulé, à l'œil d'or.
+  - **Morsure** : il se détend et mord loin devant lui.
+  - **Coup de queue** : un large balayage.
+  - **Glissade** à travers l'arène.
+  - **Anneaux** : il se resserre, ce qui libère une onde de choc.
+  - **Phase 2** : les ténèbres tombent (cercles marqués d'un œil) et des âmes égarées accourent.
+  - Le battre, c'est **gagner la partie** et briser l'un de ses anneaux.
+- **Apophis, Dévoreur du soleil** (sa version dangereuse) : ses anneaux t'attirent comme les chaînes de Shezmu, et il bondit.
+- **L'Oiseleur**, désormais 3e boss, a un peu moins de vie et rapporte un peu moins.
+- **Ta progression est gardée** : une partie en cours reste dans le même monde, et ta progression contre Talos passe à Apophis.
+
+**Quoi tester** : va jusqu'à la Douât. L'ambiance te plaît ? Apophis est-il un bon boss final, ni trop dur ni trop facile ?
+
 ## 0.50.0 — Shezmu, le Bourreau (étape 3b)
 
 - **Nouveau boss du Nil de minuit : Shezmu, le Bourreau**, qui remplace Fenrir. Il a une tête de lion, deux lames dorées en croissant, et son **pressoir** est dressé dans un coin de l'arène.

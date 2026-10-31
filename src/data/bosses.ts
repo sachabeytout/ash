@@ -2,7 +2,7 @@ import type { EnemyId } from './enemies';
 
 export type BossAttackId =
   'bite' | 'charge' | 'quake' | 'summon' | 'leap' | 'icefall' | 'sweep' | 'hook';
-export type BossId = 'ammit' | 'shezmu' | 'talos' | 'oiseleur';
+export type BossId = 'ammit' | 'shezmu' | 'oiseleur' | 'apophis';
 
 export interface BossDef {
   id: BossId;
@@ -72,8 +72,8 @@ export interface BossDef {
     count: number;
     radius: number;
     spread: number;
-    /** Dessin dans les cercles : flocon (glace), croix (débris), filet (Oiseleur) ou goutte (pressoir). */
-    glyph?: 'flake' | 'cross' | 'net' | 'drop';
+    /** Dessin dans les cercles : flocon (glace), croix (débris), filet (Oiseleur), goutte (pressoir), œil (Apophis). */
+    glyph?: 'flake' | 'cross' | 'net' | 'drop' | 'eye';
   };
   /** Balayage : un rayon part des yeux et balaie un arc annoncé (on passe derrière, ou on le traverse en dash). */
   sweep?: {
@@ -214,64 +214,82 @@ export const SHEZMU: BossDef = {
   reward: { xp: 70, weaponParts: 3 },
 };
 
-/** Talos : le géant de bronze de l'Olympe Corporatif. Lent, massif ; son rayon balaie l'arène. */
-export const TALOS: BossDef = {
-  id: 'talos',
-  texture: 'talos',
-  nameKey: 'boss.talos',
-  titleKey: 'boss.talos.title',
-  phase2Key: 'boss.talos.phase2',
-  defeatedKey: 'boss.talos.defeated',
-  maxHp: 1400,
+/**
+ * Apophis : le grand serpent de l'Isfet, au fond de la Douât (boss final). Morsure qui se détend,
+ * coup de queue, glissade à travers l'arène, anneaux qui se resserrent en onde de choc ; en phase 2,
+ * les ténèbres tombent en gouttes et les âmes égarées accourent.
+ */
+export const APOPHIS: BossDef = {
+  id: 'apophis',
+  texture: 'apophis',
+  nameKey: 'boss.apophis',
+  titleKey: 'boss.apophis.title',
+  phase2Key: 'boss.apophis.phase2',
+  defeatedKey: 'boss.apophis.defeated',
+  maxHp: 1900,
   radius: 22,
-  speed: 34,
+  speed: 44,
   phase2At: 0.5,
   phase2Tempo: 0.8,
-  idleMs: { min: 600, max: 950 },
+  idleMs: { min: 500, max: 850 },
   weights: {
-    1: { sweep: 3, quake: 2, icefall: 2, charge: 1 },
-    2: { sweep: 3, quake: 2, icefall: 2, charge: 1, summon: 1 },
+    1: { bite: 3, sweep: 2, charge: 2, quake: 1 },
+    2: { bite: 2, sweep: 2, charge: 2, quake: 2, icefall: 2, summon: 1 },
   },
-  charge: {
-    telegraphMs: 1000,
-    activeMs: 450,
-    recoveryMs: 1000,
-    damage: 18,
-    distance: 220,
-    width: 40,
-  },
-  quake: {
-    telegraphMs: 1000,
-    recoveryMs: 750,
-    damage: 13,
-    ringSpeed: 160,
-    ringMax: 230,
-    thickness: 14,
-  },
-  summon: { telegraphMs: 900, recoveryMs: 700, enemy: 'hoplite', count: 2 },
-  icefall: {
-    telegraphMs: 1000,
+  // Morsure : le serpent se détend et frappe loin devant lui.
+  bite: {
+    telegraphMs: 700,
     activeMs: 150,
     recoveryMs: 700,
-    damage: 13,
-    count: 5,
-    radius: 22,
-    spread: 80,
-    glyph: 'cross',
+    damage: 16,
+    range: 70,
+    arcDeg: 70,
+    lunge: 40,
   },
+  // Coup de queue.
   sweep: {
     telegraphMs: 1000,
     activeMs: 900,
     recoveryMs: 800,
     damage: 15,
-    range: 190,
-    arcDeg: 150,
-    thickness: 12,
+    range: 200,
+    arcDeg: 160,
+    thickness: 14,
   },
-  reward: { xp: 90, weaponParts: 4 },
+  // Glissade à travers l'arène.
+  charge: {
+    telegraphMs: 950,
+    activeMs: 420,
+    recoveryMs: 900,
+    damage: 17,
+    distance: 260,
+    width: 34,
+  },
+  // Les anneaux se resserrent : onde de choc.
+  quake: {
+    telegraphMs: 1000,
+    recoveryMs: 750,
+    damage: 13,
+    ringSpeed: 165,
+    ringMax: 240,
+    thickness: 14,
+  },
+  // Phase 2 : les ténèbres tombent.
+  icefall: {
+    telegraphMs: 1000,
+    activeMs: 150,
+    recoveryMs: 700,
+    damage: 13,
+    count: 6,
+    radius: 22,
+    spread: 85,
+    glyph: 'eye',
+  },
+  summon: { telegraphMs: 900, recoveryMs: 700, enemy: 'harpy', count: 2 },
+  reward: { xp: 150, weaponParts: 5 },
 };
 
-/** L'Oiseleur : le dieu des filets, des cages et des serments. Boss final (interprétation originale). */
+/** L'Oiseleur : le chasseur des oiseaux des dieux, au sommet de la Volière (3e monde). */
 export const OISELEUR: BossDef = {
   id: 'oiseleur',
   texture: 'oiseleur',
@@ -279,7 +297,7 @@ export const OISELEUR: BossDef = {
   titleKey: 'boss.oiseleur.title',
   phase2Key: 'boss.oiseleur.phase2',
   defeatedKey: 'boss.oiseleur.defeated',
-  maxHp: 1800,
+  maxHp: 1500,
   radius: 18,
   speed: 52,
   phase2At: 0.5,
@@ -326,12 +344,12 @@ export const OISELEUR: BossDef = {
     arcDeg: 180,
     thickness: 10,
   },
-  reward: { xp: 150, weaponParts: 5 },
+  reward: { xp: 90, weaponParts: 4 },
 };
 
 export const BOSSES: Record<BossId, BossDef> = {
   ammit: AMMIT,
   shezmu: SHEZMU,
-  talos: TALOS,
   oiseleur: OISELEUR,
+  apophis: APOPHIS,
 };
