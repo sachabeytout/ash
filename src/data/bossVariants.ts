@@ -1,4 +1,4 @@
-import { AMMIT, FENRIR, OISELEUR, TALOS, type BossDef, type BossId } from './bosses';
+import { AMMIT, OISELEUR, SHEZMU, TALOS, type BossDef, type BossId } from './bosses';
 
 /**
  * Variantes des boss : débloquées après la première victoire contre le boss, puis tirées au hasard
@@ -29,36 +29,28 @@ export const BOSS_VARIANTS: Record<BossId, BossDef> = {
     summon: { telegraphMs: 900, recoveryMs: 700, enemy: 'prowler', count: 3 },
     reward: { xp: Math.round(AMMIT.reward.xp * 1.3), weaponParts: AMMIT.reward.weaponParts + 1 },
   },
-  // Fenrir déchaîné : plus de chaînes ; son souffle gelé balaie l'arène, le sol tremble.
-  fenrir: {
-    ...FENRIR,
-    nameKey: 'boss.fenrir.variant',
-    maxHp: Math.round(FENRIR.maxHp * 1.15),
-    tint: 0xc8f0ff,
-    chained: false,
+  // Shezmu en furie : il charge à travers l'arène et appelle les chacals du Nil.
+  shezmu: {
+    ...SHEZMU,
+    nameKey: 'boss.shezmu.variant',
+    maxHp: Math.round(SHEZMU.maxHp * 1.15),
+    tint: 0xffc890,
     weights: {
-      1: { bite: 3, leap: 2, icefall: 2, charge: 1, sweep: 2 },
-      2: { bite: 2, leap: 2, icefall: 2, charge: 2, sweep: 2, quake: 1, summon: 1 },
+      1: { bite: 3, sweep: 2, hook: 2, charge: 2 },
+      2: { bite: 2, sweep: 2, hook: 2, charge: 1, quake: 2, icefall: 2, summon: 1 },
     },
-    sweep: {
-      telegraphMs: 1000,
-      activeMs: 900,
+    charge: {
+      telegraphMs: 900,
+      activeMs: 340,
       recoveryMs: 800,
-      damage: 14,
-      range: 180,
-      arcDeg: 140,
-      thickness: 12,
+      damage: 15,
+      distance: 240,
+      width: 28,
     },
-    quake: {
-      telegraphMs: 1000,
-      recoveryMs: 700,
-      damage: 12,
-      ringSpeed: 165,
-      ringMax: 220,
-      thickness: 12,
-    },
-    reward: { xp: Math.round(FENRIR.reward.xp * 1.3), weaponParts: FENRIR.reward.weaponParts + 1 },
+    summon: { telegraphMs: 900, recoveryMs: 700, enemy: 'wolfbot', count: 2 },
+    reward: { xp: Math.round(SHEZMU.reward.xp * 1.3), weaponParts: SHEZMU.reward.weaponParts + 1 },
   },
+
   // Talos en surchauffe : il bondit malgré son poids et frappe au corps à corps.
   talos: {
     ...TALOS,

@@ -723,7 +723,10 @@ export class RunScene extends Phaser.Scene {
       this.juice.shake(0.005, 200);
     };
     boss.onSummon = (enemy, count) => this.spawnWave(Array<typeof enemy>(count).fill(enemy));
+    // Shezmu : son pressoir, dans un coin de l'arène (décor ; il s'ébranle en phase 2).
+    const press = def.id === 'shezmu' ? this.drawPress(ARENA.left + 56, ARENA.top + 30) : null;
     boss.onPhase2 = () => {
+      if (press) this.tweens.add({ targets: press, x: 1.5, duration: 60, yoyo: true, repeat: 12 });
       this.ui.showBanner(t(def.phase2Key as TextKey), '');
       this.juice.burst(boss.x, boss.y, 0xb8a8ff, 30);
       this.juice.shake(0.006, 260);
@@ -731,6 +734,23 @@ export class RunScene extends Phaser.Scene {
     };
     this.boss = boss;
     this.presentBoss(def, boss);
+  }
+
+  /** Le pressoir de Shezmu : cuve de pierre, poutre et traverse, vin sombre qui goutte. */
+  private drawPress(x: number, y: number): Phaser.GameObjects.Graphics {
+    const g = this.add.graphics().setDepth(1.6);
+    g.fillStyle(0x07060d, 0.6).fillEllipse(x, y + 18, 54, 10);
+    g.fillStyle(0x2a2436, 1).fillRect(x - 22, y - 2, 44, 18);
+    g.fillStyle(0x3a3450, 1).fillRect(x - 22, y - 2, 44, 4);
+    g.fillStyle(0x3a1e3a, 1).fillRect(x - 18, y - 1, 36, 3);
+    g.fillStyle(0x4a3020, 1)
+      .fillRect(x - 3, y - 26, 6, 26)
+      .fillRect(x - 18, y - 26, 36, 5);
+    g.fillStyle(0x6a4a30, 1).fillRect(x - 10, y - 12, 20, 6);
+    g.fillStyle(0x3a1e3a, 1)
+      .fillRect(x + 22, y + 8, 6, 3)
+      .fillCircle(x + 27, y + 15, 2);
+    return g;
   }
 
   /**
@@ -769,6 +789,8 @@ export class RunScene extends Phaser.Scene {
     if (!this.leaving && !this.player.isInvulnerable(this.sim)) {
       const dmg = boss.hazardDamage(this.player, PLAYER.radius);
       if (dmg > 0) this.hurtPlayer(dmg, boss, boss.def.nameKey);
+      // Chaîne de Shezmu : Ash est tiré jusqu'au boss.
+      if (boss.consumeHook() && boss.alive) this.player.yank(this.sim, boss);
     }
     this.ui.showBoss(boss.alive ? boss.health.hp / boss.health.maxHp : 0, boss.phase);
   }

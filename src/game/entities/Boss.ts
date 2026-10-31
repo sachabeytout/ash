@@ -72,6 +72,9 @@ export class Boss implements Hittable {
   private sweepFrom = 0;
   private sweepDir = 1;
   private sweepAngle = 0;
+  /** Chaînes (Shezmu) : longueur actuelle de la chaîne, et Ash vient-il d'être accroché ? */
+  private hookReach = 0;
+  private hooked = false;
   health: Health;
   status: StatusState = newStatus();
   lastSwingId = -1;
@@ -84,7 +87,7 @@ export class Boss implements Hittable {
   private readonly history: BossAttackId[] = [];
   private attackLanded = false;
   private flashUntil = 0;
-  /** Points d'ancrage des chaînes (Fenrir) ; une se brise en phase 2. */
+  /** Points d'ancrage des chaînes (boss enchaîné) ; une se brise en phase 2. */
   private readonly anchors: Vec2[];
 
   onTelegraph: () => void = () => undefined;
@@ -202,7 +205,8 @@ export class Boss implements Hittable {
           break;
         case 'telegraph': {
           const total = this.telegraphMs();
-          const tracking = this.attack === 'bite' || this.attack === 'charge';
+          const tracking =
+            this.attack === 'bite' || this.attack === 'charge' || this.attack === 'hook';
           if (tracking && elapsed < total * 0.5) this.facing = toTarget;
           // Le bond vise Ash jusqu'aux 60 % du télégraphe, puis la zone se fige.
           if (this.attack === 'leap' && elapsed < total * 0.6) this.setZone(0, target);
@@ -218,6 +222,9 @@ export class Boss implements Hittable {
             const speed = reach / (active / 1000);
             vx = Math.cos(this.facing) * speed;
             vy = Math.sin(this.facing) * speed;
+          } else if (this.attack === 'hook' && def.hook) {
+            // La chaîne file droit devant, puis s'arrête à sa longueur.
+            this.hookReach = def.hook.distance * Math.min(1, elapsed / active);
           } else if (this.attack === 'sweep' && def.sweep) {
             const arc = (def.sweep.arcDeg * Math.PI) / 180;
             this.sweepAngle = this.sweepFrom + this.sweepDir * arc * Math.min(1, elapsed / active);
@@ -282,6 +289,15 @@ export class Boss implements Hittable {
           damage = def.charge.damage;
       } else if (this.attack === 'icefall' && def.icefall) {
         if (this.inZone(player, def.icefall.radius + playerRadius)) damage = def.icefall.damage;
+      } else if (this.attack === 'hook' && def.hook) {
+        const ux = Math.cos(this.facing);
+        const uy = Math.sin(this.facing);
+        const along = (player.x - this.x) * ux + (player.y - this.y) * uy;
+        const across = Math.abs(-(player.x - this.x) * uy + (player.y - this.y) * ux);
+        if (along > 0 && along < this.hookReach && across < def.hook.width / 2 + playerRadius) {
+          damage = def.hook.damage;
+          this.hooked = true;
+        }
       } else if (this.attack === 'sweep' && def.sweep) {
         const ux = Math.cos(this.sweepAngle);
         const uy = Math.sin(this.sweepAngle);
@@ -313,6 +329,13 @@ export class Boss implements Hittable {
     return 0;
   }
 
+  /** La chaîne vient d'accrocher Ash : à tirer vers le boss (une seule fois par chaîne). */
+  consumeHook(): boolean {
+    const hooked = this.hooked;
+    this.hooked = false;
+    return hooked;
+  }
+
   private inZone(p: Vec2, reach: number): boolean {
     for (let i = 0; i < this.zoneCount; i++) {
       const z = this.zones[i];
@@ -338,6 +361,7 @@ export class Boss implements Hittable {
       leap: def.leap?.telegraphMs,
       icefall: def.icefall?.telegraphMs,
       sweep: def.sweep?.telegraphMs,
+      hook: def.hook?.telegraphMs,
     }[this.attack];
     return tempo(def, this.phase, base ?? 800);
   }
@@ -350,6 +374,7 @@ export class Boss implements Hittable {
       leap: def.leap?.activeMs,
       icefall: def.icefall?.activeMs,
       sweep: def.sweep?.activeMs,
+      hook: def.hook?.activeMs,
       quake: 0,
       summon: 0,
     }[this.attack];
@@ -366,6 +391,7 @@ export class Boss implements Hittable {
       quake: def.quake?.recoveryMs,
       summon: def.summon?.recoveryMs,
       sweep: def.sweep?.recoveryMs,
+      hook: def.hook?.recoveryMs,
     }[this.attack];
     return ms ?? 700;
   }
@@ -420,6 +446,11 @@ export class Boss implements Hittable {
       case 'sweep':
         this.attackLanded = false;
         this.sweepAngle = this.sweepFrom;
+        this.setState('attack', now);
+        break;
+      case 'hook':
+        this.attackLanded = false;
+        this.hookReach = 0;
         this.setState('attack', now);
         break;
       case 'bite':
@@ -480,7 +511,7 @@ export class Boss implements Hittable {
     }
   }
 
-  /** Chaînes de Fenrir : du mur jusqu'à son cou (forme et ambiance, aucun danger). */
+  /** Chaînes d'un boss enchaîné : du mur jusqu'à son cou (forme et ambiance, aucun danger). */
   private drawChains(): void {
     const g = this.chains.clear();
     if (this.anchors.length === 0) return;
@@ -521,6 +552,13 @@ export class Boss implements Hittable {
       case 'charge':
         if (def.charge)
           this.drawBand(g, def.charge.distance + def.radius, def.charge.width, progress);
+        break;
+      case 'hook':
+        if (def.hook) {
+          this.drawBand(g, def.hook.distance, def.hook.width, progress);
+          // Maillons pointillés au milieu de la bande : on reconnaît la chaîne sans la couleur.
+          this.drawChainLine(g, def.hook.distance, 0.7);
+        }
         break;
       case 'quake': {
         // Le cercle se resserre sur le boss : l'onde part quand il touche son corps.
@@ -567,6 +605,11 @@ export class Boss implements Hittable {
               g.lineBetween(z.x + o * r, z.y - r * 0.6, z.x + o * r, z.y + r * 0.6);
               g.lineBetween(z.x - r * 0.6, z.y + o * r, z.x + r * 0.6, z.y + o * r);
             }
+          } else if (this.attack === 'icefall' && def.icefall?.glyph === 'drop') {
+            // Goutte du pressoir (Shezmu).
+            g.strokeCircle(z.x, z.y + r * 0.15, r * 0.28);
+            g.lineBetween(z.x - r * 0.26, z.y + r * 0.05, z.x, z.y - r * 0.45);
+            g.lineBetween(z.x + r * 0.26, z.y + r * 0.05, z.x, z.y - r * 0.45);
           } else if (this.attack === 'icefall' && def.icefall?.glyph === 'cross') {
             // Croix de débris (Talos).
             g.lineBetween(z.x - r * 0.45, z.y - r * 0.45, z.x + r * 0.45, z.y + r * 0.45);
@@ -616,6 +659,17 @@ export class Boss implements Hittable {
     g.fillStyle(DANGER, 0.12 + 0.3 * fill).fillPoints(set(length * fill), true);
   }
 
+  /** Chaîne en pointillés, du boss jusqu'à `length` dans la direction visée. */
+  private drawChainLine(g: Phaser.GameObjects.Graphics, length: number, alpha: number): void {
+    const ux = Math.cos(this.facing);
+    const uy = Math.sin(this.facing);
+    g.lineStyle(3, 0xd8d0c8, alpha);
+    for (let d = 0; d < length; d += 10) {
+      const e = Math.min(length, d + 6);
+      g.lineBetween(this.x + ux * d, this.y + uy * d, this.x + ux * e, this.y + uy * e);
+    }
+  }
+
   private drawStrike(progress: number): void {
     const g = this.telegraph.clear();
     const def = this.def;
@@ -630,6 +684,12 @@ export class Boss implements Hittable {
         const z = this.zones[i];
         if (z) g.fillCircle(z.x, z.y, def.icefall.radius);
       }
+    } else if (this.attack === 'hook' && def.hook) {
+      this.drawChainLine(g, this.hookReach, 1);
+      const tx = this.x + Math.cos(this.facing) * this.hookReach;
+      const ty = this.y + Math.sin(this.facing) * this.hookReach;
+      g.fillStyle(DANGER, 0.9).fillCircle(tx, ty, 5);
+      g.fillStyle(0xffffff, 0.9).fillCircle(tx, ty, 2);
     } else if (this.attack === 'sweep' && def.sweep) {
       const ex = this.x + Math.cos(this.sweepAngle) * def.sweep.range;
       const ey = this.y + Math.sin(this.sweepAngle) * def.sweep.range;

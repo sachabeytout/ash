@@ -87,7 +87,7 @@ export const BIOMES: readonly BiomeDef[] = [
     eliteRooms: [4, 8],
     fountainRooms: [6],
     elite: 'einherjar',
-    boss: 'fenrir',
+    boss: 'shezmu',
     music: 'frost',
     bossMusic: 'frostBoss',
     theme: {

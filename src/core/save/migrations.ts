@@ -199,6 +199,24 @@ const MIGRATIONS: Record<number, (save: Raw) => Raw> = {
     const run = isObject(old.run) ? { ...old.run, roomReward: null } : old.run;
     return { ...old, version: 17, run };
   },
+  // v17 → v18 : Shezmu remplace Fenrir (boss du Nil de minuit) : sa fiche et sa variante battue suivent.
+  17: (old) => {
+    const meta = isObject(old.meta) ? old.meta : {};
+    const codex = isObject(meta.codex) ? { ...meta.codex } : {};
+    if (typeof codex['boss.fenrir'] === 'number') {
+      codex['boss.shezmu'] = num(codex['boss.shezmu']) + codex['boss.fenrir'];
+      delete codex['boss.fenrir'];
+    }
+    const records = isObject(meta.records) ? meta.records : {};
+    const beaten = Array.isArray(records.variantsBeaten)
+      ? records.variantsBeaten.map((id) => (id === 'fenrir' ? 'shezmu' : id))
+      : records.variantsBeaten;
+    return {
+      ...old,
+      version: 18,
+      meta: { ...meta, codex, records: { ...records, variantsBeaten: beaten } },
+    };
+  },
 };
 
 function isObject(v: unknown): v is Raw {

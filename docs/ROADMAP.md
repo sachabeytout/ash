@@ -105,7 +105,7 @@ Retour sur le lore v0.2 toujours attendu (« quand le fond aura avancé »).
 - [x] **0.46.0** : Regard d'Amon (défi, faveur royale) et icônes des dieux d'après leurs représentations
 - [x] **Lore 2/3 (0.48.0)** : personnages et dialogues (Anii, Ptah, Ratatosk, arc des 10 victoires, vraie fin réécrite)
 - [x] **Lore 3a (0.49.0)** : Bas-Fonds d'Héliopolis et Nil de minuit (décors, ennemis renommés et redessinés)
-- [ ] **Lore 3b** : Shezmu, le Bourreau, remplace Fenrir (boss du Nil)
+- [x] **Lore 3b (0.50.0)** : Shezmu, le Bourreau, remplace Fenrir (boss du Nil)
 - [ ] **Lore 3c** : la Douât et Apophis (boss final) ; la Volière devient le 3e monde
 - [ ] **Plus tard (après le lore)** : skins d'Ash, aspects des armes
 - [ ] **M3** : finitions — coffres et évènements, préréglages de qualité, équilibrage avec la télémétrie, accessibilité

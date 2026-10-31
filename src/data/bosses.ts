@@ -1,7 +1,8 @@
 import type { EnemyId } from './enemies';
 
-export type BossAttackId = 'bite' | 'charge' | 'quake' | 'summon' | 'leap' | 'icefall' | 'sweep';
-export type BossId = 'ammit' | 'fenrir' | 'talos' | 'oiseleur';
+export type BossAttackId =
+  'bite' | 'charge' | 'quake' | 'summon' | 'leap' | 'icefall' | 'sweep' | 'hook';
+export type BossId = 'ammit' | 'shezmu' | 'talos' | 'oiseleur';
 
 export interface BossDef {
   id: BossId;
@@ -25,7 +26,7 @@ export interface BossDef {
   texture: string;
   /** Variante : teinte du sprite (sinon couleurs d'origine). */
   tint?: number;
-  /** Enchaîné (Fenrir) : des chaînes le relient aux murs ; il en brise une en phase 2. */
+  /** Enchaîné : des chaînes le relient aux murs ; il en brise une en phase 2. */
   chained?: boolean;
   bite?: {
     telegraphMs: number;
@@ -71,8 +72,8 @@ export interface BossDef {
     count: number;
     radius: number;
     spread: number;
-    /** Dessin dans les cercles : flocon (glace) ou croix (débris). */
-    glyph?: 'flake' | 'cross' | 'net';
+    /** Dessin dans les cercles : flocon (glace), croix (débris), filet (Oiseleur) ou goutte (pressoir). */
+    glyph?: 'flake' | 'cross' | 'net' | 'drop';
   };
   /** Balayage : un rayon part des yeux et balaie un arc annoncé (on passe derrière, ou on le traverse en dash). */
   sweep?: {
@@ -83,6 +84,18 @@ export interface BossDef {
     range: number;
     arcDeg: number;
     thickness: number;
+  };
+  /**
+   * Chaînes (Shezmu) : une bande annonce la ligne ; la chaîne part, et si elle touche Ash, elle le
+   * tire vers le boss. On l'esquive en sortant de la bande (ou en la traversant en dash).
+   */
+  hook?: {
+    telegraphMs: number;
+    activeMs: number;
+    recoveryMs: number;
+    damage: number;
+    distance: number;
+    width: number;
   };
   /** Récompenses de la victoire (en plus de la sortie). */
   reward: { xp: number; weaponParts: number };
@@ -135,52 +148,68 @@ export const AMMIT: BossDef = {
   reward: { xp: 50, weaponParts: 2 },
 };
 
-/** Fenrir-Ω : le loup enchaîné du Givre-Serveur. Bondit, fait tomber la glace, appelle sa meute. */
-export const FENRIR: BossDef = {
-  id: 'fenrir',
-  texture: 'fenrir',
-  chained: true,
-  nameKey: 'boss.fenrir',
-  titleKey: 'boss.fenrir.title',
-  phase2Key: 'boss.fenrir.phase2',
-  defeatedKey: 'boss.fenrir.defeated',
+/**
+ * Shezmu, le Bourreau : le serviteur d'Apophis, au bord du Nil de minuit. Lames en arc, grand
+ * balayage, chaînes qui tirent Ash vers lui ; en phase 2, son pressoir écrase le sol et fait pleuvoir
+ * des gouttes (les souvenirs pressés d'Anii).
+ */
+export const SHEZMU: BossDef = {
+  id: 'shezmu',
+  texture: 'shezmu',
+  nameKey: 'boss.shezmu',
+  titleKey: 'boss.shezmu.title',
+  phase2Key: 'boss.shezmu.phase2',
+  defeatedKey: 'boss.shezmu.defeated',
   maxHp: 1100,
   radius: 18,
-  speed: 58,
+  speed: 52,
   phase2At: 0.5,
   phase2Tempo: 0.8,
   idleMs: { min: 550, max: 900 },
   weights: {
-    1: { bite: 3, leap: 2, icefall: 2, charge: 1 },
-    2: { bite: 2, leap: 2, icefall: 2, charge: 2, summon: 1 },
+    1: { bite: 3, sweep: 2, hook: 2 },
+    2: { bite: 2, sweep: 2, hook: 2, quake: 2, icefall: 2 },
   },
+  // Lame en arc : un coup large devant lui.
   bite: {
     telegraphMs: 650,
-    activeMs: 130,
-    recoveryMs: 600,
+    activeMs: 140,
+    recoveryMs: 650,
     damage: 13,
-    range: 54,
-    arcDeg: 100,
-    lunge: 26,
+    range: 58,
+    arcDeg: 150,
+    lunge: 18,
   },
-  charge: {
-    telegraphMs: 900,
-    activeMs: 340,
+  // Grand balayage de la lame (demi-cercle).
+  sweep: {
+    telegraphMs: 1000,
+    activeMs: 800,
     recoveryMs: 800,
-    damage: 15,
-    distance: 240,
-    width: 28,
+    damage: 14,
+    range: 120,
+    arcDeg: 180,
+    thickness: 14,
   },
-  summon: { telegraphMs: 900, recoveryMs: 700, enemy: 'wolfbot', count: 2 },
-  leap: { telegraphMs: 950, activeMs: 420, recoveryMs: 850, damage: 16, radius: 42 },
+  hook: { telegraphMs: 850, activeMs: 300, recoveryMs: 750, damage: 8, distance: 220, width: 18 },
+  // Phase 2 : le pressoir écrase le sol…
+  quake: {
+    telegraphMs: 1000,
+    recoveryMs: 700,
+    damage: 12,
+    ringSpeed: 160,
+    ringMax: 210,
+    thickness: 12,
+  },
+  // … et des gouttes en tombent.
   icefall: {
     telegraphMs: 1000,
     activeMs: 150,
     recoveryMs: 700,
-    damage: 12,
-    count: 5,
-    radius: 20,
-    spread: 70,
+    damage: 11,
+    count: 4,
+    radius: 22,
+    spread: 80,
+    glyph: 'drop',
   },
   reward: { xp: 70, weaponParts: 3 },
 };
@@ -302,7 +331,7 @@ export const OISELEUR: BossDef = {
 
 export const BOSSES: Record<BossId, BossDef> = {
   ammit: AMMIT,
-  fenrir: FENRIR,
+  shezmu: SHEZMU,
   talos: TALOS,
   oiseleur: OISELEUR,
 };

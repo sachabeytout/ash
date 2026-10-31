@@ -2,6 +2,18 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.50.0 — Shezmu, le Bourreau (étape 3b)
+
+- **Nouveau boss du Nil de minuit : Shezmu, le Bourreau**, qui remplace Fenrir. Il a une tête de lion, deux lames dorées en croissant, et son **pressoir** est dressé dans un coin de l'arène.
+  - **Lame en arc** : un coup large devant lui (cône annoncé).
+  - **Grand balayage** : sa lame balaie un demi-cercle. Passe derrière, ou traverse en dash.
+  - **Chaînes**, une attaque nouvelle : une bande au sol annonce la ligne, puis la chaîne part. Si elle te touche, elle te **tire jusqu'à lui**. Sors de la bande, ou traverse-la en dash.
+  - **Phase 2, « Le pressoir s'ébranle ! »** : il écrase le sol (une onde de choc) et des **gouttes** tombent du pressoir (des cercles avec une goutte dessinée dedans).
+- **Shezmu en furie** (sa version dangereuse) : il charge à travers l'arène et appelle les chacals du Nil.
+- **Ta progression est gardée** : si tu avais déjà battu Fenrir, la fiche des Archives, la version dangereuse débloquée et le trophée passent à Shezmu.
+
+**Quoi tester** : affronte Shezmu (2e monde). Les chaînes sont-elles bien lisibles et esquivables ? Le combat est-il trop dur ou trop facile ?
+
 ## 0.49.0 — Les lieux d'Égypte (étape 3a)
 
 - **Monde 1 : Les Bas-Fonds d'Héliopolis.** La ville de néon prend un air égyptien :

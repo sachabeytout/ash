@@ -187,3 +187,21 @@ describe('dieux égyptiens (v14 → v15)', () => {
     ]);
   });
 });
+
+describe('Shezmu remplace Fenrir (v17 → v18)', () => {
+  it('la fiche et la variante battue de Fenrir passent à Shezmu', () => {
+    const save = migrate({
+      version: 17,
+      meta: {
+        codex: { 'boss.fenrir': 2, 'boss.ammit': 3 },
+        records: { variantsBeaten: ['fenrir', 'ammit'] },
+      },
+      settings: {},
+      run: null,
+    });
+    expect(save.meta.codex['boss.shezmu']).toBe(2);
+    expect(save.meta.codex['boss.fenrir']).toBeUndefined();
+    expect(save.meta.codex['boss.ammit']).toBe(3);
+    expect(save.meta.records.variantsBeaten).toEqual(['shezmu', 'ammit']);
+  });
+});

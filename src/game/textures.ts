@@ -173,18 +173,26 @@ export function ensureGameTextures(scene: Phaser.Scene): void {
     g.fillStyle(0x10141f).fillRect(8, 11, 6, 1.5);
   });
 
-  // Fenrir-Ω : loup d'acier, crinière givrée, collier à maillons, gueule tournée vers la droite.
-  shapeTexture(scene, 'fenrir', 50, 44, (g) => {
-    g.fillStyle(0x0b0f1a).fillCircle(20, 22, 20);
-    g.fillStyle(0xd8f0ff).fillCircle(20, 22, 18);
-    g.fillStyle(0x8fa4c8).fillCircle(20, 22, 14);
-    g.fillStyle(0x0b0f1a).fillTriangle(26, 12, 50, 22, 26, 32);
-    g.fillStyle(0x6f84a8).fillTriangle(27, 14, 47, 22, 27, 30);
-    g.fillStyle(0xf2f8ff);
-    for (let x = 31; x < 45; x += 4) g.fillTriangle(x, 21, x + 2, 21, x + 1, 24);
-    g.fillStyle(0x8ff0ff).fillCircle(27, 16, 2.4).fillCircle(27, 28, 2.4);
-    g.fillStyle(0x6d7891).fillRect(10, 8, 4, 28).fillRect(8, 12, 8, 3).fillRect(8, 28, 8, 3);
-    g.fillStyle(0xd8f0ff).fillTriangle(6, 6, 12, 0, 14, 8).fillTriangle(6, 38, 12, 44, 14, 36);
+  // Shezmu, le Bourreau : tête de lion (crinière sombre), corps de bourreau, deux lames dorées en
+  // croissant ; museau tourné vers la droite (retourné selon la visée). Jamais le rouge des dangers.
+  shapeTexture(scene, 'shezmu', 50, 44, (g) => {
+    // Lames en croissant, derrière le corps.
+    g.fillStyle(0xffe08a).fillTriangle(2, 6, 14, 14, 6, 2).fillTriangle(2, 38, 14, 30, 6, 42);
+    g.fillStyle(0x0b0a10).fillTriangle(5, 6, 14, 14, 7, 4).fillTriangle(5, 38, 14, 30, 7, 40);
+    // Corps (pagne sombre, torse ocre).
+    g.fillStyle(0x0b0a10).fillCircle(20, 22, 18);
+    g.fillStyle(0x7a4a2a).fillCircle(20, 22, 16);
+    g.fillStyle(0x3a2440).fillRect(8, 26, 24, 10);
+    g.fillStyle(0xffe08a).fillRect(8, 26, 24, 2);
+    // Crinière et tête de lion.
+    g.fillStyle(0x0b0a10).fillCircle(31, 20, 13);
+    g.fillStyle(0x8a5a20).fillCircle(31, 20, 12);
+    g.fillStyle(0xd8a050).fillCircle(34, 20, 8);
+    g.fillStyle(0xd8a050).fillRoundedRect(36, 16, 12, 9, 3);
+    g.fillStyle(0x0b0a10).fillRect(46, 19, 3, 3);
+    g.fillStyle(0xf6f2ff).fillCircle(37, 17, 2);
+    g.fillStyle(0x0f0b1c).fillCircle(37.6, 17, 1);
+    g.fillStyle(0x0b0a10).fillRect(39, 23, 8, 1.5);
   });
 
   // Olympe Corporatif. Hoplite-Sécurité : casque à crête, lance pointée vers la droite.

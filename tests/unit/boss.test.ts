@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { bossPhase, chooseBossAttack, ringHits, tempo } from '../../src/core/boss/pattern';
 import { createRng } from '../../src/core/rng';
 import type { BossAttackId } from '../../src/data/bosses';
-import { AMMIT, BOSSES, FENRIR } from '../../src/data/bosses';
+import { AMMIT, BOSSES, SHEZMU } from '../../src/data/bosses';
 import { allDictionaries } from '../../src/i18n';
 
 describe('Ammit', () => {
@@ -67,12 +67,17 @@ describe('tous les boss', () => {
     }
   });
 
-  it('Fenrir ne répète jamais trois fois la même attaque et n’invoque qu’en phase 2', () => {
+  it('Shezmu : lames et chaînes d’abord, le pressoir seulement en phase 2', () => {
     const rng = createRng(2);
     const h: BossAttackId[] = [];
-    for (let i = 0; i < 200; i++) h.push(chooseBossAttack(FENRIR, 1, h, rng));
-    expect(h).not.toContain('summon');
-    expect(h).toContain('leap');
-    expect(h).toContain('icefall');
+    for (let i = 0; i < 200; i++) h.push(chooseBossAttack(SHEZMU, 1, h, rng));
+    expect(h).toContain('hook');
+    expect(h).toContain('sweep');
+    expect(h).not.toContain('quake');
+    expect(h).not.toContain('icefall');
+    const h2: BossAttackId[] = [];
+    for (let i = 0; i < 200; i++) h2.push(chooseBossAttack(SHEZMU, 2, h2, rng));
+    expect(h2).toContain('quake');
+    expect(h2).toContain('icefall');
   });
 });
