@@ -4,12 +4,12 @@ import { distanceToRect, type KeepOut, type Rect } from './obstacles';
 
 /**
  * Pièges des salles de combat (à partir de la 3e salle d'un monde) :
- * - trappe à pics : rester dessus trop longtemps fait sortir les pics (alerte avant) ;
+ * - trappe à pics : passer dessus l'enclenche, les pics sortent peu après (alerte avant) ;
  * - explosif : passer à côté allume une courte mèche (cercle d'alerte), puis il explose.
  * Les deux blessent aussi les ennemis.
  */
 export const SPIKE_SIZE = 24;
-/** Temps à rester sur la trappe avant que les pics sortent (l'alerte dure tout ce temps). */
+/** Temps entre le passage sur la trappe et la sortie des pics (l'alerte dure tout ce temps). */
 export const SPIKE_ARM_MS = 650;
 export const SPIKE_UP_MS = 450;
 export const SPIKE_COOLDOWN_MS = 900;
@@ -97,7 +97,8 @@ export interface SpikeState {
 
 /**
  * Une étape de la trappe à pics. `occupied` : Ash est dessus. Renvoie vrai à l'instant où les pics
- * sortent (c'est là que les dégâts tombent). Quitter la trappe pendant l'alerte l'annule.
+ * sortent (c'est là que les dégâts tombent, sur ceux qui sont encore dessus). Un simple passage
+ * suffit à l'enclencher : partir pendant l'alerte ne l'annule pas.
  */
 export function stepSpike(s: SpikeState, now: number, occupied: boolean): boolean {
   switch (s.phase) {
@@ -108,10 +109,6 @@ export function stepSpike(s: SpikeState, now: number, occupied: boolean): boolea
       }
       return false;
     case 'arming':
-      if (!occupied) {
-        s.phase = 'idle';
-        return false;
-      }
       if (now - s.at < SPIKE_ARM_MS) return false;
       s.phase = 'up';
       s.at = now;

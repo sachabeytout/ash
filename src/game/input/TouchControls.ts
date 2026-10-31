@@ -1,5 +1,7 @@
 import Phaser from 'phaser';
 import { settings } from '../../core/settings';
+import type { GodDef } from '../../data/gods';
+import { drawGodIcon } from '../icons';
 import type { Action, Controls } from './Controls';
 import { screenPoint, viewSize } from '../view';
 
@@ -16,6 +18,7 @@ interface Button {
 }
 
 const JOY_RADIUS = 30;
+const BUTTON_RADIUS = 27;
 const JOY_DEADZONE = 0.12;
 const DEPTH = 1000;
 
@@ -31,6 +34,8 @@ export class TouchControls {
   private joyCenter = { x: 0, y: 0 };
   private shown = false;
   private superGauge = 0;
+  /** Dieu qui agit sur chaque action (petit badge sur le bouton). */
+  private gods: Partial<Record<Action, GodDef | undefined>> = {};
   /** Anneau qui pulse autour de la commande à utiliser (premier essai guidé). */
   private readonly focusRing: Phaser.GameObjects.Graphics;
   private focus: Action | 'move' | null = null;
@@ -56,11 +61,12 @@ export class TouchControls {
       x: 0,
       y: 0,
     });
+    // Quatre boutons de la même taille, disposés en éventail autour de l'attaque.
     this.buttons = [
-      make('attack', 27, 52, 54, 0xffb02e),
-      make('dash', 19, 114, 34, 0x9ff6ff),
-      make('power', 19, 40, 122, 0xff7a2a),
-      make('super', 17, 104, 104, 0xffe08a),
+      make('attack', BUTTON_RADIUS, 52, 54, 0xffb02e),
+      make('dash', BUTTON_RADIUS, 124, 40, 0x9ff6ff),
+      make('power', BUTTON_RADIUS, 40, 128, 0xff7a2a),
+      make('super', BUTTON_RADIUS, 118, 112, 0xffe08a),
     ];
     this.base = scene.add
       .circle(0, 0, JOY_RADIUS)
@@ -120,6 +126,12 @@ export class TouchControls {
     }
     const b = this.buttons.find((x) => x.action === target);
     if (b) g.strokeCircle(b.x, b.y, b.radius + 7);
+  }
+
+  /** Dieux qui agissent sur l'attaque, l'attaque puissante et le dash (badge sur chaque bouton). */
+  setGods(gods: Partial<Record<Action, GodDef | undefined>>): void {
+    this.gods = gods;
+    this.drawButtons();
   }
 
   setSuperGauge(value: number): void {
@@ -183,20 +195,18 @@ export class TouchControls {
             const rr = i % 2 === 0 ? r : r * 0.45;
             pts.push(new Phaser.Math.Vector2(b.x + Math.cos(a) * rr, b.y + Math.sin(a) * rr));
           }
+          // La jauge elle-même est sous la barre de vie ; l'étoile s'allume quand le Super est prêt.
           g.fillStyle(b.color, this.superGauge >= 1 ? 1 : 0.35).fillPoints(pts, true);
-          if (this.superGauge > 0) {
-            g.lineStyle(3, b.color, 1).beginPath();
-            g.arc(
-              b.x,
-              b.y,
-              b.radius + 3,
-              -Math.PI / 2,
-              -Math.PI / 2 + Math.PI * 2 * this.superGauge,
-            );
-            g.strokePath();
-          }
           break;
         }
+      }
+      const god = this.gods[b.action];
+      if (god) {
+        const bx = b.x + b.radius * 0.74;
+        const by = b.y - b.radius * 0.74;
+        g.fillStyle(0x07060d, 0.9).fillCircle(bx, by, 9);
+        g.lineStyle(1.5, god.color, 1).strokeCircle(bx, by, 9);
+        drawGodIcon(g, god, bx, by, 6);
       }
     }
   }

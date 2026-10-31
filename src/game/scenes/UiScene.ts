@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { slotGod } from '../../core/boons/boons';
 import { roomKind, type RunState } from '../../core/run/state';
 import { BOSSES } from '../../data/bosses';
 import { getBiome } from '../../data/biomes';
@@ -165,7 +166,7 @@ export class UiScene extends Phaser.Scene {
 
   private layout(): void {
     const { width, height } = viewSize(this);
-    this.hpText.setPosition(12, 29);
+    this.hpText.setPosition(12, 34);
     this.room.setPosition(width / 2, 8);
     this.trial.setPosition(width / 2, 24);
     this.placeAmon();
@@ -225,11 +226,20 @@ export class UiScene extends Phaser.Scene {
     g.fillStyle(0xff7a2a, 1).fillRect(12, 10, Math.round((w * hp) / maxHp), 8);
     g.lineStyle(1, 0xffe9d6, 0.6).strokeRect(10, 8, w + 4, 12);
     this.hpText.setText(`${hp} / ${maxHp}`);
-    // Jauge de Super (étoile du bouton tactile + barre dorée sous la vie).
+    // Jauge de Super : barre dorée sous la vie, étoile au bout (pleine quand le Super est prêt).
     const ready = run.superGauge >= 1;
     const pulse = ready ? 0.6 + 0.4 * Math.sin(this.time.now / 120) : 1;
-    g.fillStyle(0x07060d, 0.8).fillRect(10, 22, w + 4, 6);
-    g.fillStyle(0xffe08a, ready ? pulse : 0.75).fillRect(12, 23, Math.round(w * run.superGauge), 4);
+    g.fillStyle(0x07060d, 0.8).fillRect(10, 22, w + 4, 9);
+    g.fillStyle(0x3a3014, 1).fillRect(12, 24, w, 5);
+    g.fillStyle(0xffe08a, ready ? pulse : 0.85).fillRect(12, 24, Math.round(w * run.superGauge), 5);
+    g.lineStyle(1, 0xffe08a, 0.5).strokeRect(10, 22, w + 4, 9);
+    const star: Phaser.Math.Vector2[] = [];
+    for (let i = 0; i < 10; i++) {
+      const a = -Math.PI / 2 + (i * Math.PI) / 5;
+      const r = i % 2 === 0 ? 6 : 2.6;
+      star.push(new Phaser.Math.Vector2(w + 24 + Math.cos(a) * r, 26.5 + Math.sin(a) * r));
+    }
+    g.fillStyle(0xffe08a, ready ? pulse : 0.3).fillPoints(star, true);
     if (ready && !this.superWasReady) sfx.superReady();
     this.superWasReady = ready;
     this.touch.setSuperGauge(run.superGauge);
@@ -257,12 +267,18 @@ export class UiScene extends Phaser.Scene {
     const key = run.boons.map((b) => b.id).join(',');
     if (key === this.boonKey) return;
     this.boonKey = key;
+    // Badge du dieu sur chaque bouton tactile concerné.
+    const godOf = (slot: 'attack' | 'power' | 'dash') => {
+      const id = slotGod(run.boons, slot);
+      return id ? GODS[id] : undefined;
+    };
+    this.touch.setGods({ attack: godOf('attack'), power: godOf('power'), dash: godOf('dash') });
     const g = this.boonIcons.clear();
     run.boons.forEach((owned, i) => {
       const def = getBoon(owned.id);
       if (!def) return;
       const x = 18 + i * 18;
-      const y = 56;
+      const y = 62;
       g.fillStyle(0x07060d, 0.75).fillCircle(x, y, 8);
       const gods = def.gods.map((id) => GODS[id]);
       g.lineStyle(1, gods[0]?.color ?? 0xffffff, 0.8).strokeCircle(x, y, 8);

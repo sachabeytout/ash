@@ -203,6 +203,8 @@ interface Door {
 /** Durée de la présentation d'un boss (caméra + nom à l'écran). */
 const BOSS_PRESENT_MS = 2300;
 
+/** Portes de sortie d'une salle de combat (toujours 2 : un choix simple). */
+const DOOR_COUNT = 2;
 /** Distance au-delà de laquelle un ennemi est « loin » (effet `far`, aucun don actuel). */
 const FAR_DISTANCE = 70;
 /** Flèche de don (projectile sans effets d'arme ; aucun don actuel ne la lance). */
@@ -2447,17 +2449,15 @@ export class RunScene extends Phaser.Scene {
     }
     // Pas d'Étincelle s'il n'y a aucun don à améliorer.
     const exclude: RewardKind[] = upgradableBoons(this.run.boons).length > 0 ? [] : ['spark'];
-    // Salles spéciales : la lumière revient ; survie et champion offrent 3 portes, sombre et
-    // champion des éclats en plus.
+    // Salles spéciales : la lumière revient ; toutes offrent des éclats en plus (2 portes, comme partout).
     if (this.darkness) {
       this.tweens.add({ targets: this.darkness, alpha: 0, duration: 600 });
     }
-    if (this.challenge === 'dark' || this.challenge === 'champion') {
+    if (this.challenge) {
       this.run.shards += CHALLENGE_SHARDS;
       this.juice.damageNumber(this.player.x, this.player.y - 14, CHALLENGE_SHARDS, '#7fe7ff');
     }
-    const three = this.challenge === 'survival' || this.challenge === 'champion';
-    const doors = rollDoors(this.rng, three ? 3 : 2, biome.pantheon, exclude);
+    const doors = rollDoors(this.rng, DOOR_COUNT, biome.pantheon, exclude);
     // Regard d'Amon réussi : faveur royale avant l'apparition des portes.
     if (this.amon && amonRoomCleared(this.amon) === 'won') {
       this.refreshAmon();

@@ -88,6 +88,14 @@ export class WeaponPanel {
     g.lineStyle(equipped ? 3 : 1.5, unlocked ? def.color : 0x3a3550, unlocked ? 1 : 0.8);
     g.strokeRoundedRect(x, y, w, h, 8);
     const cx = x + w / 2;
+    const zone = this.scene.add.zone(cx, y + h / 2, w, h).setInteractive({ useHandCursor: true });
+    zone.on('pointerup', () => this.pick(id));
+    // Arme secrète (Lame de l'Aube) : rien n'est dévoilé, pas même son nom.
+    if (!unlocked && UNLOCK_COST[id] === undefined) {
+      this.text(cx, y + h / 2, '?', 26, COLORS.textDim, true).setOrigin(0.5);
+      this.root.add(zone);
+      return;
+    }
     this.text(
       cx,
       y + 10,
@@ -116,8 +124,6 @@ export class WeaponPanel {
       .setOrigin(0.5, 0)
       .setWordWrapWidth(w - 10)
       .setAlign('center');
-    const zone = this.scene.add.zone(cx, y + h / 2, w, h).setInteractive({ useHandCursor: true });
-    zone.on('pointerup', () => this.pick(id));
     this.root.add(zone);
   }
 

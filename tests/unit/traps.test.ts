@@ -42,12 +42,15 @@ describe('pièges', () => {
     }
   });
 
-  it('la trappe ne frappe qu’après être resté dessus assez longtemps, et se recharge', () => {
+  it('un simple passage enclenche la trappe : les pics sortent après l’alerte, puis elle se recharge', () => {
     const s: SpikeState = { phase: 'idle', at: 0 };
     expect(stepSpike(s, 0, true)).toBe(false);
-    expect(stepSpike(s, SPIKE_ARM_MS - 1, true)).toBe(false);
-    // Partir pendant l'alerte l'annule.
+    // Ash est déjà reparti : l'alerte continue quand même.
     expect(stepSpike(s, SPIKE_ARM_MS - 1, false)).toBe(false);
+    expect(s.phase).toBe('arming');
+    expect(stepSpike(s, SPIKE_ARM_MS, false)).toBe(true);
+    stepSpike(s, SPIKE_ARM_MS + SPIKE_UP_MS, false);
+    stepSpike(s, SPIKE_ARM_MS + SPIKE_UP_MS + SPIKE_COOLDOWN_MS, false);
     expect(s.phase).toBe('idle');
     stepSpike(s, 1000, true);
     expect(stepSpike(s, 1000 + SPIKE_ARM_MS, true)).toBe(true);

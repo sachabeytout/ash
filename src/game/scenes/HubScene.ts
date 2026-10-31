@@ -48,6 +48,8 @@ import {
   BARK_SHOW_MS,
   BARKS,
   type BarkSpeaker,
+  BARK_CHANCE,
+  BARK_GLOBAL_MS,
 } from '../../data/barks';
 
 /** La Cage (hub) : résumé de la dernière run, reprise, choix de l'arme, sauvegarde. */
@@ -73,6 +75,8 @@ export class HubScene extends Phaser.Scene {
     last: number;
     bubble: Phaser.GameObjects.Text;
   }[] = [];
+  /** Dernière bulle d'un habitant (toutes confondues). */
+  private lastBarkAt = 0;
   /** Abandon de la run : deuxième appui pour confirmer. */
   private abandonArmed = false;
 
@@ -86,6 +90,8 @@ export class HubScene extends Phaser.Scene {
     this.modal = false;
     this.stations = [];
     this.barkers = [];
+    // Première bulle possible quelques secondes après l'arrivée, pas tout de suite.
+    this.lastBarkAt = this.time.now - BARK_GLOBAL_MS + 4000;
     this.walkTarget = null;
     this.padA = false;
     this.abandonArmed = false;
@@ -114,7 +120,9 @@ export class HubScene extends Phaser.Scene {
       stroke: '#07060d',
       strokeThickness: 3,
     };
-    this.add.text(cx, 14, t('hub.name'), { ...style, fontSize: '18px' }).setOrigin(0.5, 0);
+    // Le titre sous le bouton de gauche : le haut de la cage reste visible.
+    this.add.text(12, 40, t('hub.name'), { ...style, fontSize: '14px' });
+    this.addCorners(meta);
     this.add
       .text(cx, 38, this.infoLines(meta).join('\n'), {
         ...style,
@@ -130,20 +138,20 @@ export class HubScene extends Phaser.Scene {
       y: 22,
       w: 88,
       h: 26,
-      label: t('hub.optionsButton'),
-      color: 0xffb02e,
+      label: t('hub.saveButton'),
+      color: 0x6b4cff,
       fontSize: 11,
-      onTap: () => this.openOptions(),
+      onTap: () => this.openSave(),
     });
     makeButton(this, {
       x: GAME_WIDTH - 52,
       y: 22,
       w: 88,
       h: 26,
-      label: t('hub.saveButton'),
-      color: 0x6b4cff,
+      label: t('hub.optionsButton'),
+      color: 0xffb02e,
       fontSize: 11,
-      onTap: () => this.openSave(),
+      onTap: () => this.openOptions(),
     });
 
     this.buildStations(meta);
@@ -275,17 +283,45 @@ export class HubScene extends Phaser.Scene {
         }),
       );
     }
-    lines.push(
-      t('hub.totals', {
-        xp: meta.xp,
-        parts: meta.weaponParts,
-        rebirths: t('hub.rebirths', { count: meta.deaths }),
-        victories: t('hub.victories', { count: meta.clears }),
-      }),
-    );
     const assist = assistReduction(settings.assist, meta.assistDeaths);
     if (assist > 0) lines.push(t('hub.assistActive', { value: Math.round(assist * 100) }));
     return lines;
+  }
+
+  /** Bilan dans les coins du bas : à gauche morts et victoires, à droite XP, pièces et arme. */
+  private addCorners(meta: MetaState): void {
+    const style = {
+      fontFamily: FONT_FAMILY,
+      fontSize: '9px',
+      color: COLORS.textDim,
+      stroke: '#07060d',
+      strokeThickness: 3,
+      lineSpacing: 3,
+    };
+    const bottom = GAME_HEIGHT - 8;
+    this.add
+      .text(
+        12,
+        bottom,
+        [
+          t('hub.rebirths', { count: meta.deaths }),
+          t('hub.victories', { count: meta.clears }),
+        ].join('\n'),
+        style,
+      )
+      .setOrigin(0, 1);
+    this.add
+      .text(
+        GAME_WIDTH - 12,
+        bottom,
+        [
+          t('hub.statXp', { xp: meta.xp }),
+          t('hub.statParts', { parts: meta.weaponParts }),
+          t(WEAPONS[chosenWeapon(meta)].nameKey as TextKey),
+        ].join('\n'),
+        { ...style, align: 'right' },
+      )
+      .setOrigin(1, 1);
   }
 
   private buildStations(meta: MetaState): void {
@@ -296,9 +332,7 @@ export class HubScene extends Phaser.Scene {
       x: GAME_WIDTH / 2,
       y: 128,
       color: 0xffb02e,
-      label: run
-        ? t('hub.station.resume')
-        : t('hub.station.door', { weapon: t(weapon.nameKey as TextKey) }),
+      label: run ? t('hub.station.resume') : t('hub.station.door'),
       draw: (g, x, y) => drawDoor(g, x, y),
       action: () => (run ? this.resume() : this.start(chosenWeapon(session.save.meta))),
     });
@@ -431,9 +465,14 @@ export class HubScene extends Phaser.Scene {
 
   private updateBarks(): void {
     const now = this.time.now;
+    if (now - this.lastBarkAt < BARK_GLOBAL_MS) return;
     for (const b of this.barkers) {
       if (now - b.lastAt < BARK_COOLDOWN_MS) continue;
       if (Math.hypot(this.ash.x - b.x, this.ash.y - b.y) > BARK_RANGE) continue;
+      // Pas à chaque passage : une fois sur deux, l'habitant se tait (et on réessaie plus tard).
+      b.lastAt = now;
+      this.lastBarkAt = now;
+      if (Math.random() > BARK_CHANCE) continue;
       // Une réplique au hasard, jamais deux fois de suite la même.
       const count = BARKS[b.who];
       let n = Math.floor(Math.random() * count);

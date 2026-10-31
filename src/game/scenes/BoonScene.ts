@@ -1,4 +1,6 @@
 import Phaser from 'phaser';
+import { settings } from '../../core/settings';
+import { scaledFontSize } from '../../core/textScale';
 import { mainValue, type BoonOffer } from '../../core/boons/boons';
 import { getBoon, slotOf } from '../../data/boons';
 import { RARITY_COLOR } from '../ui/boonCard';
@@ -92,10 +94,10 @@ export class BoonScene extends Phaser.Scene {
 
     const n = this.data_.offers.length;
     const gap = 12;
-    const cardW = Math.min(184, (width - 32 - gap * (n - 1)) / n);
-    const cardH = 184;
+    const cardW = Math.min(204, (width - 32 - gap * (n - 1)) / n);
+    const cardH = 214;
     const left = width / 2 - (cardW * n + gap * (n - 1)) / 2;
-    const top = 86;
+    const top = 80;
     this.data_.offers.forEach((offer, i) =>
       this.makeCard(offer, left + i * (cardW + gap), top, cardW, cardH, i),
     );
@@ -105,7 +107,7 @@ export class BoonScene extends Phaser.Scene {
       this.add
         .text(
           width / 2,
-          top + cardH + 24,
+          top + cardH + 20,
           `${t(god.nameKey as TextKey)} : « ${t(`${god.nameKey}.quote.${n}` as TextKey)} »`,
           {
             fontFamily: FONT_FAMILY,
@@ -194,6 +196,8 @@ export class BoonScene extends Phaser.Scene {
         });
       });
       g.lineStyle(1, color, 0.5).lineBetween(x + 6, y + band, x + w - 6, y + band);
+      // Fin trait entre le titre et l'effet (les cartes se lisent toutes de la même façon).
+      g.lineStyle(1, color, 0.25).lineBetween(x + 24, y + 94, x + w - 24, y + 94);
       g.lineStyle(focused ? 3 : 1.5, color, focused ? 1 : 0.65).strokeRoundedRect(x, y, w, h, 8);
       gods.forEach((god, i) =>
         drawGodIcon(g, god, x + w / 2 + (i - (gods.length - 1) / 2) * 26, y + 22, 9),
@@ -210,26 +214,29 @@ export class BoonScene extends Phaser.Scene {
           fontStyle: bold ? 'bold' : 'normal',
           color: col,
           align: 'center',
-          wordWrap: { width: w - 14 },
-          lineSpacing: 2,
+          wordWrap: { width: w - 24 },
+          lineSpacing: 4,
         })
         .setOrigin(0.5, 0);
 
-    text(y + 40, t(def.nameKey as TextKey), 13, COLORS.text, true);
+    text(y + 50, t(def.nameKey as TextKey), 13, COLORS.text, true);
     const slot = slotOf(def.effect);
     text(
-      y + 60,
+      y + 72,
       `${t(`rarity.${offer.rarity}` as TextKey)} · ${t(`slot.${slot}` as TextKey)}`,
       10,
       RARITY_COLOR[offer.rarity],
       true,
     );
-    text(
-      y + 80,
+    // L'effet, centré dans l'espace entre le trait et le pied de carte (police réduite s'il est long).
+    const desc = text(
+      y + (100 + h - 30) / 2,
       t(def.descKey as TextKey, { value: mainValue(def.effect, offer.rarity) }),
       11,
       COLORS.text,
-    );
+    ).setOrigin(0.5, 0.5);
+    for (let size = 10; desc.height > h - 136 && size >= 9; size--)
+      desc.setFontSize(scaledFontSize(size, settings.textSize) ?? size);
     const replaced = offer.replaces ? getBoon(offer.replaces) : undefined;
     text(
       y + h - 22,
