@@ -54,6 +54,13 @@ Dernière mise à jour : 30/10/2026 (version 0.44.0).
     15 terdecies. **Secrets de la Cage** : Thot sait tout depuis le début ; **Vesper est l'espionne d'Amon** ; Ptah ne forge pas les armes, il les **nomme**. D'accord ? → **en attente**
     15 quaterdecies. **Le Livre d'Anii** : des pages qu'elle a écrites dans chaque vie, à retrouver en jeu (plus tard). Bonne idée ? → **en attente**
 
+## D. Retours 0.47.0 (à tester)
+
+24. Le **coup d'élan** (dash + attaque) : assez facile à sortir ? Trop fort ?
+25. Le **butin en fin de salle** : bien placé (au centre, en bas) ? Faut-il qu'il vienne tout seul vers Ash ?
+26. En **portrait**, le jeu est tourné : dans le bon sens pour toi (tu tournes le téléphone vers la gauche) ?
+27. Les **petits textes** sont-ils enfin nets sur ton iPhone ?
+
 ## C. Petites décisions prises par Claude (dis seulement si tu n'es pas d'accord)
 
 16. Caméra rapprochée (zoom ×2) qui suit Ash. → **gardé**

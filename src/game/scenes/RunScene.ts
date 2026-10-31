@@ -203,6 +203,14 @@ interface Door {
 /** Durée de la présentation d'un boss (caméra + nom à l'écran). */
 const BOSS_PRESENT_MS = 2300;
 
+/** Teinte unie du sol de chaque monde (son « ADN » : nuit violette, givre bleu, marbre doré…). */
+const FLOOR_COLOR: Record<BiomeDef['theme']['floor'], number> = {
+  floor: 0x110e1e,
+  floorIce: 0x0d1828,
+  floorMarble: 0x1a160e,
+  floorAviary: 0x130f1d,
+  floorRoots: 0x20160e,
+};
 /** Portes de sortie d'une salle de combat (toujours 2 : un choix simple). */
 const DOOR_COUNT = 2;
 /** Distance au-delà de laquelle un ennemi est « loin » (effet `far`, aucun don actuel). */
@@ -1844,7 +1852,20 @@ export class RunScene extends Phaser.Scene {
       0x07060d,
     );
     const theme = this.kind === 'shop' ? MERCHANT_THEME : getBiome(this.run.biome).theme;
-    this.add.tileSprite(ARENA.centerX, ARENA.centerY, ARENA.width, ARENA.height, theme.floor);
+    // Sol uni à la teinte du monde (pas de quadrillage), éclairé doucement au centre.
+    this.add.rectangle(
+      ARENA.centerX,
+      ARENA.centerY,
+      ARENA.width,
+      ARENA.height,
+      FLOOR_COLOR[theme.floor],
+    );
+    this.add
+      .image(ARENA.centerX, ARENA.centerY, 'glow')
+      .setTint(theme.wallGlow)
+      .setAlpha(0.07)
+      .setScale((ARENA.width / 64) * 1.2, (ARENA.height / 64) * 1.2)
+      .setBlendMode('ADD');
     const g = this.add.graphics();
     // Murs : double trait néon, l'intérieur plus vif.
     g.lineStyle(6, theme.wall, 1).strokeRectShape(ARENA);

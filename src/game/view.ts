@@ -14,10 +14,10 @@ function computeRenderScale(): number {
   const forced = Number(new URLSearchParams(window.location.search).get('res'));
   if (forced >= 1) return Math.min(3, forced);
   const physical = Math.min(window.innerWidth, window.innerHeight) * (window.devicePixelRatio || 1);
-  // Plafond selon la qualité : moins de pixels à dessiner sur les téléphones modestes.
-  const cap = settings.quality === 'low' ? 1.5 : settings.quality === 'medium' ? 2 : 3;
-  const scale = Math.min(cap, Math.max(1, physical / GAME_HEIGHT));
-  return Math.round(scale * 4) / 4;
+  // Plafond selon la qualité : moins de pixels à dessiner sur les téléphones modestes. En Haute,
+  // l'image fait exactement la taille de l'écran (aucun agrandissement par le navigateur = net).
+  const cap = settings.quality === 'low' ? 2 : settings.quality === 'medium' ? 3 : 4;
+  return Math.min(cap, Math.max(1, physical / GAME_HEIGHT));
 }
 
 /** Facteur de rendu, fixé au lancement (après le chargement des réglages). */

@@ -101,6 +101,7 @@ Retour sur le lore v0.2 toujours attendu (« quand le fond aura avancé »).
 - [x] **Lore 1/3 (0.44.0)** : les 9 dieux égyptiens et leurs dons (eau et venin nouveaux)
 - [x] **0.45.0** : textes des dieux fidèles à la mythologie égyptienne
 - [x] **Lore approfondi (v0.4, docs seulement)** : `docs/LORE.md`, en attente de validation
+- [x] **0.47.0** : retours de l'utilisateur (coup d'élan, butin en fin de salle, 2 portes, paysage d'office, netteté, Cage, touches…)
 - [x] **0.46.0** : Regard d'Amon (défi, faveur royale) et icônes des dieux d'après leurs représentations
 - [ ] **Lore 2/3** : personnages et dialogues (Ash, Anii, Ratatosk qui a suivi Ash, Ptah ?) — réécriture de l'histoire v0.3
 - [ ] **Lore 3/3** : lieux et boss (Apophis boss final, à battre 10 fois ; vraie fin)

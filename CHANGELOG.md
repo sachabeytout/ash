@@ -2,6 +2,47 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.47.0 — Tes retours, d'un coup
+
+**Combat**
+
+- **Nouveau mouvement, le coup d'élan** : attaque pendant un dash, ou juste après.
+  - Dash + attaque = **Frappe d'élan** : plus forte, plus large, avec un élan vers l'avant.
+  - Dash + attaque puissante = **Tourbillon d'élan** : frappe tout autour de toi.
+  - Avec les armes à distance, les tirs sont plus forts (et plus nombreux pour la puissante).
+  - Le nom du coup s'affiche au-dessus d'Ash.
+- **Visée auto légère** pour les attaques (pas pour le dash) : un ennemi tout proche est visé même s'il est un peu de côté.
+- **Bouclier des ennemis plus permissif** :
+  - il se retourne lentement, donc tu as le temps de passer derrière ;
+  - il protège un angle plus étroit ;
+  - il baisse sa garde juste après leur attaque (l'arc pâlit : c'est le moment de frapper).
+
+**Salles et portes**
+
+- **La récompense arrive à la fin de la salle** : la porte choisie ne rapporte plus rien tout de suite. Une fois la salle nettoyée, un **butin** apparaît (don, XP, éclats…). Tu le ramasses, puis **seulement ensuite** les portes suivantes s'affichent.
+- **Toujours 2 portes** (les salles spéciales donnent des éclats en plus à la place de la 3e porte).
+- **Les pics se déclenchent dès qu'on passe sur la trappe** : pas besoin d'y rester. Ils sortent un peu après, et blessent ceux qui sont encore dessus.
+
+**Écran**
+
+- **Paysage d'office** : plus de message « tourne ton téléphone ». Même tenu en portrait, le jeu s'affiche en paysage.
+- **Textes plus nets**, surtout les petits (Thot, bulles) : l'image fait maintenant exactement la taille de l'écran, et les lettres sont lissées.
+- **Sols unis** à la couleur de chaque monde, sans quadrillage.
+- **Touches tactiles toutes de la même taille**, avec le **symbole du dieu** qui agit sur l'attaque, l'attaque puissante et le dash.
+- **Jauge du Super sous la barre de vie** (plus épaisse, étoile au bout).
+- **Cartes de dons** plus aérées : texte centré, trait de séparation, police réduite si l'effet est long.
+
+**La Cage**
+
+- Les boutons **Sauvegarde** (à gauche) et **Options** (à droite) ont été inversés.
+- Le titre « La Cage » ne cache plus le haut de la cage.
+- Le bilan est en bas : morts et victoires à gauche, XP, pièces d'arme et arme à droite.
+- La porte affiche « Sortir », tout simplement.
+- Les habitants parlent **beaucoup moins souvent**.
+- Le râtelier n'affiche que le **prix** des armes, et la Lame de l'Aube n'est plus qu'un **?**.
+
+**Quoi tester** : essaie le **dash + attaque** ; regarde si le butin en fin de salle te plaît ; ouvre le jeu en tenant le téléphone **en portrait** ; dis-moi si les petits textes sont enfin nets.
+
 ## 0.46.0 — Le Regard d'Amon et de vrais visages pour les dieux
 
 - **Le Regard d'Amon** : une fois par monde, Amon, le roi caché, t'observe pendant une salle de combat. Un **œil doré** apparaît en haut de l'écran avec son défi :

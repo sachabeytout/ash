@@ -27,15 +27,19 @@ async function expectGameFits(page: Page, viewport: { width: number; height: num
 test('le jeu reste cadré quand on tourne le téléphone', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'mobile-paysage', 'concerne seulement le téléphone');
 
+  // Tenu en portrait : pas de message « tourne ton téléphone », le jeu est tourné d'office.
   await page.setViewportSize(PORTRAIT);
   await page.goto('./');
   await expect(page.locator('body')).toHaveAttribute('data-scene', 'title');
-  await expect(page.locator('#rotate')).toBeVisible();
+  await expect(page.locator('body')).toHaveClass(/rotated/);
+  const portrait = await expectGameFits(page, PORTRAIT);
+  // Le jeu (paysage) occupe l'écran dans le sens de la longueur.
+  expect(portrait?.height).toBeGreaterThan(portrait?.width ?? 0);
 
   const first = await expectGameFits(page, LANDSCAPE);
-  await expect(page.locator('#rotate')).toBeHidden();
+  await expect(page.locator('body')).not.toHaveClass(/rotated/);
   await expectGameFits(page, PORTRAIT);
-  await expect(page.locator('#rotate')).toBeVisible();
+  await expect(page.locator('body')).toHaveClass(/rotated/);
   const again = await expectGameFits(page, LANDSCAPE);
 
   // Après un aller-retour, le jeu retrouve exactement sa taille d'origine (pas de zoom qui s'accumule).

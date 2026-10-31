@@ -47,45 +47,21 @@
       #game canvas {
         display: block;
       }
-      /* Téléphone tenu en portrait : on invite à le tourner (le jeu se joue en paysage). */
-      #rotate {
-        position: fixed;
-        inset: 0;
-        display: none;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 24px;
-        background: #07060d;
-        color: #ffe9d6;
-        font:
-          600 18px/1.4 system-ui,
-          sans-serif;
-        text-align: center;
-        padding: 24px;
-        z-index: 20;
+      /* Téléphone tenu en portrait : la page entière est tournée d'un quart de tour (le jeu reste
+         en paysage). Largeur et hauteur sont posées en pixels par src/game/landscape.ts. */
+      body.rotated {
+        inset: auto;
+        top: 0;
+        left: 0;
+        transform-origin: 0 0;
+        transform: rotate(90deg) translateY(-100%);
       }
-      #rotate .phone {
-        width: 44px;
-        height: 76px;
-        border: 3px solid #ff7a2a;
-        border-radius: 8px;
-        animation: tilt 2s ease-in-out infinite;
-      }
-      @keyframes tilt {
-        0%,
-        30% {
-          transform: rotate(0deg);
-        }
-        60%,
-        100% {
-          transform: rotate(-90deg);
-        }
-      }
-      @media (orientation: portrait) and (pointer: coarse) {
-        #rotate {
-          display: flex;
-        }
+      /* Encoche et barre d'accueil du portrait : désormais à gauche et à droite du jeu. */
+      body.rotated #game {
+        top: 0;
+        bottom: 0;
+        left: env(safe-area-inset-top);
+        right: env(safe-area-inset-bottom);
       }
       #toast {
         position: fixed;
@@ -108,10 +84,6 @@
   </head>
   <body>
     <div id="game"></div>
-    <div id="rotate" aria-live="polite">
-      <div class="phone"></div>
-      <p id="rotate-text"></p>
-    </div>
     <div id="toast" role="button"></div>
     <script type="module" src="/src/main.ts"></script>
   </body>

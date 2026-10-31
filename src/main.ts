@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { createGameConfig } from './game/config';
-import { detectLocale, setLocale, t } from './i18n';
+import { detectLocale, setLocale } from './i18n';
 import {
   lockBrowserGestures,
   onAppHidden,
@@ -12,15 +12,16 @@ import { session } from './game/session';
 import { settings } from './core/settings';
 import { installTextScale } from './game/textScale';
 import { initRenderScale, installHighResolution } from './game/view';
+import { applyLandscape, installLandscape } from './game/landscape';
 
 session.load();
 setLocale(settings.language === 'auto' ? detectLocale(navigator.languages) : settings.language);
-const rotateText = document.getElementById('rotate-text');
-if (rotateText) rotateText.textContent = t('device.rotate');
 lockBrowserGestures();
 setupPwa();
 void requestPersistentStorage();
 
+applyLandscape();
+installLandscape();
 initRenderScale();
 installHighResolution();
 installTextScale();
@@ -28,6 +29,7 @@ const game = new Phaser.Game(createGameConfig('game'));
 
 // Après une rotation, on recadre le jeu sur l'écran réel.
 onViewportChange(() => {
+  applyLandscape();
   resetPageViewport();
   game.scale.refresh();
 });

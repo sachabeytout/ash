@@ -1,6 +1,6 @@
 # Architecture (carte du projet)
 
-> Statut 0.46.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
+> Statut 0.47.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
 > combat/attack+health+status+superGauge, boons/boons, run/waves+rewards+state, save/schema+migrations+codec+store),
 > `data/` (player, weapons, enemies, biomes, gods, boons, status, skills, bosses, music, shop), `game/` (scenes Title, Hub,
 > Run, Ui, Boon, Pause, Shop ; entities Player, Enemy, Boss, Hittable ; input Controls, TouchControls ; fx/Juice+Lightning ;
@@ -36,6 +36,15 @@ par-dessus). Mort ou sortie → `hub` avec un `RunSummary`.
   `RunScene.startAmon` / `onAmonEvent` (coups reçus, ennemis vaincus, `hitKind`) / `openRoyalFavor` (dans `clearRoom`) ;
   fenêtre `src/game/scenes/AmonScene.ts`, œil `drawAmonEye` (`src/game/icons.ts`), `UiScene.showAmon`. Sauvegarde v16
   (`run.amonBiome`). Raccourci de test C : Amon regarde la salle (chaque appui change de défi).
+- Coups d'élan (dash + attaque) : `src/core/combat/dashStrike.ts` (`DASH_STRIKE`, `dashStrikeStep`), utilisé par
+  `Player.startAttack` (attaque gardée pendant le dash : `queuedStrike`) ; effet `RunScene` (`onDashStrike`, `Juice.label`).
+- Butin de fin de salle : la porte choisie remplit `run.roomReward` (sauvegarde v17) ; `RunScene.clearRoom` →
+  `afterLoot` (butin à ramasser) → `takeRoomReward` (`src/core/run/state.ts`) → choix du don si besoin → portes
+  (`placeDoors`, faveur d'Amon). Toujours 2 portes (`DOOR_COUNT`).
+- Paysage d'office : `src/game/landscape.ts` (page tournée en CSS quand le téléphone est en portrait ; corrige les
+  mesures de Phaser : `getParentBounds`, `updateCenter`, `updateBounds`, `transformPointer`).
+- Netteté : `RENDER_SCALE` exact (`src/game/view.ts`) ; textes lissés (`updateText` → filtre linéaire, `src/game/textScale.ts`).
+- Sols unis : `FLOOR_COLOR` dans `RunScene.drawArena`.
 - Icônes des dieux : `drawGodIcon` (`src/game/icons.ts`), une forme par `GodDef.icon` (tête + détail du pouvoir).
 - Présentation des boss : `RunScene.presentBoss` (caméra) + `UiScene.bossIntro` (bandes, nom) ; `BOSS_PRESENT_MS`.
 - Trophées : `src/data/trophies.ts` (objectifs, récompenses), `src/core/trophies.ts` (progression, `claimTrophies`

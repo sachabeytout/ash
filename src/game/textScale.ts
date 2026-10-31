@@ -17,6 +17,17 @@ export function installTextScale(): void {
       style?: Phaser.Types.GameObjects.Text.TextStyle,
     ) => Phaser.GameObjects.Text;
   };
+  // Les textes sont lissés (filtre linéaire) même si le jeu est en pixel art : sans ça, les petites
+  // lettres échantillonnées « au plus proche » paraissent irrégulières, comme floues.
+  const textProto = Phaser.GameObjects.Text.prototype as unknown as {
+    updateText: () => Phaser.GameObjects.Text;
+  };
+  const updateText = textProto.updateText;
+  textProto.updateText = function (this: Phaser.GameObjects.Text) {
+    const result = updateText.call(this);
+    this.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
+    return result;
+  };
   const original = proto.text;
   proto.text = function (this: { scene: Phaser.Scene }, x, y, text, style) {
     const resolution = RENDER_SCALE * (SCENE_ZOOM[this.scene.sys.settings.key] ?? 1);
