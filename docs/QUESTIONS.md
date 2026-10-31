@@ -41,17 +41,11 @@ Dernière mise à jour : 30/10/2026 (version 0.43.0).
 14. Les étapes de l'histoire sur les 10 victoires (tableau « Arc narratif » du GDD) : ça te va ?
 15. La Lame de l'Aube (arme légendaire, 5e victoire) : **attaque puissante = parade puis riposte**. D'accord ?
     15 bis. Les dialogues de la Cage (Aelia, Thot, Vesper, Brokk) : le ton te plaît-il ? Trop longs, trop courts ? Un personnage à changer ?
-    15 ter. **Les dieux (proposition, rien n'est changé tant que tu n'as pas validé)** — piste : l'Oiseleur, dieu des cages, a enfermé dans sa tour des dieux de **toutes les cultures** ; ils aident Ash pour être libérés. Ça permet de mélanger les mythologies de façon logique, et d'éviter les dieux grecs de l'Olympe (trop proches de Hadès). Pouvoirs demandés → dieu proposé :
-    - Feu → **Pelé** (Hawaï, volcans) ou garder **Râ** (Égypte, soleil)
-    - Eau → **Sedna** (Inuit, déesse de la mer) : ennemis « trempés », qui conduisent la foudre et gèlent plus vite
-    - Glace → **Skadi** (nordique), déjà là
-    - Électricité → **Raijin** (Japon, tambours du tonnerre), à la place de Zeus
-    - Poison → **Wadjet** (Égypte, déesse cobra) : dégâts qui s'accumulent
-    - Brisement → **Thor** (nordique) : son marteau fend l'armure, l'ennemi encaisse plus de dégâts
-    - Buff (attaque, défense, critiques, cadence) → **Bastet** (Égypte), déjà proche
-    - Soin et bouclier (passif) → **Isis** (Égypte, la protectrice) ou **Eir** (nordique, la guérisseuse)
-    - En plus, pour les combinaisons : garder **Anubis** (exécution) et **Hel** (malédiction) ?
-      Ta réponse : cette piste « dieux prisonniers de toutes les cultures » te plaît ? Et pour chaque ligne : d'accord, ou un autre dieu ? → **en attente, rien ne change**
+    15 ter. **Les dieux** — ✅ validé : dieux prisonniers de **toutes les cultures** ; feu = **Râ** ; soin = **Isis**.
+    Encore à valider : eau = **Sedna**, foudre = **Raijin**, poison = **Wadjet**, brisement = **Thor**, buff = **Bastet**, glace = **Skadi** (proposés).
+    15 quater. **Anubis et Hel** : les garder ? Proposé : Anubis = **exécution** (achève les ennemis affaiblis), Hel = **malédiction** (les ennemis maudits explosent à leur mort, réactions en chaîne). Leurs dons de soin passeraient à Isis, et le « dégâts reçus en plus » d'Anubis à Thor. → **gardés, recentrés**
+    15 quinquies. **Les dieux-oiseaux** (ton idée) : le Serment de la cage marque chaque dieu captif de traits d'oiseau — Râ tête de faucon, Isis ailes de milan, Skadi plumes de harfang (chouette des neiges), Raijin plumage d'orage, Sedna ailes de pétrel (oiseau des mers), Wadjet cobra ailé, Thor casque et ailes d'aigle, Bastet oreilles de hibou, Anubis cou de vautour, Hel plumes de corneille. Libérés, ils retrouvent leur vraie forme. D'accord ? Un oiseau à changer ? → **en attente**
+    15 sexies. **Le nom du grand méchant** : garder « l'Oiseleur », ou lui donner un nom plus fort ? Propositions : **le Roi sans Ailes** (il n'a jamais pu voler, alors il enferme ceux qui volent), **le Geôlier du Ciel**, ou un nom propre avec « l'Oiseleur » en titre (ex. **Morvhan, l'Oiseleur**). → **en attente (proposé : le Roi sans Ailes)**
 
 ## C. Petites décisions prises par Claude (dis seulement si tu n'es pas d'accord)
 

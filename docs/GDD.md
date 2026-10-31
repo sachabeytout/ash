@@ -103,6 +103,11 @@ L'Oiseleur le laisse s'évader, encore et encore.
 
 ## 4. Dieux 🟡 (3 par panthéon ; les 9 sont en jeu depuis la 0.10.0)
 
+> **Refonte en cours (validée en partie le 31/10/2026)** : les dieux deviennent des prisonniers de l'Oiseleur venus de
+> **toutes les cultures**, marqués de traits d'oiseau. Pouvoirs voulus : feu (**Râ** ✅), eau, glace, électricité, poison,
+> brisement (baisse la défense), buff (stats, critiques), soin / bouclier (**Isis** ✅). Propositions et questions :
+> `docs/QUESTIONS.md` (15 ter à 15 sexies). Le tableau ci-dessous décrit le jeu actuel.
+
 | Dieu    | Panthéon | Identité mécanique                       | M1  |
 | ------- | -------- | ---------------------------------------- | --- |
 | Râ      | égyptien | Brûlure (dégâts dans le temps)           | ✅  |
