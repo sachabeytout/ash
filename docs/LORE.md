@@ -49,7 +49,9 @@ rien perdre : c'est **le Livre d'Anii**.
   catastrophe. Les dieux s'éteignent un à un, et les mondes retombent dans le chaos.
 - **Pourquoi 🟡 :** il pense que les dieux sont une prison pour les hommes, et qu'un monde sans dieux serait libre. Il
   se trompe : sans dieux, c'est le chaos qui gagne. Mais il y croit sincèrement.
-- **Sa Volière 🟡 :** une tour pleine de cages vides, chacune avec une étiquette : _Phénix_, _Hō-ō_, _Fenghuang_,
+- **Sa Pyramide aux cages 🟡 (0.54.0) :** une pyramide volée à un roi oublié, devenue sa volière. Les âmes-oiseaux
+  (_ba_) s'envolent par les conduits de la pyramide vers les étoiles : il les attend au sommet avec ses filets. Elle est
+  pleine de cages vides, chacune avec une étiquette : _Phénix_, _Hō-ō_, _Fenghuang_,
   _Aigle_, _Simurgh_… Toutes ces cages ont un jour enfermé Ash, et Anii les a toutes ouvertes.
   - C'est ce qui l'obsède : **il gagne toujours, puis elle défait tout**.
 - **Son lien avec Ash 🟡 :** il est le seul, avec Anii, à se souvenir de toutes les vies d'Ash. Il lui parle comme à
@@ -136,7 +138,7 @@ rien perdre : c'est **le Livre d'Anii**.
 | --- | --------------------------------------------------------------------------------------- | -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 1   | **Les Bas-Fonds d'Héliopolis** : la ville de néon où le soleil ne se lève presque plus. | **Ammit, la Dévoreuse**    | Elle dévore les cœurs trop lourds. Celui d'Ash est **vide de souvenirs, il ne pèse rien**, alors elle ne sait pas le juger. Plus Ash retrouve de souvenirs, plus elle a faim de lui.                                 |
 | 2   | **Le Nil de minuit** : le fleuve noir que la barque de Râ ne traverse plus.             | **Shezmu, le Bourreau** ✅ | Le serviteur d'Apophis. Il **presse les souvenirs arrachés à Anii** dans son pressoir et en fait le vin de l'oubli qu'Apophis boit. Le liquide rouge sombre qui coule de son pressoir, ce sont les souvenirs d'Anii. |
-| 3   | **La Volière** : la tour de l'Oiseleur et ses cages vides.                              | **L'Oiseleur**             | Il veut remettre Ash en cage. Il lui parle de toutes ses vies. Il lui révèle que c'est **Anii** qui l'a toujours libéré.                                                                                             |
+| 3   | **La Pyramide aux cages** : la pyramide dont l'Oiseleur a fait sa volière.              | **L'Oiseleur**             | Il veut remettre Ash en cage. Il lui parle de toutes ses vies. Il lui révèle que c'est **Anii** qui l'a toujours libéré.                                                                                             |
 | 4   | **La Douât** : le monde de la nuit, où Apophis attend la barque de Râ.                  | **Apophis** (10 fois)      | À chaque victoire, un anneau se brise. Anii perd un souvenir et Ash le retrouve.                                                                                                                                     |
 
 ---
@@ -176,7 +178,9 @@ qu'un jour, dans un autre monde, une étincelle viendra les rallumer…
 
 - ✅ **Personnages (0.48.0) :** Aelia est devenue Anii, Brokk est devenu Ptah (en attendant ta réponse) ; dialogues de
   la Cage, répliques, Archives et vraie fin réécrits. Reste à faire : les lieux et les boss (étape 3).
-- **Mondes :** ✅ Bas-Fonds d'Héliopolis, Nil de minuit (0.49.0), Volière en 3e, Douât en 4e (0.51.0).
+- **Mondes :** ✅ Bas-Fonds d'Héliopolis, Nil de minuit (0.49.0), Volière en 3e, Douât en 4e (0.51.0) ; la Volière devient la Pyramide aux cages (0.54.0). L'Oiseleur, ses
+  créatures d'acier et Vesper restent étrangers à l'Égypte (choix de l'utilisateur) ; seule la pyramide et son sphinx
+  enchaîné sont égyptiens.
 - **Boss :** ✅ Ammit, Shezmu (0.50.0), l'Oiseleur, Apophis boss final (0.51.0).
 - **Mythe de l'Aube, Nox, Consortium, Serment des dieux, Lanterne :** l'ancien lore v0.2 est remplacé par ce document.
 - Le jeu garde son **style néon** : l'Égypte d'ASH est une Égypte de néon et de nuit, où le soleil ne se lève presque plus.

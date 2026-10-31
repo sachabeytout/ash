@@ -1,6 +1,6 @@
 # Architecture (carte du projet)
 
-> Statut 0.53.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
+> Statut 0.54.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
 > combat/attack+health+status+superGauge, boons/boons, run/waves+rewards+state, save/schema+migrations+codec+store),
 > `data/` (player, weapons, enemies, biomes, gods, boons, status, skills, bosses, music, shop), `game/` (scenes Title, Hub,
 > Run, Ui, Boon, Pause, Shop ; entities Player, Enemy, Boss, Hittable ; input Controls, TouchControls ; fx/Juice+Lightning ;
@@ -44,7 +44,8 @@ par-dessus). Mort ou sortie → `hub` avec un `RunSummary`.
 - Paysage d'office : `src/game/landscape.ts` (page tournée en CSS quand le téléphone est en portrait ; corrige les
   mesures de Phaser : `getParentBounds`, `updateCenter`, `updateBounds`, `transformPointer`).
 - Netteté : `RENDER_SCALE` exact (`src/game/view.ts`) ; textes lissés (`updateText` → filtre linéaire, `src/game/textScale.ts`).
-- Sols unis : `FLOOR_COLOR` dans `RunScene.drawArena` ; brume du Nil : `BiomeTheme.mist` → `RunScene.addMist`.
+- Sols unis : `FLOOR_COLOR` dans `RunScene.drawArena` ; brume du Nil : `BiomeTheme.mist` → `RunScene.addMist` ; sable de la
+  Pyramide aux cages (identifiant `aviary`) : `BiomeTheme.sand` → `RunScene.addSand`.
 - Identifiants de mondes et d'ennemis historiques (`lowtown`, `frostserver`, `wolfbot`, `einherjar`…) : seuls les noms et
   les dessins changent (sauvegarde et Archives intactes).
 - Personnages (lore v0.3, `docs/LORE.md`) : identifiants historiques gardés pour la sauvegarde (`aelia` = Anii,
@@ -78,7 +79,7 @@ par-dessus). Mort ou sortie → `hub` avec un `RunSummary`.
   1…N = combats, N + 1 = boss (`roomKind` dans `src/core/run/state.ts`) ; `afterBoss` passe au biome suivant.
 - Boss : `BOSSES` dans `src/data/bosses.ts` (attaques optionnelles : bite, charge, quake, summon, leap, icefall, sweep,
   hook = chaînes qui tirent Ash, `Boss.consumeHook` → `Player.yank`). Shezmu (Nil) : pressoir `RunScene.drawPress`.
-  Sauvegarde v18 : fiche et variante de Fenrir → Shezmu. Ordre des mondes (v19) : Héliopolis, Nil, Volière, Douât
+  Sauvegarde v18 : fiche et variante de Fenrir → Shezmu. Ordre des mondes (v19) : Héliopolis, Nil, Pyramide aux cages (ex-Volière, `aviary`), Douât
   (`douat`, boss Apophis) ; la run en cours garde son monde (indices 2 ↔ 3 échangés).
 - Marchand : articles dans `src/data/shop.ts`, achat dans `src/core/shop.ts`, écran `src/game/scenes/ShopScene.ts`.
 - Forge de Brokk : paliers dans `src/data/forge.ts`, logique `src/core/forge.ts`, fenêtre `src/game/ui/ForgePanel.ts` ;

@@ -2,6 +2,27 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.54.0 — La Pyramide aux cages
+
+Comme tu l'as demandé, un monde en rapport avec les pyramides : **la Volière (3e monde) devient la Pyramide aux cages**.
+
+- **L'histoire** : l'Oiseleur a volé une pyramide à un roi oublié et en a fait sa volière. Les âmes-oiseaux s'envolent par
+  les conduits de la pyramide vers les étoiles… et il les attend au sommet avec ses filets.
+- **Le décor** :
+  - grands blocs de pierre ;
+  - un rayon de lumière dorée qui tombe d'un conduit, avec sa poussière ;
+  - une frise peinte en haut ;
+  - des **cages dorées suspendues** (certaines vides, porte ouverte) ;
+  - des torches et des hiéroglyphes sur les murs ;
+  - un sarcophage doré, des jarres canopes et des dunes de sable ;
+  - du **sable qui tombe du plafond** (au lieu des plumes).
+- **L'élite** devient le **Sphinx enchaîné** : un gardien de la pyramide que l'Oiseleur a enchaîné. Il se bat pareil
+  (rayon lent, protégé de face).
+- **Ce qui ne change pas, comme tu l'as voulu** : l'Oiseleur, Vesper et les créatures d'acier (hirondelles, vautours,
+  geôliers) restent étrangers à l'Égypte. Ce sont des intrus dans la pyramide.
+
+**Quoi tester** : va jusqu'au 3e monde. L'ambiance de pyramide te plaît ? Le Sphinx enchaîné se lit bien ?
+
 ## 0.53.0 — Ash à l'égyptienne
 
 - **Nouveau look d'Ash**, appliqué d'office partout (combat, Cage, introduction) :

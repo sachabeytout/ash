@@ -208,7 +208,7 @@ const FLOOR_COLOR: Record<BiomeDef['theme']['floor'], number> = {
   floor: 0x110e1e,
   floorIce: 0x0d1828,
   floorMarble: 0x140a18,
-  floorAviary: 0x130f1d,
+  floorPyramid: 0x1a140c,
   floorRoots: 0x20160e,
 };
 /** Portes de sortie d'une salle de combat (toujours 2 : un choix simple). */
@@ -1908,7 +1908,23 @@ export class RunScene extends Phaser.Scene {
     neon(ARENA.right, ARENA.bottom, n1);
     if (theme.snow) this.addSnow(0xd8f6ff);
     if (theme.mist) this.addMist();
-    if (theme.feathers) this.addSnow(0xd8b8ff, 'feather');
+    if (theme.sand) this.addSand();
+  }
+
+  /** Pyramide aux cages : grains de sable qui tombent lentement du plafond, quelques-uns dorés. */
+  private addSand(): void {
+    this.add
+      .particles(0, ARENA.top - 10, 'spark', {
+        x: { min: ARENA.left, max: ARENA.right },
+        speedY: { min: 8, max: 18 },
+        speedX: { min: -2, max: 2 },
+        lifespan: 16000,
+        frequency: 160 / QUALITY_PARTICLES[settings.quality],
+        scale: { min: 0.15, max: 0.3 },
+        alpha: { start: 0.55, end: 0.05 },
+        tint: [0xe0c080, 0xc8a060, 0xffd36b],
+      })
+      .setDepth(2);
   }
 
   /** Nil de minuit : brume froide qui dérive lentement au ras de l'eau. */

@@ -3,6 +3,14 @@ import type { Rng } from '../../core/rng';
 import type { BiomeDef } from '../../data/biomes';
 import { QUALITY_PARTICLES, settings } from '../../core/settings';
 
+/** Remplit un polygone (points simples, sans Vector2). */
+function fillPoly(g: Phaser.GameObjects.Graphics, pts: readonly { x: number; y: number }[]): void {
+  g.beginPath();
+  pts.forEach((p, i) => (i === 0 ? g.moveTo(p.x, p.y) : g.lineTo(p.x, p.y)));
+  g.closePath();
+  g.fillPath();
+}
+
 /**
  * Décor propre à chaque monde. Il reste discret (couleurs sombres, sous les personnages et les
  * pièges), n'emploie jamais le rouge-magenta des dangers et ne ressemble à aucun piège :
@@ -288,67 +296,129 @@ function douat({ scene, floor, wall, arena, rng, spot, topSlots }: DecorContext)
     .setDepth(1.4);
 }
 
-// ---------- La Volière : sommet de la tour ----------
+// ---------- La Pyramide aux cages : la pyramide dont l'Oiseleur a fait sa volière ----------
 function aviary({ scene, floor, wall, arena, rng, spot, topSlots }: DecorContext): void {
-  // Ombres des barreaux de la grande cage, en diagonale sur le sol.
-  floor.fillStyle(0x07060d, 0.22);
-  for (let x = arena.left - arena.height; x < arena.right; x += 46) {
-    floor.fillTriangle(
-      x,
-      arena.bottom,
-      x + 10,
-      arena.bottom,
-      x + arena.height * 0.6 + 10,
-      arena.top,
-    );
-    floor.fillTriangle(
-      x,
-      arena.bottom,
-      x + arena.height * 0.6,
-      arena.top,
-      x + arena.height * 0.6 + 10,
-      arena.top,
-    );
+  // Grands blocs de calcaire : joints discrets, rangées décalées.
+  floor.lineStyle(1, 0x2e2416, 0.8);
+  for (let y = arena.top + 44, row = 0; y < arena.bottom; y += 44, row++) {
+    floor.lineBetween(arena.left, y, arena.right, y);
+    for (let x = arena.left + (row % 2 ? 36 : 72); x < arena.right; x += 72)
+      floor.lineBetween(x, y - 44, x, y);
   }
-  // Chaînes qui pendent du mur du haut.
+  // Rayon de lumière dorée tombé d'un conduit vers les étoiles, avec sa poussière.
+  const beamX = arena.left + arena.width * (0.3 + rng.next() * 0.4);
+  const beam = scene.add.graphics().setDepth(0.6).setBlendMode('ADD');
+  beam.fillStyle(0xffd36b, 0.05);
+  fillPoly(beam, [
+    { x: beamX - 14, y: arena.top },
+    { x: beamX + 14, y: arena.top },
+    { x: beamX + 70, y: arena.bottom },
+    { x: beamX + 10, y: arena.bottom },
+  ]);
+  beam.fillStyle(0xffd36b, 0.05).fillEllipse(beamX + 40, arena.bottom - 30, 70, 26);
+  scene.add
+    .particles(0, 0, 'spark', {
+      x: { min: beamX - 4, max: beamX + 40 },
+      y: { min: arena.top + 10, max: arena.bottom - 20 },
+      speedX: { min: -3, max: 3 },
+      speedY: { min: -4, max: 4 },
+      lifespan: 5000,
+      frequency: 500 / QUALITY_PARTICLES[settings.quality],
+      scale: { min: 0.15, max: 0.3 },
+      alpha: { start: 0.6, end: 0 },
+      tint: 0xffe08a,
+      blendMode: 'ADD',
+    })
+    .setDepth(1.4);
+  // Frise peinte sur le mur du haut : chasse aux oiseaux au filet, comme dans les tombeaux.
+  wall.fillStyle(0x2a2012, 1).fillRect(arena.left + 10, arena.top + 3, arena.width - 20, 3);
+  wall.fillStyle(0x40d0c0, 0.5);
+  for (let x = arena.left + 14; x < arena.right - 14; x += 8) wall.fillRect(x, arena.top + 4, 3, 1);
+  // Cages dorées suspendues (certaines vides, porte ouverte ; d'autres avec un oiseau qui luit).
   topSlots.forEach((x, i) => {
-    if (i % 2 === 1) return;
-    wall.lineStyle(1.5, 0x6a5a8a, 0.9);
-    for (let k = 0; k < 4; k++) wall.strokeEllipse(x, arena.top + 4 + k * 5, 3, 5);
+    const y = arena.top + 8;
+    wall.lineStyle(1, 0x8a6a3a, 1).lineBetween(x, arena.top, x, y);
+    wall.fillStyle(0x1a140c, 0.9).fillEllipse(x, y + 9, 14, 16);
+    wall.lineStyle(1, 0xd8a840, 1).strokeEllipse(x, y + 9, 14, 16);
+    wall.lineBetween(x - 3, y + 2, x - 3, y + 16).lineBetween(x + 3, y + 2, x + 3, y + 16);
+    wall.lineStyle(1.5, 0xd8a840, 1).lineBetween(x - 7, y + 15, x + 7, y + 15);
+    if (i % 2 === 0) {
+      wall
+        .fillStyle(0xffe08a, 1)
+        .fillEllipse(x, y + 11, 5, 4)
+        .fillCircle(x + 2, y + 9, 1.5);
+      blink(scene, x, y + 10, 0xffd36b, 0.5, rng);
+    } else {
+      // Porte ouverte : Anii est passée par là.
+      wall.lineStyle(1, 0xd8a840, 1).lineBetween(x + 7, y + 6, x + 12, y + 9);
+    }
   });
-  // Perchoirs avec oiseaux sur les murs latéraux.
-  for (const x of [arena.left + 4, arena.right - 4]) {
-    const y = arena.top + 70 + rng.int(0, 120);
-    const dir = x < arena.centerX ? 1 : -1;
-    wall.lineStyle(2, 0x5a4030, 1).lineBetween(x, y, x + dir * 22, y);
-    wall
-      .fillStyle(0x1a1626, 1)
-      .fillEllipse(x + dir * 14, y - 4, 9, 7)
-      .fillCircle(x + dir * 17, y - 7, 3);
-    wall.fillStyle(0xd8b8ff, 1).fillCircle(x + dir * 18, y - 8, 0.8);
+  // Torches le long des murs latéraux, colonnes de hiéroglyphes entre elles.
+  for (const x of [arena.left + 5, arena.right - 5]) {
+    for (let k = 0; k < 2; k++) {
+      const y = arena.top + 90 + k * 140;
+      wall.fillStyle(0x4a3418, 1).fillRect(x - 2, y, 4, 8);
+      wall.fillStyle(0xffa040, 1).fillTriangle(x - 3, y, x + 3, y, x, y - 7);
+      wall.fillStyle(0xffe08a, 1).fillTriangle(x - 1.5, y, x + 1.5, y, x, y - 4);
+      blink(scene, x, y - 3, 0xffa040, 0.8, rng);
+    }
+    for (let k = 0; k < 5; k++) {
+      const y = arena.top + 40 + k * 46;
+      if (Math.abs(y - (arena.top + 90)) < 14 || Math.abs(y - (arena.top + 230)) < 14) continue;
+      wall.lineStyle(1, 0x8a6a3a, 0.8);
+      if (k % 3 === 0) wall.strokeTriangle(x - 3, y + 3, x + 3, y + 3, x, y - 3);
+      else if (k % 3 === 1) wall.strokeEllipse(x, y, 6, 3).strokeCircle(x, y, 0.8);
+      else wall.lineBetween(x, y - 3, x, y + 3).lineBetween(x - 2, y - 1, x + 2, y - 1);
+    }
   }
-  // Nids dans les coins.
-  for (const [x, y] of [
-    [arena.left + 18, arena.bottom - 14],
-    [arena.right - 18, arena.bottom - 14],
-  ] as const) {
-    wall.fillStyle(0x4a3420, 1).fillEllipse(x, y, 22, 9);
-    wall
-      .lineStyle(1, 0x6a4a2a, 1)
-      .lineBetween(x - 10, y - 2, x + 8, y + 2)
-      .lineBetween(x - 6, y + 3, x + 10, y - 3);
-    wall
-      .fillStyle(0xe8e0d0, 1)
-      .fillEllipse(x - 3, y - 2, 4, 3)
-      .fillEllipse(x + 2, y - 3, 4, 3);
+  // Sarcophage doré dans un coin, jarres canopes et cage vide dans l'autre.
+  const flip = rng.next() < 0.5;
+  const [sx, cx] = flip ? [arena.right - 20, arena.left + 22] : [arena.left + 20, arena.right - 22];
+  const sy = arena.bottom - 26;
+  wall.fillStyle(0x3a2810, 1).fillEllipse(sx, sy, 14, 34);
+  wall.fillStyle(0xd8a840, 1).fillEllipse(sx, sy, 11, 31);
+  wall
+    .fillStyle(0x2a4a9a, 1)
+    .fillRect(sx - 5, sy - 8, 10, 2)
+    .fillRect(sx - 5, sy + 2, 10, 2);
+  wall.fillStyle(0xe8c890, 1).fillCircle(sx, sy - 11, 3);
+  wall.fillStyle(0x2a4a9a, 1).fillRect(sx - 4, sy - 15, 8, 2);
+  const cy = arena.bottom - 16;
+  for (let k = 0; k < 3; k++) {
+    const jx = cx + (k - 1) * 8;
+    wall.fillStyle(0xb89868, 1).fillEllipse(jx, cy, 6, 9);
+    wall.fillStyle(0x8a6a3a, 1).fillCircle(jx, cy - 5, 2.2);
   }
-  // Plumes éparpillées.
-  for (let i = 0; i < 7; i++) {
+  wall.lineStyle(1, 0x8a7a5a, 0.9).strokeEllipse(cx, cy - 18, 12, 12);
+  wall.lineBetween(cx, cy - 24, cx, cy - 12).lineBetween(cx - 5, cy - 14, cx + 5, cy - 14);
+  // Dunes de sable apportées par le vent, et petits tas sous les fissures du plafond.
+  for (let i = 0; i < 5; i++) {
+    const p = spot(24);
+    const w = 18 + rng.int(0, 22);
+    floor.fillStyle(0x3a2c18, 0.55).fillEllipse(p.x, p.y, w, w * 0.35);
+    floor.fillStyle(0x4a3a20, 0.4).fillEllipse(p.x - w * 0.1, p.y - 1, w * 0.5, w * 0.15);
+  }
+  for (let i = 0; i < 2; i++) {
+    const p = spot(40);
+    floor.fillStyle(0x5a4426, 0.7).fillEllipse(p.x, p.y, 10, 5);
+    scene.add
+      .particles(p.x, p.y - 40, 'spark', {
+        x: { min: -1, max: 1 },
+        speedY: { min: 40, max: 55 },
+        lifespan: 800,
+        frequency: 70 / QUALITY_PARTICLES[settings.quality],
+        scale: { min: 0.15, max: 0.25 },
+        alpha: { start: 0.7, end: 0.4 },
+        tint: 0xe0c080,
+      })
+      .setDepth(1.4);
+  }
+  // Plumes oubliées par les oiseaux de l'Oiseleur.
+  for (let i = 0; i < 4; i++) {
     const p = spot(20);
     const a = rng.next() * Math.PI;
     floor
-      .lineStyle(1, 0xd8d0e8, 0.55)
+      .lineStyle(1, 0xd8d0e8, 0.45)
       .lineBetween(p.x, p.y, p.x + Math.cos(a) * 6, p.y + Math.sin(a) * 6);
   }
-  void scene;
 }

@@ -341,7 +341,7 @@ export const ENEMIES: Record<EnemyId, EnemyDef> = {
     elite: { xp: 20 },
   },
 
-  // ---------- La Volière ----------
+  // ---------- La Pyramide aux cages (créatures de l'Oiseleur + sphinx enchaîné) ----------
   // Moineau d'acier : tout petit, très rapide, arrive en nuée.
   sparrow: {
     id: 'sparrow',
@@ -400,7 +400,7 @@ export const ENEMIES: Record<EnemyId, EnemyDef> = {
     attack: { kind: 'runes', triggerRange: 170, count: 2, radius: 24, spread: 40 },
     threat: 3,
   },
-  // Élite : le Héraut de l'Oiseleur. Bouclier de face, rayon annoncé : on le contourne entre deux rayons.
+  // Élite : le Sphinx enchaîné, gardien de la pyramide asservi par l'Oiseleur. Bouclier de face, rayon annoncé : on le contourne entre deux rayons.
   herald: {
     id: 'herald',
     nameKey: 'enemy.herald',

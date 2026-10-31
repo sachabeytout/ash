@@ -129,7 +129,7 @@ export const TRACKS: Record<TrackId, TrackDef> = {
     pad: true,
     mix: { bass: 0.58, arp: 0.2, kick: 0.7, hat: 0.14, pad: 0.18 },
   },
-  // La Volière : boîte à musique inquiétante, chants d'oiseaux (arpège aigu), basse lente.
+  // La Pyramide aux cages : boîte à musique inquiétante, chants d'oiseaux (arpège aigu), basse lente.
   aviary: {
     bpm: 98,
     rootHz: 82.41, // mi
@@ -142,7 +142,7 @@ export const TRACKS: Record<TrackId, TrackDef> = {
     pad: true,
     mix: { bass: 0.55, arp: 0.24, kick: 0.45, hat: 0.1, pad: 0.26 },
   },
-  // L'Oiseleur : le thème de la Volière, rapide et oppressant.
+  // L'Oiseleur : le thème de la Pyramide aux cages, rapide et oppressant.
   aviaryBoss: {
     bpm: 140,
     rootHz: 82.41,

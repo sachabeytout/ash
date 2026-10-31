@@ -289,7 +289,7 @@ export const APOPHIS: BossDef = {
   reward: { xp: 150, weaponParts: 5 },
 };
 
-/** L'Oiseleur : le chasseur des oiseaux des dieux, au sommet de la Volière (3e monde). */
+/** L'Oiseleur : le chasseur des oiseaux des dieux, au sommet de la Pyramide aux cages (3e monde). */
 export const OISELEUR: BossDef = {
   id: 'oiseleur',
   texture: 'oiseleur',

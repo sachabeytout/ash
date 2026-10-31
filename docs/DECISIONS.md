@@ -121,6 +121,11 @@ Format : date — décision — raison — validée par l'utilisateur (oui / non
 | 2026-10-30 | Couleurs des dieux (0.41.0, demandé) : Râ rouge-orangé `#ff4a14`, Zeus jaune `#ffe03a`, Skadi cyan glacé, Anubis vert émeraude, Bastet vert citron, Athéna bronze, Artémis argent lunaire, Thor bleu orage, Hel violet. Chaque couleur habille tout ce qui appartient au dieu (cartes, halo d'offre, icônes, traînée d'attaque, états des ennemis, chiffres de dégâts, flèches). Le rouge de Râ reste distinct du rouge-magenta des dangers (teinte écartée d'au moins 25°, testé) et toujours doublé d'une forme (flammes, soleil) | Demande de l'utilisateur ; règle de lisibilité des dangers conservée | à signaler |
 | 2026-10-30 | Épreuve de Vesper : 1 salle chronométrée par biome (9 s + 2,6 s/ennemi + 1,5 s/vague), coffre 30 éclats + 15 XP (+10/+5 par biome) ; échec sans pénalité | Variété des salles sans frustration | à signaler |
 
+- **0.54.0 — Pyramide aux cages** (demande : « un biome en rapport avec les pyramides ») : la Volière devient une pyramide
+  volée par l'Oiseleur plutôt qu'un 5e monde, pour garder des runs de même durée (identifiant `aviary` gardé : sauvegarde
+  intacte). L'Oiseleur, ses créatures d'acier et Vesper restent étrangers à l'Égypte (choix de l'utilisateur) ; l'élite
+  devient le Sphinx enchaîné. Plumes qui tombent → grains de sable (`BiomeTheme.sand`).
+
 ## Réponses de l'utilisateur (30/10/2026)
 
 | Sujet         | Décision                                                                                                                                                                                              | Validée        |

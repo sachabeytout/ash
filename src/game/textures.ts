@@ -1,6 +1,14 @@
 import Phaser from 'phaser';
 import { GODS } from '../data/gods';
 
+/** Remplit un polygone (points simples, sans Vector2). */
+function fillPoly(g: Phaser.GameObjects.Graphics, pts: readonly { x: number; y: number }[]): void {
+  g.beginPath();
+  pts.forEach((p, i) => (i === 0 ? g.moveTo(p.x, p.y) : g.lineTo(p.x, p.y)));
+  g.closePath();
+  g.fillPath();
+}
+
 /** Dessine un sprite pixel à partir de lignes de caractères (un caractère = un pixel). */
 function pixelTexture(
   scene: Phaser.Scene,
@@ -274,7 +282,7 @@ export function ensureGameTextures(scene: Phaser.Scene): void {
     g.fillStyle(0xffe08a).fillRect(0, 0, 2, 2);
   });
 
-  // La Volière. Moineau d'acier : petit triangle aux ailes repliées.
+  // Pyramide aux cages : les créatures d'acier de l'Oiseleur (étrangères à l'Égypte).
   // Hirondelle d'acier : ailes en flèche, queue fourchue.
   shapeTexture(scene, 'sparrow', 12, 10, (g) => {
     g.fillStyle(0x10121e).fillTriangle(0, 0, 12, 5, 0, 10);
@@ -340,13 +348,34 @@ export function ensureGameTextures(scene: Phaser.Scene): void {
     }
     g.fillStyle(0xe8f8ff).fillCircle(9, 3, 1.4);
   });
-  // Héraut du Serment (élite) : visage sous un voile, auréole.
+  // Sphinx enchaîné (élite) : gardien de la pyramide, némès rayé or et lapis, barbe postiche,
+  // collier de chaîne mauve de l'Oiseleur.
   shapeTexture(scene, 'herald', 22, 22, (g) => {
-    g.fillStyle(0x120e1c).fillCircle(11, 12, 10);
-    g.fillStyle(0xe8dcff).fillCircle(11, 12, 8);
-    g.fillStyle(0x9a8ad0).fillRect(4, 13, 14, 4);
-    g.fillStyle(0xffe08a).fillRect(4, 1, 14, 2);
-    g.fillStyle(0x120e1c).fillRect(8, 9, 2, 2).fillRect(12, 9, 2, 2);
+    g.fillStyle(0x120c06);
+    fillPoly(g, [
+      { x: 1, y: 21 },
+      { x: 21, y: 21 },
+      { x: 18, y: 5 },
+      { x: 11, y: 0 },
+      { x: 4, y: 5 },
+    ]);
+    g.fillStyle(0xd8a840);
+    fillPoly(g, [
+      { x: 3, y: 20 },
+      { x: 19, y: 20 },
+      { x: 17, y: 6 },
+      { x: 11, y: 2 },
+      { x: 5, y: 6 },
+    ]);
+    g.fillStyle(0x2a4a9a);
+    for (const y of [6, 10, 14, 18]) g.fillRect(3, y, 3, 1.5).fillRect(16, y, 3, 1.5);
+    g.fillRect(6, 4, 10, 1.5);
+    g.fillStyle(0xc89a60).fillRoundedRect(7, 6, 8, 10, 2);
+    g.fillStyle(0x120c06).fillRect(8, 9, 2.5, 1.5).fillRect(11.5, 9, 2.5, 1.5);
+    g.fillStyle(0x40d0c0).fillRect(8.5, 9.2, 1, 1).fillRect(12, 9.2, 1, 1);
+    g.fillStyle(0x8a6a3a).fillRect(10, 15, 2, 4);
+    g.lineStyle(1, 0xd8b8ff, 1);
+    for (let x = 5; x <= 17; x += 3) g.strokeEllipse(x, 18.5, 3, 2);
   });
   // L'Oiseleur : capuche, grandes ailes de filet, visage d'or (tourné vers la droite).
   shapeTexture(scene, 'oiseleur', 52, 48, (g) => {
@@ -370,19 +399,6 @@ export function ensureGameTextures(scene: Phaser.Scene): void {
     g.fillStyle(0x3a2818).fillRect(6, 16, 1, 7).fillRect(20, 24, 1, 7);
     g.fillStyle(0xffc46b).fillRect(30, 30, 1, 1);
   });
-  // Plume (Volière).
-  shapeTexture(scene, 'feather', 3, 7, (g) => {
-    g.fillStyle(0xffffff).fillRect(1, 0, 1, 7).fillRect(0, 1, 3, 4);
-  });
-  // Sol de la Volière : dalles sombres traversées par l'ombre des barreaux.
-  shapeTexture(scene, 'floorAviary', 32, 32, (g) => {
-    g.fillStyle(0x0d0a14).fillRect(0, 0, 32, 32);
-    g.fillStyle(0x130f1d).fillRect(1, 1, 30, 30);
-    g.fillStyle(0x2a1f3a).fillRect(0, 0, 32, 1).fillRect(0, 0, 1, 32);
-    g.fillStyle(0x1c1628).fillRect(10, 0, 3, 32).fillRect(24, 0, 3, 32);
-    g.fillStyle(0xd8b8ff).fillRect(0, 0, 2, 2);
-  });
-
   // Projectiles d'Ash : couleurs chaudes (jamais le rouge-magenta des ennemis).
   shapeTexture(scene, 'p_orb', 9, 9, (g) => {
     g.fillStyle(0xffd27a, 0.5).fillCircle(4.5, 4.5, 4.5);

@@ -30,7 +30,7 @@ export interface BiomeDef {
 
 export interface BiomeTheme {
   /** Texture du sol. */
-  floor: 'floor' | 'floorIce' | 'floorMarble' | 'floorAviary' | 'floorRoots';
+  floor: 'floor' | 'floorIce' | 'floorMarble' | 'floorPyramid' | 'floorRoots';
   wall: number;
   wallGlow: number;
   neons: readonly [number, number];
@@ -38,8 +38,8 @@ export interface BiomeTheme {
   snow: boolean;
   /** Brume froide qui dérive au ras de l'eau (Nil de minuit). */
   mist?: boolean;
-  /** Plumes qui tombent (Volière). */
-  feathers?: boolean;
+  /** Grains de sable qui tombent du plafond (Pyramide aux cages). */
+  sand?: boolean;
 }
 
 export const BIOMES: readonly BiomeDef[] = [
@@ -119,13 +119,14 @@ export const BIOMES: readonly BiomeDef[] = [
     boss: 'oiseleur',
     music: 'aviary',
     bossMusic: 'aviaryBoss',
+    // La Pyramide aux cages : une pyramide dont l'Oiseleur s'est emparé pour en faire sa volière.
     theme: {
-      floor: 'floorAviary',
-      wall: 0x2a1f3a,
-      wallGlow: 0xd8b8ff,
-      neons: [0xd8b8ff, 0xffe08a],
+      floor: 'floorPyramid',
+      wall: 0x3a2c1a,
+      wallGlow: 0xe8c070,
+      neons: [0xffd36b, 0x40d0c0],
       snow: false,
-      feathers: true,
+      sand: true,
     },
   },
   {

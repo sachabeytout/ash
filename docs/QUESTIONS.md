@@ -3,7 +3,7 @@
 Liste tenue à jour par Claude. Réponds quand tu veux, même en vrac (« 3 : oui, 7 : plutôt la B »).
 En attendant ta réponse, Claude applique **ce qui est indiqué en gras** (toujours modifiable ensuite).
 
-Dernière mise à jour : 30/10/2026 (version 0.44.0).
+Dernière mise à jour : 31/10/2026 (version 0.54.0).
 
 ## A. Ressenti de jeu
 
@@ -62,7 +62,9 @@ Dernière mise à jour : 30/10/2026 (version 0.44.0).
 27. Les **petits textes** sont-ils enfin nets sur ton iPhone ?
 
 28. **Noms d'armes venus d'autres mythologies** : « Gleipnir » (nordique) et « Disque d'Hélios » (grec). Je propose **Chaîne de Shezmu** et **Disque de Râ**. → ✅ **fait (0.52.0)**, avec tout le reste renommé à l'égyptienne
-29. **Vesper** (le corbeau de l'Oiseleur) et les **Épreuves de Vesper** gardent ce nom (latin) : veux-tu un nom égyptien pour lui aussi ?
+29. **Vesper** (le corbeau de l'Oiseleur) et les **Épreuves de Vesper** gardent ce nom (latin) : veux-tu un nom égyptien pour lui aussi ? → ✅ **non** : Vesper et l'Oiseleur viennent d'ailleurs, ils restent étrangers à l'Égypte
+30. **Le 3e monde devient la Pyramide aux cages (0.54.0)** : l'Oiseleur a volé une pyramide et en a fait sa volière. Ses créatures d'acier restent étrangères ; l'élite devient un **Sphinx enchaîné**. Ça te plaît ? Préfères-tu un 5e monde en plus plutôt qu'un remplacement ? → **remplacement (la run garde 4 mondes)**
+31. **Musique « dans le sable »** que tu aimes : de quel jeu (ou quel monde) s'agit-il ? Je m'inspirerai de son ambiance (tempo, instruments, émotion) sans copier sa mélodie. → **en attendant : ambiance de désert (gammes orientales, bourdon, darbouka, flûte de roseau)**
 
 ## C. Petites décisions prises par Claude (dis seulement si tu n'es pas d'accord)
 
