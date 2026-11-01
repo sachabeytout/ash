@@ -723,7 +723,7 @@
   "tutorial.super.keys": "Ta jauge est pleine ! Appuie sur E pour lancer ton Super.",
   "tutorial.super.pad": "Ta jauge est pleine ! Appuie sur ○ / B pour lancer ton Super.",
   "tutorial.doors": "Salle terminée ! Marche vers une porte : son symbole montre ta prochaine récompense.",
-  "pause.boonsTitle": "Tes dons",
+  "pause.boonsTitle": "Tes dons (touche un don pour le détail)",
   "hub.station.trophies": "Trophées",
   "trophy.title": "Trophées",
   "trophy.count": "{earned} / {total} obtenus",

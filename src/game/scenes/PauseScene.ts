@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { drawCartouche } from '../ui/frame';
 import type { RunState } from '../../core/run/state';
 import { t } from '../../i18n';
-import { addBoonMiniCard } from '../ui/boonCard';
+import { addBoonList } from '../ui/boonCard';
 import { sfx } from '../audio/sfx';
 import { OptionsPanel } from '../ui/OptionsPanel';
 import { COLORS, FONT_FAMILY } from '../theme';
@@ -59,7 +59,7 @@ export class PauseScene extends Phaser.Scene {
       )
       .setOrigin(0.5);
 
-    // À gauche les boutons ; à droite les dons obtenus, en petites cartes (effet compris).
+    // À gauche les boutons ; à droite les dons obtenus (liste compacte + détail du don touché).
     const boons = this.data_.run.boons;
     const listX = Math.min(cx - 60, 250);
     const btnX = boons.length ? listX / 2 + 4 : cx;
@@ -67,11 +67,6 @@ export class PauseScene extends Phaser.Scene {
       const areaW = width - listX - 16;
       const top = 62;
       const areaH = height - top - 26;
-      const cols = boons.length > 8 ? 3 : 2;
-      const rows = Math.ceil(boons.length / cols);
-      const gap = 6;
-      const cardW = (areaW - gap * (cols - 1)) / cols;
-      const cardH = Math.min(70, (areaH - gap * (rows - 1)) / rows);
       this.add
         .text(listX, top - 6, t('pause.boonsTitle'), {
           fontFamily: FONT_FAMILY,
@@ -79,16 +74,7 @@ export class PauseScene extends Phaser.Scene {
           color: COLORS.textDim,
         })
         .setOrigin(0, 1);
-      boons.forEach((b, i) =>
-        addBoonMiniCard(
-          this,
-          b,
-          listX + (i % cols) * (cardW + gap),
-          top + Math.floor(i / cols) * (cardH + gap),
-          cardW,
-          cardH,
-        ),
-      );
+      addBoonList(this, boons, listX, top, areaW, areaH);
     } else {
       this.add
         .text(cx, 58, t('pause.noBoons'), {

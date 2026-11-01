@@ -1,6 +1,6 @@
 # Architecture (carte du projet)
 
-> Statut 0.64.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
+> Statut 0.65.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
 > combat/attack+health+status+superGauge, boons/boons, run/waves+rewards+state, save/schema+migrations+codec+store),
 > `data/` (player, weapons, enemies, biomes, gods, boons, status, skills, bosses, music, shop), `game/` (scenes Title, Hub,
 > Run, Ui, Boon, Pause, Shop ; entities Player, Enemy, Boss, Hittable ; input Controls, TouchControls ; fx/Juice+Lightning ;
@@ -45,7 +45,7 @@ par-dessus). Mort ou sortie → `hub` avec un `RunSummary`.
   (deux colonnes). Renaissance : `RunScene.hurtPlayer` (`revivesUsed`, sauvegarde v11).
 - Premier essai guidé : `src/core/tutorial.ts` (étapes, pur) ; affiché par `RunScene.updateTutorial` →
   `UiScene.showHint` (+ `TouchControls.highlight`). Fini/passé → `tutorial_done` dans `seenDialogues`.
-- Pause : petites cartes des dons (`src/game/ui/boonCard.ts`, aussi `RARITY_COLOR`).
+- Pause : liste compacte des dons + détail du don touché (`addBoonList`, `src/game/ui/boonCard.ts`, aussi `RARITY_COLOR`).
 - Regard d'Amon : logique `src/core/amon.ts` (salle observée, défis, faveur royale, constantes) ; en jeu
   `RunScene.startAmon` / `onAmonEvent` (coups reçus, ennemis vaincus, `hitKind`) / `openRoyalFavor` (dans `clearRoom`) ;
   fenêtre `src/game/scenes/AmonScene.ts`, œil `drawAmonEye` (`src/game/icons.ts`), `UiScene.showAmon`. Sauvegarde v16

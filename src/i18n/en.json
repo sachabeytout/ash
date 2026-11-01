@@ -723,7 +723,7 @@
   "tutorial.super.keys": "Your gauge is full! Press E to unleash your Super.",
   "tutorial.super.pad": "Your gauge is full! Press ○ / B to unleash your Super.",
   "tutorial.doors": "Room cleared! Walk to a door: its symbol shows your next reward.",
-  "pause.boonsTitle": "Your boons",
+  "pause.boonsTitle": "Your boons (tap one for details)",
   "hub.station.trophies": "Trophies",
   "trophy.title": "Trophies",
   "trophy.count": "{earned} / {total} earned",

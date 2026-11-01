@@ -173,6 +173,10 @@ Format : date — décision — raison — validée par l'utilisateur (oui / non
   icône `drawEmberIcon` (`src/game/icons.ts`), variante B2 choisie par l'utilisateur après 3 séries d'exemples (charbon
   anguleux foncé, réseau fin de fissures, « + » au-dessus du coin droit) ; lueur qui pulse sur la porte.
 
+- **0.65.0 — Dons dans la pause (retour F5, option D)** : `addBoonList` (`src/game/ui/boonCard.ts`) remplace les petites
+  cartes : grille compacte (icône + nom, police réduite si besoin, 1 à 3 colonnes) et panneau de détail du don touché
+  (description entière, rétrécie si très longue) ; flèches du clavier pour naviguer.
+
 ## Réponses de l'utilisateur (30/10/2026)
 
 | Sujet         | Décision                                                                                                                                                                                              | Validée        |

@@ -2,6 +2,19 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.65.0 — Les dons dans la pause : liste compacte et détail
+
+Ton retour n° 5, solution D :
+
+- Dans la pause, tes dons forment une **liste compacte** : l'icône du dieu et le **nom en entier**. Les noms trop longs
+  rétrécissent un peu pour tenir dans leur case.
+- **Touche un don** pour voir son **détail complet** à droite : nom, rareté, action et description entière (plus
+  jamais coupée).
+- Au clavier : les flèches passent d'un don à l'autre.
+- Le nom est de la couleur de sa rareté (bleu = rare, violet = épique, or = duo).
+
+**Quoi tester** : ouvre la pause en fin de run avec beaucoup de dons. Tout se lit bien ?
+
 ## 0.64.0 — L'Étincelle devient la Braise
 
 Ton retour n° 4 :
