@@ -21,8 +21,6 @@ export interface RunPerks {
   dashCooldown: number;
   /** Renaissances par run (Thot). Ajouté en v11. */
   revives: number;
-  /** Dégâts reçus en moins (0,05 = −5 %, « Peau de cendre »). Ajouté en v21. */
-  armor: number;
 }
 
 export const NO_PERKS: RunPerks = {
@@ -32,7 +30,6 @@ export const NO_PERKS: RunPerks = {
   startShards: 0,
   dashCooldown: 0,
   revives: 0,
-  armor: 0,
 };
 
 /** État d'une run en cours (sérialisable : c'est ce qui est sauvegardé à chaque entrée de salle). */

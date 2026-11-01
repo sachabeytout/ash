@@ -597,8 +597,6 @@
   "skill.thoth_purse.desc": "Commence chaque run avec {value} éclats.",
   "skill.thoth_ibis": "Pas de l'ibis",
   "skill.thoth_ibis.desc": "Ton dash revient {value} % plus vite.",
-  "skill.thoth_ash": "Peau de cendre",
-  "skill.thoth_ash.desc": "Tu prends {value} % de dégâts en moins.",
   "skill.thoth_rebirth": "Renaissance",
   "skill.thoth_rebirth.desc": "{value} fois par run, un coup mortel te relève avec 40 % de tes PV.",
   "revive.sub": "Ash se relève de ses cendres",

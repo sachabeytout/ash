@@ -249,15 +249,27 @@ describe('les amplifications deviennent des passifs (v19 → v20)', () => {
   });
 });
 
-describe('« Peau de cendre » (v20 → v21)', () => {
-  it('une run en cours reçoit une défense nulle', () => {
+describe('« Peau de cendre » retirée (v20 → v22)', () => {
+  it('une run en cours garde sa vie, sans défense', () => {
     const save = migrate({
       version: 20,
       meta: {},
       settings: {},
       run: { ...newRun(3, 'katana', 50, 0, 'ra') },
     });
-    expect(save.run?.perks.armor).toBe(0);
     expect(save.run?.maxHp).toBe(50);
+    expect('armor' in (save.run?.perks ?? {})).toBe(false);
+  });
+
+  it('les niveaux achetés sont remboursés en XP', () => {
+    const save = migrate({
+      version: 21,
+      meta: { xp: 10, skills: { thoth_ash: 2, thoth_vigor: 1 } },
+      settings: {},
+      run: null,
+    });
+    expect(save.meta.xp).toBe(10 + 60 + 110);
+    expect(save.meta.skills['thoth_ash']).toBeUndefined();
+    expect(save.meta.skills['thoth_vigor']).toBe(1);
   });
 });

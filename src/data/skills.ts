@@ -7,8 +7,7 @@ export type SkillEffect =
   | 'superStart'
   | 'startShards'
   | 'dashCooldown'
-  | 'revive'
-  | 'armor';
+  | 'revive';
 
 export interface SkillDef {
   id: string;
@@ -86,14 +85,6 @@ export const SKILLS: readonly SkillDef[] = [
     effect: 'revive',
     perLevel: 1,
     costs: [250, 450],
-  },
-  {
-    id: 'thoth_ash',
-    nameKey: 'skill.thoth_ash',
-    descKey: 'skill.thoth_ash.desc',
-    effect: 'armor',
-    perLevel: 0.05,
-    costs: [60, 110, 170],
   },
 ];
 

@@ -165,6 +165,10 @@ Format : date — décision — raison — validée par l'utilisateur (oui / non
   défense `MAX_ARMOR` = 50 %), calcul dans `src/core/combat/incoming.ts`. Sauvegarde v21 (`perks.armor`). Trophée « Élève
   de Thot » : objectif = nombre de compétences.
 
+- **0.63.0 — Retour F3 annulé par l'utilisateur** : retour à 50 PV et aux dégâts ennemis d'origine ; compétence « Peau de
+  cendre » retirée. Sauvegarde v22 : niveaux achetés remboursés en XP (60/110/170), champ `perks.armor` retiré. Une run
+  commencée en 0.62.0 garde ses PV max (aucune perte).
+
 ## Réponses de l'utilisateur (30/10/2026)
 
 | Sujet         | Décision                                                                                                                                                                                              | Validée        |

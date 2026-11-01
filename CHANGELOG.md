@@ -2,6 +2,18 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.63.0 — Retour à la difficulté d'avant
+
+Comme tu l'as demandé, les changements de difficulté de la 0.62.0 sont **annulés** :
+
+- les ennemis frappent de nouveau comme avant (plus de −25 %) ;
+- Ash recommence chaque run avec **50 PV** (une run déjà commencée garde sa vie actuelle) ;
+- la compétence **Peau de cendre** est retirée : si tu en avais acheté des niveaux, **l'XP dépensée t'est rendue**.
+
+Le Puits d'offrandes et les nouveaux dons (0.61.0) restent.
+
+**Quoi tester** : vérifie dans l'arbre de Thot que ton XP est bien revenue si tu avais acheté « Peau de cendre ».
+
 ## 0.62.0 — Un jeu moins punitif
 
 Ton retour n° 3, solutions A + B + E :

@@ -72,7 +72,6 @@ export function runBonuses(meta: MetaState): {
       startShards: skillTotal(meta, 'startShards'),
       dashCooldown: skillTotal(meta, 'dashCooldown'),
       revives: skillTotal(meta, 'revive'),
-      armor: skillTotal(meta, 'armor'),
     },
     superStart: Math.min(1, skillTotal(meta, 'superStart')),
   };

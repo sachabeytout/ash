@@ -1,9 +1,6 @@
 /** Caractéristiques de base d'Ash (avant dons et compétences). */
 export const PLAYER = {
-  /** 70 PV depuis la 0.62.0 (retour F3 : le jeu était trop punitif ; avant : 50). */
-  maxHp: 70,
-  /** Part des dégâts ennemis réellement reçue (0,75 = −25 %, retour F3, 0.62.0). Pièges et boss compris. */
-  damageTakenScale: 0.75,
+  maxHp: 50,
   radius: 6,
   /** Vitesse de déplacement (px/s) et inertie. */
   speed: 112,

@@ -1,4 +1,3 @@
-import { MAX_ARMOR } from '../combat/incoming';
 import { BIOMES } from '../../data/biomes';
 import { CODEX_KEYS } from '../codex';
 import { HEAT } from '../../data/heat';
@@ -271,6 +270,27 @@ const MIGRATIONS: Record<number, (save: Raw) => Raw> = {
       : old.run;
     return { ...old, version: 21, run };
   },
+  // v21 → v22 : « Peau de cendre » est retirée (l'utilisateur annule le retour F3) : l'XP dépensée est rendue.
+  21: (old) => {
+    const meta = isObject(old.meta) ? old.meta : {};
+    const skills = isObject(meta.skills) ? { ...meta.skills } : {};
+    const level = Math.max(0, Math.min(3, Math.floor(num(skills['thoth_ash']))));
+    const refund = [60, 110, 170].slice(0, level).reduce((sum, c) => sum + c, 0);
+    delete skills['thoth_ash'];
+    const run =
+      isObject(old.run) && isObject(old.run.perks)
+        ? {
+            ...old.run,
+            perks: Object.fromEntries(Object.entries(old.run.perks).filter(([k]) => k !== 'armor')),
+          }
+        : old.run;
+    return {
+      ...old,
+      version: 22,
+      meta: { ...meta, skills, xp: num(meta.xp) + refund },
+      run,
+    };
+  },
 };
 
 function isObject(v: unknown): v is Raw {
@@ -430,7 +450,6 @@ function sanitizeRun(raw: unknown): RunState | null {
       startShards: num(perks.startShards, NO_PERKS.startShards, 0),
       dashCooldown: num(perks.dashCooldown, NO_PERKS.dashCooldown, 0, 0.5),
       revives: Math.floor(num(perks.revives, NO_PERKS.revives, 0, 3)),
-      armor: num(perks.armor, NO_PERKS.armor, 0, MAX_ARMOR),
     },
   };
 }
