@@ -28,7 +28,20 @@ export interface BoonOffer {
   replaces?: string;
   /** Étincelle du Phénix : rareté actuelle du don amélioré. */
   from?: Rarity;
+  /**
+   * Puits d'offrandes (0.61.0), quand le dieu n'a plus assez de dons nouveaux :
+   * « favor » = un de ses dons possédés gagne un cran de rareté (`id`, `from` → `rarity`) ;
+   * « offering » = des PV max en plus (`id` = OFFERING_ID).
+   */
+  special?: 'favor' | 'offering';
 }
+
+/** Identifiant de l'Offrande (ce n'est pas un don). */
+export const OFFERING_ID = 'offering';
+/** PV max (et soin) donnés par une Offrande. */
+export const OFFERING_HP = 6;
+/** Au plus un don qui remplace un don possédé par choix (tant qu'il reste des dons nouveaux). */
+export const MAX_REPLACEMENTS = 1;
 
 /** Rareté suivante (seuls les dons communs et rares progressent). */
 export function nextRarity(rarity: Rarity): Rarity | null {
@@ -76,7 +89,22 @@ export function rollRarity(rng: Rng, kind: BoonDef['kind'], rareBonus = 0): Rari
   return 'common';
 }
 
-/** Tire jusqu'à `count` dons différents d'un dieu (choix 1 parmi 3). */
+/** Le don déjà posé sur la même action (et que ce don remplacerait), s'il y en a un. */
+function replacedBy(def: BoonDef, owned: readonly OwnedBoon[]): OwnedBoon | undefined {
+  const slot = slotOf(def.effect);
+  if (slot === 'passive') return undefined;
+  return owned.find((o) => {
+    const d = getBoon(o.id);
+    return d !== undefined && slotOf(d.effect) === slot;
+  });
+}
+
+/**
+ * Tire jusqu'à `count` choix d'un dieu (choix 1 parmi 3). Au plus `MAX_REPLACEMENTS` don qui
+ * remplace un don possédé ; s'il ne reste pas assez de dons nouveaux, le Puits d'offrandes
+ * complète : une Faveur (un don de ce dieu gagne un cran de rareté), puis une Offrande (PV max),
+ * et seulement ensuite d'autres remplacements. Le joueur n'est jamais obligé de remplacer.
+ */
 export function rollOffer(
   rng: Rng,
   owned: readonly OwnedBoon[],
@@ -86,6 +114,8 @@ export function rollOffer(
 ): BoonOffer[] {
   const pool = BOONS.filter((b) => isEligible(b, owned, god));
   const offers: BoonOffer[] = [];
+  const extraReplacements: BoonDef[] = [];
+  let replacements = 0;
   while (offers.length < count && pool.length > 0) {
     const weight = (b: BoonDef) => (b.kind === 'normal' ? 1 : SPECIAL_WEIGHT);
     let roll = rng.next() * pool.reduce((sum, b) => sum + weight(b), 0);
@@ -95,14 +125,31 @@ export function rollOffer(
       if (roll < 0) break;
     }
     const def = pool.splice(index, 1)[0] as BoonDef;
-    const slot = slotOf(def.effect);
-    const replaced =
-      slot === 'passive'
-        ? undefined
-        : owned.find((o) => {
-            const d = getBoon(o.id);
-            return d !== undefined && slotOf(d.effect) === slot;
-          });
+    const replaced = replacedBy(def, owned);
+    if (replaced && replacements >= MAX_REPLACEMENTS) {
+      extraReplacements.push(def);
+      continue;
+    }
+    if (replaced) replacements++;
+    offers.push({
+      id: def.id,
+      rarity: rollRarity(rng, def.kind, rareBonus),
+      ...(replaced ? { replaces: replaced.id } : {}),
+    });
+  }
+  // Puits d'offrandes : des Faveurs (dons différents), en gardant une place pour l'Offrande.
+  const favors = upgradableBoons(owned).filter((o) => getBoon(o.id)?.gods.includes(god));
+  while (offers.length < Math.max(1, count - 1) && favors.length > 0) {
+    const pick = favors.splice(Math.floor(rng.next() * favors.length), 1)[0];
+    const next = pick && nextRarity(pick.rarity);
+    if (pick && next)
+      offers.push({ id: pick.id, rarity: next, from: pick.rarity, special: 'favor' });
+  }
+  if (offers.length < count)
+    offers.push({ id: OFFERING_ID, rarity: 'common', special: 'offering' });
+  while (offers.length < count && extraReplacements.length > 0) {
+    const def = extraReplacements.shift() as BoonDef;
+    const replaced = replacedBy(def, owned);
     offers.push({
       id: def.id,
       rarity: rollRarity(rng, def.kind, rareBonus),

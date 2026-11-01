@@ -155,6 +155,11 @@ Format : date — décision — raison — validée par l'utilisateur (oui / non
   déplacement nul jusqu'au relâchement) et `Player.grace` 500 ms. Choix de Claude : pas de grâce après la pause (évite
   d'enchaîner les pauses pour être intouchable). Cage : marche annulée pendant et après un menu.
 
+- **0.61.0 — Puits d'offrandes + nouveaux dons (retour F2, A + D validés ; Amulettes à reprendre)** : `rollOffer` limite
+  les remplacements à `MAX_REPLACEMENTS` = 1 tant qu'il reste des dons nouveaux, puis complète avec des Faveurs (un don du
+  dieu gagne un cran, `special: 'favor'`) et une Offrande (+`OFFERING_HP` = 6 PV max, `special: 'offering'`), et
+  seulement ensuite d'autres remplacements. 18 passifs « en plus » (2 par dieu), choisis par Claude.
+
 ## Réponses de l'utilisateur (30/10/2026)
 
 | Sujet         | Décision                                                                                                                                                                                              | Validée        |

@@ -1510,15 +1510,17 @@ export class RunScene extends Phaser.Scene {
   }
 
   private onBoonPicked(offer: BoonOffer): void {
+    // Le dieu qui offre (une Offrande n'est pas un don : on garde le dieu de la porte).
+    const god = this.run.pendingBoon ?? getBoonGod(offer);
     chooseBoon(this.run, offer);
-    recordCodex(session.save.meta, `god.${getBoonGod(offer)}`);
+    recordCodex(session.save.meta, `god.${god}`);
     session.snapshotRun(this.run);
     this.profile = buildProfile(this.run.boons);
     this.applyProfile();
     this.aegisLeft = Math.max(this.aegisLeft, this.profile.aegis);
     this.choosing = false;
     this.nextWaveAt = this.sim + 600;
-    this.juice.burst(this.player.x, this.player.y, GODS[getBoonGod(offer)].color, 24);
+    this.juice.burst(this.player.x, this.player.y, GODS[god].color, 24);
     if (this.shopOpen) this.time.delayedCall(250, () => this.openShop());
     else markScene('run');
     this.runAfterChoice();

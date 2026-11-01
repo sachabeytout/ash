@@ -2,6 +2,30 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.61.0 — Puits d'offrandes et 18 nouveaux dons
+
+Ton retour n° 2, solutions A + D (les Amulettes, la B, sont gardées pour plus tard) :
+
+- **Puits d'offrandes** : tu n'es plus jamais obligé de remplacer un don.
+  - Un choix propose **au plus un don qui remplace** un de tes dons (tant qu'il reste des dons nouveaux).
+  - Quand un dieu n'a plus assez de dons nouveaux pour toi, il propose à la place :
+    - une **Faveur** : un de tes dons de ce dieu gagne un cran de rareté (commun → rare → épique) ;
+    - une **Offrande** : +6 PV max, et tu regagnes autant de vie.
+- **18 nouveaux dons** (2 par dieu), tous des passifs « en plus » qui ne prennent aucune case :
+  - **Râ** : Couronne de flammes (ton Super brûle), Flammèches (ton attaque brûle un peu) ;
+  - **Sobek** : Éclaboussure (ton attaque trempe), Marée montante (ton attaque spéciale trempe) ;
+  - **Khonsou** : Halo lunaire (ton dash givre), Nuit polaire (ton Super givre) ;
+  - **Seth** : Étincelle errante (ton attaque lance un petit éclair), Orage (ton Super foudroie) ;
+  - **Serket** : Dard caché (ton attaque empoisonne), Venin royal (ton attaque spéciale empoisonne) ;
+  - **Anubis** : Pesée rapide (ton attaque fêle l'armure), Ombre du chacal (ton dash fêle l'armure) ;
+  - **Bastet** : Bond félin (critiques sur l'attaque spéciale), Souplesse (dash plus rapide) ;
+  - **Isis** : Souffle d'Isis (ton Super te soigne), Plume d'Isis (ton dash te protège) ;
+  - **Neith** : Volée de Saïs (ton Super tire des flèches), Lance de Neith (ton attaque affaiblit).
+- Au total : **117 dons**, dont 16 duos.
+
+**Quoi tester** : fais une longue run avec un ou deux dieux seulement. As-tu toujours un vrai choix sans devoir
+remplacer ? Les Faveurs et les Offrandes te semblent-elles utiles ?
+
 ## 0.60.0 — Ash ne bouge plus pendant les menus
 
 Ton retour n° 1, solution C :

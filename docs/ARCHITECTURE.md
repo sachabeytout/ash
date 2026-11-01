@@ -1,6 +1,6 @@
 # Architecture (carte du projet)
 
-> Statut 0.60.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
+> Statut 0.61.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
 > combat/attack+health+status+superGauge, boons/boons, run/waves+rewards+state, save/schema+migrations+codec+store),
 > `data/` (player, weapons, enemies, biomes, gods, boons, status, skills, bosses, music, shop), `game/` (scenes Title, Hub,
 > Run, Ui, Boon, Pause, Shop ; entities Player, Enemy, Boss, Hittable ; input Controls, TouchControls ; fx/Juice+Lightning ;
@@ -26,6 +26,9 @@ par-dessus). Mort ou sortie → `hub` avec un `RunSummary`.
   `actionDamage`, `shatter`, `moonPhase`, `wrath`, `venomSpread`, `poisonWeak`, `jackalSpirit`, `openMouth`, `purr`,
   `superGain`, `dashGuard`) appliquées dans `RunScene` (`passiveDamage`, `onExecute`, `solarBurst`, `shatter`,
   `spreadOnDeath`, `updatePurr`, `hurtPlayer`, `dashEffects`) et `Player.dashGuardMs` / `Player.attacking`.
+- Puits d'offrandes (0.61.0) : `rollOffer` (`MAX_REPLACEMENTS`, Faveurs `special: 'favor'`, Offrande `OFFERING_ID` /
+  `OFFERING_HP`) dans `src/core/boons/boons.ts` ; appliqué par `chooseBoon` (`src/core/run/state.ts`) ; cartes dans
+  `BoonScene.makeCard`.
 - Duos mythologiques (0.59.0) : `soakAegis`, `critBurn`, `zapBurn`, `venomHeal`, `executeHeal`, `moonRiver`,
   `frozenCrit`, `stunVenom` (profil dans `buildProfile`) ; appliqués dans `RunScene.applyHitEffects`, `resolveWeaponHit`,
   `stun`, `onExecute`, `zapBurn` (foudre).

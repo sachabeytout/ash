@@ -2,7 +2,7 @@ import type { BiomeDef } from '../../data/biomes';
 import { getBoon } from '../../data/boons';
 import type { GodId } from '../../data/gods';
 import type { WeaponId } from '../../data/weapons';
-import { mainValue, takeBoon, type BoonOffer, type OwnedBoon } from '../boons/boons';
+import { OFFERING_HP, mainValue, takeBoon, type BoonOffer, type OwnedBoon } from '../boons/boons';
 import { heatModifiers, type HeatLevels } from '../heat';
 import type { DoorReward, RewardKind } from './rewards';
 import { specialRooms } from './special';
@@ -181,6 +181,11 @@ export function takeRoomReward(run: RunState): DoorReward | null {
 /** Étincelle : le don gagne un cran de rareté (un don de vie agrandit la barre de la différence). */
 export function upgradeBoon(run: RunState, offer: BoonOffer): void {
   run.pendingSpark = false;
+  upgradeOwned(run, offer);
+}
+
+/** Un don possédé passe à la rareté de l'offre (Étincelle, Faveur). */
+function upgradeOwned(run: RunState, offer: BoonOffer): void {
   const owned = run.boons.find((b) => b.id === offer.id);
   if (!owned || !offer.from || owned.rarity !== offer.from) return;
   owned.rarity = offer.rarity;
@@ -194,8 +199,18 @@ export function upgradeBoon(run: RunState, offer: BoonOffer): void {
 
 /** Ash choisit un don : il remplace celui de la même action ; un don de vie agrandit la barre de vie. */
 export function chooseBoon(run: RunState, offer: BoonOffer): void {
-  run.boons = takeBoon(run.boons, offer);
   run.pendingBoon = null;
+  // Puits d'offrandes : Faveur (un don gagne un cran de rareté) ou Offrande (PV max).
+  if (offer.special === 'favor') {
+    upgradeOwned(run, offer);
+    return;
+  }
+  if (offer.special === 'offering') {
+    run.maxHp += OFFERING_HP;
+    run.hp += OFFERING_HP;
+    return;
+  }
+  run.boons = takeBoon(run.boons, offer);
   const def = getBoon(offer.id);
   if (def?.effect.type === 'maxHp') {
     const amount = mainValue(def.effect, offer.rarity);

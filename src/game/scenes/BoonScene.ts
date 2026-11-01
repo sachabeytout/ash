@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { frieze } from '../ui/frame';
 import { settings } from '../../core/settings';
 import { scaledFontSize } from '../../core/textScale';
-import { mainValue, type BoonOffer } from '../../core/boons/boons';
+import { OFFERING_HP, mainValue, type BoonOffer } from '../../core/boons/boons';
 import { getBoon, slotOf } from '../../data/boons';
 import { RARITY_COLOR } from '../ui/boonCard';
 import { GODS, type GodId } from '../../data/gods';
@@ -178,8 +178,9 @@ export class BoonScene extends Phaser.Scene {
 
   private makeCard(offer: BoonOffer, x: number, y: number, w: number, h: number, index: number) {
     const def = getBoon(offer.id);
-    if (!def) return;
-    const gods = def.gods.map((g) => GODS[g]);
+    const offering = offer.special === 'offering';
+    if (!def && !offering) return;
+    const gods = def ? def.gods.map((g) => GODS[g]) : [GODS[this.data_.god]];
     const color = gods[0]?.color ?? 0xffffff;
     const g = this.add.graphics();
     const draw = (focused: boolean) => {
@@ -218,19 +219,22 @@ export class BoonScene extends Phaser.Scene {
         })
         .setOrigin(0.5, 0);
 
-    text(y + 50, t(def.nameKey as TextKey), 13, COLORS.text, true);
-    const slot = slotOf(def.effect);
+    text(y + 50, def ? t(def.nameKey as TextKey) : t('boonChoice.offering'), 13, COLORS.text, true);
     text(
       y + 72,
-      `${t(`rarity.${offer.rarity}` as TextKey)} · ${t(`slot.${slot}` as TextKey)}`,
+      def
+        ? `${t(`rarity.${offer.rarity}` as TextKey)} · ${t(`slot.${slotOf(def.effect)}` as TextKey)}`
+        : t('boonChoice.offeringKind'),
       10,
-      RARITY_COLOR[offer.rarity],
+      def ? RARITY_COLOR[offer.rarity] : COLORS.textDim,
       true,
     );
     // L'effet, centré dans l'espace entre le trait et le pied de carte (police réduite s'il est long).
     const desc = text(
       y + (100 + h - 30) / 2,
-      t(def.descKey as TextKey, { value: mainValue(def.effect, offer.rarity) }),
+      def
+        ? t(def.descKey as TextKey, { value: mainValue(def.effect, offer.rarity) })
+        : t('boonChoice.offering.desc', { value: OFFERING_HP }),
       11,
       COLORS.text,
     ).setOrigin(0.5, 0.5);
@@ -239,14 +243,21 @@ export class BoonScene extends Phaser.Scene {
     const replaced = offer.replaces ? getBoon(offer.replaces) : undefined;
     text(
       y + h - 22,
-      offer.from
-        ? t('spark.from', {
+      offer.special === 'favor' && offer.from
+        ? t('boonChoice.favor', {
             from: t(`rarity.${offer.from}` as TextKey),
             to: t(`rarity.${offer.rarity}` as TextKey),
           })
-        : replaced
-          ? t('boonChoice.replaces', { name: t(replaced.nameKey as TextKey) })
-          : t('boonChoice.new'),
+        : offering
+          ? t('boonChoice.offeringFoot')
+          : offer.from
+            ? t('spark.from', {
+                from: t(`rarity.${offer.from}` as TextKey),
+                to: t(`rarity.${offer.rarity}` as TextKey),
+              })
+            : replaced
+              ? t('boonChoice.replaces', { name: t(replaced.nameKey as TextKey) })
+              : t('boonChoice.new'),
       9,
       COLORS.textDim,
     );

@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import {
   buildProfile,
   damageMultiplier,
+  OFFERING_HP,
+  OFFERING_ID,
   isEligible,
   mainValue,
   rollOffer,
@@ -9,6 +11,7 @@ import {
   slotGod,
   takeBoon,
   upgradableBoons,
+  type BoonOffer,
   type OwnedBoon,
 } from '../../src/core/boons/boons';
 import { rollDoorRewards } from '../../src/core/run/rewards';
@@ -131,8 +134,11 @@ describe('choix des dons', () => {
   });
 
   it('un nouveau don sur la même action remplace l’ancien', () => {
-    const offer = rollOffer(createRng(3), own('seth_attack'), 'ra', 5);
-    const raAttack = offer.find((o) => o.id === 'ra_attack');
+    let raAttack: BoonOffer | undefined;
+    for (let seed = 1; seed < 300 && !raAttack; seed++)
+      raAttack = rollOffer(createRng(seed), own('seth_attack'), 'ra', 5).find(
+        (o) => o.id === 'ra_attack',
+      );
     expect(raAttack?.replaces).toBe('seth_attack');
     const owned = takeBoon(own('seth_attack', 'ra_eye'), must(raAttack));
     expect(owned.map((o) => o.id).sort()).toEqual(['ra_attack', 'ra_eye']);
@@ -607,5 +613,52 @@ describe('duos tirés de la mythologie (0.59.0)', () => {
     expect(p.moonRiver).toBe(3);
     expect(p.frozenCrit).toBe(1);
     expect(p.stunVenom).toBe(2);
+  });
+});
+
+describe('Puits d’offrandes (0.61.0)', () => {
+  const everyBoonOf = (god: string): OwnedBoon[] =>
+    BOONS.filter((b) => b.kind === 'normal' && b.gods[0] === god).map((b) => ({
+      id: b.id,
+      rarity: 'common' as const,
+    }));
+
+  it('au plus un don qui remplace, tant qu’il reste des dons nouveaux', () => {
+    const owned = own('ra_attack', 'ra_power', 'ra_dash', 'ra_super');
+    for (let seed = 1; seed <= 40; seed++) {
+      const offers = rollOffer(createRng(seed), owned, 'ra');
+      expect(offers.filter((o) => o.replaces).length).toBeLessThanOrEqual(1);
+      expect(offers.length).toBe(3);
+    }
+  });
+
+  it('quand un dieu n’a plus rien de nouveau : une Faveur et une Offrande, jamais de choix vide', () => {
+    const owned = everyBoonOf('ra');
+    for (let seed = 1; seed <= 20; seed++) {
+      const offers = rollOffer(createRng(seed), owned, 'ra');
+      expect(offers.length).toBe(3);
+      expect(offers.some((o) => o.special === 'favor')).toBe(true);
+      expect(offers.some((o) => o.special === 'offering')).toBe(true);
+    }
+  });
+
+  it('une Faveur fait monter un don d’un cran ; une Offrande donne des PV max', () => {
+    const run = newRun(1, 'katana', 50, 0, 'ra');
+    run.boons = own('ra_attack');
+    chooseBoon(run, { id: 'ra_attack', rarity: 'rare', from: 'common', special: 'favor' });
+    expect(run.boons).toEqual([{ id: 'ra_attack', rarity: 'rare' }]);
+    const before = run.maxHp;
+    chooseBoon(run, { id: OFFERING_ID, rarity: 'common', special: 'offering' });
+    expect(run.maxHp).toBe(before + OFFERING_HP);
+    expect(run.boons).toHaveLength(1);
+  });
+
+  it('chaque dieu a au moins 5 passifs', () => {
+    for (const god of GOD_IDS) {
+      const n = BOONS.filter(
+        (b) => b.kind === 'normal' && b.gods.includes(god) && slotOf(b.effect) === 'passive',
+      ).length;
+      expect(n, god).toBeGreaterThanOrEqual(5);
+    }
   });
 });
