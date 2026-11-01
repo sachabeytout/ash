@@ -182,6 +182,10 @@ Format : date — décision — raison — validée par l'utilisateur (oui / non
   (arrêt 110 ms, zoom ×1,08, flash doré sauf « Réduire les flashs », double onde, 8 hiéroglyphes) ; `Player` : aura dorée
   pulsée et traînée de flammes pendant le Super. Dégâts inchangés.
 
+- **0.67.0 — Révélation des dons (retour F7, option B)** : `BoonScene.revealCard` (dos doré + œil oudjat, retournement
+  par `scaleX`, `REVEAL_FIRST_MS` 160, `REVEAL_STEP_MS` 150, `FLIP_HALF_MS` 110 ; choix bloqué jusqu'à la fin). Choix de
+  Claude (non confirmé) : éclat de la couleur de rareté pour rare / épique / duo.
+
 ## Réponses de l'utilisateur (30/10/2026)
 
 | Sujet         | Décision                                                                                                                                                                                              | Validée        |

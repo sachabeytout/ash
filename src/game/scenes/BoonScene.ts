@@ -8,7 +8,7 @@ import { RARITY_COLOR } from '../ui/boonCard';
 import { GODS, type GodId } from '../../data/gods';
 import { t, type TextKey } from '../../i18n';
 import { sfx } from '../audio/sfx';
-import { drawGodIcon } from '../icons';
+import { drawEmberIcon, drawGodIcon } from '../icons';
 import { COLORS, FONT_FAMILY } from '../theme';
 import { viewSize } from '../view';
 
@@ -28,12 +28,23 @@ export const GOD_QUOTES = 4;
 /** Évite qu'un appui d'attaque encore en cours choisisse un don par erreur. */
 const INPUT_LOCK_MS = 450;
 
+/**
+ * Révélation des cartes (retour F7, option B) : elles arrivent face cachée (dos doré, œil oudjat)
+ * puis se retournent une par une, de gauche à droite. Une carte rare, épique ou duo lance un
+ * éclat de sa couleur en se révélant.
+ */
+const REVEAL_FIRST_MS = 160;
+const REVEAL_STEP_MS = 150;
+const FLIP_HALF_MS = 110;
+
 /** Un dieu offre un don : choix 1 parmi 3 (toucher, clic, touches 1-2-3, flèches + Entrée, manette). */
 export class BoonScene extends Phaser.Scene {
   private data_!: BoonSceneData;
   private focus = 0;
   private cards: { draw: (focused: boolean) => void }[] = [];
   private openedAt = 0;
+  /** Les cartes ne se choisissent qu'une fois toutes retournées. */
+  private inputLockMs = INPUT_LOCK_MS;
   private picked = false;
   private padPrev = new Map<number, boolean>();
 
@@ -65,13 +76,9 @@ export class BoonScene extends Phaser.Scene {
         .setScale(4, 1.6)
         .setBlendMode('ADD');
     const titleIcon = this.add.graphics();
-    if (upgrade) {
-      // Flamme du Phénix.
-      titleIcon
-        .fillStyle(SPARK_COLOR, 1)
-        .fillTriangle(width / 2 - 7, 32, width / 2 + 7, 32, width / 2, 14);
-      titleIcon.fillCircle(width / 2, 28, 6);
-    } else drawGodIcon(titleIcon, god, width / 2, 26, 9);
+    // Braise du Bennu (charbon ardent) ou icône du dieu qui offre.
+    if (upgrade) drawEmberIcon(titleIcon, width / 2, 26, 0.9);
+    else drawGodIcon(titleIcon, god, width / 2, 26, 9);
     const titleText = upgrade
       ? t('spark.title')
       : t('boonChoice.title', { god: t(god.nameKey as TextKey) });
@@ -101,6 +108,10 @@ export class BoonScene extends Phaser.Scene {
     const top = 80;
     this.data_.offers.forEach((offer, i) =>
       this.makeCard(offer, left + i * (cardW + gap), top, cardW, cardH, i),
+    );
+    this.inputLockMs = Math.max(
+      INPUT_LOCK_MS,
+      REVEAL_FIRST_MS + (n - 1) * REVEAL_STEP_MS + FLIP_HALF_MS * 2,
     );
     if (!upgrade) {
       // Le dieu parle : une réplique au hasard (personnalité, un peu d'humour).
@@ -177,6 +188,95 @@ export class BoonScene extends Phaser.Scene {
   }
 
   private makeCard(offer: BoonOffer, x: number, y: number, w: number, h: number, index: number) {
+    const firstChild = this.children.list.length;
+    this.buildCardFace(offer, x, y, w, h, index);
+    // Tout ce qui vient d'être créé (sauf la zone de toucher) forme la face de la carte.
+    const parts = this.children.list
+      .slice(firstChild)
+      .filter(
+        (o): o is Phaser.GameObjects.Graphics | Phaser.GameObjects.Text =>
+          o instanceof Phaser.GameObjects.Graphics || o instanceof Phaser.GameObjects.Text,
+      );
+    this.revealCard(parts, offer, x, y, w, h, index);
+  }
+
+  /** Dos de carte, puis retournement (voir REVEAL_*). */
+  private revealCard(
+    parts: (Phaser.GameObjects.Graphics | Phaser.GameObjects.Text)[],
+    offer: BoonOffer,
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    index: number,
+  ): void {
+    const cx = x + w / 2;
+    const cy = y + h / 2;
+    const front = this.add.container(cx, cy);
+    for (const p of parts) {
+      p.setPosition(p.x - cx, p.y - cy);
+      front.add(p);
+    }
+    front.setScale(0, 1);
+    // Dos doré : cadre, frise et œil oudjat.
+    const back = this.add.container(cx, cy);
+    const g = this.add.graphics();
+    g.fillStyle(COLORS.panel, 0.98).fillRect(-w / 2, -h / 2, w, h);
+    g.lineStyle(2, COLORS.goldDim, 1).strokeRect(-w / 2, -h / 2, w, h);
+    g.lineStyle(1, COLORS.gold, 0.6).strokeRect(-w / 2 + 4, -h / 2 + 4, w - 8, h - 8);
+    frieze(g, -w / 2 + 8, -h / 2 + 8, w - 16);
+    frieze(g, -w / 2 + 8, h / 2 - 11, w - 16);
+    g.lineStyle(2, COLORS.gold, 0.9).strokeEllipse(0, 0, 44, 20);
+    g.fillStyle(COLORS.gold, 0.9).fillCircle(0, 0, 6);
+    g.lineStyle(2, COLORS.gold, 0.9).lineBetween(-6, 9, -12, 22).lineBetween(4, 9, 14, 16);
+    back.add(g);
+    back.setAlpha(0).setY(cy + 12);
+    this.tweens.add({ targets: back, alpha: 1, y: cy, duration: 150, ease: 'Sine.Out' });
+    const delay = REVEAL_FIRST_MS + index * REVEAL_STEP_MS;
+    this.tweens.add({
+      targets: back,
+      scaleX: 0,
+      delay,
+      duration: FLIP_HALF_MS,
+      ease: 'Sine.In',
+      onComplete: () => {
+        back.destroy();
+        this.tweens.add({
+          targets: front,
+          scaleX: 1,
+          duration: FLIP_HALF_MS + 30,
+          ease: 'Back.Out',
+        });
+        sfx.tap();
+        // Bonus : une carte rare, épique ou duo lance un éclat de sa couleur.
+        if (offer.rarity !== 'common' && this.textures.exists('glow')) {
+          const color = Phaser.Display.Color.HexStringToColor(RARITY_COLOR[offer.rarity]).color;
+          const flash = this.add
+            .image(cx, cy, 'glow')
+            .setTint(color)
+            .setBlendMode('ADD')
+            .setAlpha(0.8)
+            .setScale(2);
+          this.tweens.add({
+            targets: flash,
+            alpha: 0,
+            scale: 4.5,
+            duration: 420,
+            onComplete: () => flash.destroy(),
+          });
+        }
+      },
+    });
+  }
+
+  private buildCardFace(
+    offer: BoonOffer,
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    index: number,
+  ): void {
     const def = getBoon(offer.id);
     const offering = offer.special === 'offering';
     if (!def && !offering) return;
@@ -272,7 +372,7 @@ export class BoonScene extends Phaser.Scene {
   }
 
   private pick(index: number): void {
-    if (this.picked || this.time.now - this.openedAt < INPUT_LOCK_MS) return;
+    if (this.picked || this.time.now - this.openedAt < this.inputLockMs) return;
     const offer = this.data_.offers[index];
     if (!offer) return;
     this.picked = true;

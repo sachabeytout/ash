@@ -1,6 +1,6 @@
 # Architecture (carte du projet)
 
-> Statut 0.66.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
+> Statut 0.67.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
 > combat/attack+health+status+superGauge, boons/boons, run/waves+rewards+state, save/schema+migrations+codec+store),
 > `data/` (player, weapons, enemies, biomes, gods, boons, status, skills, bosses, music, shop), `game/` (scenes Title, Hub,
 > Run, Ui, Boon, Pause, Shop ; entities Player, Enemy, Boss, Hittable ; input Controls, TouchControls ; fx/Juice+Lightning ;
@@ -13,7 +13,7 @@
 
 `title` → `intro` (premier lancement, `IntroScene`, vue = `INTRO_ID` dans `seenDialogues`) → `hub` (Cage) → `run` (une salle ; se relance à chaque porte) + `ui` (calque non zoomé : vie,
 jauge de Super, dons, salle, flèches hors écran, commandes tactiles, lancé par `run`) + `boon` (choix 1 parmi 3,
-par-dessus). Mort ou sortie → `hub` avec un `RunSummary`.
+par-dessus ; cartes face cachée puis retournées : `BoonScene.revealCard`). Mort ou sortie → `hub` avec un `RunSummary`.
 
 ### Dons, Super, sauvegarde, Thot (où régler quoi)
 

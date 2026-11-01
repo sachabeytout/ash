@@ -2,6 +2,19 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.67.0 — Les dons se révèlent
+
+Ton retour n° 7, solution B :
+
+- Quand un dieu t'offre un don, les trois cartes arrivent **face cachée** (dos doré, frises et **œil oudjat**), puis se
+  **retournent une par une**, de gauche à droite, comme un tirage. L'animation dure environ une demi-seconde.
+- **Bonus** (petit choix de ma part, dis-moi si tu n'en veux pas) : une carte **rare**, **épique** ou **duo** lance un
+  éclat de sa couleur (bleu, violet, or) en se révélant.
+- Les cartes ne se choisissent qu'une fois toutes retournées (pas de choix par erreur).
+- La fenêtre de la Braise montre maintenant la nouvelle icône de charbon ardent.
+
+**Quoi tester** : l'animation te plaît ? Trop lente, trop rapide ?
+
 ## 0.66.0 — Un Super qui touche à coup sûr, et qui en impose
 
 Ton retour n° 6 : solution A pour toucher, effets 1 + 2 + 3 pour l'impression (les dégâts ne changent pas) :
