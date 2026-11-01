@@ -2,6 +2,25 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.59.0 — 8 duos tirés de la mythologie
+
+Huit nouveaux **duos** (un don partagé par deux dieux), qui racontent les liens entre eux. Ils apparaissent quand tu as
+déjà un don de chacun des deux dieux.
+
+- **Fils de Neith** (Sobek + Neith, sa mère) : tremper un ennemi te donne une protection qui bloque le prochain coup.
+- **Fille du Soleil** (Râ + Bastet, sa fille) : tes coups critiques enflamment.
+- **Gardien de la barque** (Râ + Seth, qui défend chaque nuit la barque de Râ) : ta foudre enflamme.
+- **Protectrices d'Horus** (Serket + Isis) : empoisonner un ennemi te soigne un peu.
+- **Retour d'Osiris** (Anubis + Isis, qui ont ramené Osiris à la vie) : chaque exécution te soigne.
+- **Nil sous la lune** (Sobek + Khonsou) : un ennemi trempé gèle dès 3 charges de givre.
+- **Chasseurs de la nuit** (Khonsou + Bastet) : coup critique assuré sur un ennemi gelé.
+- **Fléaux du désert** (Seth + Serket) : un ennemi étourdi est aussi empoisonné.
+
+Au total : **99 dons**, dont **16 duos**.
+
+**Quoi tester** : essaie de réunir deux dieux liés (par exemple Râ et Bastet) pour voir leur duo. Les duos sont-ils
+assez fréquents ? Assez forts ?
+
 ## 0.58.0 — 27 nouveaux dons passifs
 
 Comme tu l'as demandé : **plus de dons, des passifs, pour un max de fun**. Chaque dieu reçoit **3 passifs**. Ils ne

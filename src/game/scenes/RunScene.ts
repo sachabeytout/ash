@@ -301,6 +301,9 @@ export class RunScene extends Phaser.Scene {
   private mouthReady = false;
   private lastHurtAt = 0;
   private nextPurrAt = 0;
+  /** Duos (0.59.0) : prochaines protection de Neith et soin de Serket + Isis. */
+  private nextSoakAegisAt = 0;
+  private nextVenomHealAt = 0;
   private kind: RoomKind = 'combat';
   /** Télémétrie : temps et PV au début de la salle. */
   private roomStart = { elapsed: 0, hp: 0 };
@@ -472,6 +475,8 @@ export class RunScene extends Phaser.Scene {
     this.mouthReady = false;
     this.lastHurtAt = 0;
     this.nextPurrAt = 0;
+    this.nextSoakAegisAt = 0;
+    this.nextVenomHealAt = 0;
     this.controls = new Controls(this, () => this.sim);
     this.controls.onPause = () => this.openPause();
     this.scene.launch('ui', { controls: this.controls });
@@ -1527,8 +1532,38 @@ export class RunScene extends Phaser.Scene {
       sfx.freeze();
       this.juice.burst(e.x, e.y, FX.ice, 10);
     }
-    if (fx.soak) applySoak(e.status, this.sim, fx.soak.slow, fx.soak.durationMs);
-    if (fx.venom) applyVenom(e.status, this.sim, fx.venom.stacks, fx.venom.dps);
+    if (fx.soak) {
+      applySoak(e.status, this.sim, fx.soak.slow, fx.soak.durationMs);
+      // Duo « Fils de Neith » : tremper un ennemi donne une protection.
+      if (this.profile.soakAegisMs && this.sim >= this.nextSoakAegisAt) {
+        this.nextSoakAegisAt = this.sim + this.profile.soakAegisMs;
+        if (this.aegisLeft < Math.max(1, this.profile.aegis)) {
+          this.aegisLeft++;
+          this.lightning.ring(this.player, 18, GODS.neith.color);
+        }
+      }
+    }
+    // Duo « Nil sous la lune » : un ennemi trempé gèle plus tôt.
+    if (
+      this.profile.moonRiver &&
+      e.alive &&
+      isSoaked(e.status, this.sim) &&
+      !isFrozen(e.status, this.sim) &&
+      e.status.chill >= this.profile.moonRiver &&
+      applyChill(e.status, this.sim, 5)
+    ) {
+      e.freeze(this.sim);
+      sfx.freeze();
+      this.juice.burst(e.x, e.y, FX.ice, 10);
+    }
+    if (fx.venom) {
+      applyVenom(e.status, this.sim, fx.venom.stacks, fx.venom.dps);
+      // Duo « Protectrices d'Horus » : empoisonner soigne (au plus une fois par seconde).
+      if (this.profile.venomHeal && this.sim >= this.nextVenomHealAt) {
+        this.nextVenomHealAt = this.sim + 1000;
+        this.healPlayer(this.profile.venomHeal);
+      }
+    }
     if (fx.judge) applyJudge(e.status, this.sim, fx.judge.bonus, fx.judge.durationMs);
     if (fx.weaken) applyWeaken(e.status, this.sim, fx.weaken.reduction, fx.weaken.durationMs);
     if (fx.curse) applyCurse(e.status, this.sim, fx.curse.damage, fx.curse.radius);
@@ -1557,6 +1592,8 @@ export class RunScene extends Phaser.Scene {
   /** Une exécution (Anubis) : esprit de chacal, coup suivant renforcé. */
   private onExecute(e: Hittable): void {
     if (this.profile.openMouth) this.mouthReady = true;
+    // Duo « Retour d'Osiris » : une exécution soigne.
+    if (this.profile.executeHeal) this.healPlayer(this.profile.executeHeal);
     const dmg = this.profile.jackalSpirit;
     if (!dmg) return;
     let best: Hittable | undefined;
@@ -1621,6 +1658,12 @@ export class RunScene extends Phaser.Scene {
     }
   }
 
+  /** Duo « Gardien de la barque » (Râ + Seth) : la foudre enflamme. */
+  private zapBurn(e: Hittable): void {
+    const z = this.profile.zapBurn;
+    if (z && e.alive) applyBurn(e.status, this.sim, z.dps, z.durationMs);
+  }
+
   /** Ronronnement (Bastet) : en combat, sans être touché depuis 4 s, un peu de vie toutes les 2 s. */
   private updatePurr(): void {
     const purr = this.profile.purr;
@@ -1633,6 +1676,8 @@ export class RunScene extends Phaser.Scene {
   /** Étourdit (Seth) ; sur un boss, ce n'est qu'un court sursaut. */
   private stun(e: Hittable, durationMs: number): void {
     applyStun(e.status, this.sim, e === this.boss ? Math.min(durationMs, 400) : durationMs);
+    // Duo « Fléaux du désert » : l'étourdi reçoit du venin.
+    if (this.profile.stunVenom) applyVenom(e.status, this.sim, this.profile.stunVenom, 2);
     this.juice.burst(e.x, e.y - e.radius, FX.thunder, 6);
   }
 
@@ -1728,6 +1773,7 @@ export class RunScene extends Phaser.Scene {
       current = { x: next.x, y: next.y };
       this.damageEnemy(next, this.lightningDamage(next, chain.damage), FX.zapText);
       if (this.profile.stormStun) this.stun(next, this.profile.stormStun);
+      this.zapBurn(next);
     }
     if (hit.size > 1) {
       sfx.zap();
@@ -1762,6 +1808,7 @@ export class RunScene extends Phaser.Scene {
       hit.add(e);
       this.damageEnemy(e, this.lightningDamage(e, damage), FX.zapText);
       if (this.profile.stormStun) this.stun(e, this.profile.stormStun);
+      this.zapBurn(e);
     }
     this.conductLightning(at, hit);
   }
@@ -2303,7 +2350,10 @@ export class RunScene extends Phaser.Scene {
     const at = { x: e.x, y: e.y };
     const wasFrozen = isFrozen(e.status, this.sim);
     // Critique (Bastet) : dégâts doublés, ou plus avec « Griffes affûtées ».
-    const critChance = (fx.crit ?? 0) + (hit.kind === 'super' ? 0 : this.profile.critAll);
+    const critChance =
+      (fx.crit ?? 0) +
+      (hit.kind === 'super' ? 0 : this.profile.critAll) +
+      (wasFrozen ? this.profile.frozenCrit : 0);
     const crit = critChance > 0 && Math.random() < critChance;
     const critMult = crit ? 2 + this.profile.critDamage : 1;
     // Bouclier frontal (Einherjar, Héraut) : le coup est presque entièrement bloqué, sans effet de don.
@@ -2353,6 +2403,9 @@ export class RunScene extends Phaser.Scene {
     sfx.hit(hit.heavy || crit);
     // Duo « Griffes du tonnerre » : un critique étourdit.
     if (crit && !dead && this.profile.critStun) this.stun(e, this.profile.critStun);
+    // Duo « Fille du Soleil » : un critique enflamme.
+    const critBurn = this.profile.critBurn;
+    if (crit && !dead && critBurn) applyBurn(e.status, this.sim, critBurn.dps, critBurn.durationMs);
     if (dead) this.killEnemy(e);
     else this.applyHitEffects(e, fx);
     if (fx.chain && firstHit) this.chainLightning(e, fx.chain);

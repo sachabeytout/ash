@@ -202,6 +202,19 @@ export function mainValue(effect: BoonEffect, rarity: Rarity): number {
       return Math.round(effect.amount * p);
     case 'dashGuard':
       return Math.round(effect.ms * p);
+    case 'soakAegis':
+      return Math.round(effect.cooldownMs / 1000);
+    case 'critBurn':
+    case 'zapBurn':
+      return Math.round(effect.dps * p);
+    case 'venomHeal':
+    case 'executeHeal':
+      return Math.round(effect.amount * p);
+    case 'moonRiver':
+    case 'stunVenom':
+      return effect.stacks;
+    case 'frozenCrit':
+      return effect.chance;
     case 'deflect':
       return Math.round(effect.radius * p);
     case 'stun':
@@ -309,6 +322,15 @@ export interface CombatProfile {
   purr: number;
   superGain: number;
   dashGuardMs: number;
+  // ---------- Duos tirés de la mythologie (0.59.0) ----------
+  soakAegisMs: number;
+  critBurn?: { dps: number; durationMs: number };
+  zapBurn?: { dps: number; durationMs: number };
+  venomHeal: number;
+  executeHeal: number;
+  moonRiver: number;
+  frozenCrit: number;
+  stunVenom: number;
 }
 
 export function buildProfile(owned: readonly OwnedBoon[]): CombatProfile {
@@ -346,6 +368,12 @@ export function buildProfile(owned: readonly OwnedBoon[]): CombatProfile {
     purr: 0,
     superGain: 0,
     dashGuardMs: 0,
+    soakAegisMs: 0,
+    venomHeal: 0,
+    executeHeal: 0,
+    moonRiver: 0,
+    frozenCrit: 0,
+    stunVenom: 0,
   };
   const riders: Record<Trigger, HitEffects> = { attack: {}, power: {}, dash: {}, super: {} };
   let burnDurationBonus = 0;
@@ -494,6 +522,30 @@ export function buildProfile(owned: readonly OwnedBoon[]): CombatProfile {
         break;
       case 'dashGuard':
         profile.dashGuardMs += v;
+        break;
+      case 'soakAegis':
+        profile.soakAegisMs = e.cooldownMs;
+        break;
+      case 'critBurn':
+        profile.critBurn = { dps: v, durationMs: e.durationMs };
+        break;
+      case 'zapBurn':
+        profile.zapBurn = { dps: v, durationMs: e.durationMs };
+        break;
+      case 'venomHeal':
+        profile.venomHeal += v;
+        break;
+      case 'executeHeal':
+        profile.executeHeal += v;
+        break;
+      case 'moonRiver':
+        profile.moonRiver = v;
+        break;
+      case 'frozenCrit':
+        profile.frozenCrit = v / 100;
+        break;
+      case 'stunVenom':
+        profile.stunVenom += v;
         break;
     }
   }

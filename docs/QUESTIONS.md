@@ -70,7 +70,7 @@ Dernière mise à jour : 31/10/2026 (version 0.54.0).
 
 32. **18 nouveaux dons** → ✅ **ta décision** : 4 dons d'action par dieu (attaque, spéciale, dash, **Super**), plus d'amplifications, beaucoup de passifs qui agissent sur les actions sans prendre leur case. Lot 1 fait (0.57.0).
 33. ✅ Plus d'amplifications : ce sont maintenant des dons passifs (0.57.0).
-34. **8 duos tirés de la mythologie** (Sobek + Neith sa mère, Râ + Bastet sa fille, Seth qui défend la barque de Râ…) → **appliqués au lot 3, dis-moi si tu n'en veux pas**
+34. **8 duos tirés de la mythologie** (Sobek + Neith sa mère, Râ + Bastet sa fille, Seth qui défend la barque de Râ…) → **faits (0.59.0)**, dis-moi s'ils te plaisent
 35. Les **dons « légendaires »** : plus tard, quand on aura une idée qui nous est propre ? → **plus tard**
 
 ## C. Petites décisions prises par Claude (dis seulement si tu n'es pas d'accord)

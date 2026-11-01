@@ -13,7 +13,7 @@
       deviennent des passifs (avec rareté).
 - [x] **Lot 2 (0.58.0)** : 27 passifs (3 par dieu), dont des passifs « en plus » qui ajoutent un effet à une action
       par-dessus le don qui l'occupe.
-- [ ] **Lot 3** : duos tirés de la mythologie.
+- [x] **Lot 3 (0.59.0)** : 8 duos tirés de la mythologie (16 duos au total).
 
 ---
 

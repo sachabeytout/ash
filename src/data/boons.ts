@@ -129,7 +129,24 @@ export type BoonEffect =
   /** Magie d'Isis : la jauge de Super se remplit plus vite. */
   | { type: 'superGain'; bonus: number }
   /** Ailes d'Isis : le dash protège plus longtemps (ms). */
-  | { type: 'dashGuard'; ms: number };
+  | { type: 'dashGuard'; ms: number }
+  // ---------- Duos tirés de la mythologie (0.59.0) ----------
+  /** Sobek + Neith (sa mère) : tremper un ennemi donne une protection (au plus toutes les `cooldownMs`). */
+  | { type: 'soakAegis'; cooldownMs: number }
+  /** Râ + Bastet (sa fille) : les coups critiques enflamment. */
+  | { type: 'critBurn'; dps: number; durationMs: number }
+  /** Râ + Seth (défenseur de la barque) : la foudre enflamme. */
+  | { type: 'zapBurn'; dps: number; durationMs: number }
+  /** Serket + Isis : empoisonner soigne (au plus une fois par seconde). */
+  | { type: 'venomHeal'; amount: number }
+  /** Anubis + Isis (Osiris) : une exécution soigne. */
+  | { type: 'executeHeal'; amount: number }
+  /** Sobek + Khonsou : un ennemi trempé gèle dès `stacks` charges de givre. */
+  | { type: 'moonRiver'; stacks: number }
+  /** Khonsou + Bastet : coup critique assuré sur un ennemi gelé. */
+  | { type: 'frozenCrit'; chance: number }
+  /** Seth + Serket : un ennemi étourdi reçoit du venin. */
+  | { type: 'stunVenom'; stacks: number };
 
 /** Un effet attaché à une action (attaque, puissante, dash, Super). */
 export type SlotEffect = Extract<BoonEffect, { on: Trigger }>;
@@ -554,6 +571,71 @@ export const BOONS: readonly BoonDef[] = [
     nameKey: 'boon.duo_embalm',
     descKey: 'boon.duo_embalm.desc',
     effect: { type: 'embalm', amount: 3 },
+  },
+  // ---------- Duos tirés de la mythologie (0.59.0) ----------
+  {
+    id: 'duo_mother',
+    gods: ['sobek', 'neith'],
+    kind: 'duo',
+    nameKey: 'boon.duo_mother',
+    descKey: 'boon.duo_mother.desc',
+    effect: { type: 'soakAegis', cooldownMs: 6000 },
+  },
+  {
+    id: 'duo_daughter',
+    gods: ['ra', 'bastet'],
+    kind: 'duo',
+    nameKey: 'boon.duo_daughter',
+    descKey: 'boon.duo_daughter.desc',
+    effect: { type: 'critBurn', dps: 6, durationMs: 3000 },
+  },
+  {
+    id: 'duo_barque',
+    gods: ['ra', 'seth'],
+    kind: 'duo',
+    nameKey: 'boon.duo_barque',
+    descKey: 'boon.duo_barque.desc',
+    effect: { type: 'zapBurn', dps: 5, durationMs: 3000 },
+  },
+  {
+    id: 'duo_protectress',
+    gods: ['serket', 'isis'],
+    kind: 'duo',
+    nameKey: 'boon.duo_protectress',
+    descKey: 'boon.duo_protectress.desc',
+    effect: { type: 'venomHeal', amount: 1 },
+  },
+  {
+    id: 'duo_osiris',
+    gods: ['anubis', 'isis'],
+    kind: 'duo',
+    nameKey: 'boon.duo_osiris',
+    descKey: 'boon.duo_osiris.desc',
+    effect: { type: 'executeHeal', amount: 3 },
+  },
+  {
+    id: 'duo_moonriver',
+    gods: ['sobek', 'khonsou'],
+    kind: 'duo',
+    nameKey: 'boon.duo_moonriver',
+    descKey: 'boon.duo_moonriver.desc',
+    effect: { type: 'moonRiver', stacks: 3 },
+  },
+  {
+    id: 'duo_nighthunt',
+    gods: ['khonsou', 'bastet'],
+    kind: 'duo',
+    nameKey: 'boon.duo_nighthunt',
+    descKey: 'boon.duo_nighthunt.desc',
+    effect: { type: 'frozenCrit', chance: 100 },
+  },
+  {
+    id: 'duo_plagues',
+    gods: ['seth', 'serket'],
+    kind: 'duo',
+    nameKey: 'boon.duo_plagues',
+    descKey: 'boon.duo_plagues.desc',
+    effect: { type: 'stunVenom', stacks: 2 },
   },
   // ---------- Dons de Super (0.57.0) : un par dieu, la case « Super » ----------
   {

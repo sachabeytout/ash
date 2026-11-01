@@ -574,3 +574,38 @@ describe('passifs « en plus » (0.58.0)', () => {
     expect(isEligible(def, [{ id: 'ra_trail', rarity: 'common' }], 'ra')).toBe(true);
   });
 });
+
+describe('duos tirés de la mythologie (0.59.0)', () => {
+  it('16 duos, chacun entre deux dieux différents', () => {
+    const duos = BOONS.filter((b) => b.kind === 'duo');
+    expect(duos.length).toBe(16);
+    for (const d of duos) expect(new Set(d.gods).size, d.id).toBe(2);
+  });
+
+  it('un duo n’apparaît qu’avec un don de chacun des deux dieux', () => {
+    const def = must(getBoon('duo_mother'));
+    expect(isEligible(def, own('sobek_attack'), 'neith')).toBe(false);
+    expect(isEligible(def, own('sobek_attack', 'neith_attack'), 'neith')).toBe(true);
+  });
+
+  it('les effets des duos sont dans le profil', () => {
+    const p = buildProfile([
+      { id: 'duo_mother', rarity: 'duo' },
+      { id: 'duo_daughter', rarity: 'duo' },
+      { id: 'duo_barque', rarity: 'duo' },
+      { id: 'duo_protectress', rarity: 'duo' },
+      { id: 'duo_osiris', rarity: 'duo' },
+      { id: 'duo_moonriver', rarity: 'duo' },
+      { id: 'duo_nighthunt', rarity: 'duo' },
+      { id: 'duo_plagues', rarity: 'duo' },
+    ]);
+    expect(p.soakAegisMs).toBe(6000);
+    expect(p.critBurn?.dps).toBeGreaterThan(0);
+    expect(p.zapBurn?.dps).toBeGreaterThan(0);
+    expect(p.venomHeal).toBe(1);
+    expect(p.executeHeal).toBe(3);
+    expect(p.moonRiver).toBe(3);
+    expect(p.frozenCrit).toBe(1);
+    expect(p.stunVenom).toBe(2);
+  });
+});
