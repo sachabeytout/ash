@@ -145,6 +145,11 @@ Format : date — décision — raison — validée par l'utilisateur (oui / non
   venin, exécution, critique, soin, bouclier) pour rester lisibles ; Isis reçoit attaque (bouclier qui se recharge) et
   dash (bouclier) ; les passifs de renfort gardent leur condition (n'apparaissent que si le don renforcé est possédé).
 
+- **0.58.0 — 27 passifs** (choix de Claude dans le cadre décidé par l'utilisateur) : 3 par dieu ; les passifs « en plus »
+  ajoutent un effet à une action par-dessus le don de la case (le plus fort l'emporte, charges et chances s'additionnent).
+  « Critique dans le dos » abandonné (les ennemis se tournent toujours vers Ash) → « Instinct du chat » (bonus contre les
+  ennemis ralentis). Ronronnement seulement quand des ennemis sont présents (pas de soin en attendant dans une salle vide).
+
 ## Réponses de l'utilisateur (30/10/2026)
 
 | Sujet         | Décision                                                                                                                                                                                              | Validée        |

@@ -296,6 +296,11 @@ export class RunScene extends Phaser.Scene {
   /** Identifiants des ripostes (négatifs : distincts des coups normaux). */
   private parryId = 0;
   private barrier = 0;
+  /** Passifs (0.58.0) : Aube prête, coup suivant renforcé (Ouverture de la bouche), Ronronnement. */
+  private dawnReady = false;
+  private mouthReady = false;
+  private lastHurtAt = 0;
+  private nextPurrAt = 0;
   private kind: RoomKind = 'combat';
   /** Télémétrie : temps et PV au début de la salle. */
   private roomStart = { elapsed: 0, hp: 0 };
@@ -463,6 +468,10 @@ export class RunScene extends Phaser.Scene {
     this.profile = buildProfile(this.run.boons);
     this.forge = weaponBonuses(this.run.weapon, this.run.weaponLevel);
     this.barrier = 0;
+    this.dawnReady = true;
+    this.mouthReady = false;
+    this.lastHurtAt = 0;
+    this.nextPurrAt = 0;
     this.controls = new Controls(this, () => this.sim);
     this.controls.onPause = () => this.openPause();
     this.scene.launch('ui', { controls: this.controls });
@@ -1527,6 +1536,100 @@ export class RunScene extends Phaser.Scene {
     this.checkThermalShock(e);
   }
 
+  // ---------- Passifs « en plus » (0.58.0) ----------
+
+  /** Bonus de dégâts des passifs : action, phases de la lune, colère, ouverture de la bouche. */
+  private passiveDamage(kind: 'attack' | 'power' | 'super'): number {
+    const p = this.profile;
+    let bonus = p.actionDamage[kind];
+    // Pleine lune toutes les 12 s : le bonus monte puis redescend doucement.
+    if (p.moonPhase)
+      bonus += p.moonPhase * (0.5 - 0.5 * Math.cos((this.sim / 12000) * Math.PI * 2));
+    if (p.wrath) bonus += p.wrath * (1 - this.run.hp / this.run.maxHp);
+    if (p.openMouth && this.mouthReady) {
+      this.mouthReady = false;
+      bonus += p.openMouth;
+      this.juice.burst(this.player.x, this.player.y, GODS.anubis.color, 10);
+    }
+    return 1 + bonus;
+  }
+
+  /** Une exécution (Anubis) : esprit de chacal, coup suivant renforcé. */
+  private onExecute(e: Hittable): void {
+    if (this.profile.openMouth) this.mouthReady = true;
+    const dmg = this.profile.jackalSpirit;
+    if (!dmg) return;
+    let best: Hittable | undefined;
+    let dist = 160;
+    for (const o of this.targets) {
+      if (!o.alive || o === e) continue;
+      const d = Math.hypot(o.x - e.x, o.y - e.y);
+      if (d < dist) {
+        dist = d;
+        best = o;
+      }
+    }
+    if (!best) return;
+    this.lightning.zap(e, best, GODS.anubis.color);
+    this.juice.burst(best.x, best.y, GODS.anubis.color, 10);
+    this.damageEnemy(best, dmg, '#e8d8a0');
+  }
+
+  /** Aube (Râ) : explosion de lumière brûlante autour du premier ennemi touché. */
+  private solarBurst(at: Vec2, dawn: { damage: number; radius: number }): void {
+    this.lightning.ring(at, dawn.radius, FX.burn);
+    this.juice.burst(at.x, at.y, 0xffe08a, 18);
+    this.juice.shake(0.004);
+    sfx.burn();
+    for (const o of this.targets) {
+      if (!o.alive) continue;
+      if (Math.hypot(o.x - at.x, o.y - at.y) > dawn.radius + o.radius) continue;
+      this.damageEnemy(o, dawn.damage, FX.burnText);
+      if (o.alive) applyBurn(o.status, this.sim, Math.max(2, Math.round(dawn.damage / 4)), 3000);
+    }
+  }
+
+  /** Éclats de lune (Khonsou) : l'ennemi gelé éclate et blesse ses voisins. */
+  private shatter(at: Vec2, e: Hittable, s: { damage: number; radius: number }): void {
+    this.lightning.ring(at, s.radius, FX.ice);
+    this.juice.burst(at.x, at.y, FX.ice, 16);
+    sfx.freeze();
+    for (const o of this.targets) {
+      if (!o.alive) continue;
+      if (Math.hypot(o.x - at.x, o.y - at.y) > s.radius + o.radius) continue;
+      this.damageEnemy(o, o === e ? Math.round(s.damage / 2) : s.damage, '#cfefff');
+    }
+  }
+
+  /** Contagion solaire (Râ), Nid de scorpions (Serket) : la mort transmet brûlure et venin. */
+  private spreadOnDeath(e: Hittable): void {
+    const { burnSpread, venomSpread } = this.profile;
+    const burning = burnSpread > 0 && isBurning(e.status, this.sim);
+    const poisoned = venomSpread > 0 && isPoisoned(e.status, this.sim);
+    if (!burning && !poisoned) return;
+    for (const o of this.targets) {
+      if (!o.alive || o === e) continue;
+      const d = Math.hypot(o.x - e.x, o.y - e.y);
+      if (burning && d <= burnSpread + o.radius) {
+        applyBurn(o.status, this.sim, e.status.burnDps, 3000);
+        this.lightning.zap(e, o, FX.burn);
+      }
+      if (poisoned && d <= venomSpread + o.radius) {
+        applyVenom(o.status, this.sim, Math.max(1, e.status.venomStacks), e.status.venomDps);
+        this.lightning.zap(e, o, FX.venom);
+      }
+    }
+  }
+
+  /** Ronronnement (Bastet) : en combat, sans être touché depuis 4 s, un peu de vie toutes les 2 s. */
+  private updatePurr(): void {
+    const purr = this.profile.purr;
+    if (!purr || this.targets.length === 0 || this.run.hp >= this.run.maxHp) return;
+    if (this.sim - this.lastHurtAt < 4000 || this.sim < this.nextPurrAt) return;
+    this.nextPurrAt = this.sim + 2000;
+    this.healPlayer(purr);
+  }
+
   /** Étourdit (Seth) ; sur un boss, ce n'est qu'un court sursaut. */
   private stun(e: Hittable, durationMs: number): void {
     applyStun(e.status, this.sim, e === this.boss ? Math.min(durationMs, 400) : durationMs);
@@ -1536,6 +1639,7 @@ export class RunScene extends Phaser.Scene {
   /** Les dons du profil qui changent Ash lui-même (Bastet : vitesse, dash). */
   private applyProfile(): void {
     this.player.speedMul = 1 + this.profile.speed;
+    this.player.dashGuardMs = this.profile.dashGuardMs;
     this.player.dashCooldownMul = Math.max(
       0.3,
       1 - (this.profile.on.dash.dashCooldown ?? 0) - this.run.perks.dashCooldown,
@@ -1718,6 +1822,16 @@ export class RunScene extends Phaser.Scene {
       const target = this.nearestEnemy(at, DASH_BOLT_RANGE);
       if (target) this.lightningBolt(target, fx.bolt.damage, fx.bolt.radius);
     }
+    // Charge statique (Seth) : un éclair part vers l'ennemi le plus proche et rebondit.
+    if (fx.chain) {
+      const target = this.nearestEnemy(at, DASH_BOLT_RANGE);
+      if (target) {
+        this.lightning.zap(at, target, FX.zap);
+        this.damageEnemy(target, this.lightningDamage(target, fx.chain.damage), FX.zapText);
+        if (target.alive) this.chainLightning(target, fx.chain);
+        sfx.zap();
+      }
+    }
   }
 
   /** Neith : le dash détruit les projectiles ennemis proches. */
@@ -1806,6 +1920,7 @@ export class RunScene extends Phaser.Scene {
     this.resolvePlayerAttack(this.targets);
     this.shotsP.update(this.sim, dt, this.targets, this.player);
     this.updateBurns();
+    this.updatePurr();
     this.resolveEnemyAttacks(alive);
     this.updateShots();
     this.updateWaves();
@@ -2184,8 +2299,9 @@ export class RunScene extends Phaser.Scene {
     // Un seul éclair en chaîne par coup, même si le coup touche plusieurs ennemis.
     const firstHit = this.lastChainSwing !== hit.id;
     this.lastChainSwing = hit.id;
-    const mult = damageMultiplier(this.profile, this.targetState(e));
+    const mult = damageMultiplier(this.profile, this.targetState(e)) * this.passiveDamage(hit.kind);
     const at = { x: e.x, y: e.y };
+    const wasFrozen = isFrozen(e.status, this.sim);
     // Critique (Bastet) : dégâts doublés, ou plus avec « Griffes affûtées ».
     const critChance = (fx.crit ?? 0) + (hit.kind === 'super' ? 0 : this.profile.critAll);
     const crit = critChance > 0 && Math.random() < critChance;
@@ -2216,12 +2332,24 @@ export class RunScene extends Phaser.Scene {
       applyDamage(e.health, e.health.hp);
       dead = true;
       this.juice.burst(e.x, e.y, GODS.anubis.color, 14);
+      this.onExecute(e);
     }
+    // Aube (Râ) : le premier coup de la salle explose en lumière.
+    if (this.dawnReady && this.profile.dawn) {
+      this.dawnReady = false;
+      this.solarBurst(at, this.profile.dawn);
+    }
+    // Éclats de lune (Khonsou) : un ennemi gelé frappé par l'attaque puissante éclate.
+    if (hit.kind === 'power' && wasFrozen && this.profile.shatter)
+      this.shatter(at, e, this.profile.shatter);
     if (fx.lifeOnHit) this.healPlayer(fx.lifeOnHit);
     if (fx.barrier) this.barrier = Math.max(this.barrier, fx.barrier);
     if (fx.arrows && firstHit) this.fireArrows(fx.arrows, hit.id);
     if (hit.kind !== 'super')
-      this.run.superGauge = gainSuper(this.run.superGauge, dealt * (1 + this.forge.superGain));
+      this.run.superGauge = gainSuper(
+        this.run.superGauge,
+        dealt * (1 + this.forge.superGain + this.profile.superGain),
+      );
     sfx.hit(hit.heavy || crit);
     // Duo « Griffes du tonnerre » : un critique étourdit.
     if (crit && !dead && this.profile.critStun) this.stun(e, this.profile.critStun);
@@ -2307,6 +2435,7 @@ export class RunScene extends Phaser.Scene {
     if (this.profile.healOnKill) this.healPlayer(this.profile.healOnKill);
     // Duo « Embaumement » : un ennemi qui brûle soigne en mourant.
     if (this.profile.embalm && isBurning(e.status, this.sim)) this.healPlayer(this.profile.embalm);
+    this.spreadOnDeath(e);
     const cursed = isCursed(e.status, this.sim);
     const curse = { damage: e.status.curseDamage, radius: e.status.curseRadius, x: e.x, y: e.y };
     e.deactivate();
@@ -2334,6 +2463,7 @@ export class RunScene extends Phaser.Scene {
         other.health.hp / other.health.maxHp <= day
       ) {
         applyDamage(other.health, other.health.hp);
+        this.onExecute(other);
         this.killEnemy(other);
       }
     }
@@ -2450,6 +2580,12 @@ export class RunScene extends Phaser.Scene {
     // Neith : un ennemi affaibli frappe moins fort ; le Bouclier de Saïs bloque ; le bouclier absorbe.
     if (from instanceof Enemy)
       amount = Math.max(1, Math.round(amount * weakenFactor(from.status, this.sim)));
+    // Carapace (Serket) : un ennemi empoisonné frappe moins fort. Écailles (Sobek) : moins de dégâts en attaquant.
+    if (from instanceof Enemy && this.profile.poisonWeak && isPoisoned(from.status, this.sim))
+      amount = Math.max(1, Math.round(amount * (1 - Math.min(0.8, this.profile.poisonWeak))));
+    if (this.profile.scales && this.player.attacking)
+      amount = Math.max(1, Math.round(amount * (1 - Math.min(0.8, this.profile.scales))));
+    this.lastHurtAt = this.sim;
     if (this.aegisLeft > 0) {
       this.aegisLeft--;
       this.player.takeHit(this.sim, from);

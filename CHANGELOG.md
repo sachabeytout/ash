@@ -2,6 +2,39 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.58.0 — 27 nouveaux dons passifs
+
+Comme tu l'as demandé : **plus de dons, des passifs, pour un max de fun**. Chaque dieu reçoit **3 passifs**. Ils ne
+prennent **aucune case** : tu les gardes tous, sans rien échanger.
+
+- **Passifs « en plus »** (marqués « En plus : » sur la carte) : ils ajoutent un effet à une action, **par-dessus** le
+  don qui l'occupe déjà. Exemple : ton dash est béni par Seth, et « Sillage de feu » de Râ le fait aussi brûler.
+- **Les 27 passifs** :
+  - **Râ** : **Aube** (le premier coup de chaque salle explose en lumière), **Contagion solaire** (la brûlure passe
+    aux voisins quand un ennemi meurt), **Sillage de feu** (ton dash brûle) ;
+  - **Sobek** : **Écailles du crocodile** (moins de dégâts quand tu attaques), **Remous** (ton dash trempe),
+    **Mâchoires de Sobek** (attaque spéciale plus forte) ;
+  - **Khonsou** : **Éclats de lune** (un ennemi gelé éclate sous ton attaque spéciale), **Phases de la lune** (tes
+    dégâts montent jusqu'à la pleine lune, toutes les 12 s), **Rosée glacée** (ton attaque ajoute du givre) ;
+  - **Seth** : **Colère du désert** (plus ta vie est basse, plus tu frappes fort), **Charge statique** (ton dash lance
+    un éclair), **Seigneur du chaos** (ton attaque spéciale peut étourdir) ;
+  - **Serket** : **Nid de scorpions** (le venin passe aux voisins), **Carapace** (les empoisonnés te font moins mal),
+    **Aiguillon** (ton dash empoisonne) ;
+  - **Anubis** : **Gardien des tombes** (une exécution libère un esprit de chacal), **Ouverture de la bouche** (après
+    une exécution, ton coup suivant fait double dégâts), **Marque du chacal** (ton attaque spéciale fêle l'armure) ;
+  - **Bastet** : **Ronronnement** (tu regagnes de la vie si personne ne te touche), **Griffes sorties** (critiques sur
+    l'attaque), **Instinct du chat** (plus de dégâts contre les ennemis ralentis) ;
+  - **Isis** : **Magie d'Isis** (Super plus rapide), **Ailes d'Isis** (dash invincible plus longtemps), **Nœud d'Isis**
+    (ton attaque spéciale te protège) ;
+  - **Neith** : **Flèches croisées** (ton attaque spéciale tire 2 flèches), **Tisseuse** (ton dash affaiblit),
+    **Chasseresse** (plus de dégâts de loin).
+- Un passif qui renforce un effet (ex. « Contagion solaire » pour la brûlure) n'apparaît que si tu as déjà cet effet :
+  jamais de don inutile.
+- Au total : **91 dons** (dont 8 duos), contre 53 avant la 0.57.
+
+**Quoi tester** : fais quelques runs en mélangeant les dieux. Les passifs te donnent-ils des combinaisons amusantes ? Un
+passif est-il trop fort, trop faible ou difficile à comprendre ?
+
 ## 0.57.0 — Dons de Super, fin des amplifications
 
 Comme tu l'as demandé, chaque dieu a maintenant **4 dons d'action : attaque, attaque spéciale, dash et Super**.

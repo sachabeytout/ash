@@ -50,6 +50,8 @@ export class Player {
   private velocity = { x: 0, y: 0 };
   private lastDashEnd = -Infinity;
   private invulnerableUntil = 0;
+  /** Ailes d'Isis : invincibilité du dash allongée (ms). */
+  dashGuardMs = 0;
   private lastAttack: { index: number; startedAt: number } | null = null;
   private drawnPhase: AttackPhase | null = null;
   /** Attaque demandée pendant le dash : elle part en coup d'élan dès la fin du dash. */
@@ -106,10 +108,18 @@ export class Player {
     return this.sprite.y;
   }
 
+  /** Ash est-il en train d'attaquer (attaque, puissante ou Super) ? */
+  get attacking(): boolean {
+    return this.state.kind === 'attack';
+  }
+
   isInvulnerable(now: number): boolean {
     if (now < this.invulnerableUntil) return true;
     if (this.state.kind === 'attack' && this.state.superIndex !== null) return true;
-    return this.state.kind === 'dash' && now - this.state.startedAt < PLAYER.dash.iframesMs;
+    return (
+      this.state.kind === 'dash' &&
+      now - this.state.startedAt < PLAYER.dash.iframesMs + this.dashGuardMs
+    );
   }
 
   /** Garde levée (Lame de l'Aube) : un coup reçu maintenant est paré. */

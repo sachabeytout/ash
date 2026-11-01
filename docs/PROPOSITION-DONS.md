@@ -11,7 +11,8 @@
 
 - [x] **Lot 1 (0.57.0)** : case Super (9 dons de Super), Isis reçoit un don d'attaque et de dash, les 8 amplifications
       deviennent des passifs (avec rareté).
-- [ ] **Lot 2** : nouveaux passifs qui agissent sur les actions sans prendre leur case (2 à 3 par dieu).
+- [x] **Lot 2 (0.58.0)** : 27 passifs (3 par dieu), dont des passifs « en plus » qui ajoutent un effet à une action
+      par-dessus le don qui l'occupe.
 - [ ] **Lot 3** : duos tirés de la mythologie.
 
 ---

@@ -519,3 +519,58 @@ describe('eau de Sobek et venin de Serket', () => {
     expect(p.conduct).toBe(10);
   });
 });
+
+describe('passifs « en plus » (0.58.0)', () => {
+  it('un passif d’action s’ajoute au don qui occupe la case, sans le remplacer', () => {
+    const p = buildProfile(own('seth_dash', 'ra_trail'));
+    expect(p.on.dash.stun).toBeDefined();
+    expect(p.on.dash.burn?.dps).toBeGreaterThan(0);
+  });
+
+  it('les effets identiques se combinent : le plus fort l’emporte, les charges s’additionnent', () => {
+    const p = buildProfile(own('khonsou_attack', 'khonsou_frost'));
+    const alone = buildProfile(own('khonsou_attack'));
+    expect(p.on.attack.chill).toBe((alone.on.attack.chill ?? 0) + 1);
+    const burn = buildProfile(own('ra_dash', 'ra_trail')).on.dash.burn;
+    expect(burn?.dps).toBe(buildProfile(own('ra_dash')).on.dash.burn?.dps);
+  });
+
+  it('un passif ne prend jamais de case', () => {
+    for (const id of ['ra_trail', 'sobek_swirl', 'seth_static', 'neith_arrows', 'isis_knot']) {
+      expect(slotOf(must(getBoon(id)).effect), id).toBe('passive');
+    }
+  });
+
+  it('chaque dieu a au moins 3 passifs', () => {
+    for (const god of GOD_IDS) {
+      const n = BOONS.filter(
+        (b) => b.kind === 'normal' && b.gods.includes(god) && slotOf(b.effect) === 'passive',
+      ).length;
+      expect(n, god).toBeGreaterThanOrEqual(3);
+    }
+  });
+
+  it('les bonus des passifs sont dans le profil', () => {
+    const p = buildProfile(
+      own('sobek_jaws', 'seth_wrath', 'isis_magic', 'isis_wings', 'bastet_purr'),
+    );
+    expect(p.actionDamage.power).toBeCloseTo(0.2);
+    expect(p.wrath).toBeCloseTo(0.4);
+    expect(p.superGain).toBeCloseTo(0.25);
+    expect(p.dashGuardMs).toBe(120);
+    expect(p.purr).toBe(1);
+  });
+
+  it('Instinct du chat : bonus contre les ennemis trempés ou givrés', () => {
+    const p = buildProfile(own('bastet_instinct'));
+    expect(damageMultiplier(p, { burning: false, chilled: false })).toBe(1);
+    expect(damageMultiplier(p, { burning: false, chilled: false, soaked: true })).toBeCloseTo(1.25);
+    expect(damageMultiplier(p, { burning: false, chilled: true })).toBeCloseTo(1.25);
+  });
+
+  it('Contagion solaire n’apparaît qu’avec une source de brûlure', () => {
+    const def = must(getBoon('ra_spread'));
+    expect(isEligible(def, [], 'ra')).toBe(false);
+    expect(isEligible(def, [{ id: 'ra_trail', rarity: 'common' }], 'ra')).toBe(true);
+  });
+});

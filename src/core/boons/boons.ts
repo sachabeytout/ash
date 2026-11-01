@@ -8,6 +8,7 @@ import {
   type BoonSlot,
   type BoonEffect,
   type Rarity,
+  type SlotEffect,
   type Trigger,
 } from '../../data/boons';
 import type { GodId } from '../../data/gods';
@@ -179,6 +180,28 @@ export function mainValue(effect: BoonEffect, rarity: Rarity): number {
     case 'aegis':
     case 'aegisCharge':
       return Math.round(effect.charges * p);
+    case 'rider':
+      return mainValue(effect.effect, rarity);
+    case 'dawn':
+    case 'shatter':
+    case 'jackalSpirit':
+      return Math.round(effect.damage * p);
+    case 'burnSpread':
+    case 'venomSpread':
+      return Math.round(effect.radius * p);
+    case 'scales':
+    case 'poisonWeak':
+      return Math.round(effect.reduction * p * 100);
+    case 'actionDamage':
+    case 'moonPhase':
+    case 'wrath':
+    case 'openMouth':
+    case 'superGain':
+      return Math.round(effect.bonus * p * 100);
+    case 'purr':
+      return Math.round(effect.amount * p);
+    case 'dashGuard':
+      return Math.round(effect.ms * p);
     case 'deflect':
       return Math.round(effect.radius * p);
     case 'stun':
@@ -269,6 +292,23 @@ export interface CombatProfile {
   critStun: number;
   /** Soin quand un ennemi qui brûle meurt (duo). */
   embalm: number;
+  /** Bonus contre les ennemis ralentis (trempés ou givrés, Bastet). */
+  vsSlowed: number;
+  // ---------- Passifs « en plus » (0.58.0) ----------
+  dawn?: { damage: number; radius: number };
+  burnSpread: number;
+  scales: number;
+  actionDamage: Record<'attack' | 'power' | 'super', number>;
+  shatter?: { damage: number; radius: number };
+  moonPhase: number;
+  wrath: number;
+  venomSpread: number;
+  poisonWeak: number;
+  jackalSpirit: number;
+  openMouth: number;
+  purr: number;
+  superGain: number;
+  dashGuardMs: number;
 }
 
 export function buildProfile(owned: readonly OwnedBoon[]): CombatProfile {
@@ -293,7 +333,21 @@ export function buildProfile(owned: readonly OwnedBoon[]): CombatProfile {
     aegisStorm: 0,
     critStun: 0,
     embalm: 0,
+    vsSlowed: 0,
+    burnSpread: 0,
+    scales: 0,
+    actionDamage: { attack: 0, power: 0, super: 0 },
+    moonPhase: 0,
+    wrath: 0,
+    venomSpread: 0,
+    poisonWeak: 0,
+    jackalSpirit: 0,
+    openMouth: 0,
+    purr: 0,
+    superGain: 0,
+    dashGuardMs: 0,
   };
+  const riders: Record<Trigger, HitEffects> = { attack: {}, power: {}, dash: {}, super: {} };
   let burnDurationBonus = 0;
   let venomPotency = 0;
   let executeAll = 0;
@@ -304,19 +358,11 @@ export function buildProfile(owned: readonly OwnedBoon[]): CombatProfile {
     if (!def) continue;
     const e = def.effect;
     const v = mainValue(e, o.rarity);
+    if ('on' in e) {
+      applyOn(profile.on, e, v);
+      continue;
+    }
     switch (e.type) {
-      case 'burn':
-        profile.on[e.on].burn = { dps: v, durationMs: e.durationMs };
-        break;
-      case 'chill':
-        profile.on[e.on].chill = v;
-        break;
-      case 'soak':
-        profile.on[e.on].soak = { slow: v / 100, durationMs: e.durationMs };
-        break;
-      case 'venom':
-        profile.on[e.on].venom = { stacks: v, dps: e.dps };
-        break;
       case 'roomHeal':
         profile.roomHeal += v;
         break;
@@ -326,18 +372,13 @@ export function buildProfile(owned: readonly OwnedBoon[]): CombatProfile {
       case 'conduct':
         profile.conduct = v;
         break;
-      case 'chain':
-        profile.on[e.on].chain = { damage: v, bounces: e.bounces, range: e.range };
-        break;
-      case 'bolt':
-        profile.on[e.on].bolt = { damage: v, radius: e.radius };
-        break;
       case 'damageVs':
         if (e.status === 'burning') profile.vsBurning += v / 100;
         else if (e.status === 'chilled') profile.vsChilled += v / 100;
         else if (e.status === 'stunned') profile.vsStunned += v / 100;
         else if (e.status === 'soaked') profile.vsSoaked += v / 100;
         else if (e.status === 'poisoned') profile.vsPoisoned += v / 100;
+        else if (e.status === 'slowed') profile.vsSlowed += v / 100;
         else profile.vsFar += v / 100;
         break;
       case 'maxHp':
@@ -351,23 +392,11 @@ export function buildProfile(owned: readonly OwnedBoon[]): CombatProfile {
       case 'burnDuration':
         burnDurationBonus += v / 100;
         break;
-      case 'execute':
-        profile.on[e.on].execute = v / 100;
-        break;
       case 'executeAll':
         executeAll = Math.max(executeAll, v / 100);
         break;
-      case 'judge':
-        profile.on[e.on].judge = { bonus: v / 100, durationMs: e.durationMs };
-        break;
       case 'healOnKill':
         profile.healOnKill += v;
-        break;
-      case 'crit':
-        profile.on[e.on].crit = v / 100;
-        break;
-      case 'dashCooldown':
-        profile.on[e.on].dashCooldown = v / 100;
         break;
       case 'speed':
         profile.speed += v / 100;
@@ -378,33 +407,6 @@ export function buildProfile(owned: readonly OwnedBoon[]): CombatProfile {
       case 'aegis':
       case 'aegisCharge':
         profile.aegis += v;
-        break;
-      case 'weaken':
-        profile.on[e.on].weaken = { reduction: v / 100, durationMs: e.durationMs };
-        break;
-      case 'barrier':
-        profile.on[e.on].barrier = v;
-        break;
-      case 'deflect':
-        profile.on[e.on].deflect = v;
-        break;
-      case 'arrows':
-        profile.on[e.on].arrows = { damage: v, count: e.count };
-        break;
-      case 'stun':
-        profile.on[e.on].stun =
-          e.scales === 'chance'
-            ? { chance: v / 100, durationMs: e.durationMs }
-            : { chance: e.chance / 100, durationMs: v };
-        break;
-      case 'shockwave':
-        profile.on[e.on].shockwave = { damage: v, radius: e.radius, knockback: e.knockback };
-        break;
-      case 'curse':
-        profile.on[e.on].curse = { damage: v, radius: e.radius };
-        break;
-      case 'lifeOnHit':
-        profile.on[e.on].lifeOnHit = v;
         break;
       case 'lastBreath':
         profile.lastBreath = v;
@@ -448,8 +450,54 @@ export function buildProfile(owned: readonly OwnedBoon[]): CombatProfile {
       case 'curseDamage':
         amp.curse += v / 100;
         break;
+      case 'rider':
+        applyOn(riders, e.effect, v);
+        break;
+      case 'dawn':
+        profile.dawn = { damage: v, radius: e.radius };
+        break;
+      case 'burnSpread':
+        profile.burnSpread = Math.max(profile.burnSpread, v);
+        break;
+      case 'scales':
+        profile.scales += v / 100;
+        break;
+      case 'actionDamage':
+        profile.actionDamage[e.act] += v / 100;
+        break;
+      case 'shatter':
+        profile.shatter = { damage: v, radius: e.radius };
+        break;
+      case 'moonPhase':
+        profile.moonPhase += v / 100;
+        break;
+      case 'wrath':
+        profile.wrath += v / 100;
+        break;
+      case 'venomSpread':
+        profile.venomSpread = Math.max(profile.venomSpread, v);
+        break;
+      case 'poisonWeak':
+        profile.poisonWeak += v / 100;
+        break;
+      case 'jackalSpirit':
+        profile.jackalSpirit += v;
+        break;
+      case 'openMouth':
+        profile.openMouth += v / 100;
+        break;
+      case 'purr':
+        profile.purr += v;
+        break;
+      case 'superGain':
+        profile.superGain += v / 100;
+        break;
+      case 'dashGuard':
+        profile.dashGuardMs += v;
+        break;
     }
   }
+  for (const act of Object.keys(riders) as Trigger[]) mergeFx(profile.on[act], riders[act]);
   if (executeAll > 0) {
     for (const fx of [profile.on.attack, profile.on.power])
       fx.execute = Math.max(fx.execute ?? 0, executeAll);
@@ -470,6 +518,151 @@ export function buildProfile(owned: readonly OwnedBoon[]): CombatProfile {
   return profile;
 }
 
+/** Effet d'action (attaque, puissante, dash, Super) écrit dans la table des effets. */
+function applyOn(on: Record<Trigger, HitEffects>, e: SlotEffect, v: number): void {
+  switch (e.type) {
+    case 'burn':
+      on[e.on].burn = { dps: v, durationMs: e.durationMs };
+      break;
+    case 'chill':
+      on[e.on].chill = v;
+      break;
+    case 'soak':
+      on[e.on].soak = { slow: v / 100, durationMs: e.durationMs };
+      break;
+    case 'venom':
+      on[e.on].venom = { stacks: v, dps: e.dps };
+      break;
+    case 'chain':
+      on[e.on].chain = { damage: v, bounces: e.bounces, range: e.range };
+      break;
+    case 'bolt':
+      on[e.on].bolt = { damage: v, radius: e.radius };
+      break;
+    case 'execute':
+      on[e.on].execute = v / 100;
+      break;
+    case 'judge':
+      on[e.on].judge = { bonus: v / 100, durationMs: e.durationMs };
+      break;
+    case 'crit':
+      on[e.on].crit = v / 100;
+      break;
+    case 'dashCooldown':
+      on[e.on].dashCooldown = v / 100;
+      break;
+    case 'weaken':
+      on[e.on].weaken = { reduction: v / 100, durationMs: e.durationMs };
+      break;
+    case 'barrier':
+      on[e.on].barrier = v;
+      break;
+    case 'deflect':
+      on[e.on].deflect = v;
+      break;
+    case 'arrows':
+      on[e.on].arrows = { damage: v, count: e.count };
+      break;
+    case 'stun':
+      on[e.on].stun =
+        e.scales === 'chance'
+          ? { chance: v / 100, durationMs: e.durationMs }
+          : { chance: e.chance / 100, durationMs: v };
+      break;
+    case 'shockwave':
+      on[e.on].shockwave = { damage: v, radius: e.radius, knockback: e.knockback };
+      break;
+    case 'curse':
+      on[e.on].curse = { damage: v, radius: e.radius };
+      break;
+    case 'lifeOnHit':
+      on[e.on].lifeOnHit = v;
+      break;
+  }
+}
+
+/**
+ * Ajoute les effets d'un passif « en plus » à ceux du don qui occupe l'action : l'effet le plus fort
+ * l'emporte, les charges et les chances s'additionnent.
+ */
+function mergeFx(target: HitEffects, add: HitEffects): void {
+  const max = (a: number | undefined, b: number) => Math.max(a ?? 0, b);
+  if (add.burn)
+    target.burn = target.burn
+      ? {
+          dps: Math.max(target.burn.dps, add.burn.dps),
+          durationMs: Math.max(target.burn.durationMs, add.burn.durationMs),
+        }
+      : add.burn;
+  if (add.soak)
+    target.soak = target.soak
+      ? {
+          slow: Math.max(target.soak.slow, add.soak.slow),
+          durationMs: Math.max(target.soak.durationMs, add.soak.durationMs),
+        }
+      : add.soak;
+  if (add.venom)
+    target.venom = target.venom
+      ? {
+          stacks: target.venom.stacks + add.venom.stacks,
+          dps: Math.max(target.venom.dps, add.venom.dps),
+        }
+      : add.venom;
+  if (add.chill) target.chill = (target.chill ?? 0) + add.chill;
+  if (add.chain)
+    target.chain = target.chain
+      ? {
+          damage: Math.max(target.chain.damage, add.chain.damage),
+          bounces: Math.max(target.chain.bounces, add.chain.bounces),
+          range: Math.max(target.chain.range, add.chain.range),
+        }
+      : add.chain;
+  if (add.bolt)
+    target.bolt = target.bolt && target.bolt.damage >= add.bolt.damage ? target.bolt : add.bolt;
+  if (add.execute) target.execute = max(target.execute, add.execute);
+  if (add.judge)
+    target.judge = target.judge
+      ? {
+          bonus: Math.max(target.judge.bonus, add.judge.bonus),
+          durationMs: Math.max(target.judge.durationMs, add.judge.durationMs),
+        }
+      : add.judge;
+  if (add.crit) target.crit = (target.crit ?? 0) + add.crit;
+  if (add.weaken)
+    target.weaken = target.weaken
+      ? {
+          reduction: Math.max(target.weaken.reduction, add.weaken.reduction),
+          durationMs: Math.max(target.weaken.durationMs, add.weaken.durationMs),
+        }
+      : add.weaken;
+  if (add.barrier) target.barrier = max(target.barrier, add.barrier);
+  if (add.deflect) target.deflect = max(target.deflect, add.deflect);
+  if (add.arrows)
+    target.arrows = target.arrows
+      ? {
+          damage: Math.max(target.arrows.damage, add.arrows.damage),
+          count: target.arrows.count + add.arrows.count,
+        }
+      : add.arrows;
+  if (add.stun)
+    target.stun = target.stun
+      ? {
+          chance: 1 - (1 - target.stun.chance) * (1 - add.stun.chance),
+          durationMs: Math.max(target.stun.durationMs, add.stun.durationMs),
+        }
+      : add.stun;
+  if (add.shockwave)
+    target.shockwave =
+      target.shockwave && target.shockwave.damage >= add.shockwave.damage
+        ? target.shockwave
+        : add.shockwave;
+  if (add.curse)
+    target.curse =
+      target.curse && target.curse.damage >= add.curse.damage ? target.curse : add.curse;
+  if (add.lifeOnHit) target.lifeOnHit = (target.lifeOnHit ?? 0) + add.lifeOnHit;
+  if (add.dashCooldown) target.dashCooldown = (target.dashCooldown ?? 0) + add.dashCooldown;
+}
+
 /** Multiplicateur de dégâts d'un coup selon l'état de la cible. */
 export function damageMultiplier(
   profile: CombatProfile,
@@ -483,8 +676,10 @@ export function damageMultiplier(
     judged?: number;
   },
 ): number {
+  const slowed = target.soaked || target.chilled;
   return (
     1 +
+    (slowed ? profile.vsSlowed : 0) +
     (target.soaked ? profile.vsSoaked : 0) +
     (target.poisoned ? profile.vsPoisoned : 0) +
     (target.burning ? profile.vsBurning : 0) +

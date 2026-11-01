@@ -1,6 +1,6 @@
 # Architecture (carte du projet)
 
-> Statut 0.57.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
+> Statut 0.58.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
 > combat/attack+health+status+superGauge, boons/boons, run/waves+rewards+state, save/schema+migrations+codec+store),
 > `data/` (player, weapons, enemies, biomes, gods, boons, status, skills, bosses, music, shop), `game/` (scenes Title, Hub,
 > Run, Ui, Boon, Pause, Shop ; entities Player, Enemy, Boss, Hittable ; input Controls, TouchControls ; fx/Juice+Lightning ;
@@ -21,6 +21,11 @@ par-dessus). Mort ou sortie → `hub` avec un `RunSummary`.
   **Super** (0.57.0 : `on: 'super'`, appliqué par `RunScene.resolveWeaponHit` via `profile.on.super`) et passifs (se
   cumulent). Plus d'amplifications : les anciennes `amp_*` sont des passifs normaux (`requiresAny` évite un passif
   inutile), sauvegarde v20 (rareté `amp` → `common`).
+- Passifs (0.58.0) : effet `rider` = un effet d'action ajouté **par-dessus** le don de la case (`applyOn` dans une table
+  à part, puis `mergeFx` dans `src/core/boons/boons.ts`) ; mécaniques propres (`dawn`, `burnSpread`, `scales`,
+  `actionDamage`, `shatter`, `moonPhase`, `wrath`, `venomSpread`, `poisonWeak`, `jackalSpirit`, `openMouth`, `purr`,
+  `superGain`, `dashGuard`) appliquées dans `RunScene` (`passiveDamage`, `onExecute`, `solarBurst`, `shatter`,
+  `spreadOnDeath`, `updatePurr`, `hurtPlayer`, `dashEffects`) et `Player.dashGuardMs` / `Player.attacking`.
 - Brûlure / givre / gel : `src/data/status.ts` + `src/core/combat/status.ts`.
 - Tirage des dons et profil de combat : `src/core/boons/boons.ts` ; effets en jeu : `RunScene` (section « Dons »).
 - Super : `super` dans `src/data/weapons.ts` ; remplissage de la jauge : `PLAYER.superGauge` (`src/data/player.ts`).
