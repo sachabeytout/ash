@@ -39,7 +39,9 @@ par-dessus ; cartes face cachée puis retournées : `BoonScene.revealCard`). Mor
   `startSuperStep` ; effets : `RunScene.superLaunchFx`, aura et traînée dans `Player.updateVisuals`.
 - Comptoir de Ratatosk (salle 0 de chaque monde après le 1er) : thème et répliques `src/data/merchant.ts`, sol
   `floorRoots` (`textures.ts`), musique `merchant` ; `RunScene.startShop` / `drawCounter` / `updateMerchant` ; fontaine `RunScene.placeFountain`.
-- Cage niveau 0 : `HubScene` (stations `buildStations`, déplacement `moveAsh` + `Controls`, toucher pour marcher,
+- Cage niveau 0 : `HubScene` (salle `src/game/fx/hubRoom.ts` : `HUB_ROOM`, `drawHubRoom`, `drawThoth` ; deux caméras
+  `setupCameras` : salle zoomée qui suit Ash + interface fixe, objets répartis via `ADDED_TO_SCENE` ; flèche vers la
+  porte `updateDoorArrow` ; stations `buildStations`, déplacement `moveAsh` + `Controls`, toucher pour marcher,
   `nearStation` / Entrée / bouton A) ; fenêtre de départ (choix de l'arme après « Sortir », 0.70.0) `src/game/ui/DeparturePanel.ts`
   (`HubScene.openDeparture`, manette via `pollPad`, silhouettes `drawWeaponGlyph` dans `src/game/icons.ts`), arme
   mémorisée `meta.selectedWeapon`

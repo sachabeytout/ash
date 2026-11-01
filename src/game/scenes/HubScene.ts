@@ -12,7 +12,10 @@ import { WEAPON_ORDER, WEAPONS, type WeaponId } from '../../data/weapons';
 import { t, type TextKey } from '../../i18n';
 import { music } from '../audio/music';
 import { sfx } from '../audio/sfx';
-import { addEmbers, drawCage, drawLotusColumn, ensureTextures } from '../backdrop';
+import { ensureTextures } from '../backdrop';
+import { HUB_ROOM, drawHubRoom, drawThoth } from '../fx/hubRoom';
+import { edgeIndicator } from '../../core/geometry';
+import { RENDER_SCALE } from '../view';
 import { cheatsEnabled } from '../debug/cheats';
 import { openSaveDialog } from '../dom/saveDialog';
 import { session } from '../session';
@@ -71,6 +74,14 @@ export class HubScene extends Phaser.Scene {
   private walkTarget: { x: number; y: number; station?: Station } | null = null;
   private prompt!: Phaser.GameObjects.Text;
   private padA = false;
+  /** Caméra de la salle (zoomée, suit Ash) et caméra de l'interface (fixe, fenêtres et boutons). */
+  private worldCam!: Phaser.Cameras.Scene2D.Camera;
+  private uiCam!: Phaser.Cameras.Scene2D.Camera;
+  /** Vrai une fois la salle construite : tout objet créé ensuite appartient à l'interface. */
+  private uiLayer = false;
+  /** Flèche au bord de l'écran vers la porte quand elle est hors champ. */
+  private doorArrow!: Phaser.GameObjects.Graphics;
+  private doorArrowLabel!: Phaser.GameObjects.Text;
   /** Habitants qui parlent quand Ash passe près d'eux. */
   private barkers: {
     who: BarkSpeaker;
@@ -102,6 +113,7 @@ export class HubScene extends Phaser.Scene {
     this.walkTarget = null;
     this.padA = false;
     this.abandonArmed = false;
+    this.uiLayer = false;
   }
 
   create(): void {
@@ -113,19 +125,27 @@ export class HubScene extends Phaser.Scene {
     const newTrophies = claimTrophies(meta);
     if (newTrophies.length > 0) session.commit();
 
-    this.cameras.main.centerOn(GAME_WIDTH / 2, GAME_HEIGHT / 2);
-    const recenter = () => this.cameras.main.centerOn(GAME_WIDTH / 2, GAME_HEIGHT / 2);
-    this.scale.on('resize', recenter);
-    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.scale.off('resize', recenter));
-
-    // La Cage de l'Oiseleur (barreaux violets, étrangers) dans une salle égyptienne : colonnes de lotus.
-    const hall = this.add.graphics().setAlpha(0.75);
-    for (const x of [cx - 262, cx + 262]) drawLotusColumn(hall, x, 70, GAME_HEIGHT - 24);
-    hall
-      .lineStyle(2, COLORS.goldDim, 0.5)
-      .lineBetween(cx - 290, GAME_HEIGHT - 22, cx + 290, GAME_HEIGHT - 22);
-    drawCage(this, 0.7);
-    addEmbers(this);
+    if (cheatsEnabled) (window as unknown as { __hub?: HubScene }).__hub = this;
+    this.setupCameras();
+    // La salle : sol, murs, barreaux, habitants, Ash. La caméra de la salle suit Ash.
+    drawHubRoom(this);
+    this.buildStations(meta);
+    this.spawnAsh(meta);
+    this.followAsh();
+    // Tout ce qui est créé à partir d'ici (boutons, textes, fenêtres) est de l'interface.
+    this.uiLayer = true;
+    this.cameras.main = this.uiCam;
+    this.doorArrow = this.add.graphics().setDepth(20);
+    this.doorArrowLabel = this.add
+      .text(0, 0, '', {
+        fontFamily: FONT_FAMILY,
+        fontSize: '9px',
+        color: '#ffb02e',
+        stroke: '#07060d',
+        strokeThickness: 3,
+      })
+      .setOrigin(0.5)
+      .setDepth(20);
 
     const style = {
       fontFamily: FONT_FAMILY,
@@ -137,14 +157,14 @@ export class HubScene extends Phaser.Scene {
     this.add.text(12, 40, t('hub.name'), { ...style, fontSize: '14px' });
     this.addCorners(meta);
     this.add
-      .text(cx, 38, this.infoLines(meta).join('\n'), {
+      .text(cx, GAME_HEIGHT - 8, this.infoLines(meta).join('\n'), {
         ...style,
         fontSize: '9px',
         color: COLORS.textDim,
         align: 'center',
         lineSpacing: 2,
       })
-      .setOrigin(0.5, 0);
+      .setOrigin(0.5, 1);
 
     makeButton(this, {
       x: 52,
@@ -166,9 +186,6 @@ export class HubScene extends Phaser.Scene {
       fontSize: 11,
       onTap: () => this.openOptions(),
     });
-
-    this.buildStations(meta);
-    this.spawnAsh(meta);
 
     this.input.keyboard?.on('keydown', (e: KeyboardEvent) => {
       if (this.modal) return;
@@ -234,8 +251,9 @@ export class HubScene extends Phaser.Scene {
       if (id) this.openDeparture(id);
     });
 
-    this.cameras.main.fadeIn(500, 7, 6, 13);
-    applyPostFx(this.cameras.main, settings.quality);
+    this.worldCam.fadeIn(500, 7, 6, 13);
+    this.uiCam.fadeIn(500, 7, 6, 13);
+    applyPostFx(this.worldCam, settings.quality);
     this.autoQuality = newAutoQuality();
     music.play('hub');
     markScene('hub');
@@ -248,7 +266,8 @@ export class HubScene extends Phaser.Scene {
   private autoQuality = newAutoQuality();
 
   override update(_time: number, delta: number): void {
-    autoLowerQuality(this.autoQuality, delta, this.cameras.main);
+    autoLowerQuality(this.autoQuality, delta, this.worldCam);
+    this.updateDoorArrow();
     this.controls.update();
     this.departure?.pollPad();
     // Un menu est ouvert : Ash ne bouge pas, et la marche en cours est annulée.
@@ -275,6 +294,72 @@ export class HubScene extends Phaser.Scene {
       else if (session.save.run) this.resume();
     }
     this.padA = pressed;
+  }
+
+  /**
+   * Deux caméras : celle de la salle, zoomée comme en run et qui suit Ash, et celle de l'interface,
+   * fixe (boutons, résumé, fenêtres). Chaque objet n'est vu que par l'une des deux.
+   */
+  private setupCameras(): void {
+    this.worldCam = this.cameras.main;
+    this.uiCam = this.cameras.add(0, 0, this.scale.width, this.scale.height).setZoom(RENDER_SCALE);
+    const frameUi = () => {
+      this.uiCam.setSize(this.scale.width, this.scale.height);
+      this.uiCam.centerOn(GAME_WIDTH / 2, GAME_HEIGHT / 2);
+    };
+    frameUi();
+    this.scale.on('resize', frameUi);
+    const route = (obj: Phaser.GameObjects.GameObject) =>
+      (this.uiLayer ? this.worldCam : this.uiCam).ignore(obj);
+    this.events.on(Phaser.Scenes.Events.ADDED_TO_SCENE, route);
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.scale.off('resize', frameUi);
+      this.events.off(Phaser.Scenes.Events.ADDED_TO_SCENE, route);
+    });
+  }
+
+  private followAsh(): void {
+    const cam = this.worldCam;
+    const margin = 36;
+    cam.setBounds(
+      HUB_ROOM.x - margin,
+      HUB_ROOM.y - margin - 20,
+      HUB_ROOM.width + margin * 2,
+      HUB_ROOM.height + margin * 2 + 20,
+    );
+    cam.centerOn(this.ash.x, this.ash.y);
+    cam.startFollow(this.ash, true, 0.14, 0.14);
+  }
+
+  /** La porte est hors champ : une flèche dorée au bord de l'écran montre où sortir. */
+  private updateDoorArrow(): void {
+    const door = this.stations.find((st) => st.id === 'door');
+    const g = this.doorArrow;
+    g.clear();
+    this.doorArrowLabel.setVisible(false);
+    if (!door || this.modal) return;
+    const view = this.worldCam.worldView;
+    const zoom = this.worldCam.zoom / RENDER_SCALE;
+    // Visée sur le nom de la porte : dès qu'on le voit, la flèche disparaît.
+    const p = edgeIndicator(view, { x: door.x, y: door.y + 20 }, 14 / zoom);
+    if (!p) return;
+    const ui = this.uiCam.worldView;
+    const x = ui.x + (p.x - view.x) * zoom;
+    const y = ui.y + (p.y - view.y) * zoom;
+    const a = p.angle;
+    const tip = (d: number, da: number) => ({
+      x: x + Math.cos(a + da) * d,
+      y: y + Math.sin(a + da) * d,
+    });
+    const t1 = tip(9, 0);
+    const t2 = tip(7, 2.5);
+    const t3 = tip(7, -2.5);
+    g.fillStyle(0xffb02e, 0.95).fillTriangle(t1.x, t1.y, t2.x, t2.y, t3.x, t3.y);
+    g.lineStyle(1.5, 0x07060d, 0.9).strokeTriangle(t1.x, t1.y, t2.x, t2.y, t3.x, t3.y);
+    this.doorArrowLabel
+      .setText(door.label)
+      .setPosition(x - Math.cos(a) * 16, y - Math.sin(a) * 12)
+      .setVisible(true);
   }
 
   // ---------- La Cage, niveau 0 : Ash s'y déplace et visite les stations ----------
@@ -351,10 +436,15 @@ export class HubScene extends Phaser.Scene {
 
   private buildStations(meta: MetaState): void {
     const run = session.save.run;
+    const r = HUB_ROOM;
+    // Chacun son coin (retour F11) : la porte en haut, Anii au centre, Ptah et Thot en haut à gauche
+    // et à droite, les Archives et les Trophées en bas.
+    const left = r.left + 74;
+    const right = r.right - 74;
     this.addStation({
       id: 'door',
-      x: GAME_WIDTH / 2,
-      y: 128,
+      x: r.centerX,
+      y: r.top + 16,
       color: 0xffb02e,
       label: run ? t('hub.station.resume') : t('hub.station.door'),
       draw: (g, x, y) => drawDoor(g, x, y),
@@ -363,8 +453,8 @@ export class HubScene extends Phaser.Scene {
     if (run) {
       this.addStation({
         id: 'abandon',
-        x: GAME_WIDTH / 2 + 92,
-        y: 140,
+        x: r.centerX + 62,
+        y: r.top + 26,
         color: 0x6b4cff,
         label: t('hub.abandon'),
         draw: (g, x, y) => drawBrokenChain(g, x, y),
@@ -373,17 +463,17 @@ export class HubScene extends Phaser.Scene {
     }
     this.addStation({
       id: 'thot',
-      x: 150,
-      y: 290,
+      x: right,
+      y: r.top + 70,
       color: 0x7fffc0,
       label: t('hub.station.thot'),
-      draw: (g, x, y) => drawTerminal(g, x, y),
+      draw: (g, x, y) => drawThoth(g, x, y),
       action: () => this.openThoth(),
     });
     this.addStation({
       id: 'codex',
-      x: 238,
-      y: 316,
+      x: left,
+      y: r.bottom - 54,
       color: 0x9ab4ff,
       label: t('hub.station.codex'),
       draw: (g, x, y) => drawShelf(g, x, y),
@@ -391,8 +481,8 @@ export class HubScene extends Phaser.Scene {
     });
     this.addStation({
       id: 'trophies',
-      x: GAME_WIDTH - 238,
-      y: 316,
+      x: right,
+      y: r.bottom - 54,
       color: TROPHY_COLOR,
       label: t('hub.station.trophies'),
       draw: (g, x, y) => drawPedestal(g, x, y),
@@ -400,8 +490,8 @@ export class HubScene extends Phaser.Scene {
     });
     this.addStation({
       id: 'aelia',
-      x: GAME_WIDTH / 2,
-      y: 218,
+      x: r.centerX,
+      y: r.centerY - 4,
       color: 0xffa040,
       label: t('hub.station.aelia'),
       draw: (g, x, y) => drawBrazier(g, x, y),
@@ -409,16 +499,16 @@ export class HubScene extends Phaser.Scene {
     });
     // Le brasero d'Anii brille un peu plus à chaque victoire.
     const flame = this.add
-      .image(GAME_WIDTH / 2, 210, 'glow')
+      .image(r.centerX, r.centerY - 10, 'glow')
       .setTint(0xffa040)
       .setAlpha(0.55)
-      .setScale(1.2 + Math.min(meta.clears, 10) * 0.08)
+      .setScale(0.9 + Math.min(meta.clears, 10) * 0.06)
       .setBlendMode('ADD');
     this.tweens.add({ targets: flame, alpha: 0.3, duration: 700, yoyo: true, repeat: -1 });
     this.addStation({
       id: 'forge',
-      x: 490,
-      y: 196,
+      x: left + 6,
+      y: r.top + 70,
       color: 0xffe08a,
       label: t('hub.station.forge'),
       draw: (g, x, y) => drawForge(g, x, y),
@@ -428,8 +518,8 @@ export class HubScene extends Phaser.Scene {
       const heat = heatTotal(meta.heat);
       this.addStation({
         id: 'heat',
-        x: 490,
-        y: 290,
+        x: left,
+        y: r.centerY + 8,
         color: 0xffa040,
         label: heat > 0 ? t('hub.heatButtonOn', { heat }) : t('hub.heatButton'),
         draw: (g, x, y) => drawBoard(g, x, y),
@@ -437,22 +527,22 @@ export class HubScene extends Phaser.Scene {
       });
     }
     if (meta.deaths >= 1) {
-      // Vesper, perché près de la porte : il observe Ash.
-      const g = this.add.graphics();
-      drawRaven(g, GAME_WIDTH / 2 - 56, 112);
-      this.addBarker('vesper', GAME_WIDTH / 2 - 56, 100, 150);
-      this.tweens.add({ targets: g, y: -1.5, duration: 1300, yoyo: true, repeat: -1 });
+      // Vesper, perché sur les barreaux près de la porte : il observe Ash.
+      const g = this.add.graphics({ x: r.centerX - 56, y: r.top - 26 }).setScale(STATION_SCALE);
+      drawRaven(g, 0, 0);
+      this.addBarker('vesper', r.centerX - 56, r.top - 34, r.top + 60);
+      this.tweens.add({ targets: g, y: g.y - 1.5, duration: 1300, yoyo: true, repeat: -1 });
     }
-    this.addBarker('thot', 150, 270, 320);
-    this.addBarker('brokk', 473, 178, 230);
-    this.addBarker('aelia', GAME_WIDTH / 2, 196, 252);
+    this.addBarker('thot', right, r.top + 48, r.top + 110);
+    this.addBarker('brokk', left, r.top + 48, r.top + 110);
+    this.addBarker('aelia', r.centerX, r.centerY - 26, r.centerY + 30);
     this.prompt = this.add
       .text(0, 0, '', {
         fontFamily: FONT_FAMILY,
-        fontSize: '9px',
+        fontSize: '6px',
         color: '#ffe9d6',
         stroke: '#07060d',
-        strokeThickness: 3,
+        strokeThickness: 2,
       })
       .setOrigin(0.5, 1)
       .setDepth(30)
@@ -464,12 +554,12 @@ export class HubScene extends Phaser.Scene {
     const bubble = this.add
       .text(x, y, '', {
         fontFamily: FONT_FAMILY,
-        fontSize: '8px',
+        fontSize: '5.5px',
         color: '#ffe9d6',
         backgroundColor: '#14101e',
-        padding: { x: 5, y: 3 },
+        padding: { x: 3, y: 2 },
         align: 'center',
-        wordWrap: { width: 150 },
+        wordWrap: { width: 110 },
       })
       .setOrigin(0.5, 1)
       .setDepth(40)
@@ -496,9 +586,9 @@ export class HubScene extends Phaser.Scene {
       b.bubble
         .setText(t(`bark.${b.who}.${n + 1}` as TextKey, { deaths: session.save.meta.deaths }))
         .setAlpha(0);
-      // La bulle ne sort jamais de l'écran.
+      // La bulle ne sort jamais de la salle.
       const half = b.bubble.width / 2;
-      b.bubble.setX(Math.min(GAME_WIDTH - 6 - half, Math.max(6 + half, b.bubble.x)));
+      b.bubble.setX(Math.min(HUB_ROOM.right - 4 - half, Math.max(HUB_ROOM.left + 4 + half, b.x)));
       this.tweens.killTweensOf(b.bubble);
       this.tweens.add({
         targets: b.bubble,
@@ -511,15 +601,16 @@ export class HubScene extends Phaser.Scene {
   }
 
   private addStation(def: Omit<Station, 'labelText' | 'graphics'>): void {
-    const g = this.add.graphics().setDepth(4);
-    def.draw(g, def.x, def.y);
+    // Dessins pensés pour l'ancienne Cage : réduits pour la salle vue de près.
+    const g = this.add.graphics({ x: def.x, y: def.y }).setDepth(4).setScale(STATION_SCALE);
+    def.draw(g, 0, 0);
     const labelText = this.add
-      .text(def.x, def.y + 22, def.label, {
+      .text(def.x, def.y + 22 * STATION_SCALE, def.label, {
         fontFamily: FONT_FAMILY,
-        fontSize: '9px',
+        fontSize: '6px',
         color: `#${def.color.toString(16).padStart(6, '0')}`,
         stroke: '#07060d',
-        strokeThickness: 3,
+        strokeThickness: 2,
         align: 'center',
       })
       .setOrigin(0.5, 0)
@@ -529,7 +620,7 @@ export class HubScene extends Phaser.Scene {
     this.stations.push(station);
     // Toucher une station : Ash y marche, puis l'ouvre.
     this.add
-      .zone(def.x, def.y + 6, 60, 54)
+      .zone(def.x, def.y + 4, 44, 40)
       .setInteractive({ useHandCursor: true })
       .on('pointerup', () => {
         if (this.modal || this.starting) return;
@@ -539,21 +630,22 @@ export class HubScene extends Phaser.Scene {
   }
 
   private spawnAsh(meta: MetaState): void {
-    const x = GAME_WIDTH / 2;
-    const y = 300;
+    // Ash renaît devant le brasero d'Anii.
+    const x = HUB_ROOM.centerX;
+    const y = HUB_ROOM.centerY + 44;
     this.ashGlow = this.add
       .image(x, y, 'glow')
       .setTint(COLORS.phoenix)
       .setAlpha(0.5)
-      .setScale(1.8)
+      .setScale(0.9)
       .setBlendMode('ADD');
-    this.ash = this.add.image(x, y, 'ash').setScale(2).setDepth(10);
-    addFlameHair(this, this.ash, -14, 2);
+    this.ash = this.add.image(x, y, 'ash').setDepth(10);
+    addFlameHair(this, this.ash, -7, 1);
     this.controls = new Controls(this, () => this.time.now);
     // Toucher le sol : Ash y marche.
     this.input.on('pointerup', (p: Phaser.Input.Pointer, over: Phaser.GameObjects.GameObject[]) => {
       if (this.modal || this.starting || over.length > 0) return;
-      const w = this.cameras.main.getWorldPoint(p.x, p.y);
+      const w = this.worldCam.getWorldPoint(p.x, p.y);
       this.walkTarget = clampToFloor(w.x, w.y);
     });
     void meta;
@@ -587,12 +679,12 @@ export class HubScene extends Phaser.Scene {
 
   /** Distance d'Ash au pied de la station (on peut l'utiliser de côté comme de face). */
   private distanceTo(station: Station): number {
-    return Math.hypot(this.ash.x - station.x, this.ash.y - (station.y + 18));
+    return Math.hypot(this.ash.x - station.x, this.ash.y - (station.y + 16));
   }
 
   /** Là où Ash se tient pour utiliser une station : juste devant (en dessous). */
   private approachPoint(station: Station): { x: number; y: number } {
-    return clampToFloor(station.x, station.y + 30);
+    return clampToFloor(station.x, station.y + 24);
   }
 
   private nearStation(): Station | undefined {
@@ -617,7 +709,7 @@ export class HubScene extends Phaser.Scene {
     }
     this.prompt
       .setText(t('hub.interact'))
-      .setPosition(near.x, near.y - 22)
+      .setPosition(near.x, near.y - 20)
       .setVisible(true);
   }
 
@@ -886,8 +978,9 @@ export class HubScene extends Phaser.Scene {
   }
 
   private go(run: NonNullable<typeof session.save.run>): void {
-    this.cameras.main.fadeOut(400, 7, 6, 13);
-    this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () =>
+    this.worldCam.fadeOut(400, 7, 6, 13);
+    this.uiCam.fadeOut(400, 7, 6, 13);
+    this.uiCam.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () =>
       this.scene.start('run', { run }),
     );
   }
@@ -907,10 +1000,18 @@ interface Station {
 }
 
 /** Distance à laquelle Ash peut utiliser une station. */
-const INTERACT_RANGE = 40;
-const ASH_SPEED = 120;
-/** Sol de la Cage (entre les barreaux). */
-const FLOOR = { left: 104, right: GAME_WIDTH - 104, top: 150, bottom: 330 };
+const INTERACT_RANGE = 26;
+/** Même vitesse qu'en run. */
+const ASH_SPEED = PLAYER.speed;
+/** Taille des dessins des habitants dans la salle vue de près. */
+const STATION_SCALE = 0.75;
+/** Sol de la Cage (entre les murs). */
+const FLOOR = {
+  left: HUB_ROOM.left + 8,
+  right: HUB_ROOM.right - 8,
+  top: HUB_ROOM.top + 30,
+  bottom: HUB_ROOM.bottom - 8,
+};
 
 function clampToFloor(x: number, y: number): { x: number; y: number } {
   return {
@@ -949,18 +1050,6 @@ function drawBrokenChain(g: Phaser.GameObjects.Graphics, x: number, y: number): 
   g.lineStyle(2, 0x6b4cff, 1);
   g.strokeEllipse(x - 7, y, 12, 8).strokeEllipse(x + 7, y, 12, 8);
   g.lineBetween(x - 2, y - 6, x + 2, y + 6);
-}
-
-function drawTerminal(g: Phaser.GameObjects.Graphics, x: number, y: number): void {
-  g.fillStyle(0x0d1a16, 1).fillRect(x - 14, y - 12, 28, 20);
-  g.lineStyle(1.5, 0x7fffc0, 0.9).strokeRect(x - 14, y - 12, 28, 20);
-  g.fillStyle(0x7fffc0, 0.85)
-    .fillRect(x - 10, y - 8, 14, 2)
-    .fillRect(x - 10, y - 4, 20, 2);
-  g.fillRect(x - 10, y, 9, 2);
-  g.fillStyle(0x3a4a44, 1)
-    .fillRect(x - 3, y + 8, 6, 6)
-    .fillRect(x - 9, y + 14, 18, 3);
 }
 
 /** Socle des trophées : une coupe dorée sur une colonne. */

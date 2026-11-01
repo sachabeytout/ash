@@ -2,6 +2,29 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.71.0 — La Cage, une vraie salle
+
+Ton retour n° 11 (option B) : la Cage ressemble maintenant aux **salles des runs**, sans ennemis. Elle est **plus grande
+que l'écran** et la **caméra suit Ash**, comme en run.
+
+- Même style que les salles des runs : sol sombre, murs au double trait lumineux. Les **barreaux violets** de l'Oiseleur
+  courent le long des murs (c'est toujours ta prison), avec une frise de hiéroglyphes, des colonnes de lotus et des
+  torches.
+- Chacun son coin :
+  - la porte **Sortir** en haut, au bout d'une allée dallée, avec Vesper perché sur les barreaux à côté ;
+  - **Anii** au centre, dans son brasero, sur un grand cercle doré ;
+  - **Ptah** en haut à gauche, dans son atelier, avec un foyer de forge qui rougeoie ;
+  - **Thot** en haut à droite : ce n'est plus un écran d'ordinateur mais le dieu à tête d'ibis, à sa table de scribe ;
+  - les **Archives** en bas à gauche et les **Trophées** en bas à droite. Les mesures d'urgence (Maât) sont à gauche.
+- Ash renaît devant le brasero d'Anii et marche à la même vitesse qu'en run.
+- Quand la porte est hors de l'écran, une **petite flèche dorée « Sortir »** au bord de l'écran montre où aller.
+- Comme avant : touche un personnage et Ash y marche, puis lui parle. Les raccourcis T (Thot), F (Ptah) et 1 à 7 (départ)
+  marchent toujours.
+- Le résumé de ta dernière run passe en bas de l'écran.
+
+**Quoi tester** : promène-toi dans la Cage. Trouves-tu facilement chaque personnage et la sortie ? La salle te
+paraît-elle trop grande, trop petite ou juste comme il faut ?
+
 ## 0.70.0 — L'arme se choisit au départ
 
 Ton retour n° 10 : **plus de râtelier**. L'arme se choisit **juste après « Sortir »**, et **Ptah** garde tout ce qui

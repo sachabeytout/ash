@@ -116,6 +116,7 @@ Retour sur le lore v0.2 toujours attendu (« quand le fond aura avancé »).
 - [x] **0.58.0** : 27 passifs (3 par dieu) qui agissent sur les actions sans prendre leur case — demandé
 - [x] **0.59.0** : 8 duos tirés de la mythologie (16 duos, 99 dons au total)
 - [x] **0.60.0** : retour F1, Ash immobile pendant les menus (+ 0,5 s d'invincibilité)
+- [x] **0.71.0** : retour F11, la Cage devient une salle plus grande que l'écran (caméra qui suit Ash), habitants répartis
 - [x] **0.70.0** : retour F10, fenêtre de départ (choix de l'arme après « Sortir »), râtelier retiré
 - [x] **0.69.0** : retour F9, Papyrus et arbre de Thot à 3 branches (18 compétences, sauvegarde v24)
 - [x] **0.68.0** : retour F8, Gravures de Ptah (56 gravures, arme éveillée, sauvegarde v23)

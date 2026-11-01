@@ -194,6 +194,13 @@ Format : date — décision — raison — validée par l'utilisateur (oui / non
   mécaniques de tir (`bounces`, `split`, `explodeEnd`, `hover`) dans `PlayerShots`. Sauvegarde v23. Inspiration de
   fonctionnement : marteau de Hadès, runes de Diablo III, Dead Cells ; contenu original.
 
+- **0.71.0 — La Cage, une vraie salle (retour F11 : B)** : salle de 520 × 290 vue comme en run (zoom ×2, `SCENE_ZOOM.hub`),
+  caméra qui suit Ash. Deux caméras dans `HubScene` : la salle (zoomée) et l'interface (fixe, devient `cameras.main`
+  pour que les fenêtres existantes restent centrées) ; chaque objet n'est vu que par l'une des deux (`ADDED_TO_SCENE`).
+  Choix de Claude : la place de chacun (porte en haut, Anii au centre, Ptah et Thot en haut, Archives et Trophées en bas,
+  Maât à gauche), Thot dessiné en dieu à tête d'ibis, flèche « Sortir » au bord de l'écran, vitesse d'Ash = celle des
+  runs, résumé de la dernière run en bas.
+
 - **0.70.0 — Fenêtre de départ (retour F10 : B sans forge ; armes verrouillées « grisées, chez Ptah »)** : le
   râtelier disparaît ; « Sortir » ouvre `DeparturePanel` (ancien `WeaponPanel`), l'arme de la dernière run déjà choisie
   (`meta.selectedWeapon`, pas de changement de sauvegarde). Ptah garde améliorations, déblocages et, plus tard, les

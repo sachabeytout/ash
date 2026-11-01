@@ -28,7 +28,7 @@ export function initRenderScale(): void {
 }
 
 /** Zoom propre à certaines scènes (la salle de combat est vue de plus près). */
-export const SCENE_ZOOM: Record<string, number> = { run: 2 };
+export const SCENE_ZOOM: Record<string, number> = { run: 2, hub: 2 };
 
 /** Taille visible en coordonnées logiques (ce que valait `scene.scale` avant la haute résolution). */
 export function viewSize(scene: Phaser.Scene): { width: number; height: number } {
