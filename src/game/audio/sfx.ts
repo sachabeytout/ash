@@ -177,7 +177,7 @@ export const sfx = {
     );
     later(280, () => noise('highpass', 4000, 9000, 0.3, 0.12));
   },
-  /** Étincelle du Phénix : flamme qui monte. */
+  /** Braise du Bennu (ex-Étincelle) : flamme qui monte. */
   spark() {
     if (!throttle('spark', 300)) return;
     tone('sine', 300, 1200, 0.45, 0.22);

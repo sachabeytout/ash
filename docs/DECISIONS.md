@@ -169,6 +169,10 @@ Format : date — décision — raison — validée par l'utilisateur (oui / non
   cendre » retirée. Sauvegarde v22 : niveaux achetés remboursés en XP (60/110/170), champ `perks.armor` retiré. Une run
   commencée en 0.62.0 garde ses PV max (aucune perte).
 
+- **0.64.0 — Braise (retour F4)** : « Étincelle » → « Braise » (identifiants `spark` gardés : sauvegarde intacte) ;
+  icône `drawEmberIcon` (`src/game/icons.ts`), variante B2 choisie par l'utilisateur après 3 séries d'exemples (charbon
+  anguleux foncé, réseau fin de fissures, « + » au-dessus du coin droit) ; lueur qui pulse sur la porte.
+
 ## Réponses de l'utilisateur (30/10/2026)
 
 | Sujet         | Décision                                                                                                                                                                                              | Validée        |

@@ -398,3 +398,109 @@ export function drawAmonEye(
   g.lineBetween(x - size * 0.2, y + size * 0.55, x - size * 0.2, y + size * 1.05);
   g.lineBetween(x - size * 0.2, y + size * 1.05, x + size * 0.45, y + size * 1.2);
 }
+
+/** Couleurs de la Braise (jamais le rouge-magenta des dangers). */
+export const EMBER_COLOR = 0xff7a2a;
+
+/**
+ * Braise (récompense qui fait gagner un cran de rareté à un don) : un charbon anguleux et foncé,
+ * parcouru d'un fin réseau de fissures encore brûlantes, quelques étincelles, et un petit « + »
+ * au-dessus de son coin droit (validé par l'utilisateur, variante « B2 »).
+ */
+export function drawEmberIcon(g: Phaser.GameObjects.Graphics, x: number, y: number, s = 1): void {
+  const path = (pts: readonly (readonly [number, number])[]) => {
+    g.beginPath();
+    pts.forEach(([a, b], i) =>
+      i === 0 ? g.moveTo(x + a * s, y + b * s) : g.lineTo(x + a * s, y + b * s),
+    );
+  };
+  // Le charbon et sa face éclairée.
+  path([
+    [-9, 2],
+    [-5, -5],
+    [2, -6],
+    [9, -1],
+    [8, 7],
+    [1, 9],
+    [-7, 8],
+  ]);
+  g.closePath();
+  g.fillStyle(0x18110d, 1).fillPath();
+  path([
+    [-5, -5],
+    [2, -6],
+    [5, -2],
+    [-2, -1],
+  ]);
+  g.closePath();
+  g.fillStyle(0x2a1e16, 1).fillPath();
+  // Réseau de fissures : une ligne principale et ses ramifications.
+  g.lineStyle(0.6 * s, EMBER_COLOR, 1);
+  path([
+    [-8, 3],
+    [-5, 2],
+    [-3, 3],
+    [0, 2],
+    [2, 3],
+    [5, 2],
+    [8, 3],
+  ]);
+  g.strokePath();
+  g.lineStyle(0.5 * s, 0xffb02e, 1);
+  for (const branch of [
+    [
+      [-5, 2],
+      [-6, -1],
+    ],
+    [
+      [-3, 3],
+      [-4, 6],
+      [-6, 7],
+    ],
+    [
+      [0, 2],
+      [1, -1],
+      [3, -3],
+    ],
+    [
+      [1, -1],
+      [-1, -3],
+    ],
+    [
+      [2, 3],
+      [1, 6],
+      [2, 8],
+    ],
+    [
+      [5, 2],
+      [6, -1],
+    ],
+    [
+      [5, 2],
+      [6, 6],
+    ],
+  ] as const) {
+    path(branch);
+    g.strokePath();
+  }
+  g.lineStyle(0.4 * s, 0xffe08a, 1);
+  path([
+    [0, 2],
+    [2, 3],
+  ]);
+  g.strokePath();
+  // Étincelles qui s'échappent.
+  g.fillStyle(0xffe08a, 1);
+  for (const [a, b, r] of [
+    [-3, -9, 1.1],
+    [3, -11, 0.9],
+    [-7, -7, 0.8],
+  ] as const)
+    g.fillRect(x + (a - r / 2) * s, y + (b - r / 2) * s, r * s, r * s);
+  // Le « + », au-dessus du coin droit du charbon, sans le toucher.
+  const px = x + 10 * s;
+  const py = y - 11.5 * s;
+  g.fillStyle(0xffe9d6, 1)
+    .fillRect(px - 1 * s, py - 3.2 * s, 2 * s, 6.4 * s)
+    .fillRect(px - 3.2 * s, py - 1 * s, 6.4 * s, 2 * s);
+}

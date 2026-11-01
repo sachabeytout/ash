@@ -26,7 +26,7 @@ export interface BoonOffer {
   rarity: Rarity;
   /** Le don déjà présent sur la même action, qui sera remplacé. */
   replaces?: string;
-  /** Étincelle du Phénix : rareté actuelle du don amélioré. */
+  /** Braise du Bennu (ex-Étincelle) : rareté actuelle du don amélioré. */
   from?: Rarity;
   /**
    * Puits d'offrandes (0.61.0), quand le dieu n'a plus assez de dons nouveaux :

@@ -50,7 +50,7 @@ export interface RunState {
   boons: OwnedBoon[];
   /** Un dieu attend qu'Ash choisisse son don (au début de la salle). */
   pendingBoon: GodId | null;
-  /** Étincelle du Phénix : Ash choisira un don à améliorer au début de la salle. Ajouté en v10. */
+  /** Braise du Bennu (ex-Étincelle) : Ash choisira un don à améliorer au début de la salle. Ajouté en v10. */
   pendingSpark: boolean;
   /** Jauge de Super, de 0 à 1. */
   superGauge: number;

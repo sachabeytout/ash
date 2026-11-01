@@ -2,6 +2,18 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.64.0 — L'Étincelle devient la Braise
+
+Ton retour n° 4 :
+
+- La récompense « Étincelle » s'appelle maintenant **Braise** (« Braise du Bennu » dans la fenêtre de choix). Elle fait
+  toujours gagner un cran de rareté à un de tes dons.
+- **Nouvelle icône** (la variante B2 que tu as choisie) : un charbon foncé et anguleux, parcouru d'un fin réseau de
+  fissures encore brûlantes, quelques étincelles, et un petit **« + »** au-dessus de son coin droit.
+- Sur la porte, la Braise **rougeoie doucement**, comme un charbon encore chaud.
+
+**Quoi tester** : quand une porte « Braise » apparaît, l'icône se lit-elle bien sur ton téléphone ?
+
 ## 0.63.0 — Retour à la difficulté d'avant
 
 Comme tu l'as demandé, les changements de difficulté de la 0.62.0 sont **annulés** :

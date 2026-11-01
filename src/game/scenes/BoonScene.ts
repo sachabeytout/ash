@@ -16,7 +16,7 @@ export interface BoonSceneData {
   god: GodId;
   offers: BoonOffer[];
   onPick: (offer: BoonOffer) => void;
-  /** Étincelle du Phénix : on améliore un don déjà obtenu (titre et bas de carte différents). */
+  /** Braise du Bennu (ex-Étincelle) : on améliore un don déjà obtenu (titre et bas de carte différents). */
   upgrade?: boolean;
 }
 

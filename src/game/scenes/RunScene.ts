@@ -102,7 +102,7 @@ import type { Hittable } from '../entities/Hittable';
 import { Player } from '../entities/Player';
 import { Juice } from '../fx/Juice';
 import { Lightning } from '../fx/Lightning';
-import { AMON_COLOR, drawGodIcon } from '../icons';
+import { AMON_COLOR, EMBER_COLOR, drawEmberIcon, drawGodIcon } from '../icons';
 import type { BoonSceneData } from './BoonScene';
 import type { PauseSceneData } from './PauseScene';
 import { drawRatatosk, type ShopSceneData } from './ShopScene';
@@ -270,7 +270,7 @@ const REWARD_STYLE: Record<RewardKind | SpecialDoor, { color: number; label: Tex
   weaponMod: { color: 0xc0c8d8, label: 'reward.weaponMod' },
   xp: { color: 0xb08cff, label: 'reward.xp' },
   weaponParts: { color: 0xffe08a, label: 'reward.weaponParts' },
-  spark: { color: 0xffc46b, label: 'reward.spark' },
+  spark: { color: 0xffc46b, label: 'reward.spark' }, // Braise (ex-Étincelle)
   exit: { color: 0xffffff, label: 'reward.exit' },
   boss: { color: 0xb8a8ff, label: 'reward.boss' },
   next: { color: 0x8ff0ff, label: 'reward.next' },
@@ -673,7 +673,7 @@ export class RunScene extends Phaser.Scene {
         return;
       }
       if (e.code === 'KeyU') {
-        // Étincelle du Phénix immédiate.
+        // Braise du Bennu (ex-Étincelle) immédiate.
         this.run.pendingSpark = true;
         this.choosing = true;
         this.offerSpark();
@@ -1460,7 +1460,7 @@ export class RunScene extends Phaser.Scene {
 
   // ---------- Dons ----------
 
-  /** Étincelle du Phénix : choisir un don possédé qui gagne un cran de rareté. */
+  /** Braise du Bennu (ex-Étincelle) : choisir un don possédé qui gagne un cran de rareté. */
   private offerSpark(): void {
     const rng = createRng((this.run.seed ^ Math.imul(this.run.room + 101, 2654435761)) >>> 0);
     const offers = rollUpgrades(rng, this.run.boons);
@@ -2821,6 +2821,7 @@ export class RunScene extends Phaser.Scene {
     ring.lineStyle(2, color, 1).strokeCircle(x, y, 14);
     const icon = this.add.graphics().setDepth(5);
     if (god) drawGodIcon(icon, god, x, y, 8);
+    else if (reward.kind === 'spark') drawEmberIcon(icon, x, y, 0.85);
     else drawRewardIcon(icon, reward.kind, x, y, color);
     this.tweens.add({ targets: glow, scale: 1.7, duration: 700, yoyo: true, repeat: -1 });
     this.tweens.add({ targets: [ring, icon], y: -3, duration: 700, yoyo: true, repeat: -1 });
@@ -2955,10 +2956,20 @@ export class RunScene extends Phaser.Scene {
     else drawRewardIcon(icon, kind, x, y - 5, color);
     const glow = this.add
       .image(x, y - 5, 'glow')
-      .setTint(color)
+      .setTint(kind === 'spark' ? EMBER_COLOR : color)
       .setAlpha(0.6)
       .setScale(1.2)
       .setBlendMode('ADD');
+    // La Braise rougeoie doucement, comme un charbon encore chaud.
+    if (kind === 'spark')
+      this.tweens.add({
+        targets: glow,
+        alpha: 0.25,
+        duration: 900,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.InOut',
+      });
     const text = this.add
       .text(x, y + 18, label, {
         fontFamily: FONT_FAMILY,
@@ -3094,10 +3105,8 @@ function drawRewardIcon(
       g.lineBetween(x - 7, y + 1, x, y - 6).lineBetween(x, y - 6, x + 7, y + 1);
       g.lineBetween(x - 7, y + 8, x, y + 1).lineBetween(x, y + 1, x + 7, y + 8);
       break;
-    case 'spark': // flamme du Phénix surmontée d'une flèche vers le haut
-      g.fillTriangle(x - 6, y + 8, x + 6, y + 8, x, y - 2).fillCircle(x, y + 5, 5);
-      g.lineBetween(x, y - 4, x, y - 10).lineBetween(x - 4, y - 6, x, y - 10);
-      g.lineBetween(x + 4, y - 6, x, y - 10);
+    case 'spark': // Braise : charbon fendu de fissures brûlantes, petit « + »
+      drawEmberIcon(g, x, y);
       break;
     case 'boss': // œil (forme propre à la porte du boss)
       g.strokeEllipse(x, y, 20, 11).fillCircle(x, y, 3.5);
