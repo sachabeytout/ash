@@ -194,6 +194,13 @@ Format : date — décision — raison — validée par l'utilisateur (oui / non
   mécaniques de tir (`bounces`, `split`, `explodeEnd`, `hover`) dans `PlayerShots`. Sauvegarde v23. Inspiration de
   fonctionnement : marteau de Hadès, runes de Diablo III, Dead Cells ; contenu original.
 
+- **0.70.0 — Fenêtre de départ (retour F10 : B sans forge ; armes verrouillées « grisées, chez Ptah »)** : le
+  râtelier disparaît ; « Sortir » ouvre `DeparturePanel` (ancien `WeaponPanel`), l'arme de la dernière run déjà choisie
+  (`meta.selectedWeapon`, pas de changement de sauvegarde). Ptah garde améliorations, déblocages et, plus tard, les
+  aspects. Choix de Claude : toucher la carte déjà choisie lance la run ; touches 1 à 7 de la Cage ouvrent la fenêtre
+  avec cette arme choisie (au lieu de partir directement) ; une silhouette dessinée par arme (`drawWeaponGlyph`) ; le
+  niveau de forge en petit en haut à droite du nom (mise en page prévue par le retour F15) ; un nom trop long rapetisse.
+
 - **0.69.0 — Papyrus + arbre de Thot (retour F9 : « Papyrus » ; A + B)** : l'XP s'affiche « Papyrus » (identifiants `xp`
   gardés). 18 compétences en 3 branches (`SkillDef.branch`, `requires`), chacune débloquée par un niveau de la précédente
   (`isSkillUnlocked`) ; achats existants conservés. Choix de Claude : les 10 nouvelles compétences et leurs coûts

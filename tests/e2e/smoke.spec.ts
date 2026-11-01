@@ -38,8 +38,11 @@ test('écran titre → cage → don → combat → reprise après fermeture', as
   await page.keyboard.press('Escape');
   await page.waitForTimeout(600);
 
-  // On s'évade avec le katana : un dieu offre d'abord un don.
+  // On s'évade avec le katana : la fenêtre de départ s'ouvre avec l'arme choisie, puis un dieu offre un don.
   await page.keyboard.press('Digit1');
+  await page.waitForTimeout(400);
+  await shot('depart');
+  await page.keyboard.press('Enter');
   await expect(page.locator('body')).toHaveAttribute('data-scene', 'run');
   await page.waitForTimeout(1200);
   await shot('don');

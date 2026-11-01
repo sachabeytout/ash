@@ -35,12 +35,12 @@ export function upgradeWeapon(meta: MetaState, weapon: WeaponId): boolean {
   return true;
 }
 
-/** Arme équipée au râtelier (la Katana si l'arme choisie n'est plus disponible). */
+/** Arme choisie à la fenêtre de départ (la Katana si l'arme choisie n'est plus disponible). */
 export function chosenWeapon(meta: MetaState): WeaponId {
   return isUnlocked(meta, meta.selectedWeapon) ? meta.selectedWeapon : 'katana';
 }
 
-/** Choisit l'arme du râtelier ; refusé si elle est verrouillée. */
+/** Choisit l'arme de la run ; refusé si elle est verrouillée. */
 export function selectWeapon(meta: MetaState, weapon: WeaponId): boolean {
   if (!isUnlocked(meta, weapon)) return false;
   meta.selectedWeapon = weapon;

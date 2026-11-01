@@ -29,7 +29,7 @@ import { markSeen, nextDialogue } from '../../core/story';
 import { DAWNBLADE_VICTORIES } from '../../data/story';
 import { ThothPanel } from '../ui/ThothPanel';
 import { assistReduction } from '../../core/assist';
-import { chosenWeapon, forgeLevel, isUnlocked, selectWeapon } from '../../core/forge';
+import { chosenWeapon, forgeLevel, selectWeapon } from '../../core/forge';
 import { settings } from '../../core/settings';
 import type { MetaState } from '../../core/save/schema';
 import { applyPostFx, autoLowerQuality } from '../fx/postfx';
@@ -39,7 +39,7 @@ import { RecapPanel } from '../ui/RecapPanel';
 import { newAutoQuality } from '../../core/perf';
 import { markScene } from './markScene';
 import { Controls } from '../input/Controls';
-import { WeaponPanel } from '../ui/WeaponPanel';
+import { DeparturePanel } from '../ui/DeparturePanel';
 import { TROPHY_COLOR, TrophyPanel, drawTrophyCup, rewardText } from '../ui/TrophyPanel';
 import { claimTrophies } from '../../core/trophies';
 import type { TrophyDef } from '../../data/trophies';
@@ -61,6 +61,8 @@ export class HubScene extends Phaser.Scene {
   private modal = false;
   /** Un menu était ouvert à l'image précédente (voir `update`). */
   private menuOpen = false;
+  /** Fenêtre de départ ouverte (choix de l'arme), pour la manette. */
+  private departure: DeparturePanel | null = null;
   private controls!: Controls;
   private stations: Station[] = [];
   private ash!: Phaser.GameObjects.Image;
@@ -92,6 +94,7 @@ export class HubScene extends Phaser.Scene {
     this.starting = false;
     this.modal = false;
     this.menuOpen = false;
+    this.departure = null;
     this.stations = [];
     this.barkers = [];
     // Première bulle possible quelques secondes après l'arrivée, pas tout de suite.
@@ -225,10 +228,10 @@ export class HubScene extends Phaser.Scene {
         if (e.code === 'Digit1') this.resume();
         return;
       }
-      // Raccourcis : 1 à 7 équipent l'arme et sortent directement.
+      // Raccourcis : 1 à 7 ouvrent la fenêtre de départ avec cette arme déjà choisie.
       const digit = Number(/^Digit([1-7])$/.exec(e.code)?.[1] ?? 0);
       const id = WEAPON_ORDER[digit - 1];
-      if (id && isUnlocked(session.save.meta, id)) this.start(id);
+      if (id) this.openDeparture(id);
     });
 
     this.cameras.main.fadeIn(500, 7, 6, 13);
@@ -247,6 +250,7 @@ export class HubScene extends Phaser.Scene {
   override update(_time: number, delta: number): void {
     autoLowerQuality(this.autoQuality, delta, this.cameras.main);
     this.controls.update();
+    this.departure?.pollPad();
     // Un menu est ouvert : Ash ne bouge pas, et la marche en cours est annulée.
     if (this.modal || this.starting) {
       this.walkTarget = null;
@@ -347,7 +351,6 @@ export class HubScene extends Phaser.Scene {
 
   private buildStations(meta: MetaState): void {
     const run = session.save.run;
-    const weapon = WEAPONS[chosenWeapon(meta)];
     this.addStation({
       id: 'door',
       x: GAME_WIDTH / 2,
@@ -355,7 +358,7 @@ export class HubScene extends Phaser.Scene {
       color: 0xffb02e,
       label: run ? t('hub.station.resume') : t('hub.station.door'),
       draw: (g, x, y) => drawDoor(g, x, y),
-      action: () => (run ? this.resume() : this.start(chosenWeapon(session.save.meta))),
+      action: () => (run ? this.resume() : this.openDeparture()),
     });
     if (run) {
       this.addStation({
@@ -366,16 +369,6 @@ export class HubScene extends Phaser.Scene {
         label: t('hub.abandon'),
         draw: (g, x, y) => drawBrokenChain(g, x, y),
         action: () => this.abandonStation(),
-      });
-    } else {
-      this.addStation({
-        id: 'rack',
-        x: 150,
-        y: 196,
-        color: weapon.color,
-        label: t('hub.station.rack', { weapon: t(weapon.nameKey as TextKey) }),
-        draw: (g, x, y) => drawRack(g, x, y),
-        action: () => this.openRack(),
       });
     }
     this.addStation({
@@ -628,26 +621,26 @@ export class HubScene extends Phaser.Scene {
       .setVisible(true);
   }
 
-  private openRack(): void {
-    if (this.modal || this.starting) return;
+  /** « Sortir » : la fenêtre de départ, où l'on choisit l'arme de l'évasion (retour F10). */
+  private openDeparture(preselect?: WeaponId): void {
+    if (this.modal || this.starting || session.save.run) return;
     this.modal = true;
     sfx.tap();
-    new WeaponPanel(
+    this.departure = new DeparturePanel(
       this,
       session.save.meta,
       (weapon) => {
+        this.departure = null;
         selectWeapon(session.save.meta, weapon);
         session.commit();
         this.modal = false;
-        this.scene.restart({});
+        this.start(weapon);
       },
       () => {
-        this.modal = false;
-        this.openForge();
-      },
-      () => {
+        this.departure = null;
         this.modal = false;
       },
+      preselect,
     );
   }
 
@@ -956,17 +949,6 @@ function drawBrokenChain(g: Phaser.GameObjects.Graphics, x: number, y: number): 
   g.lineStyle(2, 0x6b4cff, 1);
   g.strokeEllipse(x - 7, y, 12, 8).strokeEllipse(x + 7, y, 12, 8);
   g.lineBetween(x - 2, y - 6, x + 2, y + 6);
-}
-
-function drawRack(g: Phaser.GameObjects.Graphics, x: number, y: number): void {
-  g.fillStyle(0x3a2a1c, 1)
-    .fillRect(x - 20, y + 8, 40, 5)
-    .fillRect(x - 20, y - 16, 4, 26);
-  g.fillRect(x + 16, y - 16, 4, 26).fillRect(x - 20, y - 16, 40, 3);
-  g.lineStyle(2, 0xd8e2ff, 1);
-  for (const dx of [-9, 0, 9]) g.lineBetween(x + dx, y - 12, x + dx, y + 7);
-  g.fillStyle(0xffb02e, 1);
-  for (const dx of [-9, 0, 9]) g.fillRect(x + dx - 3, y + 2, 6, 2);
 }
 
 function drawTerminal(g: Phaser.GameObjects.Graphics, x: number, y: number): void {

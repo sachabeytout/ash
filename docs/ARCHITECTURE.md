@@ -40,7 +40,9 @@ par-dessus ; cartes face cachée puis retournées : `BoonScene.revealCard`). Mor
 - Comptoir de Ratatosk (salle 0 de chaque monde après le 1er) : thème et répliques `src/data/merchant.ts`, sol
   `floorRoots` (`textures.ts`), musique `merchant` ; `RunScene.startShop` / `drawCounter` / `updateMerchant` ; fontaine `RunScene.placeFountain`.
 - Cage niveau 0 : `HubScene` (stations `buildStations`, déplacement `moveAsh` + `Controls`, toucher pour marcher,
-  `nearStation` / Entrée / bouton A) ; râtelier `src/game/ui/WeaponPanel.ts`, arme mémorisée `meta.selectedWeapon`
+  `nearStation` / Entrée / bouton A) ; fenêtre de départ (choix de l'arme après « Sortir », 0.70.0) `src/game/ui/DeparturePanel.ts`
+  (`HubScene.openDeparture`, manette via `pollPad`, silhouettes `drawWeaponGlyph` dans `src/game/icons.ts`), arme
+  mémorisée `meta.selectedWeapon`
   (`chosenWeapon` / `selectWeapon` dans `src/core/forge.ts`, sauvegarde v13). Répliques des habitants :
   `src/data/barks.ts` + `bark.*` (i18n), `HubScene.addBarker` / `updateBarks`.
 - Arbre de Thot (0.69.0) : `src/data/skills.ts` (3 branches `body` / `blade` / `spirit`, `requires`) +

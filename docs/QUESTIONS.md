@@ -89,7 +89,7 @@ validation. Une fois validé : mise à jour du jeu, et on passe au point suivant
 | F7  | Courte animation qui révèle chaque don lors d'un choix                                               | **fait (0.67.0)**                                 |
 | F8  | Porte « modificateur » inutile : que faire ? (idée : modificateur de l'arme choisie)                 | **fait (0.68.0)**                                 |
 | F9  | Un nom pour l'XP, plus de compétences ou un système plus riche                                       | **fait (0.69.0)**                                 |
-| F10 | Plus de râtelier : choisir l'arme juste après « Sortir »                                             | **propositions envoyées** (A, B, C)               |
+| F10 | Plus de râtelier : choisir l'arme juste après « Sortir »                                             | **fait (0.70.0)**                                 |
 | F11 | La Cage ressemble aux autres salles (sans ennemis), personnages répartis dans la salle               | à venir                                           |
 | F12 | Améliorations (armes, compétences) plus chères et plus nombreuses                                    | à venir                                           |
 | F13 | Noms plus accrocheurs pour les frappes et tourbillons d'élan de chaque arme                          | à venir                                           |

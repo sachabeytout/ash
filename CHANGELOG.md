@@ -2,6 +2,22 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.70.0 — L'arme se choisit au départ
+
+Ton retour n° 10 : **plus de râtelier**. L'arme se choisit **juste après « Sortir »**, et **Ptah** garde tout ce qui
+rend une arme plus forte (améliorations, déblocages, et plus tard les aspects).
+
+- En touchant **Sortir**, une fenêtre s'ouvre avec tes 7 armes en cartes. L'arme de ta dernière run est déjà choisie :
+  **Partir** (ou Entrée, ou toucher à nouveau la carte choisie) lance la run.
+- Chaque carte montre le nom, un **dessin de l'arme** et son **niveau de forge en petit en haut à droite du nom**.
+- Les armes pas encore débloquées sont **grisées**, avec « Chez Ptah · 5 pièces ». La Lame de l'Aube reste secrète.
+- **Retour** (ou Échap) referme la fenêtre : tu restes dans la Cage.
+- Au clavier : flèches ou touches 1 à 7 pour choisir. À la manette : gauche/droite, A pour partir, B pour revenir.
+- S'il y a une run en cours, « Reprendre la run » la relance directement, sans fenêtre.
+
+**Quoi tester** : touche « Sortir », change d'arme, puis pars. Est-ce rapide et clair ? Le dessin de chaque arme se
+reconnaît-il ?
+
 ## 0.69.0 — Le Papyrus et l'arbre de Thot
 
 Ton retour n° 9 : l'XP s'appelle **Papyrus**, et l'arbre de Thot devient un **vrai arbre à 3 branches**, avec **plus de

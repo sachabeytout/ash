@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import type { GodDef } from '../data/gods';
+import type { WeaponId } from '../data/weapons';
 
 type Pt = readonly [number, number];
 
@@ -503,4 +504,101 @@ export function drawEmberIcon(g: Phaser.GameObjects.Graphics, x: number, y: numb
   g.fillStyle(0xffe9d6, 1)
     .fillRect(px - 1 * s, py - 3.2 * s, 2 * s, 6.4 * s)
     .fillRect(px - 3.2 * s, py - 1 * s, 6.4 * s, 2 * s);
+}
+
+/**
+ * Silhouette d'une arme (fenêtre de départ) : une forme propre à chaque arme, pas seulement sa couleur.
+ * `s` = échelle (1 → environ 40 px de haut).
+ */
+export function drawWeaponGlyph(
+  g: Phaser.GameObjects.Graphics,
+  weapon: WeaponId,
+  x: number,
+  y: number,
+  color: number,
+  s = 1,
+): void {
+  const line = (w: number, a = 1) => g.lineStyle(w * s, color, a);
+  const p = (dx: number, dy: number) => ({ x: x + dx * s, y: y + dy * s });
+  const seg = (ax: number, ay: number, bx: number, by: number) => {
+    const a = p(ax, ay);
+    const b = p(bx, by);
+    g.lineBetween(a.x, a.y, b.x, b.y);
+  };
+  switch (weapon) {
+    case 'katana': {
+      // Khépesh : poignée droite, lame en faucille.
+      line(3);
+      seg(-10, 18, -4, 4);
+      g.beginPath();
+      g.arc(x + 6 * s, y - 2 * s, 11 * s, Math.PI * 0.95, Math.PI * 1.85, false);
+      g.strokePath();
+      line(2, 0.8);
+      seg(-8, 6, 0, 2);
+      break;
+    }
+    case 'twinBlades':
+      // Deux dagues croisées.
+      for (const dir of [-1, 1]) {
+        line(3);
+        seg(-12 * dir, 16, 10 * dir, -16);
+        line(2, 0.8);
+        seg(-12 * dir + 6, 12 - 4 * dir, -12 * dir - 2, 6 + 4 * dir);
+      }
+      break;
+    case 'staff':
+      // Sceptre ouas : hampe, tête d'animal en haut, fourche en bas.
+      line(3);
+      seg(0, 18, 0, -14);
+      seg(0, -14, 7, -18);
+      seg(0, 18, -4, 20);
+      seg(0, 18, 4, 20);
+      g.fillStyle(color, 1).fillCircle(x + 7 * s, y - 18 * s, 2.5 * s);
+      break;
+    case 'crossbow': {
+      // Arc tendu et flèche.
+      line(3);
+      g.beginPath();
+      g.arc(x - 10 * s, y, 18 * s, -Math.PI * 0.42, Math.PI * 0.42, false);
+      g.strokePath();
+      line(1.2, 0.8);
+      seg(-5, -17, -5, 17);
+      line(2);
+      seg(-5, 0, 16, 0);
+      seg(16, 0, 11, -4);
+      seg(16, 0, 11, 4);
+      break;
+    }
+    case 'disc':
+      // Disque de Râ : anneau et rayons.
+      line(3);
+      g.strokeCircle(x, y, 10 * s);
+      g.fillStyle(color, 0.35).fillCircle(x, y, 6 * s);
+      line(2, 0.8);
+      for (let i = 0; i < 8; i++) {
+        const a = (i / 8) * Math.PI * 2;
+        seg(Math.cos(a) * 14, Math.sin(a) * 14, Math.cos(a) * 18, Math.sin(a) * 18);
+      }
+      break;
+    case 'chain':
+      // Chaîne de maillons qui finit par un crochet.
+      line(2.5);
+      for (let i = 0; i < 4; i++) {
+        const c = p(-12 + i * 7, -10 + i * 6);
+        g.strokeEllipse(c.x, c.y, (i % 2 ? 6 : 9) * s, (i % 2 ? 9 : 6) * s);
+      }
+      line(3);
+      g.beginPath();
+      g.arc(x + 12 * s, y + 13 * s, 5 * s, -Math.PI / 2, Math.PI * 0.9, false);
+      g.strokePath();
+      break;
+    case 'dawnblade':
+      // Lame droite et petit soleil à la garde.
+      line(3);
+      seg(0, 18, 0, -18);
+      line(2);
+      seg(-7, 9, 7, 9);
+      g.fillStyle(color, 1).fillCircle(x, y + 9 * s, 3 * s);
+      break;
+  }
 }

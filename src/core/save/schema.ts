@@ -34,7 +34,7 @@ export interface MetaState {
   codex: Record<string, number>;
   /** Exploits (Archives) : records de toutes les runs. Ajouté en v12. */
   records: Records;
-  /** Arme choisie au râtelier de la Cage. Ajouté en v13. */
+  /** Arme choisie au départ (fenêtre de départ ; râtelier avant la 0.70). Ajouté en v13. */
   selectedWeapon: WeaponId;
   /** Trophées obtenus (récompense déjà créditée). Ajouté en v14. */
   trophies: TrophyId[];
