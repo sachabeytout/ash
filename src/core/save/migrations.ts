@@ -1,3 +1,4 @@
+import { MAX_ARMOR } from '../combat/incoming';
 import { BIOMES } from '../../data/biomes';
 import { CODEX_KEYS } from '../codex';
 import { HEAT } from '../../data/heat';
@@ -260,6 +261,16 @@ const MIGRATIONS: Record<number, (save: Raw) => Raw> = {
       : old.run;
     return { ...old, version: 20, run };
   },
+  // v20 → v21 : nouvelle compétence de Thot « Peau de cendre » (défense) ; une run en cours n'en a pas.
+  20: (old) => {
+    const run = isObject(old.run)
+      ? {
+          ...old.run,
+          perks: { ...(isObject(old.run.perks) ? old.run.perks : {}), armor: 0 },
+        }
+      : old.run;
+    return { ...old, version: 21, run };
+  },
 };
 
 function isObject(v: unknown): v is Raw {
@@ -419,6 +430,7 @@ function sanitizeRun(raw: unknown): RunState | null {
       startShards: num(perks.startShards, NO_PERKS.startShards, 0),
       dashCooldown: num(perks.dashCooldown, NO_PERKS.dashCooldown, 0, 0.5),
       revives: Math.floor(num(perks.revives, NO_PERKS.revives, 0, 3)),
+      armor: num(perks.armor, NO_PERKS.armor, 0, MAX_ARMOR),
     },
   };
 }

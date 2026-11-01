@@ -597,6 +597,8 @@
   "skill.thoth_purse.desc": "Start each run with {value} shards.",
   "skill.thoth_ibis": "Ibis Step",
   "skill.thoth_ibis.desc": "Your dash recharges {value}% faster.",
+  "skill.thoth_ash": "Ash Skin",
+  "skill.thoth_ash.desc": "You take {value}% less damage.",
   "skill.thoth_rebirth": "Rebirth",
   "skill.thoth_rebirth.desc": "{value} time(s) per run, a lethal blow brings you back with 40% of your HP.",
   "revive.sub": "Ash rises from his ashes",

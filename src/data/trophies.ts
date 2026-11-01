@@ -1,3 +1,4 @@
+import { SKILLS } from './skills';
 /**
  * Trophées : de grands objectifs sur plusieurs runs, pour donner envie de rejouer (autres armes,
  * autres dieux, Mesures d'urgence…). Chaque trophée rapporte une fois de l'XP et/ou des pièces d'arme.
@@ -46,5 +47,6 @@ export const TROPHIES: readonly TrophyDef[] = [
   { id: 'pressure', goal: 4, reward: { xp: 150, weaponParts: 2 } },
   { id: 'inferno', goal: 8, reward: { xp: 400, weaponParts: 5 } },
   { id: 'stubborn', goal: 50, reward: { xp: 150, weaponParts: 0 } },
-  { id: 'thothMaster', goal: 8, reward: { xp: 0, weaponParts: 4 } },
+  // Toutes les compétences de Thot (le nombre suit l'arbre ; un trophée déjà obtenu le reste).
+  { id: 'thothMaster', goal: SKILLS.length, reward: { xp: 0, weaponParts: 4 } },
 ];

@@ -248,3 +248,16 @@ describe('les amplifications deviennent des passifs (v19 → v20)', () => {
     ]);
   });
 });
+
+describe('« Peau de cendre » (v20 → v21)', () => {
+  it('une run en cours reçoit une défense nulle', () => {
+    const save = migrate({
+      version: 20,
+      meta: {},
+      settings: {},
+      run: { ...newRun(3, 'katana', 50, 0, 'ra') },
+    });
+    expect(save.run?.perks.armor).toBe(0);
+    expect(save.run?.maxHp).toBe(50);
+  });
+});

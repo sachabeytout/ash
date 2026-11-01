@@ -160,6 +160,11 @@ Format : date — décision — raison — validée par l'utilisateur (oui / non
   dieu gagne un cran, `special: 'favor'`) et une Offrande (+`OFFERING_HP` = 6 PV max, `special: 'offering'`), et
   seulement ensuite d'autres remplacements. 18 passifs « en plus » (2 par dieu), choisis par Claude.
 
+- **0.62.0 — Difficulté (retour F3, A + B + E validés)** : `PLAYER.damageTakenScale` = 0,75 (tous les dégâts reçus, pièges
+  compris), `PLAYER.maxHp` 50 → 70, compétence `thoth_ash` « Peau de cendre » (−5 %/niveau, 60/110/170 XP, plafond de
+  défense `MAX_ARMOR` = 50 %), calcul dans `src/core/combat/incoming.ts`. Sauvegarde v21 (`perks.armor`). Trophée « Élève
+  de Thot » : objectif = nombre de compétences.
+
 ## Réponses de l'utilisateur (30/10/2026)
 
 | Sujet         | Décision                                                                                                                                                                                              | Validée        |

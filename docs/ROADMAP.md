@@ -116,6 +116,7 @@ Retour sur le lore v0.2 toujours attendu (« quand le fond aura avancé »).
 - [x] **0.58.0** : 27 passifs (3 par dieu) qui agissent sur les actions sans prendre leur case — demandé
 - [x] **0.59.0** : 8 duos tirés de la mythologie (16 duos, 99 dons au total)
 - [x] **0.60.0** : retour F1, Ash immobile pendant les menus (+ 0,5 s d'invincibilité)
+- [x] **0.62.0** : retour F3, −25 % de dégâts reçus, 70 PV, compétence « Peau de cendre » (sauvegarde v21)
 - [x] **0.61.0** : retour F2, Puits d'offrandes (Faveur, Offrande) et 18 nouveaux dons (117 au total)
 - [ ] **Plus tard** : Amulettes égyptiennes à collectionner (retour F2, option B gardée en tête)
 - [ ] **Retours de la 1re run complète** (F2 à F15, `docs/QUESTIONS.md`) : un point à la fois, validé par l'utilisateur

@@ -12,6 +12,7 @@ import {
 } from '../../core/boons/boons';
 import { applyDamage, heal } from '../../core/combat/health';
 import { gainSuper, superReady } from '../../core/combat/superGauge';
+import { incomingDamage } from '../../core/combat/incoming';
 import {
   applyBurn,
   applyChill,
@@ -2659,7 +2660,8 @@ export class RunScene extends Phaser.Scene {
       return;
     }
     // Mesure « Surveillance » : les ennemis frappent plus fort.
-    amount = Math.round(amount * this.heat.enemyDamage);
+    // Dégâts ennemis réduits pour tous (retour F3), Balance de Maât, « Peau de cendre » (Thot).
+    amount = incomingDamage(amount, this.heat.enemyDamage, this.run.perks.armor);
     // Neith : un ennemi affaibli frappe moins fort ; le Bouclier de Saïs bloque ; le bouclier absorbe.
     if (from instanceof Enemy)
       amount = Math.max(1, Math.round(amount * weakenFactor(from.status, this.sim)));

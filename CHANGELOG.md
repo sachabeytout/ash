@@ -2,6 +2,18 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.62.0 — Un jeu moins punitif
+
+Ton retour n° 3, solutions A + B + E :
+
+- **A** : tous les ennemis (boss et pièges compris) font **25 % de dégâts en moins**.
+- **B** : Ash commence avec **70 PV** au lieu de 50. Ta run en cours garde sa vie actuelle ; la prochaine run part à 70.
+- **E** : nouvelle compétence de Thot, **Peau de cendre** : −5 % de dégâts reçus par niveau (3 niveaux : 60, 110,
+  170 XP).
+- Le trophée « Élève de Thot » demande maintenant les 9 compétences (s'il est déjà obtenu, il le reste).
+
+**Quoi tester** : refais une run. Le jeu est-il toujours un défi, mais moins frustrant ?
+
 ## 0.61.0 — Puits d'offrandes et 18 nouveaux dons
 
 Ton retour n° 2, solutions A + D (les Amulettes, la B, sont gardées pour plus tard) :
