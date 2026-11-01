@@ -680,6 +680,13 @@ function applyOn(on: Record<Trigger, HitEffects>, e: SlotEffect, v: number): voi
   }
 }
 
+/** Effets d'une action, plus des effets ajoutés (gravure de Ptah) : copie, l'original reste intact. */
+export function withExtraFx(base: HitEffects, extra: HitEffects): HitEffects {
+  const out: HitEffects = { ...base };
+  mergeFx(out, extra);
+  return out;
+}
+
 /**
  * Ajoute les effets d'un passif « en plus » à ceux du don qui occupe l'action : l'effet le plus fort
  * l'emporte, les charges et les chances s'additionnent.

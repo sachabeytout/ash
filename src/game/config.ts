@@ -5,6 +5,7 @@ import { PauseScene } from './scenes/PauseScene';
 import { ShopScene } from './scenes/ShopScene';
 import { EventScene } from './scenes/EventScene';
 import { AmonScene } from './scenes/AmonScene';
+import { EngravingScene } from './scenes/EngravingScene';
 import { IntroScene } from './scenes/IntroScene';
 import { EndingScene } from './scenes/EndingScene';
 import { RunScene } from './scenes/RunScene';
@@ -45,6 +46,7 @@ export function createGameConfig(parent: string): Phaser.Types.Core.GameConfig {
       ShopScene,
       EventScene,
       AmonScene,
+      EngravingScene,
       EndingScene,
       IntroScene,
     ],

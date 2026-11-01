@@ -1,7 +1,8 @@
 import Phaser from 'phaser';
 import { drawCartouche } from '../ui/frame';
 import type { RunState } from '../../core/run/state';
-import { t } from '../../i18n';
+import { t, type TextKey } from '../../i18n';
+import { getEngraving } from '../../data/engravings';
 import { addBoonList } from '../ui/boonCard';
 import { sfx } from '../audio/sfx';
 import { OptionsPanel } from '../ui/OptionsPanel';
@@ -67,6 +68,20 @@ export class PauseScene extends Phaser.Scene {
       const areaW = width - listX - 16;
       const top = 62;
       const areaH = height - top - 26;
+      // Gravures de Ptah de l'arme (en turquoise, au-dessus des dons).
+      const engraved = this.data_.run.engravings
+        .map((id) => getEngraving(id))
+        .filter((e) => e !== undefined)
+        .map((e) => t(e.nameKey as TextKey));
+      if (engraved.length)
+        this.add
+          .text(listX, top - 20, t('engraving.list', { list: engraved.join(' · ') }), {
+            fontFamily: FONT_FAMILY,
+            fontSize: '10px',
+            color: '#7fe7d8',
+            wordWrap: { width: areaW },
+          })
+          .setOrigin(0, 1);
       this.add
         .text(listX, top - 6, t('pause.boonsTitle'), {
           fontFamily: FONT_FAMILY,

@@ -2,6 +2,27 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.68.0 — Les Gravures de Ptah
+
+Ton retour n° 8 : la porte « Modificateur » devient la porte **Gravure** (le ciseau de Ptah).
+
+- **Une seule porte « Gravure » par monde** (Bas-Fonds, Nil, Pyramide, Douât).
+- En la prenant, **Ptah grave ton arme** : tu choisis **1 gravure parmi 3**, propres à ton arme.
+- Une gravure change **l'attaque**, **l'attaque spéciale**, **la frappe d'élan** ou **le tourbillon d'élan** (jamais le
+  dash ni le Super), et **une seule gravure par action**.
+- **56 gravures** : 2 par action et par arme. Par exemple :
+  - Khépesh : Croc de faucille (le dernier coup du combo frappe deux fois), Moisson (le tourbillon attire les ennemis) ;
+  - Sceptre ouas : Orbe jumeau (les orbes se divisent), Puits de pouvoir (la zone explose deux fois) ;
+  - Arc du désert : Vent du sud (les flèches rebondissent), Flèche de Neith (la flèche chargée explose) ;
+  - Disque de Râ : Éclipse (le gros disque tourne sur place) ;
+  - Lame de l'Aube : Miroir du soleil (la parade détruit aussi les tirs ennemis).
+- Avec ses **4 gravures**, ton arme **s'éveille** : +10 % de dégâts.
+- Tes gravures sont rappelées dans la **pause**, au-dessus de tes dons.
+- L'ancien bonus caché (+10 % de dégâts) disparaît.
+
+**Quoi tester** : prends une porte « Gravure » et essaie la gravure choisie. Chacune est-elle claire et amusante ? Une
+gravure est-elle trop forte ou trop faible ?
+
 ## 0.67.0 — Les dons se révèlent
 
 Ton retour n° 7, solution B :

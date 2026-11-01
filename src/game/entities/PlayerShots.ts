@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { insideAny, type Rect } from '../../core/arena/obstacles';
 import type { AttackStep, ProjectileSpec, ZoneSpec } from '../../core/combat/attack';
+import type { StepMod } from '../../core/combat/engraving';
 import type { Vec2 } from '../../core/geometry';
 import type { Hittable } from './Hittable';
 
@@ -15,6 +16,8 @@ export interface ShotHit {
   from: Vec2;
   heavy: boolean;
   shake: number;
+  /** Gravure de Ptah du coup qui a lancé ce tir (effets ajoutés). */
+  mod?: StepMod;
 }
 
 interface Projectile {
@@ -31,6 +34,12 @@ interface Projectile {
   scale: number;
   returning: boolean;
   readonly hits: Set<Hittable>;
+  mod: StepMod | undefined;
+  /** Gravures : rebonds restants, division déjà faite, fin du vol sur place (disque). */
+  bouncesLeft: number;
+  splitDone: boolean;
+  hoverUntil: number;
+  nextHoverTick: number;
 }
 
 interface Zone {
@@ -44,6 +53,7 @@ interface Zone {
   kind: HitKind;
   id: number;
   shake: number;
+  mod: StepMod | undefined;
 }
 
 const PROJECTILES = 32;
@@ -94,6 +104,11 @@ export class PlayerShots {
         scale: 1,
         returning: false,
         hits: new Set(),
+        mod: undefined,
+        bouncesLeft: 0,
+        splitDone: false,
+        hoverUntil: 0,
+        nextHoverTick: 0,
       });
     }
     for (let i = 0; i < ZONES; i++) {
@@ -108,6 +123,7 @@ export class PlayerShots {
         kind: 'attack',
         id: 0,
         shake: 0,
+        mod: undefined,
       });
     }
     this.chainLine = scene.add.graphics().setDepth(13);
@@ -122,6 +138,7 @@ export class PlayerShots {
     kind: HitKind,
     id: number,
     scale = 1,
+    mod?: StepMod,
   ): void {
     const p = step.projectile;
     if (p) {
@@ -131,7 +148,7 @@ export class PlayerShots {
       for (let i = 0; i < count; i++) {
         const offset =
           count <= 1 ? 0 : full ? (i / count) * Math.PI * 2 : (i / (count - 1) - 0.5) * spread;
-        this.spawn(from, angle + offset, p, kind, id, scale);
+        this.spawn(from, angle + offset, p, kind, id, scale, mod);
       }
     }
     const z = step.zone;
@@ -142,7 +159,7 @@ export class PlayerShots {
       for (let i = 0; i < count; i++) {
         const a = angle + (i / count) * Math.PI * 2;
         const d = count > 1 ? (z.spread ?? 0) : 0;
-        this.addZone(now, cx + Math.cos(a) * d, cy + Math.sin(a) * d, z, kind, id, step.shake);
+        this.addZone(now, cx + Math.cos(a) * d, cy + Math.sin(a) * d, z, kind, id, step.shake, mod);
       }
     }
   }
@@ -154,9 +171,10 @@ export class PlayerShots {
     kind: HitKind,
     id: number,
     scale: number,
-  ): void {
+    mod?: StepMod,
+  ): Projectile | undefined {
     const s = this.shots.find((x) => !x.active);
-    if (!s) return;
+    if (!s) return undefined;
     s.active = true;
     s.x = from.x;
     s.y = from.y;
@@ -169,12 +187,18 @@ export class PlayerShots {
     s.scale = scale;
     s.returning = false;
     s.hits.clear();
+    s.mod = mod;
+    s.bouncesLeft = spec.bounces ?? 0;
+    s.splitDone = false;
+    s.hoverUntil = 0;
+    s.nextHoverTick = 0;
     s.sprite
       .setTexture(TEXTURE[spec.look])
       .setPosition(s.x, s.y)
       .setRotation(angle)
       .setScale(spec.look === 'disc' ? spec.radius / 6 : 1)
       .setVisible(true);
+    return s;
   }
 
   private addZone(
@@ -185,6 +209,7 @@ export class PlayerShots {
     kind: HitKind,
     id: number,
     shake: number,
+    mod?: StepMod,
   ): void {
     const z = this.zones.find((v) => !v.active);
     if (!z) return;
@@ -198,17 +223,36 @@ export class PlayerShots {
       kind,
       id,
       shake,
+      mod,
     });
   }
 
   update(now: number, dt: number, targets: readonly Hittable[], player: Vec2): void {
     this.chainLine.clear();
-    for (const s of this.shots) if (s.active) this.updateShot(s, dt, targets, player);
+    for (const s of this.shots) if (s.active) this.updateShot(s, now, dt, targets, player);
     for (const z of this.zones) if (z.active) this.updateZone(z, now, targets);
   }
 
-  private updateShot(s: Projectile, dt: number, targets: readonly Hittable[], player: Vec2): void {
+  private updateShot(
+    s: Projectile,
+    now: number,
+    dt: number,
+    targets: readonly Hittable[],
+    player: Vec2,
+  ): void {
     const spec = s.spec;
+    // Gravure « Éclipse » : le disque tourne sur place, et peut retoucher régulièrement.
+    if (s.hoverUntil > 0) {
+      s.sprite.rotation += dt / 25;
+      if (now >= s.nextHoverTick) {
+        s.hits.clear();
+        s.nextHoverTick = now + 300;
+      }
+      if (now >= s.hoverUntil) {
+        s.hoverUntil = 0;
+        s.returning = true;
+      }
+    }
     if (s.returning) {
       // Le disque revient vers Ash, de plus en plus vite.
       const dx = player.x - s.x;
@@ -236,11 +280,18 @@ export class PlayerShots {
     }
 
     const out = !this.bounds.contains(s.x, s.y) || insideAny(s, this.obstacles);
-    if (!s.returning && (s.travelled >= spec.range || out)) {
-      if (spec.returns) {
+    if (!s.returning && s.hoverUntil === 0 && (s.travelled >= spec.range || out)) {
+      if (spec.returns && spec.hover && !out && s.vx !== 0) {
+        s.vx = 0;
+        s.vy = 0;
+        s.hoverUntil = now + spec.hover;
+        s.nextHoverTick = now + 300;
+      } else if (spec.returns) {
         s.returning = true;
         s.hits.clear(); // au retour, le disque peut retoucher
       } else {
+        // Gravure « Flèche de Neith » : explosion au bout de la course.
+        if (spec.explodeEnd) this.explodeAt(now, s);
         this.kill(s);
         return;
       }
@@ -258,6 +309,7 @@ export class PlayerShots {
         from: { x: s.x - s.vx * 0.05, y: s.y - s.vy * 0.05 },
         heavy: s.kind !== 'attack',
         shake: 0,
+        ...(s.mod ? { mod: s.mod } : {}),
       };
       if (spec.grapple) {
         this.onGrapple(t, hit);
@@ -265,7 +317,36 @@ export class PlayerShots {
         return;
       }
       this.onHit(t, hit);
+      // Gravure « Orbe jumeau » : deux petits projectiles partent en V au premier impact.
+      if (spec.split && !s.splitDone) {
+        s.splitDone = true;
+        const angle = Math.atan2(s.vy, s.vx);
+        const child: ProjectileSpec = {
+          ...spec,
+          damage: spec.damage * 0.5,
+          radius: Math.max(3, spec.radius - 1),
+        };
+        delete child.split;
+        for (const da of [-0.5, 0.5]) {
+          const c = this.spawn({ x: s.x, y: s.y }, angle + da, child, s.kind, s.id, s.scale, s.mod);
+          c?.hits.add(t);
+        }
+      }
+      // Gravures « Vent du sud », « Rebond » : le tir repart vers l'ennemi le plus proche.
+      if (s.bouncesLeft > 0 && !s.returning) {
+        const next = this.nearestUnhit(s, targets, 150);
+        if (next) {
+          s.bouncesLeft--;
+          const a = Math.atan2(next.y - s.y, next.x - s.x);
+          const speed = Math.hypot(s.vx, s.vy) || spec.speed;
+          s.vx = Math.cos(a) * speed;
+          s.vy = Math.sin(a) * speed;
+          s.travelled = 0;
+          continue;
+        }
+      }
       if (!spec.returns && s.hits.size > spec.pierce) {
+        if (spec.explodeEnd) this.explodeAt(now, s);
         this.kill(s);
         return;
       }
@@ -298,8 +379,44 @@ export class PlayerShots {
         from: { x: z.x, y: z.y },
         heavy: true,
         shake: z.shake,
+        ...(z.mod ? { mod: z.mod } : {}),
       });
     }
+  }
+
+  /** Ennemi le plus proche pas encore touché par ce tir. */
+  private nearestUnhit(
+    s: Projectile,
+    targets: readonly Hittable[],
+    range: number,
+  ): Hittable | undefined {
+    let best: Hittable | undefined;
+    let bestD = range;
+    for (const t of targets) {
+      if (!t.alive || s.hits.has(t)) continue;
+      const d = Math.hypot(t.x - s.x, t.y - s.y);
+      if (d < bestD) {
+        bestD = d;
+        best = t;
+      }
+    }
+    return best;
+  }
+
+  /** Explosion immédiate là où le tir s'arrête (gravure « Flèche de Neith »). */
+  private explodeAt(now: number, s: Projectile): void {
+    const e = s.spec.explodeEnd;
+    if (!e) return;
+    this.addZone(
+      now,
+      s.x,
+      s.y,
+      { damage: e.damage * s.scale, radius: e.radius, delayMs: 0, distance: 0, knockback: 120 },
+      s.kind,
+      s.id,
+      0.004,
+      s.mod,
+    );
   }
 
   private kill(s: Projectile): void {

@@ -1,4 +1,5 @@
 import { BIOMES } from '../../data/biomes';
+import { getEngraving } from '../../data/engravings';
 import { CODEX_KEYS } from '../codex';
 import { HEAT } from '../../data/heat';
 import type { HeatLevels } from '../heat';
@@ -291,6 +292,13 @@ const MIGRATIONS: Record<number, (save: Raw) => Raw> = {
       run,
     };
   },
+  // v22 → v23 : Gravures de Ptah (retour F8) ; une run en cours n'en a pas encore.
+  22: (old) => {
+    const run = isObject(old.run)
+      ? { ...old.run, engravings: [], pendingEngraving: false, engravingBiome: -1 }
+      : old.run;
+    return { ...old, version: 23, run };
+  },
 };
 
 function isObject(v: unknown): v is Raw {
@@ -399,6 +407,20 @@ function sanitizeReward(raw: unknown): RunState['roomReward'] {
   return { kind };
 }
 
+/** Gravures valides de l'arme, une par action au plus. */
+function sanitizeEngravings(raw: unknown, weapon: string): string[] {
+  if (!Array.isArray(raw)) return [];
+  const slots = new Set<string>();
+  const out: string[] = [];
+  for (const id of raw) {
+    const def = typeof id === 'string' ? getEngraving(id) : undefined;
+    if (!def || def.weapon !== weapon || slots.has(def.slot)) continue;
+    slots.add(def.slot);
+    out.push(def.id);
+  }
+  return out;
+}
+
 function sanitizeRun(raw: unknown): RunState | null {
   if (!isObject(raw)) return null;
   if (typeof raw.weapon !== 'string' || !(raw.weapon in WEAPONS)) return null;
@@ -439,6 +461,9 @@ function sanitizeRun(raw: unknown): RunState | null {
     revivesUsed: Math.floor(num(raw.revivesUsed, 0, 0, 9)),
     amonBiome: Math.round(num(raw.amonBiome, -1, -1, BIOMES.length - 1)),
     roomReward: sanitizeReward(raw.roomReward),
+    engravings: sanitizeEngravings(raw.engravings, raw.weapon as string),
+    pendingEngraving: raw.pendingEngraving === true,
+    engravingBiome: Math.round(num(raw.engravingBiome, -1, -1, BIOMES.length - 1)),
     heat: sanitizeHeat(raw.heat),
     eventTaken: Math.round(num(raw.eventTaken, -1, -1, BIOMES.length - 1)),
     kills: Math.floor(num(raw.kills, 0, 0)),

@@ -186,6 +186,14 @@ Format : date — décision — raison — validée par l'utilisateur (oui / non
   par `scaleX`, `REVEAL_FIRST_MS` 160, `REVEAL_STEP_MS` 150, `FLIP_HALF_MS` 110 ; choix bloqué jusqu'à la fin). Choix de
   Claude (non confirmé) : éclat de la couleur de rareté pour rare / épique / duo.
 
+- **0.68.0 — Gravures de Ptah (retour F8)** : décidé par l'utilisateur : attaque, spéciale, frappe et tourbillon d'élan
+  seulement (pas de dash ni de Super), une porte par monde (`run.engravingBiome`), 2 gravures par action et par arme. Choix
+  de Claude : une gravure par action, arme éveillée à 4 gravures (+10 % de dégâts), la porte disparaît quand l'arme est
+  éveillée ; ancien « Modificateur » (+10 % caché) retiré (`weaponMod` → `pendingEngraving`). Logique pure
+  `src/core/combat/engraving.ts` (`applyEngraving`, `rollEngravings`), données `src/data/engravings.ts`, nouvelles
+  mécaniques de tir (`bounces`, `split`, `explodeEnd`, `hover`) dans `PlayerShots`. Sauvegarde v23. Inspiration de
+  fonctionnement : marteau de Hadès, runes de Diablo III, Dead Cells ; contenu original.
+
 ## Réponses de l'utilisateur (30/10/2026)
 
 | Sujet         | Décision                                                                                                                                                                                              | Validée        |

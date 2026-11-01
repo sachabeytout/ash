@@ -40,6 +40,12 @@ export interface ProjectileSpec {
   returns?: boolean;
   /** Grappin : attire les petits ennemis, ou tire Ash vers les gros. */
   grapple?: boolean;
+  /** Gravures (0.68.0) : rebonds vers d'autres ennemis, division au premier impact, explosion au
+   *  bout de la course, disque qui tourne sur place avant de revenir (ms). */
+  bounces?: number;
+  split?: number;
+  explodeEnd?: { damage: number; radius: number };
+  hover?: number;
 }
 
 export interface ZoneSpec {

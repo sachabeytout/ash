@@ -13,6 +13,7 @@ import type { Controls } from '../input/Controls';
 import { bodyOf } from '../physics';
 import { addFlameHair } from '../fx/flameHair';
 import { superTarget } from '../../core/combat/superAim';
+import { applyEngraving, type EngravingSlot, type StepMod } from '../../core/combat/engraving';
 import { QUALITY_PARTICLES, settings } from '../../core/settings';
 
 export interface ActiveSwing {
@@ -22,6 +23,8 @@ export interface ActiveSwing {
   heavy: boolean;
   /** Type d'action : décide quels dons s'appliquent. */
   kind: 'attack' | 'power' | 'super';
+  /** Gravure de Ptah sur cette action (effets ajoutés aux ennemis touchés), s'il y en a une. */
+  mod?: StepMod;
 }
 
 type State =
@@ -35,6 +38,8 @@ type State =
       superIndex: number | null;
       startedAt: number;
       id: number;
+      /** Gravure de Ptah appliquée à ce coup (retour F8). */
+      mod?: StepMod;
     }
   | { kind: 'dash'; startedAt: number; dir: Vec2; distance?: number };
 
@@ -57,6 +62,10 @@ export class Player {
   private superTrail!: Phaser.GameObjects.Particles.ParticleEmitter;
   /** Ailes d'Isis : invincibilité du dash allongée (ms). */
   dashGuardMs = 0;
+  /** Gravures de Ptah, par action (retour F8). */
+  engravings: Partial<Record<EngravingSlot, StepMod>> = {};
+  /** Gravure : attirer les ennemis proches (rayon) au début du coup. */
+  onPull: (radius: number) => void = () => undefined;
   private lastAttack: { index: number; startedAt: number } | null = null;
   private drawnPhase: AttackPhase | null = null;
   /** Attaque demandée pendant le dash : elle part en coup d'élan dès la fin du dash. */
@@ -65,8 +74,13 @@ export class Player {
   /** Rappels vers la scène (sons, effets). */
   onSwing: (heavy: boolean) => void = () => undefined;
   /** Armes à distance : le coup actif lance un projectile ou une zone (géré par la scène). */
-  onFire: (step: AttackStep, angle: number, kind: ActiveSwing['kind'], id: number) => void = () =>
-    undefined;
+  onFire: (
+    step: AttackStep,
+    angle: number,
+    kind: ActiveSwing['kind'],
+    id: number,
+    mod?: StepMod,
+  ) => void = () => undefined;
   onDash: () => void = () => undefined;
   /** Début d'une attaque (normale ou puissante), pour le premier essai guidé. */
   onAttackStart: (power: boolean) => void = () => undefined;
@@ -185,12 +199,20 @@ export class Player {
   activeSwing(now: number): ActiveSwing | null {
     if (this.state.kind !== 'attack') return null;
     if (this.state.step.range <= 0) return null; // coup à distance : pas de zone de frappe
-    if (phaseAt(this.state.step, now - this.state.startedAt) !== 'active') return null;
+    const elapsed = now - this.state.startedAt;
+    if (phaseAt(this.state.step, elapsed) !== 'active') return null;
+    // Gravure « frappe deux fois » : la phase active est coupée en tranches, chacune touche à nouveau.
+    const hits = this.state.mod?.hits ?? 1;
+    const segment = Math.min(
+      hits - 1,
+      Math.floor(((elapsed - this.state.step.windupMs) / this.state.step.activeMs) * hits),
+    );
     return {
       step: this.state.step,
-      id: this.state.id,
+      id: this.state.id * 4 + segment,
       heavy: this.state.power || this.state.step.shake > 0,
       kind: this.state.superIndex !== null ? 'super' : this.state.power ? 'power' : 'attack',
+      ...(this.state.mod ? { mod: this.state.mod } : {}),
     };
   }
 
@@ -318,7 +340,26 @@ export class Player {
     if (!base) return;
     // Juste après un dash : coup d'élan (plus fort, plus large).
     const strike = isDashStrike(now, this.lastDashEnd);
-    const step = strike ? dashStrikeStep(base, power) : base;
+    // Gravure de Ptah de l'action (attaque, puissante, frappe ou tourbillon d'élan).
+    const slot: EngravingSlot = strike
+      ? power
+        ? 'dashPower'
+        : 'dashAttack'
+      : power
+        ? 'power'
+        : 'attack';
+    const mod = this.engravings[slot];
+    const comboLength = this.weapon.combo.length;
+    const step = applyEngraving(
+      strike ? dashStrikeStep(base, power) : base,
+      mod,
+      power ? 0 : index,
+      power ? 1 : comboLength,
+    );
+    // Les effets propres au dernier coup du combo (onde, coups multiples) ne valent que pour lui.
+    const finisher =
+      !power && mod?.finisher && index === comboLength - 1 ? mod.finisher : undefined;
+    const stepMod = mod || finisher ? { ...mod, ...finisher } : undefined;
     if (strike) this.lastDashEnd = -Infinity;
     this.facing = this.aimAngle(controls, enemies);
     this.state = {
@@ -329,6 +370,7 @@ export class Player {
       superIndex: null,
       startedAt: now,
       id: ++swingCounter,
+      ...(stepMod ? { mod: stepMod } : {}),
     };
     this.drawnPhase = null;
     this.onAttackStart(power);
@@ -437,9 +479,16 @@ export class Player {
       if (phase === 'active') {
         const st = this.state;
         const kind = st.superIndex !== null ? 'super' : st.power ? 'power' : 'attack';
+        // Gravures : attirer les ennemis proches, lancer une onde en plus.
+        if (st.mod?.pull) this.onPull(st.mod.pull);
+        if (st.mod?.wave) {
+          const waveStep: AttackStep = { ...step, range: 0, projectile: st.mod.wave };
+          delete waveStep.zone;
+          this.onFire(waveStep, this.facing, kind, st.id, st.mod);
+        }
         if (step.projectile || step.zone) {
           this.onSwing(st.power);
-          this.onFire(step, this.facing, kind, st.id);
+          this.onFire(step, this.facing, kind, st.id, st.mod);
         } else if (step.parry) {
           this.drawGuard();
         } else {

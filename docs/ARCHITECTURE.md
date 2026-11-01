@@ -1,6 +1,6 @@
 # Architecture (carte du projet)
 
-> Statut 0.67.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
+> Statut 0.68.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
 > combat/attack+health+status+superGauge, boons/boons, run/waves+rewards+state, save/schema+migrations+codec+store),
 > `data/` (player, weapons, enemies, biomes, gods, boons, status, skills, bosses, music, shop), `game/` (scenes Title, Hub,
 > Run, Ui, Boon, Pause, Shop ; entities Player, Enemy, Boss, Hittable ; input Controls, TouchControls ; fx/Juice+Lightning ;
@@ -52,6 +52,11 @@ par-dessus ; cartes face cachée puis retournées : `BoonScene.revealCard`). Mor
   `RunScene.startAmon` / `onAmonEvent` (coups reçus, ennemis vaincus, `hitKind`) / `openRoyalFavor` (dans `clearRoom`) ;
   fenêtre `src/game/scenes/AmonScene.ts`, œil `drawAmonEye` (`src/game/icons.ts`), `UiScene.showAmon`. Sauvegarde v16
   (`run.amonBiome`). Raccourci de test C : Amon regarde la salle (chaque appui change de défi).
+- Gravures de Ptah (0.68.0) : logique `src/core/combat/engraving.ts` (`applyEngraving`, `rollEngravings`, `isAwakened`,
+  `StepMod`), données `src/data/engravings.ts` ; `Player.engravings` (par action, appliqué dans `startAttack`, onde et
+  attraction au début du coup, coups multiples dans `activeSwing`), `PlayerShots` (rebond, division, explosion, disque
+  qui tourne), `RunScene` (`offerEngraving`, porte une fois par monde, `withExtraFx`, `pullEnemies`, écho de tir, parade
+  miroir, arme éveillée), fenêtre `src/game/scenes/EngravingScene.ts`. Raccourci de test X. Sauvegarde v23.
 - Coups d'élan (dash + attaque) : `src/core/combat/dashStrike.ts` (`DASH_STRIKE`, `dashStrikeStep`), utilisé par
   `Player.startAttack` (attaque gardée pendant le dash : `queuedStrike`) ; effet `RunScene` (`onDashStrike`, `Juice.label`).
 - Butin de fin de salle : la porte choisie remplit `run.roomReward` (sauvegarde v17) ; `RunScene.clearRoom` →

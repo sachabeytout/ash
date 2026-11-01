@@ -1,5 +1,6 @@
 import type { BiomeDef } from '../../data/biomes';
 import { getBoon } from '../../data/boons';
+import { getEngraving } from '../../data/engravings';
 import type { GodId } from '../../data/gods';
 import type { WeaponId } from '../../data/weapons';
 import { OFFERING_HP, mainValue, takeBoon, type BoonOffer, type OwnedBoon } from '../boons/boons';
@@ -69,6 +70,12 @@ export interface RunState {
   amonBiome: number;
   /** Récompense de la porte choisie : elle tombe à la fin de cette salle (null : aucune). Ajouté en v17. */
   roomReward: DoorReward | null;
+  /** Gravures de Ptah sur l'arme (identifiants, une par action). Ajouté en v23. */
+  engravings: string[];
+  /** Ptah attend qu'Ash choisisse une gravure (au début de la salle). Ajouté en v23. */
+  pendingEngraving: boolean;
+  /** Monde où la porte « Gravure » a déjà été proposée (-1 : aucun) : une fois par monde. Ajouté en v23. */
+  engravingBiome: number;
   /** Statistiques pour le récapitulatif de fin de run. Ajoutées en v9. */
   kills: number;
   damageTaken: number;
@@ -140,6 +147,9 @@ export function newRun(
     revivesUsed: 0,
     amonBiome: -1,
     roomReward: null,
+    engravings: [],
+    pendingEngraving: false,
+    engravingBiome: -1,
   };
 }
 
@@ -153,7 +163,8 @@ export function applyReward(run: RunState, reward: RewardKind, god?: GodId): voi
       run.shards += 25;
       break;
     case 'weaponMod':
-      run.damageBonus += 0.1;
+      // Gravure de Ptah : Ash la choisira au début de la salle suivante (retour F8).
+      run.pendingEngraving = true;
       break;
     case 'xp':
       run.xp += 20;
@@ -195,6 +206,16 @@ function upgradeOwned(run: RunState, offer: BoonOffer): void {
     run.maxHp += gain;
     run.hp += gain;
   }
+}
+
+/** Ash choisit une gravure : elle s'ajoute à l'arme (jamais deux sur la même action). */
+export function takeEngraving(run: RunState, id: string): void {
+  run.pendingEngraving = false;
+  const def = getEngraving(id);
+  if (!def || def.weapon !== run.weapon) return;
+  const owned = run.engravings.map(getEngraving);
+  if (owned.some((e) => e?.slot === def.slot)) return;
+  run.engravings.push(id);
 }
 
 /** Ash choisit un don : il remplace celui de la même action ; un don de vie agrandit la barre de vie. */

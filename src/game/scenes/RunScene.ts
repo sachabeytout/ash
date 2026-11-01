@@ -9,9 +9,19 @@ import {
   type BoonOffer,
   type CombatProfile,
   type HitEffects,
+  withExtraFx,
 } from '../../core/boons/boons';
 import { applyDamage, heal } from '../../core/combat/health';
 import { gainSuper, superReady } from '../../core/combat/superGauge';
+import {
+  AWAKENED_DAMAGE,
+  isAwakened,
+  rollEngravings,
+  type EngravingDef,
+  type StepMod,
+} from '../../core/combat/engraving';
+import { ENGRAVINGS, getEngraving } from '../../data/engravings';
+import type { EngravingSceneData } from './EngravingScene';
 import {
   applyBurn,
   applyChill,
@@ -63,6 +73,7 @@ import {
   recordDamage,
   recordKill,
   upgradeBoon,
+  takeEngraving,
 } from '../../core/run/state';
 import { chestLoot, openChest, trialRoom, trialTimeMs, type ChestLoot } from '../../core/run/trial';
 import {
@@ -267,7 +278,7 @@ type SpecialDoor = 'exit' | 'boss' | 'next';
 const REWARD_STYLE: Record<RewardKind | SpecialDoor, { color: number; label: TextKey }> = {
   boon: { color: 0xffb02e, label: 'reward.boon' },
   shards: { color: 0x7fe7ff, label: 'reward.shards' },
-  weaponMod: { color: 0xc0c8d8, label: 'reward.weaponMod' },
+  weaponMod: { color: 0x40d0c0, label: 'reward.weaponMod' }, // Gravure de Ptah
   xp: { color: 0xb08cff, label: 'reward.xp' },
   weaponParts: { color: 0xffe08a, label: 'reward.weaponParts' },
   spark: { color: 0xffc46b, label: 'reward.spark' }, // Braise (ex-Étincelle)
@@ -293,6 +304,8 @@ export class RunScene extends Phaser.Scene {
   private discCharged = false;
   /** Bouclier de Saïs de Neith (coups bloqués restants dans la salle) et bouclier en PV. */
   private aegisLeft = 0;
+  /** Identifiants des tirs répétés par une gravure (négatifs, distincts des autres coups). */
+  private echoId = -1_000_000;
   /** Identifiants des ripostes (négatifs : distincts des coups normaux). */
   private parryId = 0;
   private barrier = 0;
@@ -516,11 +529,21 @@ export class RunScene extends Phaser.Scene {
       this.juice.burst(at.x, at.y, 0xffd27a, 10);
       sfx.explode();
     };
-    this.player.onFire = (step, angle, kind, id) => {
+    this.player.onFire = (step, angle, kind, id, mod) => {
       const charged = this.discCharged && step.projectile?.returns === true;
       if (charged) this.discCharged = false;
-      this.shotsP.fire(this.sim, this.player, angle, step, kind, id, charged ? 1.5 : 1);
+      this.shotsP.fire(this.sim, this.player, angle, step, kind, id, charged ? 1.5 : 1, mod);
+      // Gravures « Puits de pouvoir », « Volée solaire » : le tir ou la zone revient une 2e fois.
+      if (mod?.echoMs) {
+        const from = { x: this.player.x, y: this.player.y };
+        const echoId = --this.echoId;
+        this.time.delayedCall(mod.echoMs, () => {
+          if (!this.leaving) this.shotsP.fire(this.sim, from, angle, step, kind, echoId, 1, mod);
+        });
+      }
     };
+    // Gravures « Moisson », « Treuil » : les ennemis proches sont attirés vers Ash.
+    this.player.onPull = (radius) => this.pullEnemies(radius);
     this.player.onAttackStart = (power) => this.tutorialEvent({ type: power ? 'power' : 'attack' });
     this.player.onDashStrike = (power) => {
       sfx.swing(true);
@@ -534,6 +557,7 @@ export class RunScene extends Phaser.Scene {
       );
     };
     this.applyProfile();
+    this.applyEngravings();
     this.aegisLeft = this.profile.aegis;
     this.player.canSuper = () => superReady(this.run.superGauge) && !this.choosing;
     this.player.onSuper = () => {
@@ -595,6 +619,9 @@ export class RunScene extends Phaser.Scene {
     } else if (this.run.pendingSpark) {
       this.choosing = true;
       this.time.delayedCall(380, () => this.offerSpark());
+    } else if (this.run.pendingEngraving) {
+      this.choosing = true;
+      this.time.delayedCall(380, () => this.offerEngraving());
     }
     if (cheatsEnabled) this.setupCheats();
     this.startTutorial();
@@ -676,6 +703,12 @@ export class RunScene extends Phaser.Scene {
         this.offerSpark();
       }
       if (e.code === 'KeyG') this.run.superGauge = 1;
+      if (e.code === 'KeyX' && !this.choosing) {
+        // Une gravure de Ptah tout de suite.
+        this.run.pendingEngraving = true;
+        this.choosing = true;
+        this.offerEngraving();
+      }
       if (e.code === 'KeyC' && this.kind === 'combat' && !this.roomCleared) {
         // Regard d'Amon sur cette salle (chaque appui change de défi).
         const i = AMON_CHALLENGES.indexOf(this.amon?.challenge ?? 'power');
@@ -1420,7 +1453,8 @@ export class RunScene extends Phaser.Scene {
   private weaponMultiplier(kind: 'attack' | 'power' | 'super'): number {
     const f = this.forge;
     const extra = kind === 'power' ? f.powerDamage : kind === 'super' ? f.superDamage : 0;
-    return 1 + this.run.damageBonus + f.damage + extra;
+    const awakened = isAwakened(this.engravingDefs()) ? AWAKENED_DAMAGE : 0;
+    return 1 + this.run.damageBonus + f.damage + extra + awakened;
   }
 
   // ---------- Pause ----------
@@ -1430,6 +1464,7 @@ export class RunScene extends Phaser.Scene {
       this.leaving ||
       this.scene.isPaused() ||
       this.scene.isActive('boon') ||
+      this.scene.isActive('engraving') ||
       this.scene.isActive('shop')
     )
       return;
@@ -1769,6 +1804,68 @@ export class RunScene extends Phaser.Scene {
     // Duo « Fléaux du désert » : l'étourdi reçoit du venin.
     if (this.profile.stunVenom) applyVenom(e.status, this.sim, this.profile.stunVenom, 2);
     this.juice.burst(e.x, e.y - e.radius, FX.thunder, 6);
+  }
+
+  /** Gravures de Ptah possédées (définitions). */
+  private engravingDefs(): EngravingDef[] {
+    return this.run.engravings.map(getEngraving).filter((e): e is EngravingDef => e !== undefined);
+  }
+
+  /** Les gravures changent les actions d'Ash (attaque, puissante, frappe et tourbillon d'élan). */
+  private applyEngravings(): void {
+    const mods: Partial<Record<EngravingDef['slot'], StepMod>> = {};
+    for (const e of this.engravingDefs()) mods[e.slot] = e.mod;
+    this.player.engravings = mods;
+  }
+
+  /** Ptah grave l'arme : choix 1 parmi 3 gravures (actions pas encore gravées). */
+  private offerEngraving(): void {
+    const rng = createRng((this.run.seed ^ Math.imul(this.run.room + 211, 2654435761)) >>> 0);
+    const offers = rollEngravings(ENGRAVINGS, this.run.weapon, this.engravingDefs(), () =>
+      rng.next(),
+    );
+    if (offers.length === 0) {
+      this.run.pendingEngraving = false;
+      this.choosing = false;
+      this.runAfterChoice();
+      return;
+    }
+    const data: EngravingSceneData = {
+      weaponName: t(WEAPONS[this.run.weapon].nameKey as TextKey),
+      offers,
+      onPick: (def) => {
+        const wasAwakened = isAwakened(this.engravingDefs());
+        takeEngraving(this.run, def.id);
+        session.snapshotRun(this.run);
+        this.applyEngravings();
+        this.choosing = false;
+        this.nextWaveAt = this.sim + 600;
+        this.juice.burst(this.player.x, this.player.y, 0x40d0c0, 24);
+        if (!wasAwakened && isAwakened(this.engravingDefs())) {
+          const weapon = t(WEAPONS[this.run.weapon].nameKey as TextKey);
+          this.ui.showBanner(t('engraving.awakened', { weapon }), t('engraving.awakenedSub'));
+          this.juice.burst(this.player.x, this.player.y, 0xffd36b, 40);
+          sfx.spark();
+        }
+        markScene('run');
+        this.runAfterChoice();
+      },
+    };
+    this.scene.launch('engraving', data);
+    this.scene.bringToTop('engraving');
+  }
+
+  /** Gravures « Moisson », « Treuil » : les ennemis proches (hors boss) sont attirés vers Ash. */
+  private pullEnemies(radius: number): void {
+    const at = { x: this.player.x, y: this.player.y };
+    this.lightning.ring(at, radius, 0x40d0c0);
+    for (const e of this.targets) {
+      if (!e.alive || e === this.boss) continue;
+      const d = Math.hypot(e.x - at.x, e.y - at.y);
+      if (d > radius + e.radius || d < 12) continue;
+      // Un point « derrière » l'ennemi : le recul part de là, donc vers Ash.
+      e.hit(this.sim, { x: e.x * 2 - at.x, y: e.y * 2 - at.y }, 220);
+    }
   }
 
   /** Les dons du profil qui changent Ash lui-même (Bastet : vitesse, dash). */
@@ -2392,6 +2489,7 @@ export class RunScene extends Phaser.Scene {
         heavy: swing.heavy,
         id: swing.id,
         from: this.player,
+        ...(swing.mod ? { mod: swing.mod } : {}),
       });
     }
   }
@@ -2412,6 +2510,7 @@ export class RunScene extends Phaser.Scene {
       heavy: boolean;
       id: number;
       from: Vec2;
+      mod?: StepMod;
     },
   ): void {
     this.hitKind = hit.kind;
@@ -2433,9 +2532,13 @@ export class RunScene extends Phaser.Scene {
       heavy: boolean;
       id: number;
       from: Vec2;
+      mod?: StepMod;
     },
   ): void {
-    const fx: HitEffects = this.profile.on[hit.kind];
+    // Effets des dons de l'action, plus ceux de la gravure de Ptah du coup (retour F8).
+    const fx: HitEffects = hit.mod?.fx
+      ? withExtraFx(this.profile.on[hit.kind], hit.mod.fx)
+      : this.profile.on[hit.kind];
     // Un seul éclair en chaîne par coup, même si le coup touche plusieurs ennemis.
     const firstHit = this.lastChainSwing !== hit.id;
     this.lastChainSwing = hit.id;
@@ -2530,8 +2633,12 @@ export class RunScene extends Phaser.Scene {
 
   /** Lame de l'Aube : parade réussie, le coup est annulé et Ash riposte autour de lui. */
   private parry(from: Vec2): void {
-    const riposte = WEAPONS[this.run.weapon].power.parry;
+    const riposte = this.player.state.kind === 'attack' ? this.player.state.step.parry : undefined;
+    const reflect =
+      this.player.state.kind === 'attack' ? this.player.state.mod?.reflect : undefined;
     this.player.parried(this.sim);
+    // Gravure « Miroir du soleil » : la parade détruit aussi les tirs ennemis proches.
+    if (reflect) this.deflectShots(this.player, reflect);
     sfx.block();
     sfx.super();
     this.juice.hitstop(120);
@@ -2838,8 +2945,11 @@ export class RunScene extends Phaser.Scene {
       this.trial.state = 'won';
       this.spawnChest();
     }
-    // Pas d'Étincelle s'il n'y a aucun don à améliorer.
+    // Pas de Braise s'il n'y a aucun don à améliorer ; la porte « Gravure » : une fois par monde,
+    // et plus du tout quand l'arme est éveillée (retour F8).
     const exclude: RewardKind[] = upgradableBoons(this.run.boons).length > 0 ? [] : ['spark'];
+    if (this.run.engravingBiome === this.run.biome || isAwakened(this.engravingDefs()))
+      exclude.push('weaponMod');
     // Salles spéciales : la lumière revient ; toutes offrent des éclats en plus (2 portes, comme partout).
     if (this.darkness) {
       this.tweens.add({ targets: this.darkness, alpha: 0, duration: 600 });
@@ -2849,6 +2959,7 @@ export class RunScene extends Phaser.Scene {
       this.juice.damageNumber(this.player.x, this.player.y - 14, CHALLENGE_SHARDS, '#7fe7ff');
     }
     const doors = rollDoors(this.rng, DOOR_COUNT, biome.pantheon, exclude);
+    if (doors.some((d) => d.kind === 'weaponMod')) this.run.engravingBiome = this.run.biome;
     // Regard d'Amon : le défi se juge maintenant ; la faveur royale vient après le butin.
     const favor = this.amon !== null && amonRoomCleared(this.amon) === 'won';
     this.refreshAmon();
@@ -2911,6 +3022,12 @@ export class RunScene extends Phaser.Scene {
       this.choosing = true;
       this.afterChoice = l.then;
       this.offerSpark();
+      return;
+    }
+    if (reward?.kind === 'weaponMod' && this.run.pendingEngraving) {
+      this.choosing = true;
+      this.afterChoice = l.then;
+      this.offerEngraving();
       return;
     }
     if (reward) this.showRewardGain(reward.kind);
@@ -3146,8 +3263,11 @@ function drawRewardIcon(
     case 'shards':
       g.fillTriangle(x, y - 9, x + 7, y, x, y + 9).fillTriangle(x, y - 9, x - 7, y, x, y + 9);
       break;
-    case 'weaponMod':
-      g.fillRect(x - 8, y - 7, 16, 6).fillRect(x - 2, y - 1, 4, 10);
+    case 'weaponMod': // Gravure : le ciseau de Ptah qui grave un hiéroglyphe
+      g.fillRect(x + 1, y - 10, 3, 10).fillTriangle(x - 1, y, x + 6, y, x + 2.5, y + 5);
+      g.lineStyle(1.5, color, 1)
+        .strokeEllipse(x - 5, y + 3, 6, 8)
+        .lineBetween(x - 9, y + 7, x - 1, y + 7);
       break;
     case 'xp':
       g.strokeCircle(x, y, 8).fillCircle(x, y, 3);

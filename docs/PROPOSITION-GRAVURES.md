@@ -1,6 +1,7 @@
 # Gravures de Ptah — proposition (retour F8)
 
-Statut : **exemples à valider par l'utilisateur** (rien n'est codé).
+Statut : **validé et fait (0.68.0)** : 2 gravures par action et par arme (56), liste et chiffres dans
+`src/data/engravings.ts`, textes `engraving.*`.
 
 ## Règles (décidées par l'utilisateur, détails proposés par Claude)
 
