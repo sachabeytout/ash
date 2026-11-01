@@ -3,7 +3,7 @@
 Liste tenue à jour par Claude. Réponds quand tu veux, même en vrac (« 3 : oui, 7 : plutôt la B »).
 En attendant ta réponse, Claude applique **ce qui est indiqué en gras** (toujours modifiable ensuite).
 
-Dernière mise à jour : 31/10/2026 (version 0.54.0).
+Dernière mise à jour : 01/11/2026 (version 0.59.0).
 
 ## A. Ressenti de jeu
 
@@ -72,6 +72,29 @@ Dernière mise à jour : 31/10/2026 (version 0.54.0).
 33. ✅ Plus d'amplifications : ce sont maintenant des dons passifs (0.57.0).
 34. **8 duos tirés de la mythologie** (Sobek + Neith sa mère, Râ + Bastet sa fille, Seth qui défend la barque de Râ…) → **faits (0.59.0)**, dis-moi s'ils te plaisent
 35. Les **dons « légendaires »** : plus tard, quand on aura une idée qui nous est propre ? → **plus tard**
+
+## F. Retours après la première run complète (01/11/2026) — traités un par un
+
+Règle de l'utilisateur : un point à la fois, plusieurs propositions pour chaque point, rien n'est fait avant sa
+validation. Une fois validé : mise à jour du jeu, et on passe au point suivant en parallèle.
+
+| #   | Point                                                                                                | État                      |
+| --- | ---------------------------------------------------------------------------------------------------- | ------------------------- |
+| F1  | Ash ne doit plus bouger dès qu'un menu s'affiche (dons, boutique de Ratatosk, menus de la Cage)      | **propositions envoyées** |
+| F2  | On arrive vite au bout des dons : quoi ajouter (dieux, dons, salles, objets à collectionner…) ?      | à venir                   |
+| F3  | Le jeu reste trop punitif : défense, dégâts des ennemis, autres idées ?                              | à venir                   |
+| F4  | « Étincelle » devient « Braise », nouvelle icône avec un petit « + » en haut à gauche                | à venir (exemples)        |
+| F5  | Les noms longs des dons dépassent de leur case dans le menu                                          | à venir                   |
+| F6  | Le Super touche forcément l'ennemi, et il est plus impressionnant visuellement (sans plus de dégâts) | à venir                   |
+| F7  | Courte animation qui révèle chaque don lors d'un choix                                               | à venir                   |
+| F8  | Porte « modificateur » inutile : que faire ? (idée : modificateur de l'arme choisie)                 | à venir                   |
+| F9  | Un nom pour l'XP, plus de compétences ou un système plus riche                                       | à venir                   |
+| F10 | Plus de râtelier : choisir l'arme juste après « Sortir »                                             | à venir                   |
+| F11 | La Cage ressemble aux autres salles (sans ennemis), personnages répartis dans la salle               | à venir                   |
+| F12 | Améliorations (armes, compétences) plus chères et plus nombreuses                                    | à venir                   |
+| F13 | Noms plus accrocheurs pour les frappes et tourbillons d'élan de chaque arme                          | à venir                   |
+| F14 | Pouvoir bouger en attaquant avec le Sceptre ouas                                                     | à venir                   |
+| F15 | Noms d'armes plus simples, niveau en haut à droite du nom, description (type, origine, rumeur)       | à venir                   |
 
 ## C. Petites décisions prises par Claude (dis seulement si tu n'es pas d'accord)
 
