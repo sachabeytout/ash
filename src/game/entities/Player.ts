@@ -62,6 +62,8 @@ export class Player {
   private superTrail!: Phaser.GameObjects.Particles.ParticleEmitter;
   /** Ailes d'Isis : invincibilité du dash allongée (ms). */
   dashGuardMs = 0;
+  /** « Élan du faucon » (Thot) : dégâts en plus des coups d'élan (0,15 = +15 %). */
+  strikeBonus = 0;
   /** Gravures de Ptah, par action (retour F8). */
   engravings: Partial<Record<EngravingSlot, StepMod>> = {};
   /** Gravure : attirer les ennemis proches (rayon) au début du coup. */
@@ -350,12 +352,10 @@ export class Player {
         : 'attack';
     const mod = this.engravings[slot];
     const comboLength = this.weapon.combo.length;
-    const step = applyEngraving(
-      strike ? dashStrikeStep(base, power) : base,
-      mod,
-      power ? 0 : index,
-      power ? 1 : comboLength,
-    );
+    const strikeStep = strike
+      ? applyEngraving(dashStrikeStep(base, power), { damageMul: 1 + this.strikeBonus })
+      : base;
+    const step = applyEngraving(strikeStep, mod, power ? 0 : index, power ? 1 : comboLength);
     // Les effets propres au dernier coup du combo (onde, coups multiples) ne valent que pour lui.
     const finisher =
       !power && mod?.finisher && index === comboLength - 1 ? mod.finisher : undefined;

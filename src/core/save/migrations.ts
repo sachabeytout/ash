@@ -299,6 +299,28 @@ const MIGRATIONS: Record<number, (save: Raw) => Raw> = {
       : old.run;
     return { ...old, version: 23, run };
   },
+  // v23 → v24 : arbre de Thot à 3 branches (nouvelles compétences) ; une run en cours n'en a pas.
+  23: (old) => {
+    const run = isObject(old.run)
+      ? {
+          ...old.run,
+          perks: {
+            ...(isObject(old.run.perks) ? old.run.perks : {}),
+            fountainHeal: 0,
+            bossHp: 0,
+            strikeDamage: 0,
+            powerDamage: 0,
+            superDamage: 0,
+            giantSlayer: 0,
+            startEngraving: 0,
+            shopDiscount: 0,
+            rareFirst: 0,
+            extraChoice: 0,
+          },
+        }
+      : old.run;
+    return { ...old, version: 24, run };
+  },
 };
 
 function isObject(v: unknown): v is Raw {
@@ -475,6 +497,16 @@ function sanitizeRun(raw: unknown): RunState | null {
       startShards: num(perks.startShards, NO_PERKS.startShards, 0),
       dashCooldown: num(perks.dashCooldown, NO_PERKS.dashCooldown, 0, 0.5),
       revives: Math.floor(num(perks.revives, NO_PERKS.revives, 0, 3)),
+      fountainHeal: num(perks.fountainHeal, 0, 0, 1),
+      bossHp: num(perks.bossHp, 0, 0, 50),
+      strikeDamage: num(perks.strikeDamage, 0, 0, 2),
+      powerDamage: num(perks.powerDamage, 0, 0, 2),
+      superDamage: num(perks.superDamage, 0, 0, 2),
+      giantSlayer: num(perks.giantSlayer, 0, 0, 2),
+      startEngraving: num(perks.startEngraving, 0, 0, 1),
+      shopDiscount: num(perks.shopDiscount, 0, 0, 0.5),
+      rareFirst: num(perks.rareFirst, 0, 0, 1),
+      extraChoice: Math.floor(num(perks.extraChoice, 0, 0, 1)),
     },
   };
 }

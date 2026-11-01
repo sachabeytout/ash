@@ -2,6 +2,30 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.69.0 — Le Papyrus et l'arbre de Thot
+
+Ton retour n° 9 : l'XP s'appelle **Papyrus**, et l'arbre de Thot devient un **vrai arbre à 3 branches**, avec **plus de
+compétences** (A + B).
+
+- **Papyrus** partout à la place d'« XP » (Thot écrit ta progression). Ton total ne change pas.
+- **3 onglets** chez Thot : **Corps** (vie et survie), **Lame** (dégâts et armes), **Esprit** (dons, Super et
+  ressources).
+- Chaque branche est une **chaîne** : pour apprendre une compétence, il faut au moins un niveau de la précédente. Les
+  compétences verrouillées sont grisées. Ce que tu as déjà acheté reste acquis.
+- **18 compétences** (10 nouvelles) :
+  - **Corps** : Mémoire du feu, Braises vivaces, Pas de l'ibis, **Eau sacrée** (fontaines plus fortes), **Cœur de
+    cendre** (+PV max à chaque boss vaincu), Renaissance ;
+  - **Lame** : Lame affûtée, **Élan du faucon** (coups d'élan plus forts), **Bras de Ptah** (attaque spéciale plus
+    forte), **Tueur de géants** (plus de dégâts contre élites et boss), **Colère sacrée** (Super plus fort), **Burin de
+    Ptah** (chaque run commence avec une gravure offerte) ;
+  - **Esprit** : Faveur divine, Étincelle, Bourse de Ratatosk, **Marchandage** (Ratatosk moins cher), **Première
+    faveur** (premier don au moins rare), **Œil de Thot** (4 dons proposés au lieu de 3).
+- Le trophée « Élève de Thot » demande maintenant les 18 compétences (s'il est déjà obtenu, il le reste).
+- Les prix seront revus avec ton point 12 (améliorations plus chères).
+
+**Quoi tester** : ouvre l'arbre de Thot. Les 3 branches sont-elles claires ? Les nouvelles compétences donnent-elles
+envie ?
+
 ## 0.68.0 — Les Gravures de Ptah
 
 Ton retour n° 8 : la porte « Modificateur » devient la porte **Gravure** (le ciseau de Ptah).

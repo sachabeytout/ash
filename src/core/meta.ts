@@ -40,10 +40,17 @@ export function nextCost(meta: MetaState, skill: SkillDef): number | null {
   return skill.costs[skillLevel(meta, skill)] ?? null;
 }
 
-/** Achète le niveau suivant si l'XP suffit. Renvoie vrai en cas de succès. */
+/** Une compétence est accessible quand la précédente de sa branche a au moins un niveau. */
+export function isSkillUnlocked(meta: MetaState, skill: SkillDef): boolean {
+  if (!skill.requires) return true;
+  const before = SKILLS.find((s) => s.id === skill.requires);
+  return before === undefined || skillLevel(meta, before) > 0;
+}
+
+/** Achète le niveau suivant si le Papyrus suffit et la compétence est débloquée. */
 export function buySkill(meta: MetaState, skill: SkillDef): boolean {
   const cost = nextCost(meta, skill);
-  if (cost === null || meta.xp < cost) return false;
+  if (cost === null || meta.xp < cost || !isSkillUnlocked(meta, skill)) return false;
   meta.xp -= cost;
   meta.skills[skill.id] = skillLevel(meta, skill) + 1;
   return true;
@@ -72,6 +79,16 @@ export function runBonuses(meta: MetaState): {
       startShards: skillTotal(meta, 'startShards'),
       dashCooldown: skillTotal(meta, 'dashCooldown'),
       revives: skillTotal(meta, 'revive'),
+      fountainHeal: skillTotal(meta, 'fountainHeal'),
+      bossHp: skillTotal(meta, 'bossHp'),
+      strikeDamage: skillTotal(meta, 'strikeDamage'),
+      powerDamage: skillTotal(meta, 'powerDamage'),
+      superDamage: skillTotal(meta, 'superDamage'),
+      giantSlayer: skillTotal(meta, 'giantSlayer'),
+      startEngraving: skillTotal(meta, 'startEngraving'),
+      shopDiscount: skillTotal(meta, 'shopDiscount'),
+      rareFirst: skillTotal(meta, 'rareFirst'),
+      extraChoice: skillTotal(meta, 'extraChoice'),
     },
     superStart: Math.min(1, skillTotal(meta, 'superStart')),
   };

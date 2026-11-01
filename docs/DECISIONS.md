@@ -194,6 +194,12 @@ Format : date — décision — raison — validée par l'utilisateur (oui / non
   mécaniques de tir (`bounces`, `split`, `explodeEnd`, `hover`) dans `PlayerShots`. Sauvegarde v23. Inspiration de
   fonctionnement : marteau de Hadès, runes de Diablo III, Dead Cells ; contenu original.
 
+- **0.69.0 — Papyrus + arbre de Thot (retour F9 : « Papyrus » ; A + B)** : l'XP s'affiche « Papyrus » (identifiants `xp`
+  gardés). 18 compétences en 3 branches (`SkillDef.branch`, `requires`), chacune débloquée par un niveau de la précédente
+  (`isSkillUnlocked`) ; achats existants conservés. Choix de Claude : les 10 nouvelles compétences et leurs coûts
+  (provisoires, à revoir avec le retour F12) ; « Peau de cendre » non remise (retour F3 annulé). Sauvegarde v24 (nouveaux
+  bonus de run).
+
 ## Réponses de l'utilisateur (30/10/2026)
 
 | Sujet         | Décision                                                                                                                                                                                              | Validée        |

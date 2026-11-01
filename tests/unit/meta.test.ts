@@ -1,9 +1,16 @@
 import { describe, expect, it } from 'vitest';
-import { buySkill, nextCost, runBonuses, skillLevel, updateRecords } from '../../src/core/meta';
+import {
+  buySkill,
+  isSkillUnlocked,
+  nextCost,
+  runBonuses,
+  skillLevel,
+  updateRecords,
+} from '../../src/core/meta';
 import { defaultMeta } from '../../src/core/save/schema';
-import { newRun } from '../../src/core/run/state';
+import { drinkFountain, newRun } from '../../src/core/run/state';
 import { migrate } from '../../src/core/save/migrations';
-import { SKILLS } from '../../src/data/skills';
+import { SKILLS, SKILL_BRANCHES } from '../../src/data/skills';
 import { allDictionaries } from '../../src/i18n';
 
 const vigor = SKILLS.find((s) => s.id === 'thoth_vigor');
@@ -116,5 +123,63 @@ describe('Exploits (0.28.0)', () => {
       bestHeatClear: 0,
       variantsBeaten: [],
     });
+  });
+});
+
+describe('arbre de Thot à 3 branches (retour F9, 0.69.0)', () => {
+  const byId = (id: string) => {
+    const s = SKILLS.find((x) => x.id === id);
+    if (!s) throw new Error(id);
+    return s;
+  };
+
+  it('trois branches, chacune une chaîne : chaque compétence demande la précédente', () => {
+    for (const branch of SKILL_BRANCHES) {
+      const chain = SKILLS.filter((s) => s.branch === branch);
+      expect(chain.length, branch).toBeGreaterThanOrEqual(6);
+      expect(chain[0]?.requires, branch).toBeUndefined();
+      chain.slice(1).forEach((s, i) => expect(s.requires).toBe(chain[i]?.id));
+    }
+  });
+
+  it('une compétence verrouillée ne s’achète pas', () => {
+    const meta = defaultMeta();
+    meta.xp = 1000;
+    const falcon = byId('thoth_falcon');
+    expect(isSkillUnlocked(meta, falcon)).toBe(false);
+    expect(buySkill(meta, falcon)).toBe(false);
+    expect(buySkill(meta, byId('thoth_edge'))).toBe(true);
+    expect(buySkill(meta, falcon)).toBe(true);
+  });
+
+  it('les nouvelles compétences se retrouvent dans la run', () => {
+    const meta = defaultMeta();
+    meta.skills = {
+      thoth_spring: 1,
+      thoth_ashHeart: 2,
+      thoth_haggle: 1,
+      thoth_chisel: 1,
+      thoth_eye: 1,
+    };
+    const p = runBonuses(meta).perks;
+    expect(p.fountainHeal).toBeCloseTo(0.15);
+    expect(p.bossHp).toBe(8);
+    expect(p.shopDiscount).toBeCloseTo(0.1);
+    expect(p.extraChoice).toBe(1);
+    const run = newRun(1, 'katana', 50, 0, 'ra', p);
+    expect(run.pendingEngraving).toBe(true);
+    run.hp = 1;
+    expect(drinkFountain(run)).toBe(Math.round(50 * 0.45));
+  });
+
+  it('sauvegarde v23 → v24 : une run en cours reçoit les nouveaux bonus à zéro', () => {
+    const save = migrate({
+      version: 23,
+      meta: {},
+      settings: {},
+      run: newRun(3, 'katana', 50, 0, 'ra'),
+    });
+    expect(save.run?.perks.extraChoice).toBe(0);
+    expect(save.run?.perks.giantSlayer).toBe(0);
   });
 });

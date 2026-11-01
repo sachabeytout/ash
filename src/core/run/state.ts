@@ -22,6 +22,19 @@ export interface RunPerks {
   dashCooldown: number;
   /** Renaissances par run (Thot). Ajouté en v11. */
   revives: number;
+  /** Arbre de Thot à 3 branches (0.69.0, v24) : fontaine (+part), PV max par boss, coups d'élan,
+   *  attaque spéciale, Super, contre élites et boss (+part), gravure offerte, prix du marchand (−part),
+   *  premier don au moins rare, choix de dons en plus. */
+  fountainHeal: number;
+  bossHp: number;
+  strikeDamage: number;
+  powerDamage: number;
+  superDamage: number;
+  giantSlayer: number;
+  startEngraving: number;
+  shopDiscount: number;
+  rareFirst: number;
+  extraChoice: number;
 }
 
 export const NO_PERKS: RunPerks = {
@@ -31,6 +44,16 @@ export const NO_PERKS: RunPerks = {
   startShards: 0,
   dashCooldown: 0,
   revives: 0,
+  fountainHeal: 0,
+  bossHp: 0,
+  strikeDamage: 0,
+  powerDamage: 0,
+  superDamage: 0,
+  giantSlayer: 0,
+  startEngraving: 0,
+  shopDiscount: 0,
+  rareFirst: 0,
+  extraChoice: 0,
 };
 
 /** État d'une run en cours (sérialisable : c'est ce qui est sauvegardé à chaque entrée de salle). */
@@ -148,7 +171,8 @@ export function newRun(
     amonBiome: -1,
     roomReward: null,
     engravings: [],
-    pendingEngraving: false,
+    // « Burin de Ptah » (Thot) : une gravure offerte dès le début.
+    pendingEngraving: perks.startEngraving > 0,
     engravingBiome: -1,
   };
 }
@@ -263,7 +287,9 @@ export const FOUNTAIN_HEAL = 0.3;
 
 export function drinkFountain(run: RunState): number {
   if (heatModifiers(run.heat).noRest) return 0;
-  const healed = Math.max(0, Math.min(run.maxHp - run.hp, Math.round(run.maxHp * FOUNTAIN_HEAL)));
+  // Arrondi au centième : 0,3 + 0,15 donne bien 0,45 (pas 0,4499…).
+  const heal = Math.round((FOUNTAIN_HEAL + run.perks.fountainHeal) * 100) / 100;
+  const healed = Math.max(0, Math.min(run.maxHp - run.hp, Math.round(run.maxHp * heal)));
   run.hp += healed;
   return healed;
 }

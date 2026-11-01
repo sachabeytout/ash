@@ -1,6 +1,6 @@
 # Architecture (carte du projet)
 
-> Statut 0.68.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
+> Statut 0.69.0 — existe : `core/` (rng, geometry, settings, meta, input/buffer, boss/pattern,
 > combat/attack+health+status+superGauge, boons/boons, run/waves+rewards+state, save/schema+migrations+codec+store),
 > `data/` (player, weapons, enemies, biomes, gods, boons, status, skills, bosses, music, shop), `game/` (scenes Title, Hub,
 > Run, Ui, Boon, Pause, Shop ; entities Player, Enemy, Boss, Hittable ; input Controls, TouchControls ; fx/Juice+Lightning ;
@@ -43,8 +43,9 @@ par-dessus ; cartes face cachée puis retournées : `BoonScene.revealCard`). Mor
   `nearStation` / Entrée / bouton A) ; râtelier `src/game/ui/WeaponPanel.ts`, arme mémorisée `meta.selectedWeapon`
   (`chosenWeapon` / `selectWeapon` dans `src/core/forge.ts`, sauvegarde v13). Répliques des habitants :
   `src/data/barks.ts` + `bark.*` (i18n), `HubScene.addBarker` / `updateBarks`.
-- Arbre de Thot : `src/data/skills.ts` + `src/core/meta.ts` (`runBonuses` → `RunPerks`) ; fenêtre : `src/game/ui/ThothPanel.ts`
-  (deux colonnes). Renaissance : `RunScene.hurtPlayer` (`revivesUsed`, sauvegarde v11).
+- Arbre de Thot (0.69.0) : `src/data/skills.ts` (3 branches `body` / `blade` / `spirit`, `requires`) +
+  `src/core/meta.ts` (`isSkillUnlocked`, `runBonuses` → `RunPerks`) ; fenêtre à onglets `src/game/ui/ThothPanel.ts`.
+  L'XP s'affiche « Papyrus ». Renaissance : `RunScene.hurtPlayer` (`revivesUsed`, sauvegarde v11).
 - Premier essai guidé : `src/core/tutorial.ts` (étapes, pur) ; affiché par `RunScene.updateTutorial` →
   `UiScene.showHint` (+ `TouchControls.highlight`). Fini/passé → `tutorial_done` dans `seenDialogues`.
 - Pause : liste compacte des dons + détail du don touché (`addBoonList`, `src/game/ui/boonCard.ts`, aussi `RARITY_COLOR`).

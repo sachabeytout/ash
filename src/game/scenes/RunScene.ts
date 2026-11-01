@@ -852,6 +852,11 @@ export class RunScene extends Phaser.Scene {
     if (boss.def.tint !== undefined) recordVariantBeaten(session.save.meta, boss.def.id);
     this.run.xp += boss.def.reward.xp;
     this.run.weaponParts += boss.def.reward.weaponParts;
+    // « Cœur de cendre » (Thot) : chaque boss vaincu donne des PV max.
+    if (this.run.perks.bossHp > 0) {
+      this.run.maxHp += this.run.perks.bossHp;
+      this.run.hp += this.run.perks.bossHp;
+    }
     this.run.shards += SHARD_BOUNTY.boss;
     this.juice.hitstop(220);
     this.juice.shake(0.01, 400);
@@ -1200,7 +1205,7 @@ export class RunScene extends Phaser.Scene {
   }
 
   private openEvent(id: EventId): void {
-    const cost = eventCost(this.run, id, this.heat.shopPrice);
+    const cost = eventCost(this.run, id, this.priceMul());
     const blocked: EventSceneData['blocked'] =
       this.run.eventTaken === this.run.biome
         ? 'taken'
@@ -1230,7 +1235,7 @@ export class RunScene extends Phaser.Scene {
     const hpBefore = this.run.hp;
     this.choosing = false;
     markScene('run');
-    if (!takeEvent(this.run, id, this.heat.shopPrice, biome.pantheon)) return;
+    if (!takeEvent(this.run, id, this.priceMul(), biome.pantheon)) return;
     session.snapshotRun(this.run);
     const spot = this.eventSpot;
     if (spot) {
@@ -1429,9 +1434,9 @@ export class RunScene extends Phaser.Scene {
     const data: ShopSceneData = {
       run: this.run,
       sold: this.shopSold,
-      priceMul: this.heat.shopPrice,
+      priceMul: this.priceMul(),
       onBuy: (item) => {
-        if (!buyItem(this.run, item, rng, this.heat.shopPrice)) return false;
+        if (!buyItem(this.run, item, rng, this.priceMul())) return false;
         if (this.run.pendingBoon) {
           this.choosing = true;
           this.time.delayedCall(150, () => this.offerBoon());
@@ -1452,7 +1457,14 @@ export class RunScene extends Phaser.Scene {
   /** Dégâts d'un coup d'arme : bonus de run (modificateurs, Thot) + forge selon le type de coup. */
   private weaponMultiplier(kind: 'attack' | 'power' | 'super'): number {
     const f = this.forge;
-    const extra = kind === 'power' ? f.powerDamage : kind === 'super' ? f.superDamage : 0;
+    // Forge de Ptah et compétences de Thot (« Bras de Ptah », « Colère sacrée »).
+    const perks = this.run.perks;
+    const extra =
+      kind === 'power'
+        ? f.powerDamage + perks.powerDamage
+        : kind === 'super'
+          ? f.superDamage + perks.superDamage
+          : 0;
     const awakened = isAwakened(this.engravingDefs()) ? AWAKENED_DAMAGE : 0;
     return 1 + this.run.damageBonus + f.damage + extra + awakened;
   }
@@ -1529,7 +1541,16 @@ export class RunScene extends Phaser.Scene {
     if (!god) return;
     // Même graine que la salle : fermer et rouvrir le jeu repropose les mêmes dons.
     const rng = createRng((this.run.seed ^ Math.imul(this.run.room, 2654435761)) >>> 0);
-    const offers = rollOffer(rng, this.run.boons, god, 3, this.run.perks.rareBonus);
+    // « Première faveur » : le premier don de la run est au moins rare ; « Œil de Thot » : un choix de plus.
+    const perks = this.run.perks;
+    const firstRare = perks.rareFirst > 0 && this.run.boons.length === 0 ? 1 : 0;
+    const offers = rollOffer(
+      rng,
+      this.run.boons,
+      god,
+      3 + perks.extraChoice,
+      perks.rareBonus + firstRare,
+    );
     if (offers.length === 0) {
       this.run.pendingBoon = null;
       this.choosing = false;
@@ -1553,6 +1574,12 @@ export class RunScene extends Phaser.Scene {
     this.choosing = false;
     this.nextWaveAt = this.sim + 600;
     this.juice.burst(this.player.x, this.player.y, GODS[god].color, 24);
+    // « Burin de Ptah » : la gravure offerte suit le premier don.
+    if (this.run.pendingEngraving && !this.shopOpen) {
+      this.choosing = true;
+      this.time.delayedCall(250, () => this.offerEngraving());
+      return;
+    }
     if (this.shopOpen) this.time.delayedCall(250, () => this.openShop());
     else markScene('run');
     this.runAfterChoice();
@@ -1806,6 +1833,11 @@ export class RunScene extends Phaser.Scene {
     this.juice.burst(e.x, e.y - e.radius, FX.thunder, 6);
   }
 
+  /** Prix du marchand et des évènements : Balance de Maât, « Marchandage » (Thot). */
+  private priceMul(): number {
+    return this.heat.shopPrice * (1 - this.run.perks.shopDiscount);
+  }
+
   /** Gravures de Ptah possédées (définitions). */
   private engravingDefs(): EngravingDef[] {
     return this.run.engravings.map(getEngraving).filter((e): e is EngravingDef => e !== undefined);
@@ -1871,6 +1903,7 @@ export class RunScene extends Phaser.Scene {
   /** Les dons du profil qui changent Ash lui-même (Bastet : vitesse, dash). */
   private applyProfile(): void {
     this.player.speedMul = 1 + this.profile.speed;
+    this.player.strikeBonus = this.run.perks.strikeDamage;
     this.player.dashGuardMs = this.profile.dashGuardMs;
     this.player.dashCooldownMul = Math.max(
       0.3,
@@ -2542,7 +2575,12 @@ export class RunScene extends Phaser.Scene {
     // Un seul éclair en chaîne par coup, même si le coup touche plusieurs ennemis.
     const firstHit = this.lastChainSwing !== hit.id;
     this.lastChainSwing = hit.id;
-    const mult = damageMultiplier(this.profile, this.targetState(e)) * this.passiveDamage(hit.kind);
+    // « Tueur de géants » (Thot) : plus de dégâts contre les élites et les boss.
+    const giant = e === this.boss || (e instanceof Enemy && e.def.elite !== undefined);
+    const mult =
+      damageMultiplier(this.profile, this.targetState(e)) *
+      this.passiveDamage(hit.kind) *
+      (giant ? 1 + this.run.perks.giantSlayer : 1);
     const at = { x: e.x, y: e.y };
     const wasFrozen = isFrozen(e.status, this.sim);
     // Critique (Bastet) : dégâts doublés, ou plus avec « Griffes affûtées ».

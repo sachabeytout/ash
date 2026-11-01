@@ -148,7 +148,7 @@ export class BoonScene extends Phaser.Scene {
     this.redraw();
 
     this.input.keyboard?.on('keydown', (e: KeyboardEvent) => {
-      const digit = ['Digit1', 'Digit2', 'Digit3'].indexOf(e.code);
+      const digit = ['Digit1', 'Digit2', 'Digit3', 'Digit4'].indexOf(e.code);
       if (digit >= 0 && digit < n) this.pick(digit);
       if (e.code === 'ArrowLeft' || e.code === 'KeyA') this.move(-1);
       if (e.code === 'ArrowRight' || e.code === 'KeyD') this.move(1);
