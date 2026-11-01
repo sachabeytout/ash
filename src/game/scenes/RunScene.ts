@@ -539,10 +539,7 @@ export class RunScene extends Phaser.Scene {
     this.player.onSuper = () => {
       this.run.superGauge = 0;
       sfx.super();
-      this.juice.hitstop(60);
-      this.juice.shake(0.004, 160);
-      this.lightning.ring(this.player, 40, 0xffe08a);
-      this.juice.burst(this.player.x, this.player.y, 0xffe08a, 24);
+      this.superLaunchFx();
       this.tutorialEvent({ type: 'super' });
     };
 
@@ -1575,6 +1572,72 @@ export class RunScene extends Phaser.Scene {
     if (fx.curse) applyCurse(e.status, this.sim, fx.curse.damage, fx.curse.radius);
     if (fx.stun && Math.random() < fx.stun.chance) this.stun(e, fx.stun.durationMs);
     this.checkThermalShock(e);
+  }
+
+  // ---------- Super : lancement impressionnant (retour F6, 0.66.0) ----------
+
+  /**
+   * Arrêt sur image + léger zoom + flash doré, onde de choc dorée au sol et cercle de hiéroglyphes
+   * lumineux. Pas de dégâts en plus : c'est seulement pour qu'on sente l'attaque spéciale.
+   */
+  private superLaunchFx(): void {
+    const at = { x: this.player.x, y: this.player.y };
+    const gold = 0xffd36b;
+    this.juice.hitstop(110);
+    this.juice.shake(0.005, 200);
+    const cam = this.cameras.main;
+    const base = cam.zoom;
+    cam.zoomTo(
+      base * 1.08,
+      90,
+      'Sine.easeOut',
+      true,
+      (_c: Phaser.Cameras.Scene2D.Camera, p: number) => {
+        if (p >= 1) cam.zoomTo(base, 260, 'Sine.easeInOut', true);
+      },
+    );
+    if (settings.reduceFlashes) this.juice.burst(at.x, at.y, gold, 30);
+    else cam.flash(140, 255, 214, 120);
+    this.lightning.ring(at, 30, gold);
+    this.lightning.ring(at, 64, gold);
+    this.juice.burst(at.x, at.y, 0xffe08a, 24);
+    // Hiéroglyphes lumineux en cercle (ânkh, œil, plume, scarabée), qui s'élargissent puis s'éteignent.
+    const glyphs = this.add.graphics().setPosition(at.x, at.y).setDepth(2.5).setBlendMode('ADD');
+    const r = 34;
+    for (let i = 0; i < 8; i++) {
+      const a = (i * Math.PI) / 4;
+      const x = Math.cos(a) * r;
+      const y = Math.sin(a) * r * 0.7;
+      glyphs.lineStyle(1.5, gold, 1);
+      switch (i % 4) {
+        case 0: // ânkh
+          glyphs
+            .strokeEllipse(x, y - 3, 4, 5)
+            .lineBetween(x - 3.5, y, x + 3.5, y)
+            .lineBetween(x, y, x, y + 5);
+          break;
+        case 1: // œil
+          glyphs.strokeEllipse(x, y, 10, 4.5).fillStyle(gold, 1).fillCircle(x, y, 1.4);
+          break;
+        case 2: // plume de Maât
+          glyphs.lineBetween(x, y - 5, x, y + 5).strokeEllipse(x + 1.5, y - 1, 3.5, 7);
+          break;
+        default: // scarabée
+          glyphs
+            .strokeEllipse(x, y, 5, 7)
+            .lineBetween(x - 2.5, y - 1, x - 6, y - 3)
+            .lineBetween(x + 2.5, y - 1, x + 6, y - 3);
+      }
+    }
+    glyphs.setScale(0.6).setAlpha(1);
+    this.tweens.add({
+      targets: glyphs,
+      scale: 1.35,
+      alpha: 0,
+      duration: 750,
+      ease: 'Sine.easeOut',
+      onComplete: () => glyphs.destroy(),
+    });
   }
 
   // ---------- Menus : Ash ne bouge pas (retour F1, 0.60.0) ----------

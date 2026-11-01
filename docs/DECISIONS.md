@@ -177,6 +177,11 @@ Format : date — décision — raison — validée par l'utilisateur (oui / non
   cartes : grille compacte (icône + nom, police réduite si besoin, 1 à 3 colonnes) et panneau de détail du don touché
   (description entière, rétrécie si très longue) ; flèches du clavier pour naviguer.
 
+- **0.66.0 — Super (retour F6 : A + effets 1, 2, 3)** : `superTarget` (`src/core/combat/superAim.ts`, ennemi le plus proche à
+  `PLAYER.superAimRange` = 260 dans toutes les directions) au lancement et à chaque coup suivant ; `RunScene.superLaunchFx`
+  (arrêt 110 ms, zoom ×1,08, flash doré sauf « Réduire les flashs », double onde, 8 hiéroglyphes) ; `Player` : aura dorée
+  pulsée et traînée de flammes pendant le Super. Dégâts inchangés.
+
 ## Réponses de l'utilisateur (30/10/2026)
 
 | Sujet         | Décision                                                                                                                                                                                              | Validée        |

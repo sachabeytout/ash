@@ -2,6 +2,22 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.66.0 — Un Super qui touche à coup sûr, et qui en impose
+
+Ton retour n° 6 : solution A pour toucher, effets 1 + 2 + 3 pour l'impression (les dégâts ne changent pas) :
+
+- **Visée automatique forte** : au lancement, le Super part vers **l'ennemi le plus proche**, même derrière Ash (jusqu'à
+  une bonne distance). Pour les Supers en plusieurs coups, chaque coup se retourne vers l'ennemi le plus proche. S'il
+  n'y a personne à portée, le Super part dans la direction que tu as choisie.
+- **Lancement** : court **arrêt sur image**, léger **zoom** et **flash doré** (un simple éclat doré si l'option
+  « Réduire les flashs » est activée).
+- **Pendant tout le Super** : une **aura dorée** qui pulse autour d'Ash et une **traînée de flammes**.
+- **Au sol** : une **onde de choc dorée** et un **cercle de hiéroglyphes lumineux** (ânkh, œil, plume, scarabée) qui
+  s'élargit puis s'éteint.
+
+**Quoi tester** : lance ton Super avec un ennemi sur le côté ou derrière toi : il doit être touché. L'effet te plaît ?
+Trop, pas assez ?
+
 ## 0.65.0 — Les dons dans la pause : liste compacte et détail
 
 Ton retour n° 5, solution D :

@@ -7,12 +7,13 @@ import {
 } from '../../core/combat/attack';
 import { dashStrikeStep, isDashStrike } from '../../core/combat/dashStrike';
 import { nearestInCone, type Vec2 } from '../../core/geometry';
-import { settings } from '../../core/settings';
 import { PLAYER } from '../../data/player';
 import type { WeaponDef } from '../../data/weapons';
 import type { Controls } from '../input/Controls';
 import { bodyOf } from '../physics';
 import { addFlameHair } from '../fx/flameHair';
+import { superTarget } from '../../core/combat/superAim';
+import { QUALITY_PARTICLES, settings } from '../../core/settings';
 
 export interface ActiveSwing {
   step: AttackStep;
@@ -50,6 +51,10 @@ export class Player {
   private velocity = { x: 0, y: 0 };
   private lastDashEnd = -Infinity;
   private invulnerableUntil = 0;
+  /** Ennemis vus à la dernière image (visée des coups suivants du Super). */
+  private lastEnemies: readonly Vec2[] = [];
+  /** Traînée de flammes dorées pendant le Super (retour F6). */
+  private superTrail!: Phaser.GameObjects.Particles.ParticleEmitter;
   /** Ailes d'Isis : invincibilité du dash allongée (ms). */
   dashGuardMs = 0;
   private lastAttack: { index: number; startedAt: number } | null = null;
@@ -89,6 +94,21 @@ export class Player {
       .setScale(1.6)
       .setBlendMode('ADD');
     this.sprite = scene.physics.add.image(x, y, 'ash').setDepth(10);
+    // Traînée de flammes dorées pendant le Super (allumée par updateVisuals).
+    this.superTrail = scene.add.particles(0, 0, 'spark', {
+      x: { min: -4, max: 4 },
+      y: { min: -4, max: 6 },
+      speedY: { min: -30, max: -10 },
+      speedX: { min: -8, max: 8 },
+      lifespan: 380,
+      frequency: 22 / QUALITY_PARTICLES[settings.quality],
+      scale: { start: 0.6, end: 0 },
+      alpha: { start: 0.95, end: 0 },
+      tint: [0xffd36b, 0xffa040, 0xffe08a],
+      blendMode: 'ADD',
+      emitting: false,
+    });
+    this.superTrail.startFollow(this.sprite).setDepth(9.5);
     // Cercle de collision aux pieds (le haut du dessin, ce sont les cheveux en flamme).
     bodyOf(this.sprite).setCircle(
       PLAYER.radius,
@@ -186,6 +206,7 @@ export class Player {
   }
 
   update(now: number, dt: number, controls: Controls, enemies: readonly Vec2[]): void {
+    this.lastEnemies = enemies;
     const buffer = controls.buffer;
     const dashReady = now - this.lastDashEnd >= PLAYER.dash.cooldownMs * this.dashCooldownMul;
 
@@ -325,13 +346,22 @@ export class Player {
   private startSuper(now: number, controls: Controls, enemies: readonly Vec2[]): void {
     const first = this.weapon.super[0];
     if (!first) return;
-    this.facing = this.aimAngle(controls, enemies);
+    // Visée automatique forte : le Super part vers l'ennemi le plus proche (retour F6).
+    const target = superTarget(this, enemies, PLAYER.superAimRange);
+    this.facing = target
+      ? Math.atan2(target.y - this.y, target.x - this.x)
+      : this.aimAngle(controls, enemies);
     this.lastAttack = null;
     this.onSuper();
     this.startSuperStep(now, 0, first);
   }
 
   private startSuperStep(now: number, superIndex: number, step: AttackStep): void {
+    // Chaque coup suivant du Super se retourne vers l'ennemi le plus proche (le premier est peut-être mort).
+    if (superIndex > 0) {
+      const target = superTarget(this, this.lastEnemies, PLAYER.superAimRange);
+      if (target) this.facing = Math.atan2(target.y - this.y, target.x - this.x);
+    }
     this.state = {
       kind: 'attack',
       step,
@@ -476,6 +506,13 @@ export class Player {
     const { x, y } = this.sprite;
     this.sprite.setFlipX(Math.cos(this.facing) < -0.1);
     this.glow.setPosition(x, y);
+    // Pendant le Super : aura dorée qui pulse et traînée de flammes (retour F6).
+    const inSuper = this.state.kind === 'attack' && this.state.superIndex !== null;
+    this.glow
+      .setTint(inSuper ? 0xffd36b : 0xff7a2a)
+      .setScale(inSuper ? 2.4 + 0.3 * Math.sin(now / 60) : 1.6)
+      .setAlpha(inSuper ? 0.9 : 0.55);
+    if (this.superTrail.emitting !== inSuper) this.superTrail.emitting = inSuper;
     this.pip
       .setPosition(x + Math.cos(this.facing) * 13, y + Math.sin(this.facing) * 13)
       .setRotation(this.facing);

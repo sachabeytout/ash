@@ -25,4 +25,6 @@ export const PLAYER = {
    * de côté (`near`), un ennemi plus loin seulement s'il est à peu près devant (`far`).
    */
   aimAssist: { near: { coneDeg: 150, range: 70 }, far: { coneDeg: 70, range: 140 } },
+  /** Super (retour F6) : visée automatique sur l'ennemi le plus proche dans ce rayon, quelle que soit la direction. */
+  superAimRange: 260,
 } as const;

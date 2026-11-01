@@ -116,6 +116,7 @@ Retour sur le lore v0.2 toujours attendu (« quand le fond aura avancé »).
 - [x] **0.58.0** : 27 passifs (3 par dieu) qui agissent sur les actions sans prendre leur case — demandé
 - [x] **0.59.0** : 8 duos tirés de la mythologie (16 duos, 99 dons au total)
 - [x] **0.60.0** : retour F1, Ash immobile pendant les menus (+ 0,5 s d'invincibilité)
+- [x] **0.66.0** : retour F6, Super à visée automatique forte + lancement spectaculaire (sans plus de dégâts)
 - [x] **0.65.0** : retour F5, pause : liste compacte des dons + détail au toucher
 - [x] **0.64.0** : retour F4, l'Étincelle devient la Braise (nouvelle icône de charbon ardent)
 - [x] **0.63.0** : retour F3 annulé à la demande de l'utilisateur (XP de « Peau de cendre » rendue, sauvegarde v22)
