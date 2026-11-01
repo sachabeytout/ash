@@ -135,6 +135,19 @@ export class Player {
     this.queuedStrike = null;
   }
 
+  /** Un menu s'ouvre : Ash s'arrête net (déplacement, dash et attaque en cours annulés). */
+  halt(): void {
+    this.state = { kind: 'free' };
+    this.queuedStrike = null;
+    this.velocity = { x: 0, y: 0 };
+    (this.sprite.body as Phaser.Physics.Arcade.Body | null)?.setVelocity(0, 0);
+  }
+
+  /** Temps de grâce (après un menu) : Ash ne peut pas être touché pendant `durationMs`. */
+  grace(now: number, durationMs: number): void {
+    this.invulnerableUntil = Math.max(this.invulnerableUntil, now + durationMs);
+  }
+
   /** Parade réussie : Ash est brièvement invincible, la garde se termine. */
   parried(now: number): void {
     this.invulnerableUntil = now + 450;

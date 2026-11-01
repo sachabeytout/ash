@@ -150,6 +150,11 @@ Format : date — décision — raison — validée par l'utilisateur (oui / non
   « Critique dans le dos » abandonné (les ennemis se tournent toujours vers Ash) → « Instinct du chat » (bonus contre les
   ennemis ralentis). Ronronnement seulement quand des ennemis sont présents (pas de soin en attendant dans une salle vide).
 
+- **0.60.0 — Menus (retour F1, option C validée)** : en run, la physique est figée tant qu'un menu est ouvert
+  (`RunScene.choosing`) ; `Player.halt` à l'ouverture ; à la fermeture `Controls.resetAfterMenu` (appuis oubliés,
+  déplacement nul jusqu'au relâchement) et `Player.grace` 500 ms. Choix de Claude : pas de grâce après la pause (évite
+  d'enchaîner les pauses pour être intouchable). Cage : marche annulée pendant et après un menu.
+
 ## Réponses de l'utilisateur (30/10/2026)
 
 | Sujet         | Décision                                                                                                                                                                                              | Validée        |

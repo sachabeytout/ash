@@ -54,6 +54,8 @@ export class Controls {
   touchMove: Vec2 = { x: 0, y: 0 };
 
   private readonly held = new Set<string>();
+  /** Après un menu : le déplacement reste à zéro tant que le joueur n'a pas tout relâché. */
+  private waitRelease = false;
   private readonly padPrev = new Map<number, boolean>();
   private readonly onKeyDown = (e: KeyboardEvent) => {
     if (e.code in MOVE_KEYS || e.code in ACTION_KEYS) e.preventDefault();
@@ -87,6 +89,16 @@ export class Controls {
       if (!p.wasTouch) this.lastDevice = 'mouse';
     });
     scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.destroy());
+  }
+
+  /**
+   * Un menu vient de se fermer : on oublie les appuis faits pendant le menu, et le personnage
+   * ne repart que lorsque le joueur a relâché puis retouché la direction.
+   */
+  resetAfterMenu(): void {
+    this.buffer.clear();
+    this.waitRelease = true;
+    this.move = { x: 0, y: 0 };
   }
 
   press(action: Action): void {
@@ -137,6 +149,10 @@ export class Controls {
     // Tactile
     if (Math.hypot(this.touchMove.x, this.touchMove.y) > 0) move = this.touchMove;
 
+    if (this.waitRelease) {
+      if (Math.hypot(move.x, move.y) < 0.1) this.waitRelease = false;
+      move = { x: 0, y: 0 };
+    }
     this.move = move;
 
     // Souris : point visé dans le monde

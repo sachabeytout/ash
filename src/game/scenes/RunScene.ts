@@ -298,6 +298,8 @@ export class RunScene extends Phaser.Scene {
   private barrier = 0;
   /** Passifs (0.58.0) : Aube prête, coup suivant renforcé (Ouverture de la bouche), Ronronnement. */
   private dawnReady = false;
+  /** Un menu de run est ouvert (voir `onMenuOpen` / `onMenuClosed`). */
+  private menuOpen = false;
   private mouthReady = false;
   private lastHurtAt = 0;
   private nextPurrAt = 0;
@@ -472,6 +474,7 @@ export class RunScene extends Phaser.Scene {
     this.forge = weaponBonuses(this.run.weapon, this.run.weaponLevel);
     this.barrier = 0;
     this.dawnReady = true;
+    this.menuOpen = false;
     this.mouthReady = false;
     this.lastHurtAt = 0;
     this.nextPurrAt = 0;
@@ -1441,6 +1444,7 @@ export class RunScene extends Phaser.Scene {
       onResume: () => {
         this.scene.resume('ui');
         this.scene.resume();
+        this.onMenuClosed(false);
         markScene('run');
       },
       onAbandon: () => {
@@ -1569,6 +1573,27 @@ export class RunScene extends Phaser.Scene {
     if (fx.curse) applyCurse(e.status, this.sim, fx.curse.damage, fx.curse.radius);
     if (fx.stun && Math.random() < fx.stun.chance) this.stun(e, fx.stun.durationMs);
     this.checkThermalShock(e);
+  }
+
+  // ---------- Menus : Ash ne bouge pas (retour F1, 0.60.0) ----------
+
+  /** Grâce après un menu de run : Ash ne peut pas être touché tout de suite. */
+  private static readonly MENU_GRACE_MS = 500;
+
+  private onMenuOpen(): void {
+    this.menuOpen = true;
+    this.player.halt();
+  }
+
+  /**
+   * Fin d'un menu : appuis oubliés, il faut relâcher la direction pour repartir. Après un choix
+   * (don, boutique…), une demi-seconde d'invincibilité ; pas après la pause (sinon on pourrait
+   * l'enchaîner pour éviter les coups).
+   */
+  private onMenuClosed(grace: boolean): void {
+    this.menuOpen = false;
+    this.controls.resetAfterMenu();
+    if (grace) this.player.grace(this.sim, RunScene.MENU_GRACE_MS);
   }
 
   // ---------- Passifs « en plus » (0.58.0) ----------
@@ -1941,14 +1966,17 @@ export class RunScene extends Phaser.Scene {
       if (!this.physics.world.isPaused) this.physics.world.pause();
       return;
     }
-    if (this.physics.world.isPaused) this.physics.world.resume();
-
     const dt = Math.min(delta, 50);
+    // Un menu est ouvert (don, boutique, évènement, Amon…) : tout se fige, Ash compris.
     if (this.choosing) {
+      if (!this.menuOpen) this.onMenuOpen();
+      if (!this.physics.world.isPaused) this.physics.world.pause();
       this.ui.showRun(this.run);
       this.ui.showHint('', null);
       return;
     }
+    if (this.physics.world.isPaused) this.physics.world.resume();
+    if (this.menuOpen) this.onMenuClosed(true);
     this.sim += dt;
     if (!this.leaving) this.run.elapsedMs += dt;
 

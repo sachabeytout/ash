@@ -2,6 +2,22 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.60.0 — Ash ne bouge plus pendant les menus
+
+Ton retour n° 1, solution C :
+
+- Dès qu'un menu s'ouvre en run (choix de don, boutique de Ratatosk, évènement, faveur d'Amon…), **tout se fige** :
+  Ash s'arrête net, les ennemis et leurs tirs aussi.
+- À la fermeture, Ash **ne repart que lorsque tu as relâché puis retouché** la direction, et les appuis faits pendant
+  le menu sont oubliés (pas d'attaque par erreur).
+- Après un menu de run, Ash est **intouchable une demi-seconde** (il clignote un peu).
+- Après la pause, même chose sans l'invincibilité (sinon on pourrait enchaîner les pauses pour éviter les coups).
+- Dans la Cage, ouvrir un menu (Thot, Ptah, Archives…) arrête Ash, et le toucher qui ferme le menu ne le fait plus
+  marcher.
+
+**Quoi tester** : ouvre un choix de don en courant, puis ferme-le en gardant le doigt sur le joystick : Ash doit rester
+immobile jusqu'à ce que tu relâches.
+
 ## 0.59.0 — 8 duos tirés de la mythologie
 
 Huit nouveaux **duos** (un don partagé par deux dieux), qui racontent les liens entre eux. Ils apparaissent quand tu as

@@ -59,6 +59,8 @@ export class HubScene extends Phaser.Scene {
   private starting = false;
   /** Une fenêtre (sauvegarde, Thot) est ouverte : la Cage ignore les touches. */
   private modal = false;
+  /** Un menu était ouvert à l'image précédente (voir `update`). */
+  private menuOpen = false;
   private controls!: Controls;
   private stations: Station[] = [];
   private ash!: Phaser.GameObjects.Image;
@@ -89,6 +91,7 @@ export class HubScene extends Phaser.Scene {
     this.summary = data.summary;
     this.starting = false;
     this.modal = false;
+    this.menuOpen = false;
     this.stations = [];
     this.barkers = [];
     // Première bulle possible quelques secondes après l'arrivée, pas tout de suite.
@@ -244,7 +247,18 @@ export class HubScene extends Phaser.Scene {
   override update(_time: number, delta: number): void {
     autoLowerQuality(this.autoQuality, delta, this.cameras.main);
     this.controls.update();
-    if (this.modal || this.starting) return;
+    // Un menu est ouvert : Ash ne bouge pas, et la marche en cours est annulée.
+    if (this.modal || this.starting) {
+      this.walkTarget = null;
+      this.menuOpen = true;
+      return;
+    }
+    // Le menu vient de se fermer : on oublie le toucher qui l'a fermé et les appuis faits pendant.
+    if (this.menuOpen) {
+      this.menuOpen = false;
+      this.walkTarget = null;
+      this.controls.resetAfterMenu();
+    }
     this.moveAsh(delta);
     this.highlightStations();
     this.updateBarks();
