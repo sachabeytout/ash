@@ -117,11 +117,11 @@ export const FORGE: Record<WeaponId, readonly ForgeLevel[]> = {
     mod('all', { fx: { burn: { dps: 2, durationMs: 2500 } } }),
     mod('all', { projectile: { radiusAdd: 3 } }),
   ),
-  // Chaîne du pressoir : plus de portée, grappin qui étourdit, fouet plus large.
+  // Chaîne du pressoir : plus de portée, grappin qui porte plus loin, fouet plus large.
   chain: tiers(
     'chain',
     mod('all', { rangeAdd: 9 }),
-    mod('power', { fx: { stun: { chance: 1, durationMs: 500 } } }),
+    mod('power', { projectile: { rangeMul: 1.25 } }),
     mod('attack', { arcAdd: 30 }),
   ),
   // Lame de l'Aube : parade plus facile, parade qui soigne, parade qui remplit le Super.

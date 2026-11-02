@@ -105,7 +105,8 @@ export const ENGRAVINGS: readonly EngravingDef[] = [
   // ---------- Chaîne du pressoir ----------
   def('chain', 'attack', 'press', { rangeAdd: 10, damageMul: 1.15 }),
   def('chain', 'attack', 'double', { hits: 2, damageMul: 0.65 }),
-  def('chain', 'power', 'garrote', { fx: { stun: { chance: 1, durationMs: 1000 } } }),
+  // Le grappin immobilise déjà 2 s : le Garrot rend l'ennemi attrapé plus fragile pendant ce temps.
+  def('chain', 'power', 'garrote', { fx: { judge: { bonus: 0.3, durationMs: 2000 } } }),
   def('chain', 'power', 'long', { projectile: { rangeMul: 1.5 } }),
   def('chain', 'dashAttack', 'sweep', { arcAdd: 100 }),
   def('chain', 'dashAttack', 'flail', { fx: { stun: { chance: 1, durationMs: 400 } } }),

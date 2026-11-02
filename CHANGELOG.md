@@ -2,6 +2,22 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.78.0 — Le grappin ne rate plus
+
+Ton retour du 02/11, point 1 : l'attaque spéciale de la **Chaîne du pressoir** vise toute seule et immobilise.
+
+- **Visée** : le grappin prend l'ennemi le plus proche dans la direction où tu vises. S'il n'y a personne devant, il
+  prend l'ennemi le plus proche autour de toi.
+- **Trajectoire** : il part dans la direction visée puis **se courbe** pour rejoindre sa cible (si la cible est
+  derrière toi, il part directement vers elle).
+- **Effet** : l'ennemi attrapé est **immobilisé 2 s**. Les boss restent limités à 0,4 s, pour qu'on ne puisse pas les
+  bloquer.
+- **Gravure « Garrot »** : l'ennemi attrapé subit maintenant +30 % de dégâts pendant 2 s (avant : immobilisé 1 s).
+- **Ptah, niveau 8 de la Chaîne** : « Grappin lointain », le grappin porte 25 % plus loin (avant : étourdit 0,5 s).
+
+**Quoi tester** : avec la Chaîne, lance le grappin vers un ennemi un peu sur le côté, puis vers un ennemi derrière toi.
+Touche-t-il à chaque fois ? L'immobilisation de 2 s te paraît-elle juste ?
+
 ## 0.77.0 — Les nouveaux noms des armes
 
 Ton retour n° 15, fin (noms B) : des noms plus courts, toujours égyptiens.

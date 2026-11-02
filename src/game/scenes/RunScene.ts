@@ -529,16 +529,27 @@ export class RunScene extends Phaser.Scene {
       this.juice.burst(at.x, at.y, 0xffd27a, 10);
       sfx.explode();
     };
-    this.player.onFire = (step, angle, kind, id, mod) => {
+    this.player.onFire = (step, angle, kind, id, mod, homing) => {
       const charged = this.discCharged && step.projectile?.returns === true;
       if (charged) this.discCharged = false;
-      this.shotsP.fire(this.sim, this.player, angle, step, kind, id, charged ? 1.5 : 1, mod);
+      this.shotsP.fire(
+        this.sim,
+        this.player,
+        angle,
+        step,
+        kind,
+        id,
+        charged ? 1.5 : 1,
+        mod,
+        homing,
+      );
       // Gravures « Puits de pouvoir », « Volée solaire » : le tir ou la zone revient une 2e fois.
       if (mod?.echoMs) {
         const from = { x: this.player.x, y: this.player.y };
         const echoId = --this.echoId;
         this.time.delayedCall(mod.echoMs, () => {
-          if (!this.leaving) this.shotsP.fire(this.sim, from, angle, step, kind, echoId, 1, mod);
+          if (!this.leaving)
+            this.shotsP.fire(this.sim, from, angle, step, kind, echoId, 1, mod, homing);
         });
       }
     };
@@ -2668,6 +2679,8 @@ export class RunScene extends Phaser.Scene {
       hitstopMs: 40,
     });
     if (!target.alive) return;
+    // L'ennemi attrapé est immobilisé (les boss restent limités, voir `stun`).
+    this.stun(target, PLAYER.grapple.stunMs);
     const small = target instanceof Enemy && !target.def.elite && target.radius <= 9;
     if (small) {
       // Point « derrière » la cible : le recul part de là, donc vers Ash.

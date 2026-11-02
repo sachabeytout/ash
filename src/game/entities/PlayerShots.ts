@@ -2,7 +2,9 @@ import Phaser from 'phaser';
 import { insideAny, type Rect } from '../../core/arena/obstacles';
 import type { AttackStep, ProjectileSpec, ZoneSpec } from '../../core/combat/attack';
 import type { StepMod } from '../../core/combat/engraving';
+import { steerToward } from '../../core/combat/grapple';
 import type { Vec2 } from '../../core/geometry';
+import { PLAYER } from '../../data/player';
 import type { Hittable } from './Hittable';
 
 /** `boon` : flèches de don (dégâts de don, sans effets d'arme). */
@@ -40,6 +42,10 @@ interface Projectile {
   splitDone: boolean;
   hoverUntil: number;
   nextHoverTick: number;
+  /** Grappin : la cible qu'il rejoint en se courbant (null : vol droit). */
+  homing: Vec2 | null;
+  /** Distance de vol avant la fin de course (allongée pour un grappin qui se courbe). */
+  maxTravel: number;
 }
 
 interface Zone {
@@ -109,6 +115,8 @@ export class PlayerShots {
         splitDone: false,
         hoverUntil: 0,
         nextHoverTick: 0,
+        homing: null,
+        maxTravel: 0,
       });
     }
     for (let i = 0; i < ZONES; i++) {
@@ -139,6 +147,7 @@ export class PlayerShots {
     id: number,
     scale = 1,
     mod?: StepMod,
+    homing?: Vec2,
   ): void {
     const p = step.projectile;
     if (p) {
@@ -148,7 +157,11 @@ export class PlayerShots {
       for (let i = 0; i < count; i++) {
         const offset =
           count <= 1 ? 0 : full ? (i / count) * Math.PI * 2 : (i / (count - 1) - 0.5) * spread;
-        this.spawn(from, angle + offset, p, kind, id, scale, mod);
+        const s = this.spawn(from, angle + offset, p, kind, id, scale, mod);
+        if (s && homing && p.grapple) {
+          s.homing = homing;
+          s.maxTravel = p.range * PLAYER.grapple.travelMul;
+        }
       }
     }
     const z = step.zone;
@@ -192,6 +205,8 @@ export class PlayerShots {
     s.splitDone = false;
     s.hoverUntil = 0;
     s.nextHoverTick = 0;
+    s.homing = null;
+    s.maxTravel = spec.range;
     s.sprite
       .setTexture(TEXTURE[spec.look])
       .setPosition(s.x, s.y)
@@ -267,6 +282,16 @@ export class PlayerShots {
       s.vx = (dx / d) * speed;
       s.vy = (dy / d) * speed;
     }
+    // Grappin : il se courbe vers sa cible tant qu'elle est en vie.
+    if (s.homing) {
+      if ((s.homing as { alive?: boolean }).alive === false) s.homing = null;
+      else {
+        const turn = ((PLAYER.grapple.turnDegPerSec * Math.PI) / 180) * (dt / 1000);
+        const v = steerToward(s.vx, s.vy, s, s.homing, turn);
+        s.vx = v.vx;
+        s.vy = v.vy;
+      }
+    }
     const stepX = (s.vx * dt) / 1000;
     const stepY = (s.vy * dt) / 1000;
     s.x += stepX;
@@ -280,7 +305,7 @@ export class PlayerShots {
     }
 
     const out = !this.bounds.contains(s.x, s.y) || insideAny(s, this.obstacles);
-    if (!s.returning && s.hoverUntil === 0 && (s.travelled >= spec.range || out)) {
+    if (!s.returning && s.hoverUntil === 0 && (s.travelled >= s.maxTravel || out)) {
       if (spec.returns && spec.hover && !out && s.vx !== 0) {
         s.vx = 0;
         s.vy = 0;

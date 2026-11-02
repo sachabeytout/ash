@@ -200,6 +200,12 @@ prennent plus seules à partir de cette date.
   mécaniques de tir (`bounces`, `split`, `explodeEnd`, `hover`) dans `PlayerShots`. Sauvegarde v23. Inspiration de
   fonctionnement : marteau de Hadès, runes de Diablo III, Dead Cells ; contenu original.
 
+- **0.78.0 — Grappin de la Chaîne (02/11, point 1 : mélange B + C, validé)** : cible = plus proche dans un cône de 120°
+  devant, sinon plus proche autour (`grappleTarget`, `src/core/combat/grapple.ts`) ; départ dans la direction visée et
+  virage vers la cible (`steerToward`, 540°/s, course ×1,5) ; immobilisation 2 s (`PLAYER.grapple`), boss limités à
+  0,4 s (validé). Gravure Garrot → +30 % de dégâts subis 2 s (validé) ; Ptah niveau 8 → grappin +25 % de portée
+  (validé). Réglages techniques choisis par Claude : cône 120°, virage 540°/s, course ×1,5.
+
 - **0.77.0 — Noms des armes (retour F15 : B)** : Khépesh, Dagues d'étoile, Ouas, Arc de Neith, Disque solaire, Chaîne du
   pressoir, Lame de l'Aube. Identifiants internes inchangés (sauvegarde intacte). Choix de Claude : en anglais Star
   daggers, Was, Bow of Neith, Sun disc, Press chain.

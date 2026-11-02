@@ -12,6 +12,7 @@ import type { WeaponDef } from '../../data/weapons';
 import type { Controls } from '../input/Controls';
 import { bodyOf } from '../physics';
 import { addFlameHair } from '../fx/flameHair';
+import { grappleLaunchAngle, grappleTarget } from '../../core/combat/grapple';
 import { superTarget } from '../../core/combat/superAim';
 import {
   applyEngraving,
@@ -45,6 +46,8 @@ type State =
       id: number;
       /** Gravure de Ptah appliquée à ce coup (retour F8). */
       mod?: StepMod;
+      /** Grappin : l'ennemi visé, que le grappin rejoint en se courbant. */
+      homing?: Vec2;
     }
   | { kind: 'dash'; startedAt: number; dir: Vec2; distance?: number };
 
@@ -92,6 +95,7 @@ export class Player {
     kind: ActiveSwing['kind'],
     id: number,
     mod?: StepMod,
+    homing?: Vec2,
   ) => void = () => undefined;
   onDash: () => void = () => undefined;
   /** Début d'une attaque (normale ou puissante), pour le premier essai guidé. */
@@ -378,6 +382,11 @@ export class Player {
     const stepMod = mod || finisher ? { ...mod, ...finisher } : undefined;
     if (strike) this.lastDashEnd = -Infinity;
     this.facing = this.aimAngle(controls, enemies);
+    // Grappin : il choisit sa cible (devant d'abord, sinon autour) et part vers elle.
+    const grapple = step.projectile?.grapple
+      ? grappleTarget(this, this.facing, enemies, step.projectile.range, PLAYER.grapple.coneDeg)
+      : null;
+    if (grapple) this.facing = grappleLaunchAngle(this, this.facing, grapple);
     this.state = {
       kind: 'attack',
       step,
@@ -387,6 +396,7 @@ export class Player {
       startedAt: now,
       id: ++swingCounter,
       ...(stepMod ? { mod: stepMod } : {}),
+      ...(grapple ? { homing: grapple.target } : {}),
     };
     this.drawnPhase = null;
     this.onAttackStart(power);
@@ -513,7 +523,7 @@ export class Player {
         }
         if (step.projectile || step.zone) {
           this.onSwing(st.power);
-          this.onFire(step, this.facing, kind, st.id, st.mod);
+          this.onFire(step, this.facing, kind, st.id, st.mod, st.homing);
         } else if (step.parry) {
           this.drawGuard();
         } else {

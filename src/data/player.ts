@@ -27,4 +27,11 @@ export const PLAYER = {
   aimAssist: { near: { coneDeg: 150, range: 70 }, far: { coneDeg: 70, range: 140 } },
   /** Super (retour F6) : visée automatique sur l'ennemi le plus proche dans ce rayon, quelle que soit la direction. */
   superAimRange: 260,
+  /**
+   * Grappin de la Chaîne du pressoir (retour du 02/11) : il vise l'ennemi le plus proche dans ce cône
+   * devant Ash (sinon le plus proche autour), part dans la direction visée et se courbe vers lui.
+   * `turnDegPerSec` : virage maximal ; `travelMul` : course allongée pour la courbe ;
+   * `stunMs` : immobilisation de l'ennemi attrapé (les boss restent limités, voir `RunScene.stun`).
+   */
+  grapple: { coneDeg: 120, turnDegPerSec: 540, travelMul: 1.5, stunMs: 2000 },
 } as const;

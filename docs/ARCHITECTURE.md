@@ -34,6 +34,9 @@ par-dessus ; cartes face cachée puis retournées : `BoonScene.revealCard`). Mor
   `stun`, `onExecute`, `zapBurn` (foudre).
 - Brûlure / givre / gel : `src/data/status.ts` + `src/core/combat/status.ts`.
 - Tirage des dons et profil de combat : `src/core/boons/boons.ts` ; effets en jeu : `RunScene` (section « Dons »).
+- Grappin (Chaîne) : cible et courbe `src/core/combat/grapple.ts` (`grappleTarget`, `steerToward`), réglages
+  `PLAYER.grapple` ; choisi dans `Player.startAttack` (`homing`), suivi dans `PlayerShots.updateShot`, immobilisation
+  dans `RunScene.grapple`.
 - Super : `super` dans `src/data/weapons.ts` ; remplissage de la jauge : `PLAYER.superGauge` (`src/data/player.ts`).
   Visée : `superTarget` (`src/core/combat/superAim.ts`, `PLAYER.superAimRange`), dans `Player.startSuper` /
   `startSuperStep` ; effets : `RunScene.superLaunchFx`, aura et traînée dans `Player.updateVisuals`.
