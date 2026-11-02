@@ -93,7 +93,7 @@ validation. Une fois validé : mise à jour du jeu, et on passe au point suivant
 | F11 | La Cage ressemble aux autres salles (sans ennemis), personnages répartis dans la salle               | **fait (0.71.0)**                                 |
 | F12 | Améliorations (armes, compétences) plus chères et plus nombreuses                                    | **fait (0.72.0 + 0.73.0)**                        |
 | F13 | Noms plus accrocheurs pour les frappes et tourbillons d'élan de chaque arme                          | **fait (0.74.0)**                                 |
-| F14 | Pouvoir bouger en attaquant avec le Sceptre ouas                                                     | à venir                                           |
+| F14 | Pouvoir bouger en attaquant avec le Sceptre ouas                                                     | **fait (0.75.0)**                                 |
 | F15 | Noms d'armes plus simples, niveau en haut à droite du nom, description (type, origine, rumeur)       | à venir                                           |
 
 ## C. Petites décisions prises par Claude (dis seulement si tu n'es pas d'accord)
