@@ -24,7 +24,12 @@ export class HubTouchScene extends Phaser.Scene {
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => (this.touch = null));
   }
 
-  /** Le bouton « Utiliser » s'allume devant un personnage, la porte ou un objet. */
+  /** Ce toucher est-il pour un bouton tactile (et pas pour la salle dessous) ? */
+  coversPointer(p: Phaser.Input.Pointer): boolean {
+    return this.touch?.coversPointer(p) ?? false;
+  }
+
+  /** Le bouton « Utiliser » n'apparaît que près d'un personnage, de la porte ou d'un objet. */
   setUseReady(ready: boolean): void {
     this.touch?.setUseReady(ready);
   }

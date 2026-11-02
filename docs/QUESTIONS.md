@@ -77,22 +77,26 @@ Dernière mise à jour : 01/11/2026 (version 0.59.0).
 
 Liste du 02/11/2026 (8 points) :
 
-| #   | Point                                                                              | État                                                                |
-| --- | ---------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| 1   | Chaîne : l'attaque spéciale vise toute seule et immobilise 2 s                     | **validé** (0.78.0)                                                 |
-| 2   | Arc de Neith : bouger aussi pendant l'attaque spéciale                             | **annulé** par l'utilisateur                                        |
-| 3   | Disque solaire : coups de disque au corps à corps ; lancer qui rebondit et revient | **validé** (0.79.0 + 0.79.1)                                        |
-| 4   | Le doigt resté sur le joystick choisit le don de gauche par erreur                 | **validé** (0.80.0)                                                 |
-| 5   | Salles sombres : les ennemis restent trop visibles                                 | **validé** (0.81.0)                                                 |
-| 6   | Remplacer l'ambiance néon par des ambiances plus égyptiennes                       | **validé** (0.82.0)                                                 |
-| 7   | La Cage : se déplacer au joystick comme dans les salles                            | **fait, en attente de validation finale** (A : joystick + Utiliser) |
-| 8   | La Cage : compteurs de victoires et renaissances à droite avec Papyrus et pièces   | en attente                                                          |
+| #   | Point                                                                              | État                                                        |
+| --- | ---------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| 1   | Chaîne : l'attaque spéciale vise toute seule et immobilise 2 s                     | **validé** (0.78.0)                                         |
+| 2   | Arc de Neith : bouger aussi pendant l'attaque spéciale                             | **annulé** par l'utilisateur                                |
+| 3   | Disque solaire : coups de disque au corps à corps ; lancer qui rebondit et revient | **validé** (0.79.0 + 0.79.1)                                |
+| 4   | Le doigt resté sur le joystick choisit le don de gauche par erreur                 | **validé** (0.80.0)                                         |
+| 5   | Salles sombres : les ennemis restent trop visibles                                 | **validé** (0.81.0)                                         |
+| 6   | Remplacer l'ambiance néon par des ambiances plus égyptiennes                       | **validé** (0.82.0)                                         |
+| 7   | La Cage : se déplacer au joystick comme dans les salles                            | **fait, en attente de validation finale** (0.83.0 + 0.84.0) |
+| 8   | La Cage : compteurs regroupés (à gauche, choix final de l'utilisateur)             | **fait, en attente de validation finale** (0.84.0)          |
 
 Point 7 — fichiers : `src/game/input/TouchControls.ts`, `src/game/scenes/HubTouchScene.ts` (nouveau),
 `src/game/scenes/HubScene.ts`, `src/game/ui/tap.ts`, `src/game/config.ts`. Tests : lint, typecheck, tests unitaires,
 e2e, vérification en jeu avec un vrai toucher simulé (joystick, bouton Utiliser, pouce posé sur un habitant, toucher
-bref). À voir avec le point 8 : le bouton recouvre en partie les compteurs du coin bas-droit. Pas encore enregistré ni
-mis en ligne (attente d'autorisation).
+bref). Enregistré et mis en ligne en 0.83.0. Ajustement 0.84.0 : bouton visible seulement près d'une interaction,
+plus de toucher qui traverse le bouton.
+
+Point 8 — fichiers : `src/game/scenes/HubScene.ts` (`addCounters`). Compteurs en haut à gauche sous « La Cage » (le
+joystick est en bas à gauche). Tests : lint, typecheck, tests unitaires, e2e, captures, vérification au toucher simulé.
+Pas encore enregistré ni mis en ligne (attente d'autorisation).
 
 Points F1 à F15 : validés le 02/11/2026. Gardés pour plus tard : amulettes (F2, option B), aspects des armes.
 

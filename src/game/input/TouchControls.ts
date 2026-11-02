@@ -145,7 +145,14 @@ export class TouchControls {
     if (b) g.strokeCircle(b.x, b.y, b.radius + 7);
   }
 
-  /** Cage : le bouton « Utiliser » s'allume quand Ash est devant quelque chose à utiliser. */
+  /** Un bouton visible est-il sous ce pointeur ? (La Cage ignore alors le toucher, pas de double action.) */
+  coversPointer(p: Phaser.Input.Pointer): boolean {
+    if (!this.shown) return false;
+    const at = screenPoint(p);
+    return this.buttonAt(at.x, at.y) !== undefined;
+  }
+
+  /** Cage : le bouton « Utiliser » n'apparaît que quand Ash est près de quelque chose à utiliser. */
   setUseReady(ready: boolean): void {
     if (ready === this.useReady) return;
     this.useReady = ready;
@@ -166,7 +173,7 @@ export class TouchControls {
 
   private setVisible(v: boolean): void {
     this.shown = v;
-    this.buttons.forEach((b) => b.g.setVisible(v));
+    this.buttons.forEach((b) => b.g.setVisible(v && (b.action !== 'use' || this.useReady)));
     const showStick = v && (settings.joystick === 'fixed' || this.joyPointer !== null);
     this.base.setVisible(showStick);
     this.knob.setVisible(showStick);
@@ -196,8 +203,8 @@ export class TouchControls {
       g.lineStyle(2, b.color, 1).fillStyle(b.color, 1);
       const r = b.radius * 0.45;
       if (b.action === 'use') {
-        // Ânkh doré, plus vif quand Ash est devant quelque chose à utiliser.
-        g.setAlpha(this.useReady ? 1 : 0.45);
+        // Ânkh doré, qui n'apparaît que lorsque Ash est près de quelque chose à utiliser.
+        g.setVisible(this.shown && this.useReady);
         g.lineStyle(2.5, b.color, 1).strokeEllipse(b.x, b.y - r * 0.55, r * 0.9, r * 1.1);
         g.lineBetween(b.x - r * 0.75, b.y, b.x + r * 0.75, b.y);
         g.lineBetween(b.x, b.y, b.x, b.y + r * 1.05);
@@ -248,6 +255,8 @@ export class TouchControls {
     let best: Button | undefined;
     let bestDist = Infinity;
     for (const b of this.buttons) {
+      // Un bouton caché (« Utiliser » loin de tout) ne se touche pas.
+      if (b.action === 'use' && !this.useReady) continue;
       const d = Math.hypot(x - b.x, y - b.y);
       if (d < b.radius * 1.45 && d < bestDist) {
         best = b;

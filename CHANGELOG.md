@@ -2,6 +2,20 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.84.0 — La Cage : compteurs à gauche, bouton « Utiliser » discret
+
+Ton retour du 02/11, points 7 et 8 :
+
+- **Les compteurs sont à gauche**, en haut, sous « La Cage » : points d'expérience, pièces d'armes, arme choisie,
+  renaissances et victoires, tous ensemble. Pas en bas à gauche, car le joystick y est.
+- **Le bouton « Utiliser » n'apparaît que près de quelque chose à utiliser** (un personnage, la porte, un objet). Loin
+  de tout, il n'y a plus de bouton à l'écran, et toucher sa place ne fait rien.
+- Correction : toucher le bouton « Utiliser » quand un personnage est dessiné juste dessous ne fait plus partir Ash vers
+  ce personnage.
+
+**Quoi tester** : dans la Cage, regarde les compteurs en haut à gauche, puis approche-toi de Thot : le bouton doit
+apparaître, et disparaître quand tu t'éloignes.
+
 ## 0.83.0 — Le joystick dans la Cage
 
 Ton retour du 02/11, point 7 (option A) : sur téléphone, on se déplace dans la Cage **avec le même joystick que dans les

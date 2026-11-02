@@ -200,6 +200,12 @@ prennent plus seules à partir de cette date.
   mécaniques de tir (`bounces`, `split`, `explodeEnd`, `hover`) dans `PlayerShots`. Sauvegarde v23. Inspiration de
   fonctionnement : marteau de Hadès, runes de Diablo III, Dead Cells ; contenu original.
 
+- **0.84.0 — Cage : compteurs et bouton « Utiliser » (02/11, points 7 et 8)** : demande de l'utilisateur, compteurs à
+  gauche et bouton visible seulement près des interactions. Tous les compteurs regroupés en haut à gauche sous le titre
+  (`HubScene.addCounters`), car le joystick fixe occupe le bas à gauche. `setUseReady` règle la visibilité du bouton ;
+  caché, il ne capte aucun toucher. `TouchControls.coversPointer` empêche un toucher sur le bouton d'agir aussi sur
+  l'habitant dessiné dessous.
+
 - **0.83.0 — Joystick dans la Cage (02/11, point 7 : A)** : `TouchControls` en mode `hub` (joystick + bouton « Utiliser »
   `onUse`), scène `HubTouchScene` au-dessus de la Cage, endormie pendant les fenêtres ; toucher le sol retiré ; toucher un
   habitant gardé mais seulement s'il est bref (< 0,3 s, < 10 px, `isQuickTap`). Choix de Claude : le bouton tactile n'agit

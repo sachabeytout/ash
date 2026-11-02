@@ -164,7 +164,7 @@ export class HubScene extends Phaser.Scene {
     };
     // Le titre sous le bouton de gauche : le haut de la cage reste visible.
     this.add.text(12, 40, t('hub.name'), { ...style, fontSize: '14px' });
-    this.addCorners(meta);
+    this.addCounters(meta);
     this.add
       .text(cx, GAME_HEIGHT - 8, this.infoLines(meta).join('\n'), {
         ...style,
@@ -404,39 +404,30 @@ export class HubScene extends Phaser.Scene {
   }
 
   /** Bilan dans les coins du bas : à gauche morts et victoires, à droite XP, pièces et arme. */
-  private addCorners(meta: MetaState): void {
-    const style = {
-      fontFamily: FONT_FAMILY,
-      fontSize: '9px',
-      color: COLORS.textDim,
-      stroke: '#07060d',
-      strokeThickness: 3,
-      lineSpacing: 3,
-    };
-    const bottom = GAME_HEIGHT - 8;
-    this.add
-      .text(
-        12,
-        bottom,
-        [
-          t('hub.rebirths', { count: meta.deaths }),
-          t('hub.victories', { count: meta.clears }),
-        ].join('\n'),
-        style,
-      )
-      .setOrigin(0, 1);
-    this.add
-      .text(
-        GAME_WIDTH - 12,
-        bottom,
-        [
-          t('hub.statXp', { xp: meta.xp }),
-          t('hub.statParts', { parts: meta.weaponParts }),
-          t(WEAPONS[chosenWeapon(meta)].nameKey as TextKey),
-        ].join('\n'),
-        { ...style, align: 'right' },
-      )
-      .setOrigin(1, 1);
+  /**
+   * Compteurs, tous ensemble en haut à gauche sous le titre (retours du 02/11, point 8) : rien dans
+   * les coins du bas, où se trouvent le joystick et le bouton « Utiliser ».
+   */
+  private addCounters(meta: MetaState): void {
+    this.add.text(
+      12,
+      62,
+      [
+        t('hub.statXp', { xp: meta.xp }),
+        t('hub.statParts', { parts: meta.weaponParts }),
+        t(WEAPONS[chosenWeapon(meta)].nameKey as TextKey),
+        t('hub.rebirths', { count: meta.deaths }),
+        t('hub.victories', { count: meta.clears }),
+      ].join('\n'),
+      {
+        fontFamily: FONT_FAMILY,
+        fontSize: '9px',
+        color: COLORS.textDim,
+        stroke: '#07060d',
+        strokeThickness: 3,
+        lineSpacing: 3,
+      },
+    );
   }
 
   private buildStations(meta: MetaState): void {
@@ -628,6 +619,8 @@ export class HubScene extends Phaser.Scene {
     // d'un habitant n'ouvre rien en se levant (retours du 02/11, point 7).
     onTap(this.add.zone(def.x, def.y + 4, 44, 40).setInteractive({ useHandCursor: true }), (p) => {
       if (this.modal || this.starting || !isQuickTap(p)) return;
+      // Toucher destiné au bouton « Utiliser » : pas pour l'habitant dessiné dessous.
+      if (this.touchScene()?.coversPointer(p)) return;
       if (this.distanceTo(station) <= INTERACT_RANGE) station.action();
       else this.walkTarget = { ...this.approachPoint(station), station };
     });
