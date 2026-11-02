@@ -96,28 +96,28 @@ export const FORGE: Record<WeaponId, readonly ForgeLevel[]> = {
     mod('all', { fx: { crit: 0.08 } }),
     { type: 'dashCooldown', value: 0.15 },
   ),
-  // Sceptre ouas : orbes plus lointains, zone plus grande, orbes qui traversent.
+  // Ouas : orbes plus lointains, zone plus grande, orbes qui traversent.
   staff: tiers(
     'staff',
     mod('attack', { projectile: { rangeMul: 1.2 } }),
     mod('power', { zone: { radiusAdd: 7 } }),
     mod('attack', { projectile: { pierceAdd: 1 } }),
   ),
-  // Arc du désert : flèches plus rapides et lointaines, flèche chargée plus forte, tir double.
+  // Arc de Neith : flèches plus rapides et lointaines, flèche chargée plus forte, tir double.
   crossbow: tiers(
     'crossbow',
     mod('all', { projectile: { speedMul: 1.15, rangeMul: 1.1 } }),
     { type: 'powerDamage', value: 0.25 },
     { type: 'doubleShot', value: 4 },
   ),
-  // Disque de Râ : retour plus rapide, petite brûlure, disque plus grand (il traverse déjà tout).
+  // Disque solaire : retour plus rapide, petite brûlure, disque plus grand (il traverse déjà tout).
   disc: tiers(
     'disc',
     mod('all', { projectile: { speedMul: 1.2 } }),
     mod('all', { fx: { burn: { dps: 2, durationMs: 2500 } } }),
     mod('all', { projectile: { radiusAdd: 3 } }),
   ),
-  // Chaîne de Shezmu : plus de portée, grappin qui étourdit, fouet plus large.
+  // Chaîne du pressoir : plus de portée, grappin qui étourdit, fouet plus large.
   chain: tiers(
     'chain',
     mod('all', { rangeAdd: 9 }),

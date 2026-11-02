@@ -73,7 +73,7 @@ export class Player {
   engravings: Partial<Record<EngravingSlot, StepMod>> = {};
   /** Forge de Ptah, niveaux 6 à 10 (retour F12) : changements des coups, attaque et attaque spéciale. */
   forgeMods: { attack?: StepMod; power?: StepMod } = {};
-  /** Forge (Arc du désert) : un tir d'attaque sur n part en double (0 = jamais). */
+  /** Forge (Arc de Neith) : un tir d'attaque sur n part en double (0 = jamais). */
   doubleShotEvery = 0;
   private attackShots = 0;
   /** Gravure : attirer les ennemis proches (rayon) au début du coup. */

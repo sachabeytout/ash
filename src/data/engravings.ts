@@ -62,7 +62,7 @@ export const ENGRAVINGS: readonly EngravingDef[] = [
   }),
   def('katana', 'dashPower', 'harvest', { pull: 80 }),
   def('katana', 'dashPower', 'sandstorm', { rangeAdd: 16, knockbackMul: 1.4 }),
-  // ---------- Dagues de fer céleste ----------
+  // ---------- Dagues d'étoile ----------
   def('twinBlades', 'attack', 'stars', { finisher: { wave: STAR_DAGGER } }),
   def('twinBlades', 'attack', 'frenzy', { comboRamp: 0.15 }),
   def('twinBlades', 'power', 'meteor', { fx: { judge: { bonus: 0.3, durationMs: 3000 } } }),
@@ -71,7 +71,7 @@ export const ENGRAVINGS: readonly EngravingDef[] = [
   def('twinBlades', 'dashAttack', 'lunge', { lungeAdd: 30, rangeAdd: 8 }),
   def('twinBlades', 'dashPower', 'belt', { wave: ring('bolt', 8, 6) }),
   def('twinBlades', 'dashPower', 'cyclone', { hits: 2, damageMul: 0.7 }),
-  // ---------- Sceptre ouas ----------
+  // ---------- Ouas ----------
   def('staff', 'attack', 'twin', { projectile: { split: 2 } }),
   def('staff', 'attack', 'heavy', {
     projectile: { damageMul: 1.35, radiusAdd: 2, speedMul: 0.85 },
@@ -84,7 +84,7 @@ export const ENGRAVINGS: readonly EngravingDef[] = [
   def('staff', 'dashAttack', 'triple', { projectile: { countAdd: 2, spreadAdd: 30 } }),
   def('staff', 'dashPower', 'ring', { wave: ring('orb', 10, 6) }),
   def('staff', 'dashPower', 'rain', { zone: { countAdd: 2 } }),
-  // ---------- Arc du désert ----------
+  // ---------- Arc de Neith ----------
   def('crossbow', 'attack', 'southWind', { projectile: { bounces: 1 } }),
   def('crossbow', 'attack', 'quick', { tempoMul: 0.75 }),
   def('crossbow', 'power', 'neith', { projectile: { explodeEnd: { damage: 24, radius: 36 } } }),
@@ -93,7 +93,7 @@ export const ENGRAVINGS: readonly EngravingDef[] = [
   def('crossbow', 'dashAttack', 'serpent', { fx: { venom: { stacks: 2, dps: 2 } } }),
   def('crossbow', 'dashPower', 'volley', { echoMs: 500 }),
   def('crossbow', 'dashPower', 'fan', { projectile: { countAdd: 3, spreadAdd: 30 } }),
-  // ---------- Disque de Râ ----------
+  // ---------- Disque solaire ----------
   def('disc', 'attack', 'twinSun', { damageMul: 0.7, projectile: { countAdd: 1, spreadAdd: 16 } }),
   def('disc', 'attack', 'swift', { projectile: { speedMul: 1.35 } }),
   def('disc', 'power', 'eclipse', { projectile: { hover: 1200 } }),
@@ -102,7 +102,7 @@ export const ENGRAVINGS: readonly EngravingDef[] = [
   def('disc', 'dashAttack', 'edge', { fx: { judge: { bonus: 0.2, durationMs: 4000 } } }),
   def('disc', 'dashPower', 'crown', { fx: { burn: { dps: 4, durationMs: 3000 } } }),
   def('disc', 'dashPower', 'double', { projectile: { countAdd: 4 } }),
-  // ---------- Chaîne de Shezmu ----------
+  // ---------- Chaîne du pressoir ----------
   def('chain', 'attack', 'press', { rangeAdd: 10, damageMul: 1.15 }),
   def('chain', 'attack', 'double', { hits: 2, damageMul: 0.65 }),
   def('chain', 'power', 'garrote', { fx: { stun: { chance: 1, durationMs: 1000 } } }),

@@ -78,23 +78,23 @@ Dernière mise à jour : 01/11/2026 (version 0.59.0).
 Règle de l'utilisateur : un point à la fois, plusieurs propositions pour chaque point, rien n'est fait avant sa
 validation. Une fois validé : mise à jour du jeu, et on passe au point suivant en parallèle.
 
-| #   | Point                                                                                                | État                                                                |
-| --- | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| F1  | Ash ne doit plus bouger dès qu'un menu s'affiche (dons, boutique de Ratatosk, menus de la Cage)      | **fait (0.60.0)**                                                   |
-| F2  | On arrive vite au bout des dons : quoi ajouter (dieux, dons, salles, objets à collectionner…) ?      | **fait (0.61.0)**, amulettes (option B) plus tard                   |
-| F3  | Le jeu reste trop punitif : défense, dégâts des ennemis, autres idées ?                              | **annulé** par l'utilisateur (0.63.0)                               |
-| F4  | « Étincelle » devient « Braise », nouvelle icône avec un petit « + » en haut à gauche                | **fait (0.64.0)**                                                   |
-| F5  | Les noms longs des dons dépassent de leur case dans le menu                                          | **fait (0.65.0)**                                                   |
-| F6  | Le Super touche forcément l'ennemi, et il est plus impressionnant visuellement (sans plus de dégâts) | **fait (0.66.0)**                                                   |
-| F7  | Courte animation qui révèle chaque don lors d'un choix                                               | **fait (0.67.0)**                                                   |
-| F8  | Porte « modificateur » inutile : que faire ? (idée : modificateur de l'arme choisie)                 | **fait (0.68.0)**                                                   |
-| F9  | Un nom pour l'XP, plus de compétences ou un système plus riche                                       | **fait (0.69.0)**                                                   |
-| F10 | Plus de râtelier : choisir l'arme juste après « Sortir »                                             | **fait (0.70.0)**                                                   |
-| F11 | La Cage ressemble aux autres salles (sans ennemis), personnages répartis dans la salle               | **fait (0.71.0)**                                                   |
-| F12 | Améliorations (armes, compétences) plus chères et plus nombreuses                                    | **fait (0.72.0 + 0.73.0)**                                          |
-| F13 | Noms plus accrocheurs pour les frappes et tourbillons d'élan de chaque arme                          | **fait (0.74.0)**                                                   |
-| F14 | Pouvoir bouger en attaquant avec le Sceptre ouas                                                     | **fait (0.75.0)**                                                   |
-| F15 | Noms d'armes plus simples, niveau en haut à droite du nom, description (type, origine, rumeur)       | **en cours** : affichage fait (0.76.0) ; noms à choisir (A, B ou C) |
+| #   | Point                                                                                                | État                                              |
+| --- | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| F1  | Ash ne doit plus bouger dès qu'un menu s'affiche (dons, boutique de Ratatosk, menus de la Cage)      | **fait (0.60.0)**                                 |
+| F2  | On arrive vite au bout des dons : quoi ajouter (dieux, dons, salles, objets à collectionner…) ?      | **fait (0.61.0)**, amulettes (option B) plus tard |
+| F3  | Le jeu reste trop punitif : défense, dégâts des ennemis, autres idées ?                              | **annulé** par l'utilisateur (0.63.0)             |
+| F4  | « Étincelle » devient « Braise », nouvelle icône avec un petit « + » en haut à gauche                | **fait (0.64.0)**                                 |
+| F5  | Les noms longs des dons dépassent de leur case dans le menu                                          | **fait (0.65.0)**                                 |
+| F6  | Le Super touche forcément l'ennemi, et il est plus impressionnant visuellement (sans plus de dégâts) | **fait (0.66.0)**                                 |
+| F7  | Courte animation qui révèle chaque don lors d'un choix                                               | **fait (0.67.0)**                                 |
+| F8  | Porte « modificateur » inutile : que faire ? (idée : modificateur de l'arme choisie)                 | **fait (0.68.0)**                                 |
+| F9  | Un nom pour l'XP, plus de compétences ou un système plus riche                                       | **fait (0.69.0)**                                 |
+| F10 | Plus de râtelier : choisir l'arme juste après « Sortir »                                             | **fait (0.70.0)**                                 |
+| F11 | La Cage ressemble aux autres salles (sans ennemis), personnages répartis dans la salle               | **fait (0.71.0)**                                 |
+| F12 | Améliorations (armes, compétences) plus chères et plus nombreuses                                    | **fait (0.72.0 + 0.73.0)**                        |
+| F13 | Noms plus accrocheurs pour les frappes et tourbillons d'élan de chaque arme                          | **fait (0.74.0)**                                 |
+| F14 | Pouvoir bouger en attaquant avec le Sceptre ouas                                                     | **fait (0.75.0)**                                 |
+| F15 | Noms d'armes plus simples, niveau en haut à droite du nom, description (type, origine, rumeur)       | **fait (0.76.0 + 0.77.0)**                        |
 
 ## C. Petites décisions prises par Claude (dis seulement si tu n'es pas d'accord)
 

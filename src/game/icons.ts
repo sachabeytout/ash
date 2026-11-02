@@ -547,7 +547,7 @@ export function drawWeaponGlyph(
       }
       break;
     case 'staff':
-      // Sceptre ouas : hampe, tête d'animal en haut, fourche en bas.
+      // Ouas : hampe, tête d'animal en haut, fourche en bas.
       line(3);
       seg(0, 18, 0, -14);
       seg(0, -14, 7, -18);
@@ -570,7 +570,7 @@ export function drawWeaponGlyph(
       break;
     }
     case 'disc':
-      // Disque de Râ : anneau et rayons.
+      // Disque solaire : anneau et rayons.
       line(3);
       g.strokeCircle(x, y, 10 * s);
       g.fillStyle(color, 0.35).fillCircle(x, y, 6 * s);

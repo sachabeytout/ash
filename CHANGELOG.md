@@ -2,6 +2,25 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.77.0 — Les nouveaux noms des armes
+
+Ton retour n° 15, fin (noms B) : des noms plus courts, toujours égyptiens.
+
+| Avant                 | Maintenant         |
+| --------------------- | ------------------ |
+| Khépesh               | Khépesh            |
+| Dagues de fer céleste | Dagues d'étoile    |
+| Sceptre ouas          | Ouas               |
+| Arc du désert         | Arc de Neith       |
+| Disque de Râ          | Disque solaire     |
+| Chaîne de Shezmu      | Chaîne du pressoir |
+| Lame de l'Aube        | Lame de l'Aube     |
+
+Les nouveaux noms sont partout : fenêtre de départ, Ptah, Archives, récapitulatif de fin de run. Ta progression ne
+change pas.
+
+**Quoi tester** : touche « Sortir » et regarde les cartes. Les noms sont-ils plus clairs ?
+
 ## 0.76.0 — Chaque arme a son histoire
 
 Ton retour n° 15 (affichage a) : sous les cartes de la fenêtre de départ, un **bandeau** présente l'arme choisie.

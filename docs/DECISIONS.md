@@ -194,6 +194,10 @@ Format : date — décision — raison — validée par l'utilisateur (oui / non
   mécaniques de tir (`bounces`, `split`, `explodeEnd`, `hover`) dans `PlayerShots`. Sauvegarde v23. Inspiration de
   fonctionnement : marteau de Hadès, runes de Diablo III, Dead Cells ; contenu original.
 
+- **0.77.0 — Noms des armes (retour F15 : B)** : Khépesh, Dagues d'étoile, Ouas, Arc de Neith, Disque solaire, Chaîne du
+  pressoir, Lame de l'Aube. Identifiants internes inchangés (sauvegarde intacte). Choix de Claude : en anglais Star
+  daggers, Was, Bow of Neith, Sun disc, Press chain.
+
 - **0.76.0 — Description des armes (retour F15 : affichage a)** : bandeau sous les cartes de la fenêtre de départ
   (`DeparturePanel.describe`), textes `weapon.<id>.type` et `weapon.<id>.rumor`, repris dans les Archives (fiche
   d'arme en 9 px pour tenir) ; niveau en exposant chez Ptah. Choix de Claude : la rumeur de la Lame de l'Aube suit les
