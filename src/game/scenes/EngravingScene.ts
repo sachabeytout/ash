@@ -8,6 +8,7 @@ import { frieze } from '../ui/frame';
 import { COLORS, FONT_FAMILY } from '../theme';
 import { viewSize } from '../view';
 import { markScene } from './markScene';
+import { onTap } from '../ui/tap';
 
 export interface EngravingSceneData {
   /** Nom de l'arme (déjà traduit). */
@@ -151,14 +152,14 @@ export class EngravingScene extends Phaser.Scene {
     for (let size = 10; desc.y + desc.height > y + h - 10 && size >= 8; size--)
       desc.setFontSize(scaledFontSize(size, settings.textSize) ?? size);
     text(y + h + 4, `${i + 1}`, 10, COLORS.textDim);
-    this.add
+    const zone = this.add
       .zone(cx, y + h / 2, w, h)
       .setInteractive({ useHandCursor: true })
       .on('pointerover', () => {
         this.focus = i;
         this.redraw();
-      })
-      .on('pointerup', () => this.pick(i));
+      });
+    onTap(zone, () => this.pick(i));
   }
 
   private redraw(): void {

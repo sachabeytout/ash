@@ -11,6 +11,7 @@ import { sfx } from '../audio/sfx';
 import { drawEmberIcon, drawGodIcon } from '../icons';
 import { COLORS, FONT_FAMILY } from '../theme';
 import { viewSize } from '../view';
+import { onTap } from '../ui/tap';
 
 export interface BoonSceneData {
   god: GodId;
@@ -368,7 +369,7 @@ export class BoonScene extends Phaser.Scene {
       this.focus = index;
       this.redraw();
     });
-    zone.on('pointerup', () => this.pick(index));
+    onTap(zone, () => this.pick(index));
   }
 
   private pick(index: number): void {

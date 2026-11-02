@@ -7,6 +7,7 @@ import { AMON_COLOR, drawAmonEye, drawGodIcon } from '../icons';
 import { COLORS, FONT_FAMILY } from '../theme';
 import { viewSize } from '../view';
 import { markScene } from './markScene';
+import { onTap } from '../ui/tap';
 
 export interface AmonSceneData {
   gods: readonly GodId[];
@@ -99,7 +100,7 @@ export class AmonScene extends Phaser.Scene {
       const zone = this.add.zone(x, cardY, cardW, cardH).setInteractive({ useHandCursor: true });
       zone.on('pointerover', () => draw(true));
       zone.on('pointerout', () => draw(false));
-      zone.on('pointerup', () => this.pick(id));
+      onTap(zone, () => this.pick(id));
     });
 
     setTimeout(() => window.addEventListener('keydown', this.onKey), 0);

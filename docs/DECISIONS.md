@@ -200,6 +200,12 @@ prennent plus seules à partir de cette date.
   mécaniques de tir (`bounces`, `split`, `explodeEnd`, `hover`) dans `PlayerShots`. Sauvegarde v23. Inspiration de
   fonctionnement : marteau de Hadès, runes de Diablo III, Dead Cells ; contenu original.
 
+- **0.80.0 — Toucher fiable dans les menus (02/11, point 4 : A)** : `onTap` (`src/game/ui/tap.ts`) ne déclenche une
+  action que si le même doigt s'est posé puis levé sur l'objet ; appliqué aux dons, gravures, Ratatosk, Amon, boutons
+  communs (`makeButton`, salles d'évènement, boutons de la Cage) et pause. Choix de Claude : glisser hors de l'objet
+  annule ; les fenêtres de la Cage (Thot, Ptah, départ…) ne sont pas concernées pour l'instant (elles s'ouvrent par un
+  toucher déjà levé).
+
 - **0.79.0 — Refonte du Disque solaire (02/11, point 3 : B, Super c, bonus de rattrapage supprimé, gravures validées)** :
   combo en main (`DISC_CUT`, `DISC_SPIN`), lancer `recallable` à 4 rebonds qui revient seul (`PlayerShots.beginReturn`)
   ou au rappel (`recall`, rappuyer sur l'attaque spéciale), coup de poing (`WeaponDef.unarmed`) pendant le vol,

@@ -8,6 +8,7 @@ import { sfx } from '../audio/sfx';
 import { COLORS, FONT_FAMILY } from '../theme';
 import { markScene } from './markScene';
 import { viewSize } from '../view';
+import { onTap } from '../ui/tap';
 
 export interface ShopSceneData {
   run: RunState;
@@ -93,10 +94,9 @@ export class ShopScene extends Phaser.Scene {
         color: COLORS.text,
       })
       .setOrigin(0.5);
-    this.add
-      .zone(cx, by, 180, 42)
-      .setInteractive({ useHandCursor: true })
-      .on('pointerup', () => this.leave());
+    onTap(this.add.zone(cx, by, 180, 42).setInteractive({ useHandCursor: true }), () =>
+      this.leave(),
+    );
 
     setTimeout(() => window.addEventListener('keydown', this.onKey), 0);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () =>
@@ -144,10 +144,9 @@ export class ShopScene extends Phaser.Scene {
     text(by - 7, label, 10, affordable ? COLORS.text : COLORS.textDim, affordable);
     text(y + h + 4, `${i + 1}`, 10, COLORS.textDim);
     if (affordable) {
-      this.add
-        .zone(cx, y + h / 2, w, h)
-        .setInteractive({ useHandCursor: true })
-        .on('pointerup', () => this.buy(item));
+      onTap(this.add.zone(cx, y + h / 2, w, h).setInteractive({ useHandCursor: true }), () =>
+        this.buy(item),
+      );
     }
   }
 

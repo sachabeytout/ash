@@ -2,6 +2,21 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.80.0 — Plus de choix par erreur avec le joystick
+
+Ton retour du 02/11, point 4 (option A) : quand un choix de don s'ouvrait pendant que ton pouce était sur le joystick,
+lever le pouce choisissait la carte de gauche.
+
+- Maintenant, une carte ou un bouton ne réagit que si ton doigt s'est **posé dessus après l'ouverture du menu**, puis
+  s'est levé dessus. Le pouce qui tenait le joystick est ignoré.
+- Tu peux choisir avec le pouce droit pendant que le gauche reste sur le joystick.
+- Glisser le doigt hors d'une carte annule le toucher.
+- C'est valable pour tous les menus qui s'ouvrent pendant la run : dons, gravures de Ptah, comptoir de Ratatosk, choix
+  d'Amon, salles d'évènement, et le menu pause. Le clavier et la manette ne changent pas.
+
+**Quoi tester** : marche vers un don en gardant le pouce sur le joystick, puis lève-le quand les cartes apparaissent.
+Rien ne doit être choisi ; un toucher sur une carte doit la prendre normalement.
+
 ## 0.79.1 — Le disque garde la marche
 
 Ta demande sur le point 3 : avec le **Disque solaire**, Ash continue de marcher à environ 60 % de sa vitesse pendant

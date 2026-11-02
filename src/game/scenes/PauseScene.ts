@@ -9,6 +9,7 @@ import { OptionsPanel } from '../ui/OptionsPanel';
 import { COLORS, FONT_FAMILY } from '../theme';
 import { markScene } from './markScene';
 import { viewSize } from '../view';
+import { onTap as tap } from '../ui/tap';
 
 export interface PauseSceneData {
   run: RunState;
@@ -114,10 +115,7 @@ export class PauseScene extends Phaser.Scene {
           color: COLORS.text,
         })
         .setOrigin(0.5);
-      this.add
-        .zone(cx, y, w, h + 8)
-        .setInteractive({ useHandCursor: true })
-        .on('pointerup', onTap);
+      tap(this.add.zone(cx, y, w, h + 8).setInteractive({ useHandCursor: true }), onTap);
       return txt;
     };
     const mid = height / 2 + 6;

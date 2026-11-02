@@ -34,6 +34,8 @@ par-dessus ; cartes face cachée puis retournées : `BoonScene.revealCard`). Mor
   `stun`, `onExecute`, `zapBurn` (foudre).
 - Brûlure / givre / gel : `src/data/status.ts` + `src/core/combat/status.ts`.
 - Tirage des dons et profil de combat : `src/core/boons/boons.ts` ; effets en jeu : `RunScene` (section « Dons »).
+- Toucher fiable (0.80.0) : `onTap` dans `src/game/ui/tap.ts` (doigt posé puis levé sur l'objet) pour les menus de
+  choix et `makeButton` ; test `tests/unit/tap.test.ts`.
 - Disque solaire (0.79.0) : données `WEAPONS.disc` (`unarmed`, `dashPower`, lancer `recallable`) ; un seul disque :
   `PlayerShots.thrownOut` / `recall` / `beginReturn` / `catchRecallable`, coup de poing et rappel dans
   `Player.startAttack`, Super `RunScene.eclipseFx`. Tests `tests/unit/disc.test.ts`.

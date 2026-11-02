@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { COLORS, FONT_FAMILY } from '../theme';
 import { drawCartouche } from './frame';
+import { onTap } from './tap';
 
 export interface ButtonOptions {
   x: number;
@@ -47,7 +48,7 @@ export function makeButton(scene: Phaser.Scene, o: ButtonOptions): Button {
   const zone = scene.add.zone(o.x, o.y, o.w, o.h).setInteractive({ useHandCursor: true });
   zone.on('pointerover', () => draw(true));
   zone.on('pointerout', () => draw(false));
-  zone.on('pointerup', () => o.onTap());
+  onTap(zone, () => o.onTap());
   return {
     setLabel(text, subText) {
       label.setText(text).setY(subText ? o.y - 7 : o.y);
