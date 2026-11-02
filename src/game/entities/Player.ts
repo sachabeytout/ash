@@ -271,7 +271,7 @@ export class Player {
         if (next) this.startSuperStep(now, superIndex + 1, next);
         else this.state = { kind: 'free' };
       }
-      if (this.state.kind === 'attack') this.updateAttackMotion(now);
+      if (this.state.kind === 'attack') this.updateAttackMotion(now, controls);
     } else if (this.state.kind === 'attack') {
       const st = this.state;
       const elapsed = now - st.startedAt;
@@ -294,7 +294,7 @@ export class Player {
           this.state = { kind: 'free' };
         }
       }
-      if (this.state.kind === 'attack') this.updateAttackMotion(now);
+      if (this.state.kind === 'attack') this.updateAttackMotion(now, controls);
     }
 
     if (this.state.kind === 'free') {
@@ -480,13 +480,22 @@ export class Player {
     this.onDash();
   }
 
-  private updateAttackMotion(now: number): void {
+  private updateAttackMotion(now: number, controls: Controls): void {
     if (this.state.kind !== 'attack') return;
     const { step, startedAt } = this.state;
     const phase = phaseAt(step, now - startedAt);
-    if (phase === 'active') {
+    // Armes à distance : on continue de marcher pendant l'attaque normale (retour F14).
+    const walk =
+      !this.state.power && this.state.superIndex === null ? this.weapon.walkWhileAttacking : 0;
+    if (phase === 'active' && step.lunge > 0) {
       const speed = step.lunge / (step.activeMs / 1000);
       this.velocity = { x: Math.cos(this.facing) * speed, y: Math.sin(this.facing) * speed };
+    } else if (walk) {
+      const m = controls.move;
+      const speed = PLAYER.speed * this.speedMul * walk;
+      this.velocity = { x: m.x * speed, y: m.y * speed };
+    } else if (phase === 'active') {
+      this.velocity = { x: 0, y: 0 };
     } else {
       this.velocity = { x: this.velocity.x * 0.7, y: this.velocity.y * 0.7 };
     }

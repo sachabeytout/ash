@@ -2,6 +2,18 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.75.0 — Marcher en tirant
+
+Ton retour n° 14 (option B) : avec les **armes à distance**, Ash ne s'arrête plus pour attaquer.
+
+- **Sceptre ouas**, **Arc du désert** et **Disque de Râ** : pendant l'attaque normale, Ash continue de marcher à
+  environ 60 % de sa vitesse. Il vise toujours l'ennemi le plus proche.
+- L'attaque spéciale, la Percée, le Tourbillon et le Super ne changent pas : Ash reste en place pour les placer.
+- Les armes de corps à corps gardent leur petit bond en avant à chaque coup.
+
+**Quoi tester** : avec le Sceptre, garde le doigt sur le déplacement et attaque en continu. Te sens-tu plus libre ? La
+vitesse (60 %) te paraît-elle juste ?
+
 ## 0.74.0 — Percée et Tourbillon
 
 Ton retour n° 13 : les coups d'élan ont des noms plus courts et plus parlants, les mêmes pour toutes les armes.

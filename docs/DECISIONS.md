@@ -194,6 +194,10 @@ Format : date — décision — raison — validée par l'utilisateur (oui / non
   mécaniques de tir (`bounces`, `split`, `explodeEnd`, `hover`) dans `PlayerShots`. Sauvegarde v23. Inspiration de
   fonctionnement : marteau de Hadès, runes de Diablo III, Dead Cells ; contenu original.
 
+- **0.75.0 — Marcher en attaquant (retour F14 : B)** : `WeaponDef.walkWhileAttacking` (0,6) pour le Sceptre, l'Arc
+  et le Disque, appliqué dans `Player.updateAttackMotion` à l'attaque normale seulement (pas la spéciale, ni le Super ;
+  la Percée garde son bond). Choix de Claude : 60 % de la vitesse.
+
 - **0.74.0 — Percée et Tourbillon (retour F13 : C, paire 10)** : un seul nom pour toutes les armes, partout (combat,
   gravures, Thot, Ptah). Identifiants internes inchangés (`strike.*`, `dashAttack`, `dashPower`). Choix de Claude : en
   anglais « Lunge » et « Whirlwind ».

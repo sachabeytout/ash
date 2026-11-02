@@ -22,6 +22,11 @@ export interface WeaponDef {
   combo: readonly AttackStep[];
   /** Temps laissé après un coup pour enchaîner le suivant. */
   comboWindowMs: number;
+  /**
+   * Armes à distance (retour F14) : Ash continue de marcher pendant l'attaque normale, à cette part de
+   * sa vitesse. Absent = Ash s'arrête pour frapper (corps à corps, attaque spéciale, Super).
+   */
+  walkWhileAttacking?: number;
   power: AttackStep;
   /** Super : suite de coups joués d'un trait, Ash est invincible pendant toute la durée. */
   superNameKey: string;
@@ -41,6 +46,9 @@ const STORM_SPIN: AttackStep = {
   hitstopMs: 18,
   shake: 0,
 };
+
+/** Vitesse de marche pendant l'attaque normale des armes à distance (retour F14). */
+const RANGED_WALK = 0.6;
 
 /** Coup « à distance » : pas de zone de frappe, le projectile ou la zone fait les dégâts. */
 function ranged(
@@ -282,6 +290,7 @@ export const WEAPONS: Record<WeaponId, WeaponDef> = {
   staff: {
     id: 'staff',
     nameKey: 'weapon.staff',
+    walkWhileAttacking: RANGED_WALK,
     color: 0xffd27a,
     comboWindowMs: 260,
     combo: [
@@ -322,6 +331,7 @@ export const WEAPONS: Record<WeaponId, WeaponDef> = {
   crossbow: {
     id: 'crossbow',
     nameKey: 'weapon.crossbow',
+    walkWhileAttacking: RANGED_WALK,
     color: 0xff9f6a,
     comboWindowMs: 220,
     combo: [
@@ -347,6 +357,7 @@ export const WEAPONS: Record<WeaponId, WeaponDef> = {
   disc: {
     id: 'disc',
     nameKey: 'weapon.disc',
+    walkWhileAttacking: RANGED_WALK,
     color: 0xffe08a,
     comboWindowMs: 260,
     combo: [ranged({ windupMs: 80, activeMs: 40, recoveryMs: 260 }, { projectile: DISC })],
