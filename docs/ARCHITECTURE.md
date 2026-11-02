@@ -117,7 +117,9 @@ par-dessus ; cartes face cachée puis retournées : `BoonScene.revealCard`). Mor
   Sauvegarde v18 : fiche et variante de Fenrir → Shezmu. Ordre des mondes (v19) : Héliopolis, Nil, Pyramide aux cages (ex-Volière, `aviary`), Douât
   (`douat`, boss Apophis) ; la run en cours garde son monde (indices 2 ↔ 3 échangés).
 - Marchand : articles dans `src/data/shop.ts`, achat dans `src/core/shop.ts`, écran `src/game/scenes/ShopScene.ts`.
-- Forge de Brokk : paliers dans `src/data/forge.ts`, logique `src/core/forge.ts`, fenêtre `src/game/ui/ForgePanel.ts` ;
+- Forge de Brokk (Ptah) : 10 paliers par arme dans `src/data/forge.ts` (6 à 10 propres à l'arme, `tiers`), logique
+  `src/core/forge.ts` (`weaponBonuses` → `WeaponBonuses`, dont `attackMod` / `powerMod` appliqués dans
+  `Player.startAttack` avec la gravure ; soin à la victime, parade, dash dans `RunScene`), fenêtre `src/game/ui/ForgePanel.ts` ;
   le niveau est figé dans la run (`weaponLevel`) et appliqué par `RunScene.weaponMultiplier`.
 - Bénédiction du Bennu (ex-Phénix) : `src/core/assist.ts` (réglage `assist`, compteur `meta.assistDeaths`).
 - Sauvegarde **v2** (forge, assistance) : migration 1 → 2 dans `src/core/save/migrations.ts`.

@@ -13,6 +13,7 @@ import {
 import { migrate } from '../../src/core/save/migrations';
 import { SAVE_VERSION, defaultMeta } from '../../src/core/save/schema';
 import { FORGE, UNLOCK_COST } from '../../src/data/forge';
+import { applyEngraving, mergeStepMods } from '../../src/core/combat/engraving';
 import { WEAPON_ORDER, WEAPONS } from '../../src/data/weapons';
 import { allDictionaries } from '../../src/i18n';
 
@@ -51,7 +52,7 @@ describe('forge de Brokk', () => {
   it('les bonus se cumulent', () => {
     expect(weaponBonuses('katana', 0).damage).toBe(0);
     const b = weaponBonuses('katana', FORGE.katana.length);
-    expect(b.damage).toBeCloseTo(0.16);
+    expect(b.damage).toBeCloseTo(0.24);
     expect(b.powerDamage).toBeGreaterThan(0);
     expect(b.superGain).toBeGreaterThan(0);
   });
@@ -140,5 +141,60 @@ describe('râtelier de la Cage (0.30.0)', () => {
     const save = migrate({ version: 12, meta: { xp: 3 }, settings: {}, run: null });
     expect(save.meta.selectedWeapon).toBe('katana');
     expect(save.meta.xp).toBe(3);
+  });
+});
+
+describe('forge de Ptah, niveaux 6 à 10 (retour F12)', () => {
+  it('10 niveaux par arme, prix 2 à 16, chaque palier a son texte', () => {
+    for (const id of WEAPON_ORDER) {
+      expect(
+        FORGE[id].map((l) => l.cost),
+        id,
+      ).toEqual([2, 3, 4, 6, 8, 9, 10, 12, 14, 16]);
+      for (const l of FORGE[id])
+        for (const dict of Object.values(allDictionaries))
+          expect(dict[l.descKey], l.descKey).toBeDefined();
+    }
+  });
+
+  it('les niveaux propres à chaque arme arrivent dans les bonus', () => {
+    const katana = weaponBonuses('katana', 10);
+    expect(katana.strikeDamage).toBeCloseTo(0.25);
+    expect(katana.killHeal).toBe(1);
+    expect(katana.attackMod?.rangeAdd).toBe(5);
+    expect(katana.attackMod?.finisher?.damageMul).toBeCloseTo(1.3);
+    expect(katana.powerMod?.finisher).toBeUndefined();
+    expect(weaponBonuses('katana', 7).killHeal).toBe(0);
+    expect(weaponBonuses('twinBlades', 10).dashCooldown).toBeCloseTo(0.15);
+    expect(weaponBonuses('twinBlades', 10).attackMod?.fx?.crit).toBeCloseTo(0.08);
+    expect(weaponBonuses('crossbow', 10).doubleShot).toBe(4);
+    expect(weaponBonuses('crossbow', 10).powerDamage).toBeCloseTo(0.45);
+    expect(weaponBonuses('dawnblade', 10).parrySuper).toBeCloseTo(0.1);
+    expect(weaponBonuses('dawnblade', 10).powerMod?.activeMul).toBeCloseTo(1.25);
+  });
+
+  it('forge et gravure se cumulent sur le même coup', () => {
+    const merged = mergeStepMods(
+      { rangeAdd: 5, tempoMul: 0.9, projectile: { rangeMul: 1.2 }, fx: { crit: 0.08 } },
+      {
+        rangeAdd: 4,
+        tempoMul: 0.8,
+        projectile: { rangeMul: 1.5, pierceAdd: 1 },
+        fx: { crit: 0.1 },
+      },
+    );
+    expect(merged?.rangeAdd).toBe(9);
+    expect(merged?.tempoMul).toBeCloseTo(0.72);
+    expect(merged?.projectile?.rangeMul).toBeCloseTo(1.8);
+    expect(merged?.projectile?.pierceAdd).toBe(1);
+    expect(merged?.fx?.crit).toBeCloseTo(0.18);
+    expect(mergeStepMods(undefined, { rangeAdd: 1 })).toEqual({ rangeAdd: 1 });
+  });
+
+  it('une phase active plus longue rend la parade plus facile', () => {
+    const step = WEAPONS.dawnblade.power;
+    expect(applyEngraving(step, { activeMul: 1.25 }).activeMs).toBe(
+      Math.round(step.activeMs * 1.25),
+    );
   });
 });

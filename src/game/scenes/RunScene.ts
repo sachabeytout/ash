@@ -1903,12 +1903,22 @@ export class RunScene extends Phaser.Scene {
   /** Les dons du profil qui changent Ash lui-même (Bastet : vitesse, dash). */
   private applyProfile(): void {
     this.player.speedMul = 1 + this.profile.speed;
-    this.player.strikeBonus = this.run.perks.strikeDamage;
+    // Élan : Thot (« Élan du faucon ») + forge de Ptah (niveau 9).
+    this.player.strikeBonus = this.run.perks.strikeDamage + this.forge.strikeDamage;
     this.player.dashGuardMs = this.profile.dashGuardMs;
     this.player.dashCooldownMul = Math.max(
       0.3,
-      1 - (this.profile.on.dash.dashCooldown ?? 0) - this.run.perks.dashCooldown,
+      1 -
+        (this.profile.on.dash.dashCooldown ?? 0) -
+        this.run.perks.dashCooldown -
+        this.forge.dashCooldown,
     );
+    // Forge de Ptah, niveaux 6 à 10 : coups changés, tir double (retour F12).
+    this.player.forgeMods = {
+      ...(this.forge.attackMod ? { attack: this.forge.attackMod } : {}),
+      ...(this.forge.powerMod ? { power: this.forge.powerMod } : {}),
+    };
+    this.player.doubleShotEvery = this.forge.doubleShot;
     // La traînée de l'attaque prend la couleur du dieu qui la bénit.
     const god = slotGod(this.run.boons, 'attack');
     this.player.boonColor = god ? GODS[god].color : null;
@@ -2675,6 +2685,10 @@ export class RunScene extends Phaser.Scene {
     const reflect =
       this.player.state.kind === 'attack' ? this.player.state.mod?.reflect : undefined;
     this.player.parried(this.sim);
+    // Forge (Lame de l'Aube, niveaux 8 et 10) : la parade soigne et remplit la jauge de Super.
+    if (this.forge.parryHeal > 0) this.healPlayer(this.forge.parryHeal);
+    if (this.forge.parrySuper > 0)
+      this.run.superGauge = Math.min(1, this.run.superGauge + this.forge.parrySuper);
     // Gravure « Miroir du soleil » : la parade détruit aussi les tirs ennemis proches.
     if (reflect) this.deflectShots(this.player, reflect);
     sfx.block();
@@ -2709,6 +2723,8 @@ export class RunScene extends Phaser.Scene {
     }
     if (!(e instanceof Enemy)) return;
     recordKill(this.run);
+    // Forge (Khépesh, niveau 10) : chaque ennemi vaincu rend des PV.
+    if (this.forge.killHeal > 0) this.healPlayer(this.forge.killHeal);
     this.onAmonEvent({ type: 'kill', at: this.sim, power: this.hitKind === 'power' });
     if (e.affix) {
       this.run.shards += AFFIX_BOUNTY;

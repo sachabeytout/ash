@@ -1,6 +1,7 @@
 import { FORGE, STARTING_WEAPONS, UNLOCK_COST, type ForgeLevel } from '../data/forge';
 import { DAWNBLADE_VICTORIES } from '../data/story';
 import type { WeaponId } from '../data/weapons';
+import { mergeStepMods, type StepMod } from './combat/engraving';
 import type { MetaState } from './save/schema';
 
 export interface WeaponBonuses {
@@ -8,6 +9,19 @@ export interface WeaponBonuses {
   powerDamage: number;
   superGain: number;
   superDamage: number;
+  /** Frappes et tourbillons d'élan (niveau 9). */
+  strikeDamage: number;
+  /** PV rendus par ennemi vaincu. */
+  killHeal: number;
+  /** Recharge du dash plus rapide (fraction). */
+  dashCooldown: number;
+  /** Un tir d'attaque sur n part en double (0 = jamais). */
+  doubleShot: number;
+  parryHeal: number;
+  parrySuper: number;
+  /** Changements de coups (niveaux 6 à 10), par action. */
+  attackMod?: StepMod;
+  powerMod?: StepMod;
 }
 
 export const NO_WEAPON_BONUS: WeaponBonuses = {
@@ -15,6 +29,12 @@ export const NO_WEAPON_BONUS: WeaponBonuses = {
   powerDamage: 0,
   superGain: 0,
   superDamage: 0,
+  strikeDamage: 0,
+  killHeal: 0,
+  dashCooldown: 0,
+  doubleShot: 0,
+  parryHeal: 0,
+  parrySuper: 0,
 };
 
 export function forgeLevel(meta: MetaState, weapon: WeaponId): number {
@@ -64,7 +84,18 @@ export function unlockWeapon(meta: MetaState, weapon: WeaponId): boolean {
 
 /** Bonus cumulés des niveaux de forge atteints. */
 export function weaponBonuses(weapon: WeaponId, level: number): WeaponBonuses {
-  const total = { ...NO_WEAPON_BONUS };
-  FORGE[weapon].slice(0, level).forEach((l) => (total[l.effect.type] += l.effect.value));
+  const total: WeaponBonuses = { ...NO_WEAPON_BONUS };
+  for (const { effect } of FORGE[weapon].slice(0, level)) {
+    if (effect.type === 'mod') {
+      if (effect.slot !== 'power')
+        total.attackMod = mergeStepMods(total.attackMod, effect.mod) ?? effect.mod;
+      if (effect.slot !== 'attack')
+        total.powerMod = mergeStepMods(total.powerMod, effect.mod) ?? effect.mod;
+    } else if (effect.type === 'doubleShot') {
+      total.doubleShot = effect.value;
+    } else {
+      total[effect.type] += effect.value;
+    }
+  }
   return total;
 }

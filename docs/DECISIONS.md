@@ -194,6 +194,12 @@ Format : date — décision — raison — validée par l'utilisateur (oui / non
   mécaniques de tir (`bounces`, `split`, `explodeEnd`, `hover`) dans `PlayerShots`. Sauvegarde v23. Inspiration de
   fonctionnement : marteau de Hadès, runes de Diablo III, Dead Cells ; contenu original.
 
+- **0.73.0 — Forge de Ptah, niveaux 6 à 10 (retour F12, option 1)** : 7 = +8 % de dégâts, 9 = élan +25 %, 6/8/10
+  propres à l'arme (tableau validé). Coûts 9/10/12/14/16. Les bonus de coups passent par le même mécanisme que les
+  gravures (`StepMod`, réunis par `mergeStepMods`, nouveau champ `activeMul` pour la parade). Choix de Claude : les
+  valeurs exactes ; Disque de Râ niveau 10 = disque plus grand au lieu de « traverse un ennemi de plus » (il les traverse
+  déjà tous) ; les bonus « toutes actions » valent aussi pour les coups d'élan.
+
 - **0.72.0 — Améliorations plus chères et plus nombreuses (retour F12 : B, 1re partie)** : forge 2/3/4/6/8 (avant
   1 à 5), déblocage 8/8/12/12 (avant 3/3/5/5), Thot ×1,5 et des niveaux en plus (arbre complet ≈ 12 400 Papyrus, cible
   60 à 80 runs). Niveaux déjà achetés conservés (rien à migrer : la sauvegarde garde des niveaux, pas des prix). Choix de

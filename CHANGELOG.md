@@ -2,6 +2,29 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.73.0 — Ptah : les niveaux 6 à 10
+
+Ton retour n° 12, 2e partie (option 1) : chaque arme a maintenant **10 niveaux** chez Ptah. Les niveaux 6 à 10 coûtent
+9, 10, 12, 14 et 16 pièces.
+
+- **Communs à toutes les armes** : niveau 7 = +8 % de dégâts ; niveau 9 = frappes et tourbillons d'élan +25 %.
+- **Propres à chaque arme** (niveaux 6, 8 et 10) :
+  - **Khépesh** : +15 % de portée ; le dernier coup du combo fait +30 % ; chaque ennemi vaincu rend 1 PV.
+  - **Dagues** : attaques 10 % plus rapides ; 8 % de coups critiques ; le dash se recharge 15 % plus vite.
+  - **Sceptre ouas** : orbes 20 % plus loin ; zone de l'attaque spéciale 20 % plus grande ; les orbes traversent un
+    ennemi de plus.
+  - **Arc du désert** : flèches plus rapides et +10 % de portée ; flèche chargée +25 % ; une flèche sur quatre part en
+    double.
+  - **Disque de Râ** : va et revient 20 % plus vite ; enflamme un peu les ennemis ; **disque plus grand** qui touche plus
+    facilement (changé : le disque traversait déjà tous les ennemis, « un ennemi de plus » n'aurait rien changé).
+  - **Chaîne de Shezmu** : +15 % de portée ; le grappin étourdit 0,5 s ; le fouet frappe en arc plus large.
+  - **Lame de l'Aube** : parade plus facile ; une parade réussie rend 3 PV ; une parade réussie remplit 10 % de la
+    jauge de Super.
+- Les bonus de Ptah s'additionnent aux gravures de la run.
+
+**Quoi tester** : forge ton arme préférée au-delà du niveau 5. Sens-tu la différence en combat ? Un bonus te paraît-il
+trop faible ou trop fort ?
+
 ## 0.72.0 — Des améliorations plus chères et plus nombreuses (1re partie)
 
 Ton retour n° 12 (option B) : on finissait presque tout en une dizaine de runs. Première partie : les prix et les

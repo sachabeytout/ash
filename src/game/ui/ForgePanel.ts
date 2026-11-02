@@ -17,7 +17,10 @@ import { COLORS, FONT_FAMILY } from '../theme';
 const BROKK = 0xffe08a;
 
 function effectText(descKey: string, effect: ForgeEffect): string {
-  return t(descKey as TextKey, { value: Math.round(effect.value * 100) });
+  // Fractions en % (dégâts, jauge) ; nombres entiers tels quels (PV, un tir sur n).
+  if (!('value' in effect)) return t(descKey as TextKey);
+  const v = effect.value;
+  return t(descKey as TextKey, { value: v < 1 ? Math.round(v * 100) : v });
 }
 
 /** Forge de Ptah : une ligne par arme, niveau, prochain effet, bouton « Forger ». */

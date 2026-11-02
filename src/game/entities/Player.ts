@@ -13,7 +13,12 @@ import type { Controls } from '../input/Controls';
 import { bodyOf } from '../physics';
 import { addFlameHair } from '../fx/flameHair';
 import { superTarget } from '../../core/combat/superAim';
-import { applyEngraving, type EngravingSlot, type StepMod } from '../../core/combat/engraving';
+import {
+  applyEngraving,
+  mergeStepMods,
+  type EngravingSlot,
+  type StepMod,
+} from '../../core/combat/engraving';
 import { QUALITY_PARTICLES, settings } from '../../core/settings';
 
 export interface ActiveSwing {
@@ -66,6 +71,11 @@ export class Player {
   strikeBonus = 0;
   /** Gravures de Ptah, par action (retour F8). */
   engravings: Partial<Record<EngravingSlot, StepMod>> = {};
+  /** Forge de Ptah, niveaux 6 à 10 (retour F12) : changements des coups, attaque et attaque spéciale. */
+  forgeMods: { attack?: StepMod; power?: StepMod } = {};
+  /** Forge (Arc du désert) : un tir d'attaque sur n part en double (0 = jamais). */
+  doubleShotEvery = 0;
+  private attackShots = 0;
   /** Gravure : attirer les ennemis proches (rayon) au début du coup. */
   onPull: (radius: number) => void = () => undefined;
   private lastAttack: { index: number; startedAt: number } | null = null;
@@ -350,7 +360,13 @@ export class Player {
       : power
         ? 'power'
         : 'attack';
-    const mod = this.engravings[slot];
+    // Forge de Ptah puis gravure de l'action : les deux s'additionnent.
+    let mod = mergeStepMods(this.forgeMods[power ? 'power' : 'attack'], this.engravings[slot]);
+    if (!power && this.doubleShotEvery > 0 && base.projectile) {
+      this.attackShots += 1;
+      if (this.attackShots % this.doubleShotEvery === 0)
+        mod = mergeStepMods(mod, { projectile: { countAdd: 1, spreadAdd: 8 } });
+    }
     const comboLength = this.weapon.combo.length;
     const strikeStep = strike
       ? applyEngraving(dashStrikeStep(base, power), { damageMul: 1 + this.strikeBonus })
