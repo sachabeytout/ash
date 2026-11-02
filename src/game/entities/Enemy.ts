@@ -91,6 +91,11 @@ export class Enemy {
     this.deactivate();
   }
 
+  /** Salle sombre : l'aperçu de ses attaques passe au-dessus de l'obscurité (jamais de coup caché). */
+  setTelegraphDepth(depth: number): void {
+    this.telegraph.setDepth(depth);
+  }
+
   get alive(): boolean {
     return this.state !== 'dead';
   }

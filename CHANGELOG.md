@@ -2,6 +2,20 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.81.0 — Des salles vraiment sombres
+
+Ton retour du 02/11, point 5 (option A) : dans les salles sombres, on voyait les ennemis comme en plein jour.
+
+- Hors du halo de lumière d'Ash, les ennemis sont maintenant **cachés par l'obscurité** : on ne voit que **deux yeux
+  pâles qui brillent** à leur place. Dans le halo, on les voit normalement.
+- Le halo est un peu plus petit qu'avant, pour que l'obscurité se sente.
+- **Leurs attaques restent visibles partout** (l'aperçu rouge, le « ! » et les tirs) : tu vois toujours venir un coup.
+- Les effets visibles sur les ennemis (brûlure, gel…) sont aussi cachés hors du halo.
+- Le halo suit Ash sans décalage, même en courant.
+
+**Quoi tester** : dans une salle sombre (bandeau « Salle sombre »), éloigne-toi des ennemis. Vois-tu leurs yeux dans le
+noir ? Arrives-tu toujours à voir venir leurs attaques ?
+
 ## 0.80.0 — Plus de choix par erreur avec le joystick
 
 Ton retour du 02/11, point 4 (option A) : quand un choix de don s'ouvrait pendant que ton pouce était sur le joystick,

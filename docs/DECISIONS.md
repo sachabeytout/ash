@@ -200,6 +200,11 @@ prennent plus seules à partir de cette date.
   mécaniques de tir (`bounces`, `split`, `explodeEnd`, `hover`) dans `PlayerShots`. Sauvegarde v23. Inspiration de
   fonctionnement : marteau de Hadès, runes de Diablo III, Dead Cells ; contenu original.
 
+- **0.81.0 — Salles sombres (02/11, point 5 : A)** : l'obscurité passe au-dessus des ennemis (profondeur 9,3) ; les
+  attaques ennemies (aperçu `Enemy.setTelegraphDepth`, « ! », tirs) restent au-dessus ; yeux pâles hors du halo
+  (`RunScene.updateDarkness`, après la physique). Choix de Claude (réglages `DARK`) : halo plus petit (clair à 30 px, noir
+  à 135 px au lieu de 210), yeux de 85 à 125 px, couleur crème (le rouge reste réservé aux dangers).
+
 - **0.80.0 — Toucher fiable dans les menus (02/11, point 4 : A)** : `onTap` (`src/game/ui/tap.ts`) ne déclenche une
   action que si le même doigt s'est posé puis levé sur l'objet ; appliqué aux dons, gravures, Ratatosk, Amon, boutons
   communs (`makeButton`, salles d'évènement, boutons de la Cage) et pause. Choix de Claude : glisser hors de l'objet

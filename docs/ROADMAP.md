@@ -117,6 +117,7 @@ Retour sur le lore v0.2 toujours attendu (« quand le fond aura avancé »).
 - [x] **0.59.0** : 8 duos tirés de la mythologie (16 duos, 99 dons au total)
 - [x] **0.60.0** : retour F1, Ash immobile pendant les menus (+ 0,5 s d'invincibilité)
 - [x] **0.72.0** : retour F12 (1re partie), prix de Ptah et de Thot relevés, 13 compétences de Thot avec 1 ou 2 niveaux de plus
+- [x] **0.81.0** : retours du 02/11, point 5 : salles sombres, ennemis cachés hors du halo (yeux qui brillent)
 - [x] **0.80.0** : retours du 02/11, point 4 : toucher fiable dans les menus (le doigt du joystick ne choisit plus)
 - [x] **0.79.1** : le Disque solaire garde la marche à 60 %
 - [x] **0.79.0** : retours du 02/11, point 3 : refonte du Disque solaire (un seul disque, rappel, Super Éclipse)

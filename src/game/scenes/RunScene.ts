@@ -185,6 +185,22 @@ const KEEP_OUT: readonly KeepOut[] = [
 ];
 /** Zoom de la caméra : Ash fait ~1/13 de la hauteur d'écran, lisible au pouce. */
 const POOL_SIZE = 16;
+/**
+ * Salle sombre : obscurité au-dessus des ennemis (8) et de leurs effets (9), sous les attaques, les
+ * yeux, la traînée du Super (9,5) et Ash (10). Halo clair jusqu'à `haloInner`, noir complet à
+ * `haloOuter` ; yeux visibles à partir de `eyesFrom`, pleinement à `eyesFull` (pixels de salle).
+ */
+const DARK = {
+  scale: 3,
+  depth: 9.3,
+  attacksDepth: 9.35,
+  eyesDepth: 9.4,
+  haloInner: 30,
+  haloOuter: 135,
+  eyesFrom: 85,
+  eyesFull: 125,
+  eyesColor: 0xfff0c0,
+} as const;
 const SPAWN_WARNING_MS = 750;
 const MIN_SPAWN_DISTANCE = 110;
 
@@ -364,6 +380,8 @@ export class RunScene extends Phaser.Scene {
   private challenge: ChallengeId | null = null;
   private survival: { startAt: number; nextAt: number } | null = null;
   private darkness: Phaser.GameObjects.Image | null = null;
+  /** Salle sombre : les yeux des ennemis qui brillent hors du halo d'Ash. */
+  private darkEyes: Phaser.GameObjects.Graphics | null = null;
   /** Pièges de la salle : trappes à pics et explosifs. */
   private spikeTraps: { rect: Rect; state: SpikeState; g: Phaser.GameObjects.Graphics }[] = [];
   private mines: {
@@ -450,6 +468,7 @@ export class RunScene extends Phaser.Scene {
         : null;
     this.survival = null;
     this.darkness = null;
+    this.darkEyes = null;
     this.cinematicUntil = 0;
     this.heat = heatModifiers(this.run.heat);
     this.fountain = null;
@@ -934,16 +953,27 @@ export class RunScene extends Phaser.Scene {
     );
   }
 
-  /** Salle sombre : un halo autour d'Ash ; les ennemis et leurs attaques restent visibles. */
+  /**
+   * Salle sombre (retours du 02/11, point 5) : l'obscurité passe au-dessus des ennemis ; hors du
+   * halo d'Ash on ne voit que leurs yeux. Leurs attaques (aperçu, « ! », tirs) restent au-dessus de
+   * l'obscurité : on voit toujours venir un coup.
+   */
   private addDarkness(): void {
-    if (!this.textures.exists('darkness')) {
-      const tex = this.textures.createCanvas('darkness', 256, 256);
+    if (!this.textures.exists('darkness2')) {
+      const tex = this.textures.createCanvas('darkness2', 256, 256);
       const ctx = tex?.getContext();
       if (tex && ctx) {
         ctx.fillStyle = 'rgba(4,3,8,0.93)';
         ctx.fillRect(0, 0, 256, 256);
         ctx.globalCompositeOperation = 'destination-out';
-        const grad = ctx.createRadialGradient(128, 128, 10, 128, 128, 70);
+        const grad = ctx.createRadialGradient(
+          128,
+          128,
+          DARK.haloInner / DARK.scale,
+          128,
+          128,
+          DARK.haloOuter / DARK.scale,
+        );
         grad.addColorStop(0, 'rgba(0,0,0,1)');
         grad.addColorStop(1, 'rgba(0,0,0,0)');
         ctx.fillStyle = grad;
@@ -952,13 +982,41 @@ export class RunScene extends Phaser.Scene {
       }
     }
     this.darkness = this.add
-      .image(this.player.x, this.player.y, 'darkness')
-      .setScale(3)
-      .setDepth(6.5);
+      .image(this.player.x, this.player.y, 'darkness2')
+      .setScale(DARK.scale)
+      .setDepth(DARK.depth);
+    for (const e of this.enemies) e.setTelegraphDepth(DARK.attacksDepth);
+    this.darkEyes = this.add.graphics().setDepth(DARK.eyesDepth);
+    // Après le déplacement par la physique : le halo et les yeux restent collés à Ash et aux ennemis.
+    this.events.on(Phaser.Scenes.Events.POST_UPDATE, this.updateDarkness, this);
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () =>
+      this.events.off(Phaser.Scenes.Events.POST_UPDATE, this.updateDarkness, this),
+    );
+  }
+
+  /**
+   * Salle sombre, après le déplacement par la physique : le halo suit Ash, et deux yeux pâles
+   * remplacent chaque ennemi resté dans l'ombre.
+   */
+  private updateDarkness(): void {
+    const g = this.darkEyes;
+    if (!g || !this.darkness) return;
+    this.darkness.setPosition(this.player.x, this.player.y);
+    g.clear();
+    for (const e of this.enemies) {
+      if (!e.alive) continue;
+      const d = Math.hypot(e.x - this.player.x, e.y - this.player.y);
+      const a = Phaser.Math.Clamp((d - DARK.eyesFrom) / (DARK.eyesFull - DARK.eyesFrom), 0, 1);
+      if (a <= 0) continue;
+      const y = e.y - e.radius * 0.3;
+      g.fillStyle(DARK.eyesColor, a * 0.25).fillCircle(e.x, y, 5);
+      g.fillStyle(DARK.eyesColor, a)
+        .fillCircle(e.x - 2.5, y, 1.2)
+        .fillCircle(e.x + 2.5, y, 1.2);
+    }
   }
 
   private updateChallenge(): void {
-    if (this.darkness) this.darkness.setPosition(this.player.x, this.player.y);
     const sv = this.survival;
     if (!sv || this.roomCleared || this.leaving) return;
     if (sv.startAt < 0) sv.startAt = this.sim;
@@ -3053,7 +3111,7 @@ export class RunScene extends Phaser.Scene {
       exclude.push('weaponMod');
     // Salles spéciales : la lumière revient ; toutes offrent des éclats en plus (2 portes, comme partout).
     if (this.darkness) {
-      this.tweens.add({ targets: this.darkness, alpha: 0, duration: 600 });
+      this.tweens.add({ targets: [this.darkness, this.darkEyes], alpha: 0, duration: 600 });
     }
     if (this.challenge) {
       this.run.shards += CHALLENGE_SHARDS;
