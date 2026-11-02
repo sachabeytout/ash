@@ -98,16 +98,20 @@ function blink(
   });
 }
 
-// ---------- Les Bas-Fonds d'Héliopolis : la ville de néon où le soleil ne se lève presque plus ----------
-function lowtown({ scene, floor, wall, arena, rng, spot, topSlots }: DecorContext): void {
-  const neons = [0x7fe7ff, 0xffb02e, 0x7fffc0, 0xb08cff];
-  // Enseignes néon sur le mur du haut : des hiéroglyphes (ânkh, œil, scarabée, plume).
-  topSlots.forEach((x, i) => {
-    const color = neons[(i + rng.int(0, 3)) % neons.length] ?? 0x7fe7ff;
-    const y = arena.top + 9;
-    wall.fillStyle(0x0d0a14, 1).fillRect(x - 12, arena.top + 2, 24, 14);
-    wall.lineStyle(1.5, color, 0.9).strokeRect(x - 12, arena.top + 2, 24, 14);
-    wall.lineStyle(1.5, color, 0.85);
+// ---------- Éléments communs aux salles de temple (retours du 02/11, point 6) ----------
+
+/** Hiéroglyphes peints sur le mur du haut (ânkh, œil, scarabée, plume de Maât). */
+function paintGlyphs(
+  wall: Phaser.GameObjects.Graphics,
+  arena: Phaser.Geom.Rectangle,
+  slots: readonly number[],
+  rng: Rng,
+  paint: readonly number[],
+): void {
+  const y = arena.top - 7;
+  slots.forEach((x, i) => {
+    const color = paint[(i + rng.int(0, 3)) % paint.length] ?? 0xd8b060;
+    wall.lineStyle(1.5, color, 1);
     switch ((i + rng.int(0, 3)) % 4) {
       case 0: // ânkh
         wall.strokeEllipse(x, y - 2, 4, 5).lineBetween(x - 4, y + 1, x + 4, y + 1);
@@ -124,105 +128,107 @@ function lowtown({ scene, floor, wall, arena, rng, spot, topSlots }: DecorContex
       default: // plume de Maât
         wall.lineBetween(x, y - 5, x, y + 5).strokeEllipse(x + 2, y - 1, 4, 8);
     }
-    blink(scene, x, y, color, 1, rng, true);
   });
-  // Tuyaux le long des murs latéraux.
-  for (const x of [arena.left + 5, arena.right - 5]) {
-    wall.lineStyle(3, 0x2a2438, 1).lineBetween(x, arena.top + 30, x, arena.bottom - 30);
-    wall
-      .fillStyle(0x3a3450, 1)
-      .fillRect(x - 3, arena.top + 90, 6, 4)
-      .fillRect(x - 3, arena.top + 200, 6, 4);
+}
+
+/** Colonnes à chapiteau de lotus, à moitié prises dans les murs de côté (vues de dessus). */
+function wallColumns(
+  wall: Phaser.GameObjects.Graphics,
+  arena: Phaser.Geom.Rectangle,
+  c: { stone: number; top: number; ring: number; cap: number },
+): void {
+  for (const x of [arena.left - 2, arena.right + 2]) {
+    for (const cy of [arena.top + 70, arena.bottom - 70]) {
+      wall.fillStyle(0x000000, 0.3).fillCircle(x + 1.5, cy + 2, 9);
+      wall.fillStyle(c.stone, 1).fillCircle(x, cy, 9);
+      wall.fillStyle(c.top, 1).fillCircle(x, cy, 7);
+      wall.lineStyle(1, c.ring, 1).strokeCircle(x, cy, 5);
+      wall.fillStyle(c.cap, 1).fillCircle(x, cy, 2.5);
+    }
   }
-  // Flaques qui reflètent les néons.
-  for (let i = 0; i < 4; i++) {
-    const p = spot();
-    const w = 26 + rng.int(0, 20);
-    floor.fillStyle(0x1a2848, 0.9).fillEllipse(p.x, p.y, w, w * 0.4);
-    floor
-      .fillStyle(neons[i % neons.length] ?? 0x7fe7ff, 0.5)
-      .fillRect(p.x - w * 0.25, p.y - 1, w * 0.4, 1.5);
+}
+
+// ---------- Héliopolis : temple de grès éclairé au feu (retours du 02/11, point 6) ----------
+function lowtown({ scene, floor, wall, arena, rng, spot, topSlots }: DecorContext): void {
+  paintGlyphs(wall, arena, topSlots, rng, [0xd8b060, 0x2a4a8a, 0x3aa89a, 0xc08a3a]);
+  wallColumns(wall, arena, { stone: 0x8a7050, top: 0xa08560, ring: 0x3aa89a, cap: 0xc8a060 });
+  // Palmiers en jarre contre les murs de côté, entre les colonnes (ils ne gênent pas le passage).
+  for (const side of [-1, 1]) {
+    const p = {
+      x: side < 0 ? arena.left + 22 : arena.right - 22,
+      y: arena.centerY + rng.int(-24, 24),
+    };
+    floor.fillStyle(0x000000, 0.3).fillEllipse(p.x + 2, p.y + 3, 16, 8);
+    floor.fillStyle(0x7a4a2a, 1).fillCircle(p.x, p.y, 5);
+    for (let k = 0; k < 7; k++) {
+      const a = (k / 7) * Math.PI * 2 + rng.next();
+      const fx = p.x + Math.cos(a) * 7;
+      const fy = p.y + Math.sin(a) * 7;
+      floor.fillStyle(k % 2 ? 0x3e6a2e : 0x4e7a34, 1);
+      floor.fillTriangle(
+        p.x + Math.cos(a + 0.35) * 2,
+        p.y + Math.sin(a + 0.35) * 2,
+        p.x + Math.cos(a - 0.35) * 2,
+        p.y + Math.sin(a - 0.35) * 2,
+        fx + Math.cos(a) * 5,
+        fy + Math.sin(a) * 5,
+      );
+    }
+    floor.fillStyle(0x5a3a1e, 1).fillCircle(p.x, p.y, 2.2);
   }
-  // Bouches d'aération qui fument.
-  for (let i = 0; i < 2; i++) {
-    const p = spot();
-    floor.fillStyle(0x16141e, 1).fillCircle(p.x, p.y, 7);
-    floor.lineStyle(1.5, 0x4a4560, 1).strokeCircle(p.x, p.y, 7);
-    floor.lineBetween(p.x - 5, p.y, p.x + 5, p.y).lineBetween(p.x, p.y - 5, p.x, p.y + 5);
-    scene.add
-      .particles(p.x, p.y, 'spark', {
-        speedY: { min: -18, max: -8 },
-        speedX: { min: -4, max: 4 },
-        lifespan: 2200,
-        frequency: 260 / QUALITY_PARTICLES[settings.quality],
-        scale: { start: 0.6, end: 1.4 },
-        alpha: { start: 0.25, end: 0 },
-        tint: 0x9a94a8,
-      })
-      .setDepth(1.4);
-  }
-  // Sable apporté par le vent, éclats de céramique et fissures.
+  // Sable apporté par le vent et fissures dans les dalles.
   for (let i = 0; i < 8; i++) {
     const p = spot(20);
-    if (rng.next() < 0.4) floor.fillStyle(0x2a2418, 0.7).fillEllipse(p.x, p.y, 10, 4);
-    else if (rng.next() < 0.5)
-      floor.fillStyle(0x3a2a20, 0.9).fillTriangle(p.x, p.y, p.x + 4, p.y + 1, p.x + 1, p.y + 3);
+    if (rng.next() < 0.55) floor.fillStyle(0x4a3a22, 0.55).fillEllipse(p.x, p.y, 14, 5);
     else
       floor
-        .lineStyle(1, 0x1a1724, 1)
+        .lineStyle(1, 0x15100a, 1)
         .lineBetween(p.x, p.y, p.x + rng.int(-8, 8), p.y + rng.int(4, 10));
   }
-  // Obélisque brisé et jarres dans les coins du bas.
+  // Obélisque brisé et jarres dans les coins du bas (à côté des braseros).
   for (const [x, y] of [
-    [arena.left + 16, arena.bottom - 18],
-    [arena.right - 16, arena.bottom - 18],
+    [arena.left + 28, arena.bottom - 16],
+    [arena.right - 28, arena.bottom - 16],
   ] as const) {
-    wall.fillStyle(0x2a2436, 1).fillTriangle(x - 6, y + 7, x + 6, y + 7, x + 3, y - 14);
-    wall.fillStyle(0x3a3450, 1).fillTriangle(x - 6, y + 7, x - 1, y + 7, x + 3, y - 14);
+    wall.fillStyle(0x7a6040, 1).fillTriangle(x - 6, y + 7, x + 6, y + 7, x + 3, y - 14);
+    wall.fillStyle(0x9a7a50, 1).fillTriangle(x - 6, y + 7, x - 1, y + 7, x + 3, y - 14);
     wall
-      .lineStyle(1, 0xffb02e, 0.5)
+      .lineStyle(1, 0x3a2a1a, 0.7)
       .lineBetween(x, y - 4, x + 2, y - 4)
       .lineBetween(x, y, x + 2, y);
     const jx = x + (x < arena.centerX ? 14 : -14);
     wall
-      .fillStyle(0x4a3020, 1)
+      .fillStyle(0x8a5030, 1)
       .fillEllipse(jx, y + 2, 9, 11)
       .fillRect(jx - 2, y - 6, 4, 3);
   }
+  void scene;
 }
 
 // ---------- Le Nil de minuit : le fleuve noir que la barque de Râ ne traverse plus ----------
 function frostserver({ scene, floor, wall, arena, rng, spot, topSlots }: DecorContext): void {
-  // Colonnes à chapiteau de lotus le long du mur du haut, reflet de lune entre elles.
-  topSlots.forEach((x) => {
-    wall.fillStyle(0x16243a, 1).fillRect(x - 5, arena.top + 4, 10, 14);
-    wall.lineStyle(1, 0x3a5a7a, 1).strokeRect(x - 5, arena.top + 4, 10, 14);
-    wall
-      .fillStyle(0x2c4a6a, 1)
-      .fillTriangle(x - 9, arena.top + 2, x + 9, arena.top + 2, x, arena.top + 8);
-    wall.lineStyle(1, 0x8ff0ff, 0.5).lineBetween(x - 5, arena.top + 12, x + 5, arena.top + 12);
-    blink(scene, x, arena.top + 6, 0x8ff0ff, 0.4, rng);
-  });
-  // Rides sur l'eau noire.
-  for (let i = 0; i < 6; i++) {
-    const p = spot();
-    const w = 24 + rng.int(0, 30);
-    floor.lineStyle(1, 0x8ff0ff, 0.12).strokeEllipse(p.x, p.y, w, w * 0.35);
-    floor.lineStyle(1, 0x8ff0ff, 0.07).strokeEllipse(p.x, p.y, w * 1.6, w * 0.55);
-  }
-  // Reflet de la lune (pâle) sur l'eau.
-  const moon = spot(60);
-  floor.fillStyle(0xd8f6ff, 0.06).fillEllipse(moon.x, moon.y, 70, 22);
-  floor.fillStyle(0xd8f6ff, 0.1).fillEllipse(moon.x, moon.y, 30, 8);
-  // Lotus qui flottent.
+  // Temple au bord du Nil, la nuit (retours du 02/11, point 6) : calcaire gris-bleu, frise argentée.
+  paintGlyphs(wall, arena, topSlots, rng, [0xc8d4e8, 0x2a4a8a, 0x3aa89a, 0xc8d4e8]);
+  wallColumns(wall, arena, { stone: 0x5a606c, top: 0x767c88, ring: 0x3aa89a, cap: 0xc8d4e8 });
+  // Bassins d'eau sombre, rides argentées et lotus qui flottent.
   for (let i = 0; i < 3; i++) {
-    const p = spot();
-    floor.fillStyle(0x1c3a3a, 1).fillCircle(p.x, p.y, 5);
-    floor.fillStyle(0xd8e8ff, 0.8).fillTriangle(p.x - 3, p.y, p.x + 3, p.y, p.x, p.y - 5);
-    floor.fillStyle(0xb8c8ff, 0.7).fillTriangle(p.x - 5, p.y + 1, p.x - 1, p.y, p.x - 4, p.y - 3);
-    floor.fillTriangle(p.x + 5, p.y + 1, p.x + 1, p.y, p.x + 4, p.y - 3);
+    const p = spot(50);
+    const w = 40 + rng.int(0, 24);
+    floor.fillStyle(0x0a1018, 0.95).fillEllipse(p.x, p.y, w, w * 0.45);
+    floor.lineStyle(1, 0x5a6a7a, 0.8).strokeEllipse(p.x, p.y, w, w * 0.45);
+    floor.lineStyle(1, 0xc8d4e8, 0.12).strokeEllipse(p.x, p.y, w * 0.6, w * 0.25);
+    const lx = p.x + rng.int(-6, 6);
+    const ly = p.y + rng.int(-3, 3);
+    floor.fillStyle(0x1c3a3a, 1).fillCircle(lx, ly, 4);
+    floor.fillStyle(0xe8e8f8, 0.85).fillTriangle(lx - 2.5, ly, lx + 2.5, ly, lx, ly - 4);
   }
-  // Papyrus le long des murs latéraux.
+  // Reflet de la lune (argent pâle) dans le plus grand bassin.
+  const moon = spot(70);
+  floor.fillStyle(0x0a1018, 0.95).fillEllipse(moon.x, moon.y, 76, 28);
+  floor.lineStyle(1, 0x5a6a7a, 0.8).strokeEllipse(moon.x, moon.y, 76, 28);
+  floor.fillStyle(0xd8e4f0, 0.1).fillEllipse(moon.x, moon.y, 46, 14);
+  floor.fillStyle(0xe8f0f8, 0.22).fillEllipse(moon.x, moon.y, 16, 5);
+  // Papyrus et roseaux le long des murs de côté (berges du fleuve).
   for (const x of [arena.left + 8, arena.right - 8]) {
     for (let k = 0; k < 5; k++) {
       const y = arena.top + 50 + k * 50 + rng.int(-8, 8);
@@ -231,16 +237,20 @@ function frostserver({ scene, floor, wall, arena, rng, spot, topSlots }: DecorCo
       wall
         .fillStyle(0x3a7a5a, 1)
         .fillTriangle(x + lean - 4, y - 3, x + lean + 4, y - 3, x + lean, y + 2);
+      wall.lineStyle(1, 0x5a7a4a, 1).lineBetween(x + lean * 2, y + 14, x + lean * 3, y + 2);
     }
   }
+  void scene;
 }
 
 // ---------- La Douât : le monde de la nuit, ses portes gardées et ses lacs de feu ----------
 function douat({ scene, floor, wall, arena, rng, spot, topSlots }: DecorContext): void {
+  // Murs de basalte noir (retours du 02/11, point 6) : hiéroglyphes peints or et vert des âmes.
+  paintGlyphs(wall, arena, topSlots, rng, [0x7fd8a0, 0xc8a040, 0x7fd8a0, 0x2a4a8a]);
   // Portes de la nuit (pylônes) le long du mur du haut, un œil gravé au-dessus.
   topSlots.forEach((x) => {
     wall
-      .fillStyle(0x24142c, 1)
+      .fillStyle(0x1e1e24, 1)
       .fillTriangle(x - 13, arena.top + 18, x - 7, arena.top + 2, x - 3, arena.top + 18);
     wall.fillTriangle(x + 13, arena.top + 18, x + 7, arena.top + 2, x + 3, arena.top + 18);
     wall.fillStyle(0x07060d, 1).fillRect(x - 3, arena.top + 8, 6, 10);
@@ -265,16 +275,26 @@ function douat({ scene, floor, wall, arena, rng, spot, topSlots }: DecorContext)
     for (let k = 1; k <= 6; k++) floor.lineTo(a.x + k * 10, a.y + Math.sin(k * 1.3) * 7);
     floor.strokePath();
   }
-  // Étoiles du plafond de la nuit, reflétées au sol.
-  for (let i = 0; i < 10; i++) {
-    const p = spot(16);
-    floor.fillStyle(0xd8c8ff, 0.25 + rng.next() * 0.3).fillRect(p.x, p.y, 1.5, 1.5);
-  }
+  // Âmes des défunts : petites lueurs vert pâle qui flottent lentement dans la salle.
+  scene.add
+    .particles(0, 0, 'glow', {
+      x: { min: arena.left + 20, max: arena.right - 20 },
+      y: { min: arena.top + 30, max: arena.bottom - 20 },
+      speedX: { min: -6, max: 6 },
+      speedY: { min: -8, max: -2 },
+      lifespan: 6000,
+      frequency: 900 / QUALITY_PARTICLES[settings.quality],
+      scale: { start: 0.18, end: 0.05 },
+      alpha: { start: 0.6, end: 0 },
+      tint: 0x9fe8b0,
+      blendMode: 'ADD',
+    })
+    .setDepth(1.4);
   // Colonnes de hiéroglyphes sur les murs latéraux.
   for (const x of [arena.left + 7, arena.right - 7]) {
     for (let k = 0; k < 6; k++) {
       const y = arena.top + 40 + k * 40;
-      wall.lineStyle(1, 0x6a4a7a, 0.8);
+      wall.lineStyle(1, 0x7fd8a0, 0.7);
       if (k % 3 === 0) wall.strokeEllipse(x, y, 6, 3);
       else if (k % 3 === 1) wall.lineBetween(x - 3, y, x + 3, y).lineBetween(x, y - 3, x, y + 3);
       else wall.strokeCircle(x, y, 2.5);
@@ -298,13 +318,8 @@ function douat({ scene, floor, wall, arena, rng, spot, topSlots }: DecorContext)
 
 // ---------- La Pyramide aux cages : la pyramide dont l'Oiseleur a fait sa volière ----------
 function aviary({ scene, floor, wall, arena, rng, spot, topSlots }: DecorContext): void {
-  // Grands blocs de calcaire : joints discrets, rangées décalées.
-  floor.lineStyle(1, 0x2e2416, 0.8);
-  for (let y = arena.top + 44, row = 0; y < arena.bottom; y += 44, row++) {
-    floor.lineBetween(arena.left, y, arena.right, y);
-    for (let x = arena.left + (row % 2 ? 36 : 72); x < arena.right; x += 72)
-      floor.lineBetween(x, y - 44, x, y);
-  }
+  // Murs de calcaire doré (retours du 02/11, point 6) : hiéroglyphes peints sur le mur du haut.
+  paintGlyphs(wall, arena, topSlots, rng, [0xd8a840, 0x2a4a9a, 0x40d0c0, 0xd8a840]);
   // Rayon de lumière dorée tombé d'un conduit vers les étoiles, avec sa poussière.
   const beamX = arena.left + arena.width * (0.3 + rng.next() * 0.4);
   const beam = scene.add.graphics().setDepth(0.6).setBlendMode('ADD');
@@ -330,10 +345,6 @@ function aviary({ scene, floor, wall, arena, rng, spot, topSlots }: DecorContext
       blendMode: 'ADD',
     })
     .setDepth(1.4);
-  // Frise peinte sur le mur du haut : chasse aux oiseaux au filet, comme dans les tombeaux.
-  wall.fillStyle(0x2a2012, 1).fillRect(arena.left + 10, arena.top + 3, arena.width - 20, 3);
-  wall.fillStyle(0x40d0c0, 0.5);
-  for (let x = arena.left + 14; x < arena.right - 14; x += 8) wall.fillRect(x, arena.top + 4, 3, 1);
   // Cages dorées suspendues (certaines vides, porte ouverte ; d'autres avec un oiseau qui luit).
   topSlots.forEach((x, i) => {
     const y = arena.top + 8;

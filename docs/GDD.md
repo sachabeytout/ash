@@ -105,12 +105,12 @@ L'Oiseleur le laisse s'évader, encore et encore.
 
 ### Biomes et boss 🟡
 
-| #   | Biome                                    | Panthéon | Boss                       |
-| --- | ---------------------------------------- | -------- | -------------------------- |
-| 1   | **Les Bas-Fonds** : ruelles de néon      | mélangé  | **Ammit, la Dévoreuse**    |
-| 2   | **Le Givre-Serveur** : datacenter gelé   | nordique | **Fenrir-Ω** (enchaîné)    |
-| 3   | **L'Olympe Corporatif** : tours de verre | grec     | **Talos**, géant de bronze |
-| 4   | **La Volière** : sommet de la tour       | —        | **L'Oiseleur**             |
+| #   | Biome                                     | Panthéon | Boss                       |
+| --- | ----------------------------------------- | -------- | -------------------------- |
+| 1   | **Les Bas-Fonds** : temple de grès au feu | mélangé  | **Ammit, la Dévoreuse**    |
+| 2   | **Le Givre-Serveur** : datacenter gelé    | nordique | **Fenrir-Ω** (enchaîné)    |
+| 3   | **L'Olympe Corporatif** : tours de verre  | grec     | **Talos**, géant de bronze |
+| 4   | **La Volière** : sommet de la tour        | —        | **L'Oiseleur**             |
 
 ### Arc narratif — vraie fin à la 10e victoire ✅ (contenu 🟡)
 

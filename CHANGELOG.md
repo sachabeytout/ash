@@ -2,6 +2,25 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.82.0 — Adieu le néon : des temples éclairés au feu
+
+Ton retour du 02/11, point 6 (option A) : toute l'ambiance néon est remplacée par l'Égypte des temples, éclairée par le
+feu.
+
+- **Les 4 mondes** : murs en blocs de pierre avec une frise peinte et des hiéroglyphes, braseros dans les coins, sol de
+  grandes dalles discrètes, obstacles en blocs de pierre.
+  - **Héliopolis** : grès, colonnes de lotus, palmiers en jarre, obélisque brisé.
+  - **Nil de minuit** : calcaire gris-bleu, bassins d'eau sombre avec lotus et reflet de lune, papyrus et roseaux.
+  - **Pyramide aux cages** : calcaire doré, cages suspendues, sarcophage et jarres canopes.
+  - **Douât** : basalte noir, lacs de feu, pylônes, lueurs vert pâle des âmes.
+- **La Cage** : même style de temple ; les barreaux de l'Oiseleur sont en fer sombre (plus de violet lumineux).
+- **Le comptoir de Ratatosk** : murs en planches de bois et lanternes chaudes.
+- **L'écran titre** : la cage devant la pyramide est en fer sombre.
+- Les attaques ennemies (rouge) restent aussi lisibles qu'avant.
+
+**Quoi tester** : fais une run complète. Chaque monde a-t-il sa personnalité ? Vois-tu toujours bien les ennemis et
+leurs attaques ?
+
 ## 0.81.0 — Des salles vraiment sombres
 
 Ton retour du 02/11, point 5 (option A) : dans les salles sombres, on voyait les ennemis comme en plein jour.

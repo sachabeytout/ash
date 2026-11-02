@@ -77,21 +77,22 @@ Dernière mise à jour : 01/11/2026 (version 0.59.0).
 
 Liste du 02/11/2026 (8 points) :
 
-| #   | Point                                                                              | État                                                              |
-| --- | ---------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| 1   | Chaîne : l'attaque spéciale vise toute seule et immobilise 2 s                     | **validé** (0.78.0)                                               |
-| 2   | Arc de Neith : bouger aussi pendant l'attaque spéciale                             | **annulé** par l'utilisateur                                      |
-| 3   | Disque solaire : coups de disque au corps à corps ; lancer qui rebondit et revient | **validé** (0.79.0 + 0.79.1)                                      |
-| 4   | Le doigt resté sur le joystick choisit le don de gauche par erreur                 | **validé** (0.80.0)                                               |
-| 5   | Salles sombres : les ennemis restent trop visibles                                 | **fait, en attente de validation finale** (A : yeux dans le noir) |
-| 6   | Remplacer l'ambiance néon par des ambiances plus égyptiennes                       | en attente                                                        |
-| 7   | La Cage : se déplacer au joystick comme dans les salles                            | en attente                                                        |
-| 8   | La Cage : compteurs de victoires et renaissances à droite avec Papyrus et pièces   | en attente                                                        |
+| #   | Point                                                                              | État                                                           |
+| --- | ---------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| 1   | Chaîne : l'attaque spéciale vise toute seule et immobilise 2 s                     | **validé** (0.78.0)                                            |
+| 2   | Arc de Neith : bouger aussi pendant l'attaque spéciale                             | **annulé** par l'utilisateur                                   |
+| 3   | Disque solaire : coups de disque au corps à corps ; lancer qui rebondit et revient | **validé** (0.79.0 + 0.79.1)                                   |
+| 4   | Le doigt resté sur le joystick choisit le don de gauche par erreur                 | **validé** (0.80.0)                                            |
+| 5   | Salles sombres : les ennemis restent trop visibles                                 | **validé** (0.81.0)                                            |
+| 6   | Remplacer l'ambiance néon par des ambiances plus égyptiennes                       | **fait, en attente de validation finale** (A : temples au feu) |
+| 7   | La Cage : se déplacer au joystick comme dans les salles                            | en attente                                                     |
+| 8   | La Cage : compteurs de victoires et renaissances à droite avec Papyrus et pièces   | en attente                                                     |
 
-Point 5 — fichiers : `src/game/scenes/RunScene.ts` (`addDarkness`, `updateDarkness`, réglages `DARK`),
-`src/game/entities/Enemy.ts` (`setTelegraphDepth`). Tests : lint, typecheck, 267 tests unitaires, e2e, vérification en
-jeu par captures (ennemi proche net, ennemi lointain réduit à deux yeux, attaques visibles). Pas encore enregistré ni mis
-en ligne (attente d'autorisation).
+Point 6 — fichiers : `src/data/biomes.ts`, `src/data/merchant.ts`, `src/game/fx/temple.ts` (nouveau),
+`src/game/fx/biomeDecor.ts`, `src/game/fx/hubRoom.ts`, `src/game/scenes/RunScene.ts`, `src/game/backdrop.ts`,
+`src/game/theme.ts`, `src/game/scenes/TitleScene.ts`, `src/i18n/fr.json`, `src/i18n/en.json`, `docs/GDD.md`. Tests :
+lint, typecheck, tests unitaires, e2e, captures des 4 mondes, de la Cage, du comptoir et du titre. Mise en ligne prévue à
+la fin du point (accord de l'utilisateur).
 
 Points F1 à F15 : validés le 02/11/2026. Gardés pour plus tard : amulettes (F2, option B), aspects des armes.
 

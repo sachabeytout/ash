@@ -11,7 +11,7 @@ export function ensureTextures(scene: Phaser.Scene): void {
   g.destroy();
 }
 
-/** Silhouette de la cage à oiseau géante, en néon discret. */
+/** Silhouette de la cage à oiseau géante, en fer sombre (retours du 02/11, point 6 : plus de néon). */
 export function drawCage(scene: Phaser.Scene, alpha = 1): Phaser.GameObjects.Graphics {
   const g = scene.add.graphics().setAlpha(alpha);
   const cx = GAME_WIDTH / 2;
@@ -20,7 +20,7 @@ export function drawCage(scene: Phaser.Scene, alpha = 1): Phaser.GameObjects.Gra
   const halfWidth = 230;
   const bars = 13;
 
-  g.lineStyle(2, COLORS.cageBar, 1);
+  g.lineStyle(2, 0x3a3a42, 1);
   for (let i = 0; i < bars; i++) {
     const x = cx - halfWidth + (i * 2 * halfWidth) / (bars - 1);
     // Les barreaux se rejoignent en dôme vers le haut.
@@ -29,7 +29,7 @@ export function drawCage(scene: Phaser.Scene, alpha = 1): Phaser.GameObjects.Gra
     g.lineBetween(x, startY, x, bottom);
     g.lineBetween(x, startY, cx + (x - cx) * 0.15, top - 10);
   }
-  g.lineStyle(3, COLORS.cageGlow, 0.6);
+  g.lineStyle(3, 0x5e5e68, 0.9);
   g.lineBetween(cx - halfWidth - 8, bottom, cx + halfWidth + 8, bottom);
   g.strokeCircle(cx, top - 16, 6);
   return g;

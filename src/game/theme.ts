@@ -4,8 +4,6 @@ export const GAME_HEIGHT = 360;
 
 export const COLORS = {
   background: 0x07060d,
-  cageBar: 0x2a2342,
-  cageGlow: 0x6b4cff,
   phoenix: 0xff7a2a,
   ember: 0xffb02e,
   text: '#ffe9d6',

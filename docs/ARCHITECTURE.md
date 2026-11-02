@@ -34,6 +34,10 @@ par-dessus ; cartes face cachée puis retournées : `BoonScene.revealCard`). Mor
   `stun`, `onExecute`, `zapBurn` (foudre).
 - Brûlure / givre / gel : `src/data/status.ts` + `src/core/combat/status.ts`.
 - Tirage des dons et profil de combat : `src/core/boons/boons.ts` ; effets en jeu : `RunScene` (section « Dons »).
+- Salles de temple (0.82.0) : thème `BiomeTheme.temple` (`src/data/biomes.ts`, `MERCHANT_THEME`), dessin commun
+  `src/game/fx/temple.ts` (`drawTempleRoom`, `TEMPLE_WALL`) utilisé par `RunScene.drawArena`, `drawHubRoom` (Cage) ;
+  décors par monde `src/game/fx/biomeDecor.ts` (`paintGlyphs`, `wallColumns`). `drawNeonArena` reste pour un thème
+  sans `temple`.
 - Toucher fiable (0.80.0) : `onTap` dans `src/game/ui/tap.ts` (doigt posé puis levé sur l'objet) pour les menus de
   choix et `makeButton` ; test `tests/unit/tap.test.ts`.
 - Disque solaire (0.79.0) : données `WEAPONS.disc` (`unarmed`, `dashPower`, lancer `recallable`) ; un seul disque :

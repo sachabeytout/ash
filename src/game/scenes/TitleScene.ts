@@ -32,7 +32,7 @@ export class TitleScene extends Phaser.Scene {
         fontSize: '72px',
         fontStyle: 'bold',
         color: COLORS.text,
-        padding: { x: 12, y: 8 }, // laisse la place au halo néon
+        padding: { x: 12, y: 8 }, // laisse la place au halo de feu
       })
       .setOrigin(0.5);
     title.enableFilters();

@@ -8,8 +8,21 @@ export const MERCHANT_THEME: BiomeTheme = {
   floor: 'floorRoots',
   wall: 0x5a3a1c,
   wallGlow: 0xffc46b,
-  neons: [0xffc46b, 0x7fe7ff],
+  neons: [0xffc46b, 0xffa040],
   snow: false,
+  // Retours du 02/11 (point 6) : murs en planches, lanternes chaudes, pas de frise égyptienne.
+  temple: {
+    floor: 0x20160e,
+    slab: 0x170f08,
+    stone: 0x5a3a1c,
+    stoneTop: 0x7a5230,
+    joint: 0x3a2410,
+    frieze: [],
+    glyph: 0xffc46b,
+    light: 0xffc46b,
+    walls: 'planks',
+    corner: 'lantern',
+  },
 };
 
 /** Répliques de Ratatosk quand Ash s'approche (une tirée par visite). */

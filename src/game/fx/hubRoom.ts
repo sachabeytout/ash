@@ -3,24 +3,37 @@ import { createRng } from '../../core/rng';
 import { QUALITY_PARTICLES, settings } from '../../core/settings';
 import { drawLotusColumn } from '../backdrop';
 import { COLORS } from '../theme';
-import { frieze } from '../ui/frame';
+import type { TempleTheme } from '../../data/biomes';
+import { TEMPLE_WALL, drawTempleRoom } from './temple';
 
 /**
  * La Cage (retour F11) : une salle comme celles des runs, vue de plus près, plus grande que l'écran.
- * La caméra suit Ash. Les barreaux violets de l'Oiseleur courent le long des murs : c'est une prison.
+ * La caméra suit Ash. Retours du 02/11 (point 6) : temple de grès éclairé au feu ; les barreaux de fer
+ * sombre de l'Oiseleur courent le long des murs (c'est une prison).
  */
 export const HUB_ROOM = new Phaser.Geom.Rectangle(40, 34, 520, 290);
 
-const FLOOR = 0x16111c;
-const WALL = 0x2a2040;
-const WALL_GLOW = 0x6b4cff;
+/** Grès d'Héliopolis, comme le premier monde. */
+const CAGE_TEMPLE: TempleTheme = {
+  floor: 0x2a2016,
+  slab: 0x1f170f,
+  stone: 0x6b5236,
+  stoneTop: 0x8a6a44,
+  joint: 0x4a3824,
+  frieze: [0x2a4a8a, 0xc08a3a, 0x3aa89a, 0xc08a3a],
+  glyph: 0xd8b060,
+  light: 0xff9640,
+};
+/** Barreaux de fer sombre (plus de lueur violette). */
+const IRON = 0x3a3a42;
+const IRON_TOP = 0x5e5e68;
 
 /** Sol, murs, barreaux, colonnes, torches et coins de chaque habitant. */
 export function drawHubRoom(scene: Phaser.Scene): void {
   const r = HUB_ROOM;
   const pad = 400;
   scene.add.rectangle(r.centerX, r.centerY, r.width + pad * 2, r.height + pad * 2, 0x07060d);
-  scene.add.rectangle(r.centerX, r.centerY, r.width, r.height, FLOOR);
+  drawTempleRoom(scene, r, CAGE_TEMPLE);
   // Lumière chaude du brasero d'Anii au centre.
   scene.add
     .image(r.centerX, r.centerY, 'glow')
@@ -41,7 +54,7 @@ export function drawHubRoom(scene: Phaser.Scene): void {
   }
   // Allée dallée de la porte jusqu'au brasero.
   for (let y = r.top + 34; y < r.centerY - 50; y += 14)
-    floor.fillStyle(0x221a2a, 1).fillRect(r.centerX - 14, y, 28, 11);
+    floor.fillStyle(0x3a2c1c, 1).fillRect(r.centerX - 14, y, 28, 11);
   // Un tapis sous chaque coin habité (repères au sol).
   const mat = (x: number, y: number, color: number) => {
     floor.fillStyle(color, 0.06).fillRoundedRect(x - 40, y - 26, 80, 56, 8);
@@ -69,7 +82,7 @@ export function drawHubRoom(scene: Phaser.Scene): void {
     const kind = rng.int(0, 5);
     if (kind <= 1) {
       // Fissure en zigzag.
-      floor.lineStyle(1, 0x0c0910, 1);
+      floor.lineStyle(1, 0x15100a, 1);
       let px = x;
       let py = y;
       for (let k = 0; k < 3; k++) {
@@ -82,9 +95,9 @@ export function drawHubRoom(scene: Phaser.Scene): void {
     } else if (kind === 2) {
       floor.fillStyle(0x2a2418, 0.6).fillEllipse(x, y, 12 + rng.int(0, 10), 4 + rng.int(0, 3));
     } else if (kind === 3) {
-      // Plume violette de l'Oiseleur.
-      floor.lineStyle(1, COLORS.cageGlow, 0.5).lineBetween(x - 4, y + 2, x + 4, y - 2);
-      floor.fillStyle(COLORS.cageGlow, 0.35).fillEllipse(x + 1, y - 1, 7, 2.5);
+      // Plume de l'Oiseleur, couleur de prune éteinte.
+      floor.lineStyle(1, 0x6a5a80, 0.5).lineBetween(x - 4, y + 2, x + 4, y - 2);
+      floor.fillStyle(0x6a5a80, 0.35).fillEllipse(x + 1, y - 1, 7, 2.5);
     } else if (kind === 4) {
       // Maillon de chaîne tombé.
       floor
@@ -93,29 +106,34 @@ export function drawHubRoom(scene: Phaser.Scene): void {
         .strokeEllipse(x + 4, y + 1, 5, 3);
     } else {
       // Dalle fendue, un peu plus claire.
-      floor.fillStyle(0x1e1826, 1).fillRect(x - 7, y - 5, 14, 10);
-      floor.lineStyle(1, 0x0c0910, 1).lineBetween(x - 7, y - 5, x + 3, y + 5);
+      floor.fillStyle(0x32261a, 1).fillRect(x - 7, y - 5, 14, 10);
+      floor.lineStyle(1, 0x15100a, 1).lineBetween(x - 7, y - 5, x + 3, y + 5);
     }
   }
 
   const wall = scene.add.graphics().setDepth(1.5);
-  // Murs : double trait néon, comme les salles des runs.
-  wall.lineStyle(6, WALL, 1).strokeRectShape(r);
-  wall.lineStyle(2, WALL_GLOW, 0.7).strokeRect(r.x - 1, r.y - 1, r.width + 2, r.height + 2);
-  // Frise de hiéroglyphes au-dessus du mur du haut.
-  frieze(wall, r.left + 8, r.top - 12, r.width - 16);
-  // Barreaux de la cage : debout le long du mur du haut, en pointillés sur les autres murs.
-  wall.lineStyle(1.5, COLORS.cageGlow, 0.45);
+  // Barreaux de fer de la cage : debout au-dessus du mur du haut, scellés dans les autres murs.
+  const top = r.top - TEMPLE_WALL - 3;
   for (let x = r.left + 10; x < r.right - 6; x += 14) {
     if (Math.abs(x - r.centerX) < 26) continue; // la porte
-    wall.lineBetween(x, r.top - 30, x, r.top - 2);
+    wall.lineStyle(2, IRON, 1).lineBetween(x, top - 28, x, top);
+    wall.lineStyle(0.8, IRON_TOP, 1).lineBetween(x - 0.6, top - 28, x - 0.6, top);
   }
-  wall.lineStyle(2, COLORS.cageGlow, 0.5).lineBetween(r.left, r.top - 30, r.right, r.top - 30);
-  wall.fillStyle(COLORS.cageGlow, 0.55);
+  wall
+    .lineStyle(3, IRON, 1)
+    .lineBetween(r.left - TEMPLE_WALL, top - 28, r.right + TEMPLE_WALL, top - 28);
+  wall
+    .lineStyle(1, IRON_TOP, 1)
+    .lineBetween(r.left - TEMPLE_WALL, top - 29, r.right + TEMPLE_WALL, top - 29);
+  const post = (x: number, y: number) => {
+    wall.fillStyle(IRON, 1).fillRect(x - 1.5, y - 1.5, 3, 3);
+    wall.fillStyle(IRON_TOP, 1).fillRect(x - 1.5, y - 1.5, 3, 1);
+  };
   for (let y = r.top + 14; y < r.bottom; y += 14) {
-    wall.fillCircle(r.left - 5, y, 1.6).fillCircle(r.right + 5, y, 1.6);
+    post(r.left - TEMPLE_WALL / 2, y);
+    post(r.right + TEMPLE_WALL / 2, y);
   }
-  for (let x = r.left + 10; x < r.right; x += 14) wall.fillCircle(x, r.bottom + 5, 1.6);
+  for (let x = r.left + 10; x < r.right; x += 14) post(x, r.bottom + TEMPLE_WALL / 2);
 
   // Colonnes de lotus dans les coins du haut et de part et d'autre de la porte.
   const cols = scene.add.graphics().setDepth(1.6);

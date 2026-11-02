@@ -200,6 +200,13 @@ prennent plus seules à partir de cette date.
   mécaniques de tir (`bounces`, `split`, `explodeEnd`, `hover`) dans `PlayerShots`. Sauvegarde v23. Inspiration de
   fonctionnement : marteau de Hadès, runes de Diablo III, Dead Cells ; contenu original.
 
+- **0.82.0 — Temples éclairés au feu (02/11, point 6 : A, maquettes validées, Cage a, Ratatosk a)** : `BiomeTheme.temple`
+  (`TempleTheme` : sol, dalles, pierre, joints, frise, lumière, murs en pierre ou planches, braseros ou lanternes) ;
+  dessin commun `src/game/fx/temple.ts` (`drawTempleRoom`) pour les salles, la Cage et le comptoir ; décors
+  (`biomeDecor.ts`, aides communes `paintGlyphs`, `wallColumns`). Couleurs `cageBar` / `cageGlow` retirées. Choix de
+  Claude : couleurs exactes de chaque monde, lueurs d'âmes vertes de la Douât, rien changé à l'histoire d'Anii
+  (« allumeuse de néons » dans le GDD, absente du jeu).
+
 - **0.81.0 — Salles sombres (02/11, point 5 : A)** : l'obscurité passe au-dessus des ennemis (profondeur 9,3) ; les
   attaques ennemies (aperçu `Enemy.setTelegraphDepth`, « ! », tirs) restent au-dessus ; yeux pâles hors du halo
   (`RunScene.updateDarkness`, après la physique). Choix de Claude (réglages `DARK`) : halo plus petit (clair à 30 px, noir

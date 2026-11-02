@@ -97,6 +97,7 @@ import {
   type EventId,
 } from '../../core/run/events';
 import { BIOMES, getBiome, type BiomeDef } from '../../data/biomes';
+import { drawTempleRoom } from '../fx/temple';
 import { DASH_AURA_RADIUS, DASH_BOLT_RANGE, getBoon } from '../../data/boons';
 import { GOD_IDS, GODS } from '../../data/gods';
 import { ENEMIES, type EnemyDef } from '../../data/enemies';
@@ -2339,6 +2340,19 @@ export class RunScene extends Phaser.Scene {
         : [];
     const theme = getBiome(this.run.biome).theme;
     const g = this.add.graphics().setDepth(2);
+    if (theme.temple) {
+      // Temple : blocs de pierre, arête éclairée, un joint au milieu et une ombre portée.
+      const t = theme.temple;
+      for (const r of this.obstacles) {
+        g.fillStyle(0x07060d, 0.4).fillRect(r.x + 3, r.y + 4, r.w, r.h);
+        g.fillStyle(t.stone, 1).fillRect(r.x, r.y, r.w, r.h);
+        g.fillStyle(t.stoneTop, 1).fillRect(r.x, r.y, r.w, 2);
+        g.lineStyle(1, t.joint, 1).strokeRect(r.x, r.y, r.w, r.h);
+        if (r.w >= r.h) g.lineBetween(r.x + r.w / 2, r.y, r.x + r.w / 2, r.y + r.h);
+        else g.lineBetween(r.x, r.y + r.h / 2, r.x + r.w, r.y + r.h / 2);
+      }
+      return;
+    }
     for (const r of this.obstacles) {
       // Bloc sombre au liseré du mur : même langage visuel que les bords de l'arène.
       g.fillStyle(0x07060d, 0.35).fillRect(r.x + 3, r.y + 4, r.w, r.h);
@@ -2374,6 +2388,18 @@ export class RunScene extends Phaser.Scene {
       0x07060d,
     );
     const theme = this.kind === 'shop' ? MERCHANT_THEME : getBiome(this.run.biome).theme;
+    if (theme.temple) {
+      drawTempleRoom(this, ARENA, theme.temple);
+    } else {
+      this.drawNeonArena(theme);
+    }
+    if (theme.snow) this.addSnow(0xd8f6ff);
+    if (theme.mist) this.addMist();
+    if (theme.sand) this.addSand();
+  }
+
+  /** Salle « néon » (mondes pas encore passés au style temple). */
+  private drawNeonArena(theme: BiomeDef['theme']): void {
     // Sol uni à la teinte du monde (pas de quadrillage), éclairé doucement au centre.
     this.add.rectangle(
       ARENA.centerX,
@@ -2406,9 +2432,6 @@ export class RunScene extends Phaser.Scene {
     neon(ARENA.right, ARENA.top, n2);
     neon(ARENA.left, ARENA.bottom, n2);
     neon(ARENA.right, ARENA.bottom, n1);
-    if (theme.snow) this.addSnow(0xd8f6ff);
-    if (theme.mist) this.addMist();
-    if (theme.sand) this.addSand();
   }
 
   /** Pyramide aux cages : grains de sable qui tombent lentement du plafond, quelques-uns dorés. */
