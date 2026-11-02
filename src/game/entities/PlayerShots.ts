@@ -85,7 +85,7 @@ export class PlayerShots {
 
   onHit: (target: Hittable, hit: ShotHit) => void = () => undefined;
   onGrapple: (target: Hittable, hit: ShotHit) => void = () => undefined;
-  /** Le disque est rattrapé au retour. */
+  /** Le disque revient dans la main d'Ash (effet et son seulement). */
   onCatch: () => void = () => undefined;
   onZone: (at: Vec2, radius: number) => void = () => undefined;
   /** Obstacles de la salle : ils arrêtent les projectiles. */
@@ -306,11 +306,8 @@ export class PlayerShots {
 
     const out = !this.bounds.contains(s.x, s.y) || insideAny(s, this.obstacles);
     if (!s.returning && s.hoverUntil === 0 && (s.travelled >= s.maxTravel || out)) {
-      if (spec.returns && spec.hover && !out && s.vx !== 0) {
-        s.vx = 0;
-        s.vy = 0;
-        s.hoverUntil = now + spec.hover;
-        s.nextHoverTick = now + 300;
+      if (spec.returns && !(out && spec.hover)) {
+        this.beginReturn(s, now);
       } else if (spec.returns) {
         s.returning = true;
         s.hits.clear(); // au retour, le disque peut retoucher
@@ -369,6 +366,11 @@ export class PlayerShots {
           s.travelled = 0;
           continue;
         }
+      }
+      // Disque solaire : ses rebonds finis (ou plus personne à portée), il revient tout seul.
+      if (spec.recallable && !s.returning && s.hoverUntil === 0) {
+        this.beginReturn(s, now, t);
+        return;
       }
       if (!spec.returns && s.hits.size > spec.pierce) {
         if (spec.explodeEnd) this.explodeAt(now, s);
@@ -442,6 +444,46 @@ export class PlayerShots {
       0.004,
       s.mod,
     );
+  }
+
+  /**
+   * Fin de l'aller du disque : il tourne d'abord sur place s'il le peut (gravure « Éclipse »), puis
+   * revient vers Ash. `justHit` : l'ennemi qu'il vient de toucher, qu'il ne retouche pas aussitôt.
+   */
+  private beginReturn(s: Projectile, now: number, justHit?: Hittable): void {
+    if (s.spec.hover && (s.vx !== 0 || s.vy !== 0)) {
+      s.vx = 0;
+      s.vy = 0;
+      s.hoverUntil = now + s.spec.hover;
+      s.nextHoverTick = now + 300;
+      return;
+    }
+    s.returning = true;
+    s.hits.clear(); // au retour, le disque peut retoucher
+    if (justHit) s.hits.add(justHit);
+  }
+
+  /** Disque solaire : est-il en vol (pas dans la main d'Ash) ? */
+  thrownOut(): boolean {
+    return this.shots.some((s) => s.active && s.spec.recallable === true);
+  }
+
+  /** Rappelle le disque lancé : il revient tout de suite, en frappant sur son chemin. */
+  recall(): boolean {
+    let recalled = false;
+    for (const s of this.shots) {
+      if (!s.active || !s.spec.recallable || s.returning) continue;
+      s.hoverUntil = 0;
+      s.returning = true;
+      s.hits.clear();
+      recalled = true;
+    }
+    return recalled;
+  }
+
+  /** Le disque revient instantanément dans la main (Super du disque). */
+  catchRecallable(): void {
+    for (const s of this.shots) if (s.active && s.spec.recallable) this.kill(s);
   }
 
   private kill(s: Projectile): void {

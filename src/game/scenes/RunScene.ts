@@ -43,7 +43,7 @@ import {
   tickBurn,
   weakenFactor,
 } from '../../core/combat/status';
-import type { AttackStep } from '../../core/combat/attack';
+import type { AttackStep, ZoneSpec } from '../../core/combat/attack';
 import { edgeIndicator, hitsArc, type Vec2 } from '../../core/geometry';
 import { createRng, type Rng } from '../../core/rng';
 import { insideAny, planObstacles, type KeepOut, type Rect } from '../../core/arena/obstacles';
@@ -301,7 +301,6 @@ export class RunScene extends Phaser.Scene {
   private boss: Boss | null = null;
   private shotsP!: PlayerShots;
   /** Disque rattrapé : le prochain lancer frappe plus fort. */
-  private discCharged = false;
   /** Bouclier de Saïs de Neith (coups bloqués restants dans la salle) et bouclier en PV. */
   private aegisLeft = 0;
   /** Identifiants des tirs répétés par une gravure (négatifs, distincts des autres coups). */
@@ -513,14 +512,12 @@ export class RunScene extends Phaser.Scene {
       this.tutorialEvent({ type: 'dash' });
     };
     this.shotsP = new PlayerShots(this, ARENA);
-    this.discCharged = false;
     this.shotsP.onHit = (target, hit) => {
       if (hit.kind === 'boon') this.damageEnemy(target, hit.damage, FX.arrowText);
       else this.weaponHit(target, { ...hit, kind: hit.kind, hitstopMs: hit.heavy ? 40 : 18 });
     };
     this.shotsP.onGrapple = (target, hit) => this.grapple(target, hit);
     this.shotsP.onCatch = () => {
-      this.discCharged = true;
       sfx.tap();
       this.juice.burst(this.player.x, this.player.y, 0xffe08a, 10);
     };
@@ -530,19 +527,10 @@ export class RunScene extends Phaser.Scene {
       sfx.explode();
     };
     this.player.onFire = (step, angle, kind, id, mod, homing) => {
-      const charged = this.discCharged && step.projectile?.returns === true;
-      if (charged) this.discCharged = false;
-      this.shotsP.fire(
-        this.sim,
-        this.player,
-        angle,
-        step,
-        kind,
-        id,
-        charged ? 1.5 : 1,
-        mod,
-        homing,
-      );
+      this.shotsP.fire(this.sim, this.player, angle, step, kind, id, 1, mod, homing);
+      // Super du disque solaire (« Éclipse ») : le disque monte puis s'abat sur la zone.
+      if (kind === 'super' && step.zone && WEAPONS[this.run.weapon].unarmed)
+        this.eclipseFx(angle, step.zone);
       // Gravures « Puits de pouvoir », « Volée solaire » : le tir ou la zone revient une 2e fois.
       if (mod?.echoMs) {
         const from = { x: this.player.x, y: this.player.y };
@@ -571,7 +559,16 @@ export class RunScene extends Phaser.Scene {
     this.applyEngravings();
     this.aegisLeft = this.profile.aegis;
     this.player.canSuper = () => superReady(this.run.superGauge) && !this.choosing;
+    // Disque solaire : savoir s'il est en vol (coup de poing sinon), et le rappeler.
+    this.player.isThrownOut = () => this.shotsP.thrownOut();
+    this.player.onRecall = () => {
+      if (!this.shotsP.recall()) return;
+      sfx.swing(false);
+      this.juice.burst(this.player.x, this.player.y, 0xffe08a, 6);
+    };
     this.player.onSuper = () => {
+      // Le Super du disque se joue disque en main : s'il était lancé, il revient aussitôt.
+      this.shotsP.catchRecallable();
       this.run.superGauge = 0;
       sfx.super();
       this.superLaunchFx();
@@ -1653,6 +1650,43 @@ export class RunScene extends Phaser.Scene {
    * Arrêt sur image + léger zoom + flash doré, onde de choc dorée au sol et cercle de hiéroglyphes
    * lumineux. Pas de dégâts en plus : c'est seulement pour qu'on sente l'attaque spéciale.
    */
+  /**
+   * Super du disque solaire (« Éclipse ») : le disque monte au-dessus d'Ash, puis s'abat sur la zone
+   * devant lui juste avant qu'elle éclate (la zone elle-même fait les dégâts).
+   */
+  private eclipseFx(angle: number, zone: ZoneSpec): void {
+    const from = { x: this.player.x, y: this.player.y };
+    const to = {
+      x: from.x + Math.cos(angle) * zone.distance,
+      y: from.y + Math.sin(angle) * zone.distance,
+    };
+    const disc = this.add
+      .image(from.x, from.y - 6, 'p_disc')
+      .setDepth(15)
+      .setScale(1.4)
+      .setBlendMode('ADD');
+    const rise = Math.min(260, zone.delayMs * 0.45);
+    this.tweens.add({
+      targets: disc,
+      y: from.y - 46,
+      scale: 2.2,
+      angle: 360,
+      duration: rise,
+      ease: 'Sine.Out',
+      onComplete: () =>
+        this.tweens.add({
+          targets: disc,
+          x: to.x,
+          y: to.y,
+          scale: 3,
+          angle: 720,
+          duration: Math.max(80, zone.delayMs - rise),
+          ease: 'Quad.In',
+          onComplete: () => disc.destroy(),
+        }),
+    });
+  }
+
   private superLaunchFx(): void {
     const at = { x: this.player.x, y: this.player.y };
     const gold = 0xffd36b;

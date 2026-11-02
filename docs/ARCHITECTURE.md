@@ -34,6 +34,9 @@ par-dessus ; cartes face cachée puis retournées : `BoonScene.revealCard`). Mor
   `stun`, `onExecute`, `zapBurn` (foudre).
 - Brûlure / givre / gel : `src/data/status.ts` + `src/core/combat/status.ts`.
 - Tirage des dons et profil de combat : `src/core/boons/boons.ts` ; effets en jeu : `RunScene` (section « Dons »).
+- Disque solaire (0.79.0) : données `WEAPONS.disc` (`unarmed`, `dashPower`, lancer `recallable`) ; un seul disque :
+  `PlayerShots.thrownOut` / `recall` / `beginReturn` / `catchRecallable`, coup de poing et rappel dans
+  `Player.startAttack`, Super `RunScene.eclipseFx`. Tests `tests/unit/disc.test.ts`.
 - Grappin (Chaîne) : cible et courbe `src/core/combat/grapple.ts` (`grappleTarget`, `steerToward`), réglages
   `PLAYER.grapple` ; choisi dans `Player.startAttack` (`homing`), suivi dans `PlayerShots.updateShot`, immobilisation
   dans `RunScene.grapple`.

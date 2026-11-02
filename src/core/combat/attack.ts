@@ -36,8 +36,13 @@ export interface ProjectileSpec {
   /** Plusieurs projectiles en éventail (360 = tout autour). */
   count?: number;
   spreadDeg?: number;
-  /** Revient vers Ash (disque) : le rattraper renforce le lancer suivant. */
+  /** Revient vers Ash (disque) une fois sa course ou ses rebonds finis. */
   returns?: boolean;
+  /**
+   * Disque solaire (retours du 02/11) : il n'y en a qu'un. Tant qu'il est lancé, rappuyer sur
+   * l'attaque spéciale le rappelle, et l'attaque normale devient un coup de poing (`WeaponDef.unarmed`).
+   */
+  recallable?: boolean;
   /** Grappin : attire les petits ennemis, ou tire Ash vers les gros. */
   grapple?: boolean;
   /** Gravures (0.68.0) : rebonds vers d'autres ennemis, division au premier impact, explosion au

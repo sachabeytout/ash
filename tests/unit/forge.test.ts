@@ -202,7 +202,7 @@ describe('forge de Ptah, niveaux 6 à 10 (retour F12)', () => {
 describe('marcher en attaquant (retour F14)', () => {
   it('seules les armes à distance laissent marcher pendant l’attaque normale', () => {
     const walking = WEAPON_ORDER.filter((id) => (WEAPONS[id].walkWhileAttacking ?? 0) > 0);
-    expect(walking).toEqual(['staff', 'crossbow', 'disc']);
+    expect(walking).toEqual(['staff', 'crossbow']);
     for (const id of walking) expect(WEAPONS[id].walkWhileAttacking).toBeLessThan(1);
   });
 });

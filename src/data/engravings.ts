@@ -94,14 +94,16 @@ export const ENGRAVINGS: readonly EngravingDef[] = [
   def('crossbow', 'dashPower', 'volley', { echoMs: 500 }),
   def('crossbow', 'dashPower', 'fan', { projectile: { countAdd: 3, spreadAdd: 30 } }),
   // ---------- Disque solaire ----------
-  def('disc', 'attack', 'twinSun', { damageMul: 0.7, projectile: { countAdd: 1, spreadAdd: 16 } }),
-  def('disc', 'attack', 'swift', { projectile: { speedMul: 1.35 } }),
+  // Refonte du disque (02/11) : identifiants d'origine gardés pour les runs sauvegardées.
+  // « twinSun » = Lame de midi, « swift » = Éclat, « bounce » = Éblouissement, « double » = Halo.
+  def('disc', 'attack', 'twinSun', { rangeAdd: 6, tempoMul: 0.85 }),
+  def('disc', 'attack', 'swift', { finisher: { wave: LIGHT_WAVE } }),
   def('disc', 'power', 'eclipse', { projectile: { hover: 1200 } }),
   def('disc', 'power', 'giant', { damageMul: 1.2, projectile: { radiusAdd: 4 } }),
-  def('disc', 'dashAttack', 'bounce', { projectile: { bounces: 1 } }),
+  def('disc', 'dashAttack', 'bounce', { fx: { stun: { chance: 1, durationMs: 600 } } }),
   def('disc', 'dashAttack', 'edge', { fx: { judge: { bonus: 0.2, durationMs: 4000 } } }),
   def('disc', 'dashPower', 'crown', { fx: { burn: { dps: 4, durationMs: 3000 } } }),
-  def('disc', 'dashPower', 'double', { projectile: { countAdd: 4 } }),
+  def('disc', 'dashPower', 'double', { rangeAdd: 14, knockbackMul: 1.5 }),
   // ---------- Chaîne du pressoir ----------
   def('chain', 'attack', 'press', { rangeAdd: 10, damageMul: 1.15 }),
   def('chain', 'attack', 'double', { hits: 2, damageMul: 0.65 }),

@@ -28,6 +28,10 @@ export interface WeaponDef {
    */
   walkWhileAttacking?: number;
   power: AttackStep;
+  /** Tourbillon (attaque spéciale juste après un dash) propre à l'arme, à la place du calcul commun. */
+  dashPower?: AttackStep;
+  /** Coup porté sans l'arme, pendant qu'elle est lancée (disque solaire). */
+  unarmed?: AttackStep;
   /** Super : suite de coups joués d'un trait, Ash est invincible pendant toute la durée. */
   superNameKey: string;
   super: readonly AttackStep[];
@@ -101,6 +105,31 @@ const DISC = {
   look: 'disc',
   returns: true,
 } as const;
+/** Disque solaire en main : deux tranchants rapides, puis un coup tournant. */
+const DISC_CUT: AttackStep = {
+  damage: 12,
+  windupMs: 70,
+  activeMs: 70,
+  recoveryMs: 170,
+  range: 32,
+  arcDeg: 120,
+  lunge: 8,
+  knockback: 70,
+  hitstopMs: 40,
+  shake: 0,
+};
+const DISC_SPIN: AttackStep = {
+  damage: 20,
+  windupMs: 120,
+  activeMs: 90,
+  recoveryMs: 280,
+  range: 38,
+  arcDeg: 240,
+  lunge: 10,
+  knockback: 160,
+  hitstopMs: 70,
+  shake: 0.003,
+};
 const LASH: AttackStep = {
   damage: 12,
   windupMs: 80,
@@ -353,23 +382,63 @@ export const WEAPONS: Record<WeaponId, WeaponDef> = {
       ),
     ],
   },
-  // Disque d'Hélios : il part et revient ; le rattraper renforce le lancer suivant.
+  // Disque solaire (retours du 02/11) : un seul disque. En main, il frappe au corps à corps ;
+  // l'attaque spéciale le lance : il rebondit sur jusqu'à 4 ennemis puis revient seul (ou tout de
+  // suite si l'on rappuie). Pendant qu'il vole, l'attaque normale devient un coup de poing enflammé.
   disc: {
     id: 'disc',
     nameKey: 'weapon.disc',
-    walkWhileAttacking: RANGED_WALK,
     color: 0xffe08a,
     comboWindowMs: 260,
-    combo: [ranged({ windupMs: 80, activeMs: 40, recoveryMs: 260 }, { projectile: DISC })],
+    combo: [DISC_CUT, DISC_CUT, DISC_SPIN],
     power: ranged(
-      { windupMs: 260, activeMs: 50, recoveryMs: 320 },
-      { projectile: { ...DISC, damage: 26, radius: 9, range: 200, knockback: 140 } },
+      { windupMs: 200, activeMs: 50, recoveryMs: 260 },
+      {
+        projectile: {
+          ...DISC,
+          damage: 22,
+          radius: 7,
+          range: 170,
+          bounces: 4,
+          recallable: true,
+          knockback: 120,
+        },
+      },
     ),
+    // Tourbillon : le disque en main, Ash tourne sur lui-même.
+    dashPower: {
+      damage: 24,
+      windupMs: 60,
+      activeMs: 110,
+      recoveryMs: 260,
+      range: 44,
+      arcDeg: 360,
+      lunge: 0,
+      knockback: 180,
+      hitstopMs: 60,
+      shake: 0.004,
+    },
+    unarmed: {
+      damage: 6,
+      windupMs: 50,
+      activeMs: 60,
+      recoveryMs: 150,
+      range: 22,
+      arcDeg: 90,
+      lunge: 6,
+      knockback: 50,
+      hitstopMs: 25,
+      shake: 0,
+    },
+    // Éclipse : le disque monte au-dessus d'Ash puis s'abat en explosion de lumière devant lui.
     superNameKey: 'super.disc',
     super: [
       ranged(
-        { windupMs: 150, activeMs: 50, recoveryMs: 600 },
-        { projectile: { ...DISC, damage: 20, count: 8, spreadDeg: 360 }, shake: 0.005 },
+        { windupMs: 150, activeMs: 50, recoveryMs: 700 },
+        {
+          zone: { damage: 75, radius: 58, delayMs: 650, distance: 60, knockback: 240 },
+          shake: 0.008,
+        },
       ),
     ],
   },

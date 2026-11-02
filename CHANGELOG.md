@@ -2,6 +2,28 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.79.0 — Le Disque solaire, un seul disque
+
+Ton retour du 02/11, point 3 (option B) : le disque est refait. Il n'y a plus jamais qu'**un seul disque**.
+
+- **Attaque normale** : 3 coups avec le disque en main, au corps à corps (deux tranchants rapides, puis un coup
+  tournant). Plus rien n'est lancé.
+- **Attaque spéciale** : tu lances le disque. Il **rebondit sur jusqu'à 4 ennemis**, puis **revient tout seul**.
+  **Rappuie** sur l'attaque spéciale pendant son vol pour le faire revenir tout de suite (il frappe ce qu'il traverse).
+- **Pendant que le disque vole**, l'attaque normale devient un **coup de poing enflammé**, court et plus faible.
+- **Percée** : un coup tranchant en avant, disque en main. **Tourbillon** : un coup tournant tout autour d'Ash.
+- **Super « Éclipse »** : le disque monte au-dessus d'Ash, puis s'abat en explosion de lumière sur la zone devant lui.
+- Le bonus quand on rattrapait le disque (lancer suivant ×1,5) est **supprimé**.
+- **Gravures** : Lame de midi (coups +20 % de portée et 15 % plus rapides), Éclat (le dernier coup du combo lance une
+  onde de lumière), Éblouissement (la Percée étourdit 0,6 s) et Halo (Tourbillon plus large, qui repousse plus fort)
+  remplacent Double soleil, Disque rapide, Rebond et Double couronne. Éclipse, Soleil géant, Disque tranchant et
+  Couronne de feu restent. Si une run en cours avait une des anciennes gravures, elle devient la nouvelle.
+- Le disque étant maintenant une arme de corps à corps, Ash ne marche plus pendant ses coups (comme les autres armes de
+  corps à corps).
+
+**Quoi tester** : lance le disque au milieu de plusieurs ennemis, puis essaie de le rappeler en rappuyant. Le combo en
+main et le coup de poing te plaisent-ils ? Le Super « Éclipse » est-il assez spectaculaire ?
+
 ## 0.78.0 — Le grappin ne rate plus
 
 Ton retour du 02/11, point 1 : l'attaque spéciale de la **Chaîne du pressoir** vise toute seule et immobilise.

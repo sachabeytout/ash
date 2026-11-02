@@ -77,22 +77,22 @@ Dernière mise à jour : 01/11/2026 (version 0.59.0).
 
 Liste du 02/11/2026 (8 points) :
 
-| #   | Point                                                                              | État                                                                                             |
-| --- | ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| 1   | Chaîne : l'attaque spéciale vise toute seule et immobilise 2 s                     | **fait, en attente de validation finale** (B + C, boss 0,4 s, Garrot +30 %, Ptah 8 portée +25 %) |
-| 2   | Arc de Neith : bouger aussi pendant l'attaque spéciale                             | en attente                                                                                       |
-| 3   | Disque solaire : coups de disque au corps à corps ; lancer qui rebondit et revient | en attente                                                                                       |
-| 4   | Le doigt resté sur le joystick choisit le don de gauche par erreur                 | en attente                                                                                       |
-| 5   | Salles sombres : les ennemis restent trop visibles                                 | en attente                                                                                       |
-| 6   | Remplacer l'ambiance néon par des ambiances plus égyptiennes                       | en attente                                                                                       |
-| 7   | La Cage : se déplacer au joystick comme dans les salles                            | en attente                                                                                       |
-| 8   | La Cage : compteurs de victoires et renaissances à droite avec Papyrus et pièces   | en attente                                                                                       |
+| #   | Point                                                                              | État                                                                               |
+| --- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| 1   | Chaîne : l'attaque spéciale vise toute seule et immobilise 2 s                     | **validé** (0.78.0)                                                                |
+| 2   | Arc de Neith : bouger aussi pendant l'attaque spéciale                             | **annulé** par l'utilisateur                                                       |
+| 3   | Disque solaire : coups de disque au corps à corps ; lancer qui rebondit et revient | **fait, en attente de validation finale** (B, Super Éclipse, sans bonus, gravures) |
+| 4   | Le doigt resté sur le joystick choisit le don de gauche par erreur                 | en attente                                                                         |
+| 5   | Salles sombres : les ennemis restent trop visibles                                 | en attente                                                                         |
+| 6   | Remplacer l'ambiance néon par des ambiances plus égyptiennes                       | en attente                                                                         |
+| 7   | La Cage : se déplacer au joystick comme dans les salles                            | en attente                                                                         |
+| 8   | La Cage : compteurs de victoires et renaissances à droite avec Papyrus et pièces   | en attente                                                                         |
 
-Point 1 — fichiers : `src/core/combat/grapple.ts` (nouveau), `tests/unit/grapple.test.ts` (nouveau),
-`src/data/player.ts`, `src/game/entities/Player.ts`, `src/game/entities/PlayerShots.ts`,
-`src/game/scenes/RunScene.ts`, `src/data/engravings.ts`, `src/data/forge.ts`, `src/i18n/fr.json`, `src/i18n/en.json`.
-Tests : lint, typecheck, 260 tests unitaires, e2e, vérification en jeu (cible sur le côté, derrière, loin devant ; 7
-armes sans erreur). Pas encore enregistré ni mis en ligne (attente d'autorisation).
+Point 3 — fichiers : `src/data/weapons.ts`, `src/core/combat/attack.ts`, `src/game/entities/Player.ts`,
+`src/game/entities/PlayerShots.ts`, `src/game/scenes/RunScene.ts`, `src/data/engravings.ts`, `src/i18n/fr.json`,
+`src/i18n/en.json`, `tests/unit/disc.test.ts` (nouveau), `tests/unit/forge.test.ts`. Tests : lint, typecheck, 264 tests
+unitaires, e2e, vérification en jeu (combo sans projectile, un seul disque lancé, rebond, coup de poing, retour seul,
+rappel, Tourbillon 360°, Super). Pas encore enregistré ni mis en ligne (attente d'autorisation).
 
 Points F1 à F15 : validés le 02/11/2026. Gardés pour plus tard : amulettes (F2, option B), aspects des armes.
 

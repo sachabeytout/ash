@@ -98,6 +98,10 @@ export class Player {
     homing?: Vec2,
   ) => void = () => undefined;
   onDash: () => void = () => undefined;
+  /** Disque solaire : l'arme est-elle lancée (pas dans la main d'Ash) ? */
+  isThrownOut: () => boolean = () => false;
+  /** Disque solaire : rappuyer sur l'attaque spéciale pendant son vol le rappelle. */
+  onRecall: () => void = () => undefined;
   /** Début d'une attaque (normale ou puissante), pour le premier essai guidé. */
   onAttackStart: (power: boolean) => void = () => undefined;
   /** Coup d'élan (attaque ou puissante enchaînée sur le dash), pour l'effet et le son. */
@@ -352,7 +356,13 @@ export class Player {
     controls: Controls,
     enemies: readonly Vec2[],
   ): void {
-    const base = power ? this.weapon.power : this.weapon.combo[index];
+    // Disque solaire lancé : l'attaque spéciale le rappelle, l'attaque normale devient un coup de poing.
+    const unarmed = this.weapon.unarmed && this.isThrownOut() ? this.weapon.unarmed : null;
+    if (power && unarmed) {
+      this.onRecall();
+      return;
+    }
+    const base = unarmed ?? (power ? this.weapon.power : this.weapon.combo[index]);
     if (!base) return;
     // Juste après un dash : coup d'élan (plus fort, plus large).
     const strike = isDashStrike(now, this.lastDashEnd);
@@ -364,16 +374,21 @@ export class Player {
       : power
         ? 'power'
         : 'attack';
-    // Forge de Ptah puis gravure de l'action : les deux s'additionnent.
-    let mod = mergeStepMods(this.forgeMods[power ? 'power' : 'attack'], this.engravings[slot]);
+    // Forge de Ptah puis gravure de l'action : les deux s'additionnent (pas pour le coup de poing).
+    let mod = unarmed
+      ? undefined
+      : mergeStepMods(this.forgeMods[power ? 'power' : 'attack'], this.engravings[slot]);
     if (!power && this.doubleShotEvery > 0 && base.projectile) {
       this.attackShots += 1;
       if (this.attackShots % this.doubleShotEvery === 0)
         mod = mergeStepMods(mod, { projectile: { countAdd: 1, spreadAdd: 8 } });
     }
-    const comboLength = this.weapon.combo.length;
+    const comboLength = unarmed ? 1 : this.weapon.combo.length;
+    // Tourbillon propre à l'arme (disque solaire : coup tournant disque en main), sinon le calcul commun.
+    const strikeBase =
+      power && this.weapon.dashPower ? this.weapon.dashPower : dashStrikeStep(base, power);
     const strikeStep = strike
-      ? applyEngraving(dashStrikeStep(base, power), { damageMul: 1 + this.strikeBonus })
+      ? applyEngraving(strikeBase, { damageMul: 1 + this.strikeBonus })
       : base;
     const step = applyEngraving(strikeStep, mod, power ? 0 : index, power ? 1 : comboLength);
     // Les effets propres au dernier coup du combo (onde, coups multiples) ne valent que pour lui.

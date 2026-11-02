@@ -200,6 +200,14 @@ prennent plus seules à partir de cette date.
   mécaniques de tir (`bounces`, `split`, `explodeEnd`, `hover`) dans `PlayerShots`. Sauvegarde v23. Inspiration de
   fonctionnement : marteau de Hadès, runes de Diablo III, Dead Cells ; contenu original.
 
+- **0.79.0 — Refonte du Disque solaire (02/11, point 3 : B, Super c, bonus de rattrapage supprimé, gravures validées)** :
+  combo en main (`DISC_CUT`, `DISC_SPIN`), lancer `recallable` à 4 rebonds qui revient seul (`PlayerShots.beginReturn`)
+  ou au rappel (`recall`, rappuyer sur l'attaque spéciale), coup de poing (`WeaponDef.unarmed`) pendant le vol,
+  Tourbillon propre (`WeaponDef.dashPower`), Super en zone (`eclipseFx`). Gravures remplacées en gardant leurs
+  identifiants (aucune migration : une run sauvegardée garde ses gravures). Choix techniques de Claude (valeurs) :
+  dégâts et vitesses des coups, 4 rebonds, coup de poing 6 dégâts ; le disque ne marche plus pendant ses coups (corps à
+  corps). Point 2 (Arc : bouger pendant l'attaque spéciale) annulé par l'utilisateur.
+
 - **0.78.0 — Grappin de la Chaîne (02/11, point 1 : mélange B + C, validé)** : cible = plus proche dans un cône de 120°
   devant, sinon plus proche autour (`grappleTarget`, `src/core/combat/grapple.ts`) ; départ dans la direction visée et
   virage vers la cible (`steerToward`, 540°/s, course ×1,5) ; immobilisation 2 s (`PLAYER.grapple`), boss limités à
