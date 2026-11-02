@@ -92,7 +92,8 @@ Point 3 — fichiers : `src/data/weapons.ts`, `src/core/combat/attack.ts`, `src/
 `src/game/entities/PlayerShots.ts`, `src/game/scenes/RunScene.ts`, `src/data/engravings.ts`, `src/i18n/fr.json`,
 `src/i18n/en.json`, `tests/unit/disc.test.ts` (nouveau), `tests/unit/forge.test.ts`. Tests : lint, typecheck, 264 tests
 unitaires, e2e, vérification en jeu (combo sans projectile, un seul disque lancé, rebond, coup de poing, retour seul,
-rappel, Tourbillon 360°, Super). Pas encore enregistré ni mis en ligne (attente d'autorisation).
+rappel, Tourbillon 360°, Super). Mis en ligne en 0.79.0. Demande de l'utilisateur : le disque garde la marche à 60 %
+(0.79.1, pas encore enregistré).
 
 Points F1 à F15 : validés le 02/11/2026. Gardés pour plus tard : amulettes (F2, option B), aspects des armes.
 

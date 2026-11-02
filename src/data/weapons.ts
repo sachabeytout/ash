@@ -23,8 +23,8 @@ export interface WeaponDef {
   /** Temps laissé après un coup pour enchaîner le suivant. */
   comboWindowMs: number;
   /**
-   * Armes à distance (retour F14) : Ash continue de marcher pendant l'attaque normale, à cette part de
-   * sa vitesse. Absent = Ash s'arrête pour frapper (corps à corps, attaque spéciale, Super).
+   * Ash continue de marcher pendant l'attaque normale, à cette part de sa vitesse (Ouas, Arc, Disque).
+   * Absent = Ash s'arrête pour frapper. Jamais pendant l'attaque spéciale ni le Super.
    */
   walkWhileAttacking?: number;
   power: AttackStep;
@@ -51,8 +51,11 @@ const STORM_SPIN: AttackStep = {
   shake: 0,
 };
 
-/** Vitesse de marche pendant l'attaque normale des armes à distance (retour F14). */
-const RANGED_WALK = 0.6;
+/**
+ * Vitesse de marche pendant l'attaque normale (retour F14 : Ouas et Arc ; retours du 02/11 : Disque
+ * solaire aussi, même au corps à corps).
+ */
+const ATTACK_WALK = 0.6;
 
 /** Coup « à distance » : pas de zone de frappe, le projectile ou la zone fait les dégâts. */
 function ranged(
@@ -319,7 +322,7 @@ export const WEAPONS: Record<WeaponId, WeaponDef> = {
   staff: {
     id: 'staff',
     nameKey: 'weapon.staff',
-    walkWhileAttacking: RANGED_WALK,
+    walkWhileAttacking: ATTACK_WALK,
     color: 0xffd27a,
     comboWindowMs: 260,
     combo: [
@@ -360,7 +363,7 @@ export const WEAPONS: Record<WeaponId, WeaponDef> = {
   crossbow: {
     id: 'crossbow',
     nameKey: 'weapon.crossbow',
-    walkWhileAttacking: RANGED_WALK,
+    walkWhileAttacking: ATTACK_WALK,
     color: 0xff9f6a,
     comboWindowMs: 220,
     combo: [
@@ -388,6 +391,7 @@ export const WEAPONS: Record<WeaponId, WeaponDef> = {
   disc: {
     id: 'disc',
     nameKey: 'weapon.disc',
+    walkWhileAttacking: ATTACK_WALK,
     color: 0xffe08a,
     comboWindowMs: 260,
     combo: [DISC_CUT, DISC_CUT, DISC_SPIN],

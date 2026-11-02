@@ -206,7 +206,8 @@ prennent plus seules à partir de cette date.
   Tourbillon propre (`WeaponDef.dashPower`), Super en zone (`eclipseFx`). Gravures remplacées en gardant leurs
   identifiants (aucune migration : une run sauvegardée garde ses gravures). Choix techniques de Claude (valeurs) :
   dégâts et vitesses des coups, 4 rebonds, coup de poing 6 dégâts ; le disque ne marche plus pendant ses coups (corps à
-  corps). Point 2 (Arc : bouger pendant l'attaque spéciale) annulé par l'utilisateur.
+  corps) — **corrigé en 0.79.1 à la demande de l'utilisateur : le disque garde la marche à 60 % pendant l'attaque
+  normale**. Point 2 (Arc : bouger pendant l'attaque spéciale) annulé par l'utilisateur.
 
 - **0.78.0 — Grappin de la Chaîne (02/11, point 1 : mélange B + C, validé)** : cible = plus proche dans un cône de 120°
   devant, sinon plus proche autour (`grappleTarget`, `src/core/combat/grapple.ts`) ; départ dans la direction visée et

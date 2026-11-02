@@ -2,6 +2,14 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.79.1 — Le disque garde la marche
+
+Ta demande sur le point 3 : avec le **Disque solaire**, Ash continue de marcher à environ 60 % de sa vitesse pendant
+l'attaque normale (le combo en main et le coup de poing), comme avec l'Ouas et l'Arc. L'attaque spéciale, le Tourbillon
+et le Super restent immobiles.
+
+**Quoi tester** : avec le disque, garde le doigt sur le déplacement et enchaîne les coups normaux.
+
 ## 0.79.0 — Le Disque solaire, un seul disque
 
 Ton retour du 02/11, point 3 (option B) : le disque est refait. Il n'y a plus jamais qu'**un seul disque**.
