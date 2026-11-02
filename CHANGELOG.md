@@ -2,6 +2,24 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.72.0 — Des améliorations plus chères et plus nombreuses (1re partie)
+
+Ton retour n° 12 (option B) : on finissait presque tout en une dizaine de runs. Première partie : les prix et les
+nouveaux niveaux de Thot. Les niveaux 6 à 10 de Ptah arrivent juste après (je te propose d'abord leurs bonus).
+
+- **Tout ce que tu as déjà acheté reste acquis** : seuls les prochains achats changent.
+- **Ptah** : forger coûte maintenant 2, 3, 4, 6 puis 8 pièces (avant : 1 à 5). Débloquer une arme coûte 8 pièces
+  (Sceptre ouas, Arc du désert) ou 12 pièces (Disque de Râ, Chaîne de Shezmu), au lieu de 3 et 5.
+- **Thot** : les prix sont environ 1,5 fois plus élevés, et **13 compétences gagnent 1 ou 2 niveaux** :
+  - Mémoire du feu et Lame affûtée passent à 5 niveaux (jusqu'à +40 PV max et +25 % de dégâts) ;
+  - Bras de Ptah et Bourse de Ratatosk passent à 4 niveaux ;
+  - Braises vivaces, Pas de l'ibis, Eau sacrée, Cœur de cendre, Élan du faucon, Tueur de géants, Colère sacrée, Faveur
+    divine, Étincelle et Marchandage passent à 3 niveaux.
+- L'arbre complet coûte environ 12 400 Papyrus (avant : environ 4 800), soit 60 à 80 runs pour tout apprendre.
+
+**Quoi tester** : fais quelques runs puis passe chez Thot et Ptah. Les prix te paraissent-ils justes ? As-tu toujours
+quelque chose à acheter en rentrant ?
+
 ## 0.71.0 — La Cage, une vraie salle
 
 Ton retour n° 11 (option B) : la Cage ressemble maintenant aux **salles des runs**, sans ennemis. Elle est **plus grande

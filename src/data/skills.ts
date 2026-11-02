@@ -59,28 +59,29 @@ const skill = (
   costs,
 });
 
+// Retour F12 (0.72.0) : prix ×1,5 et des niveaux en plus pour la plupart des compétences.
 export const SKILLS: readonly SkillDef[] = [
   // ---------- Corps ----------
-  skill('thoth_vigor', 'body', undefined, 'maxHp', 8, [30, 60, 100]),
-  skill('thoth_embers', 'body', 'thoth_vigor', 'healPerRoom', 3, [50, 100]),
-  skill('thoth_ibis', 'body', 'thoth_embers', 'dashCooldown', 0.1, [70, 140]),
-  skill('thoth_spring', 'body', 'thoth_ibis', 'fountainHeal', 0.15, [90, 160]),
-  skill('thoth_ashHeart', 'body', 'thoth_spring', 'bossHp', 4, [120, 200]),
-  skill('thoth_rebirth', 'body', 'thoth_ashHeart', 'revive', 1, [250, 450]),
+  skill('thoth_vigor', 'body', undefined, 'maxHp', 8, [45, 90, 150, 220, 300]),
+  skill('thoth_embers', 'body', 'thoth_vigor', 'healPerRoom', 3, [75, 150, 240]),
+  skill('thoth_ibis', 'body', 'thoth_embers', 'dashCooldown', 0.1, [105, 210, 320]),
+  skill('thoth_spring', 'body', 'thoth_ibis', 'fountainHeal', 0.15, [135, 240, 360]),
+  skill('thoth_ashHeart', 'body', 'thoth_spring', 'bossHp', 4, [180, 300, 450]),
+  skill('thoth_rebirth', 'body', 'thoth_ashHeart', 'revive', 1, [375, 675]),
   // ---------- Lame ----------
-  skill('thoth_edge', 'blade', undefined, 'damage', 0.05, [40, 80, 130]),
-  skill('thoth_falcon', 'blade', 'thoth_edge', 'strikeDamage', 0.15, [60, 120]),
-  skill('thoth_ptahArm', 'blade', 'thoth_falcon', 'powerDamage', 0.1, [70, 130, 190]),
-  skill('thoth_giant', 'blade', 'thoth_ptahArm', 'giantSlayer', 0.08, [100, 180]),
-  skill('thoth_wrath', 'blade', 'thoth_giant', 'superDamage', 0.15, [120, 200]),
-  skill('thoth_chisel', 'blade', 'thoth_wrath', 'startEngraving', 1, [300]),
+  skill('thoth_edge', 'blade', undefined, 'damage', 0.05, [60, 120, 195, 280, 380]),
+  skill('thoth_falcon', 'blade', 'thoth_edge', 'strikeDamage', 0.15, [90, 180, 280]),
+  skill('thoth_ptahArm', 'blade', 'thoth_falcon', 'powerDamage', 0.1, [105, 195, 285, 390]),
+  skill('thoth_giant', 'blade', 'thoth_ptahArm', 'giantSlayer', 0.08, [150, 270, 400]),
+  skill('thoth_wrath', 'blade', 'thoth_giant', 'superDamage', 0.15, [180, 300, 450]),
+  skill('thoth_chisel', 'blade', 'thoth_wrath', 'startEngraving', 1, [450]),
   // ---------- Esprit ----------
-  skill('thoth_favor', 'spirit', undefined, 'rareBonus', 0.08, [60, 120]),
-  skill('thoth_spark', 'spirit', 'thoth_favor', 'superStart', 0.25, [45, 90]),
-  skill('thoth_purse', 'spirit', 'thoth_spark', 'startShards', 15, [40, 80, 120]),
-  skill('thoth_haggle', 'spirit', 'thoth_purse', 'shopDiscount', 0.1, [80, 150]),
-  skill('thoth_firstFavor', 'spirit', 'thoth_haggle', 'rareFirst', 1, [150]),
-  skill('thoth_eye', 'spirit', 'thoth_firstFavor', 'extraChoice', 1, [350]),
+  skill('thoth_favor', 'spirit', undefined, 'rareBonus', 0.08, [90, 180, 280]),
+  skill('thoth_spark', 'spirit', 'thoth_favor', 'superStart', 0.25, [70, 135, 210]),
+  skill('thoth_purse', 'spirit', 'thoth_spark', 'startShards', 15, [60, 120, 180, 260]),
+  skill('thoth_haggle', 'spirit', 'thoth_purse', 'shopDiscount', 0.1, [120, 225, 340]),
+  skill('thoth_firstFavor', 'spirit', 'thoth_haggle', 'rareFirst', 1, [225]),
+  skill('thoth_eye', 'spirit', 'thoth_firstFavor', 'extraChoice', 1, [525]),
 ];
 
 /** Renaissance : part des PV max retrouvés en se relevant. */

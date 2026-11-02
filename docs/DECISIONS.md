@@ -194,6 +194,12 @@ Format : date — décision — raison — validée par l'utilisateur (oui / non
   mécaniques de tir (`bounces`, `split`, `explodeEnd`, `hover`) dans `PlayerShots`. Sauvegarde v23. Inspiration de
   fonctionnement : marteau de Hadès, runes de Diablo III, Dead Cells ; contenu original.
 
+- **0.72.0 — Améliorations plus chères et plus nombreuses (retour F12 : B, 1re partie)** : forge 2/3/4/6/8 (avant
+  1 à 5), déblocage 8/8/12/12 (avant 3/3/5/5), Thot ×1,5 et des niveaux en plus (arbre complet ≈ 12 400 Papyrus, cible
+  60 à 80 runs). Niveaux déjà achetés conservés (rien à migrer : la sauvegarde garde des niveaux, pas des prix). Choix de
+  Claude : quelles compétences gagnent des niveaux et les prix exacts. Les niveaux 6 à 10 de Ptah attendent la
+  validation de leurs bonus.
+
 - **0.71.0 — La Cage, une vraie salle (retour F11 : B)** : salle de 520 × 290 vue comme en run (zoom ×2, `SCENE_ZOOM.hub`),
   caméra qui suit Ash. Deux caméras dans `HubScene` : la salle (zoomée) et l'interface (fixe, devient `cameras.main`
   pour que les fenêtres existantes restent centrées) ; chaque objet n'est vu que par l'une des deux (`ADDED_TO_SCENE`).

@@ -32,14 +32,14 @@ describe('arbre de Thot', () => {
 
   it("achète un niveau si l'XP suffit, sinon rien ne change", () => {
     const meta = defaultMeta();
-    meta.xp = 29;
+    meta.xp = 44;
     expect(buySkill(meta, vigor)).toBe(false);
-    expect(meta.xp).toBe(29);
+    expect(meta.xp).toBe(44);
     meta.xp = 95;
     expect(buySkill(meta, vigor)).toBe(true);
-    expect(meta.xp).toBe(65);
+    expect(meta.xp).toBe(50);
     expect(skillLevel(meta, vigor)).toBe(1);
-    expect(nextCost(meta, vigor)).toBe(60);
+    expect(nextCost(meta, vigor)).toBe(90);
   });
 
   it('niveau maximum', () => {

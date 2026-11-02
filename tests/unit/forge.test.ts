@@ -32,10 +32,10 @@ describe('forge de Brokk', () => {
   it('améliore avec les pièces d’arme, sinon rien ne change', () => {
     const meta = defaultMeta();
     expect(upgradeWeapon(meta, 'katana')).toBe(false);
-    meta.weaponParts = 3;
+    meta.weaponParts = 5;
     expect(upgradeWeapon(meta, 'katana')).toBe(true);
     expect(forgeLevel(meta, 'katana')).toBe(1);
-    expect(meta.weaponParts).toBe(2);
+    expect(meta.weaponParts).toBe(3);
     expect(upgradeWeapon(meta, 'katana')).toBe(true);
     expect(meta.weaponParts).toBe(0);
     expect(forgeLevel(meta, 'twinBlades')).toBe(0);
