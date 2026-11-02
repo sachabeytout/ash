@@ -92,7 +92,7 @@ validation. Une fois validé : mise à jour du jeu, et on passe au point suivant
 | F10 | Plus de râtelier : choisir l'arme juste après « Sortir »                                             | **fait (0.70.0)**                                 |
 | F11 | La Cage ressemble aux autres salles (sans ennemis), personnages répartis dans la salle               | **fait (0.71.0)**                                 |
 | F12 | Améliorations (armes, compétences) plus chères et plus nombreuses                                    | **fait (0.72.0 + 0.73.0)**                        |
-| F13 | Noms plus accrocheurs pour les frappes et tourbillons d'élan de chaque arme                          | à venir                                           |
+| F13 | Noms plus accrocheurs pour les frappes et tourbillons d'élan de chaque arme                          | **fait (0.74.0)**                                 |
 | F14 | Pouvoir bouger en attaquant avec le Sceptre ouas                                                     | à venir                                           |
 | F15 | Noms d'armes plus simples, niveau en haut à droite du nom, description (type, origine, rumeur)       | à venir                                           |
 

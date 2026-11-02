@@ -2,6 +2,18 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.74.0 — Percée et Tourbillon
+
+Ton retour n° 13 : les coups d'élan ont des noms plus courts et plus parlants, les mêmes pour toutes les armes.
+
+- L'attaque juste après un dash s'appelle maintenant **Percée** (avant : « Frappe d'élan »).
+- L'attaque spéciale juste après un dash s'appelle maintenant **Tourbillon** (avant : « Tourbillon d'élan »).
+- Les nouveaux noms sont partout : à l'écran pendant le combat, sur les cartes de gravures, chez Thot (« Élan du
+  faucon ») et chez Ptah (niveau 9).
+
+**Quoi tester** : fais un dash puis attaque (Percée !), puis un dash et ton attaque spéciale (Tourbillon !). Les noms
+te plaisent-ils à l'écran ?
+
 ## 0.73.0 — Ptah : les niveaux 6 à 10
 
 Ton retour n° 12, 2e partie (option 1) : chaque arme a maintenant **10 niveaux** chez Ptah. Les niveaux 6 à 10 coûtent

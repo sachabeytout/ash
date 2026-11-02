@@ -194,6 +194,10 @@ Format : date — décision — raison — validée par l'utilisateur (oui / non
   mécaniques de tir (`bounces`, `split`, `explodeEnd`, `hover`) dans `PlayerShots`. Sauvegarde v23. Inspiration de
   fonctionnement : marteau de Hadès, runes de Diablo III, Dead Cells ; contenu original.
 
+- **0.74.0 — Percée et Tourbillon (retour F13 : C, paire 10)** : un seul nom pour toutes les armes, partout (combat,
+  gravures, Thot, Ptah). Identifiants internes inchangés (`strike.*`, `dashAttack`, `dashPower`). Choix de Claude : en
+  anglais « Lunge » et « Whirlwind ».
+
 - **0.73.0 — Forge de Ptah, niveaux 6 à 10 (retour F12, option 1)** : 7 = +8 % de dégâts, 9 = élan +25 %, 6/8/10
   propres à l'arme (tableau validé). Coûts 9/10/12/14/16. Les bonus de coups passent par le même mécanisme que les
   gravures (`StepMod`, réunis par `mergeStepMods`, nouveau champ `activeMul` pour la parade). Choix de Claude : les
