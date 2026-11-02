@@ -75,7 +75,16 @@ export class ForgePanel {
       const level = forgeLevel(this.meta, id);
       const max = FORGE[id].length;
       const next = nextForgeLevel(this.meta, id);
-      this.text(left + 14, y + 2, t(WEAPONS[id].nameKey as TextKey), 12, COLORS.text, true);
+      const name = this.text(
+        left + 14,
+        y + 2,
+        t(WEAPONS[id].nameKey as TextKey),
+        12,
+        COLORS.text,
+        true,
+      );
+      // Niveau en petit en haut à droite du nom (retour F15).
+      if (level > 0) this.text(left + 15 + name.width, y, String(level), 9, '#ffe08a', true);
       const pips = scene.add.graphics();
       for (let p = 0; p < max; p++) {
         const px = left + 18 + p * 12;

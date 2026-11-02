@@ -117,6 +117,7 @@ Retour sur le lore v0.2 toujours attendu (« quand le fond aura avancé »).
 - [x] **0.59.0** : 8 duos tirés de la mythologie (16 duos, 99 dons au total)
 - [x] **0.60.0** : retour F1, Ash immobile pendant les menus (+ 0,5 s d'invincibilité)
 - [x] **0.72.0** : retour F12 (1re partie), prix de Ptah et de Thot relevés, 13 compétences de Thot avec 1 ou 2 niveaux de plus
+- [x] **0.76.0** : retour F15 (1re partie), bandeau de description des armes, niveau chez Ptah, Archives
 - [x] **0.75.0** : retour F14, Ash marche (60 %) pendant l'attaque normale du Sceptre, de l'Arc et du Disque
 - [x] **0.74.0** : retour F13, « Percée » et « Tourbillon » remplacent « Frappe d'élan » et « Tourbillon d'élan »
 - [x] **0.73.0** : retour F12 (2e partie), niveaux 6 à 10 de la forge de Ptah (bonus propres à chaque arme)

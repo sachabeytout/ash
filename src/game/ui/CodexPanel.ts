@@ -172,7 +172,17 @@ export class CodexPanel {
         10,
         '#7fffc0',
       );
-      this.text(dx + 12, top + 144, t(`codex.${entry.key}` as TextKey), 10, COLORS.text)
+      // Armes (retour F15) : type et origine, puis la fiche, puis l'anecdote.
+      const body =
+        entry.section === 'weapon'
+          ? [
+              t(`weapon.${entry.id}.type` as TextKey),
+              t(`codex.${entry.key}` as TextKey),
+              t(`weapon.${entry.id}.rumor` as TextKey),
+            ].join('\n')
+          : t(`codex.${entry.key}` as TextKey);
+      // Fiche d'arme plus longue (type, fiche, anecdote) : un peu plus petite pour tenir dans le cadre.
+      this.text(dx + 12, top + 144, body, entry.section === 'weapon' ? 9 : 10, COLORS.text)
         .setWordWrapWidth(dw - 24)
         .setLineSpacing(3);
     } else {

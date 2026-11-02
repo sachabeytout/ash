@@ -2,6 +2,19 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.76.0 — Chaque arme a son histoire
+
+Ton retour n° 15 (affichage a) : sous les cartes de la fenêtre de départ, un **bandeau** présente l'arme choisie.
+
+- Le bandeau montre le **nom** de l'arme, son **niveau** en petit en haut à droite, son **type et son origine**, puis
+  **une anecdote ou une rumeur** (plusieurs sont vraies : la dague météorite de Toutânkhamon, Thèbes « la ville du
+  sceptre », les « Neuf Arcs »).
+- Le niveau s'affiche aussi en petit en haut à droite du nom **chez Ptah**.
+- Les **Archives de Thot** (onglet Armes) montrent aussi le type, l'origine et l'anecdote.
+- Les noms des armes ne changent pas encore : j'attends ton choix (A, B ou C).
+
+**Quoi tester** : touche « Sortir » et passe d'une arme à l'autre avec les flèches. Les descriptions te plaisent-elles ?
+
 ## 0.75.0 — Marcher en tirant
 
 Ton retour n° 14 (option B) : avec les **armes à distance**, Ash ne s'arrête plus pour attaquer.

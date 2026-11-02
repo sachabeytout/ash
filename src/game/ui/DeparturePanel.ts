@@ -77,7 +77,7 @@ export class DeparturePanel {
     const cx = cam.midPoint.x;
     const cy = cam.midPoint.y;
     const w = Math.min(600, cam.displayWidth - 24);
-    const h = 310;
+    const h = 340;
     const left = cx - w / 2;
     const top = cy - h / 2;
     const veil = scene.add
@@ -90,14 +90,15 @@ export class DeparturePanel {
     this.text(left + 14, top + 30, t('depart.intro'), 10, COLORS.textDim);
 
     const cardW = (w - 28 - 3 * 8) / 4;
-    const cardH = 96;
+    const cardH = 78;
     WEAPON_ORDER.forEach((id, i) => {
       const row = i < 4 ? 0 : 1;
       const col = row === 0 ? i : i - 4 + 0.5;
       const x = left + 14 + col * (cardW + 8);
-      const y = top + 52 + row * (cardH + 10);
+      const y = top + 48 + row * (cardH + 8);
       this.card(id, i, x, y, cardW, cardH);
     });
+    this.describe(left + 14, top + 220, w - 28, 78);
 
     // Boutons du bas : Retour à gauche, Partir à droite (le plus visible).
     const by = top + h - 22;
@@ -126,10 +127,10 @@ export class DeparturePanel {
 
     // Arme secrète (Lame de l'Aube) : rien n'est dévoilé, pas même son nom.
     if (!unlocked && UNLOCK_COST[id] === undefined) {
-      this.text(cx, y + h / 2 - 8, '?', 26, COLORS.textDim, true).setOrigin(0.5);
+      this.text(cx, y + h / 2 - 10, '?', 24, COLORS.textDim, true).setOrigin(0.5);
       this.text(
         cx,
-        y + h - 22,
+        y + h - 18,
         t('depart.lockedDawn', { count: DAWNBLADE_VICTORIES }),
         9,
         COLORS.textDim,
@@ -144,7 +145,7 @@ export class DeparturePanel {
     // Nom, et niveau de forge en petit en haut à droite du nom (mise en page du retour F15).
     const name = this.text(
       cx,
-      y + 8,
+      y + 6,
       t(def.nameKey as TextKey),
       11,
       unlocked ? COLORS.text : COLORS.textDim,
@@ -154,10 +155,10 @@ export class DeparturePanel {
     for (let size = 10; name.width > w - 24 && size >= 8; size--) name.setFontSize(size);
     const level = forgeLevel(this.meta, id);
     if (unlocked && level > 0)
-      this.text(cx + name.width / 2 + 1, y + 5, String(level), 9, '#ffe08a', true);
+      this.text(cx + name.width / 2 + 1, y + 3, String(level), 9, '#ffe08a', true);
 
     const glyph = this.scene.add.graphics().setAlpha(unlocked ? 1 : 0.35);
-    drawWeaponGlyph(glyph, id, cx, y + 50, unlocked ? def.color : 0x8a84a0, 1);
+    drawWeaponGlyph(glyph, id, cx, y + 40, unlocked ? def.color : 0x8a84a0, 0.8);
     this.root.add(glyph);
 
     const cost = UNLOCK_COST[id] ?? 0;
@@ -166,11 +167,34 @@ export class DeparturePanel {
       : selected
         ? t('depart.selected')
         : t('depart.key', { key: index + 1 });
-    this.text(cx, y + h - 18, status, 9, selected ? '#ffb02e' : COLORS.textDim, selected)
+    this.text(cx, y + h - 16, status, 9, selected ? '#ffb02e' : COLORS.textDim, selected)
       .setOrigin(0.5, 0)
       .setWordWrapWidth(w - 10)
       .setAlign('center');
     this.root.add(zone);
+  }
+
+  /**
+   * Bandeau sous les cartes (retour F15) : l'arme choisie, son niveau, son type et son origine,
+   * puis une anecdote ou une rumeur.
+   */
+  private describe(x: number, y: number, w: number, h: number): void {
+    const id = this.selected;
+    const def = WEAPONS[id];
+    const g = this.scene.add.graphics();
+    g.fillStyle(0x07060d, 0.95).fillRoundedRect(x, y, w, h, 8);
+    g.lineStyle(1.5, def.color, 0.6).strokeRoundedRect(x, y, w, h, 8);
+    this.root.add(g);
+    const color = `#${def.color.toString(16).padStart(6, '0')}`;
+    const name = this.text(x + 12, y + 8, t(def.nameKey as TextKey), 13, color, true);
+    const level = forgeLevel(this.meta, id);
+    if (level > 0) this.text(x + 12 + name.width + 1, y + 5, String(level), 10, '#ffe08a', true);
+    this.text(x + 12, y + 27, t(`weapon.${id}.type` as TextKey), 10, '#d8b878').setFontStyle(
+      'italic',
+    );
+    this.text(x + 12, y + 44, t(`weapon.${id}.rumor` as TextKey), 10, COLORS.text)
+      .setWordWrapWidth(w - 24)
+      .setLineSpacing(2);
   }
 
   private button(

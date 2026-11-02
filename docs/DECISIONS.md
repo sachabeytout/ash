@@ -194,6 +194,12 @@ Format : date — décision — raison — validée par l'utilisateur (oui / non
   mécaniques de tir (`bounces`, `split`, `explodeEnd`, `hover`) dans `PlayerShots`. Sauvegarde v23. Inspiration de
   fonctionnement : marteau de Hadès, runes de Diablo III, Dead Cells ; contenu original.
 
+- **0.76.0 — Description des armes (retour F15 : affichage a)** : bandeau sous les cartes de la fenêtre de départ
+  (`DeparturePanel.describe`), textes `weapon.<id>.type` et `weapon.<id>.rumor`, repris dans les Archives (fiche
+  d'arme en 9 px pour tenir) ; niveau en exposant chez Ptah. Choix de Claude : la rumeur de la Lame de l'Aube suit les
+  Archives (plume du Bennu) au lieu de « personne ne sait d'où vient sa lumière ». Noms des armes : en attente (A, B ou
+  C).
+
 - **0.75.0 — Marcher en attaquant (retour F14 : B)** : `WeaponDef.walkWhileAttacking` (0,6) pour le Sceptre, l'Arc
   et le Disque, appliqué dans `Player.updateAttackMotion` à l'attaque normale seulement (pas la spéciale, ni le Super ;
   la Percée garde son bond). Choix de Claude : 60 % de la vitesse.
