@@ -36,6 +36,9 @@ Dernière mise à jour : 01/11/2026 (version 0.59.0).
 
 ## B. Histoire (lore v0.2, dans `docs/GDD.md`)
 
+> 🗄️ **Remplacée le 02/11/2026** : on repart de zéro. Les questions d'histoire sont maintenant dans
+> `docs/bible/07-questions-ouvertes.md`. La partie B ci-dessous est gardée pour mémoire.
+
 12. L'Oiseleur, **un dieu** plus ancien que les panthéons (dieu des filets, des cages et des serments) : ça te va ?
 13. Aelia devient **la Lanterne** qui éclaire la ville et perd ses souvenirs chaque nuit : ça te va ?
 14. Les étapes de l'histoire sur les 10 victoires (tableau « Arc narratif » du GDD) : ça te va ?

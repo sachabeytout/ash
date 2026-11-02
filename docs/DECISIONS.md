@@ -8,6 +8,12 @@ L'utilisateur a fixé des directives permanentes : `docs/DIRECTIVES.md`. Elles p
 mise en ligne : au cas par cas, avec son autorisation. Les « petites décisions prises par Claude » ci-dessous ne se
 prennent plus seules à partir de cette date.
 
+## Univers narratif : on repart de zéro (02/11/2026)
+
+| Date       | Décision                                                                                                                                                                                              | Raison                                                                               | Validée |
+| ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ | ------- |
+| 2026-11-02 | **Le lore repart de zéro.** Nouvelle référence : la bible narrative `docs/bible/` (option A : un fichier par thème). `docs/LORE.md` archivé, pas supprimé. Rien ne change dans le jeu pour l'instant. | Manque d'attachement aux personnages, de mystères et de relations entre personnages. | oui     |
+
 ## Décisions issues du brief (validées)
 
 | Date       | Décision                                                                                                                  | Raison                                                                     | Validée                                        |

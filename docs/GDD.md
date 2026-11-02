@@ -9,6 +9,9 @@
 
 ## 2. Lore
 
+> 🗄️ **Remplacé le 02/11/2026** : on repart de zéro. La référence est la bible narrative `docs/bible/`.
+> Les sections ci-dessous décrivent l'ancien lore (encore présent dans le jeu) et sont gardées pour mémoire.
+
 ### Lore v0.3 — la base fixée par l'utilisateur (31/10/2026) ✅
 
 - **Dieux : uniquement égyptiens.**

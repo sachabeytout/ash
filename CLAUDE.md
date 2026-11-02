@@ -14,7 +14,8 @@ sans son autorisation (au cas par cas)** ; jamais de reset ni de suppression de 
 1. Ce fichier, puis `docs/DIRECTIVES.md`.
 2. `docs/ARCHITECTURE.md` pour trouver les bons fichiers **avant** de lire du code.
 3. Selon la tâche : `docs/GDD.md` (design), `docs/DECISIONS.md` (ce qui est tranché), `docs/ROADMAP.md` (où on en est),
-   `docs/QUESTIONS.md` (questions en attente de l'utilisateur).
+   `docs/QUESTIONS.md` (questions en attente de l'utilisateur), `docs/bible/` (univers et histoire : seule référence
+   narrative depuis le 02/11/2026).
 4. `docs/BRIEF.md` = source de vérité d'origine. **Ne jamais le modifier.**
 
 ## L'utilisateur

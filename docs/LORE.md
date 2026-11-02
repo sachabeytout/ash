@@ -1,5 +1,8 @@
 # Lore d'ASH — version approfondie (v0.4)
 
+> 🗄️ **ARCHIVÉ le 02/11/2026 — n'est plus la référence.** L'utilisateur repart de zéro : voir `docs/bible/`.
+> Ce document est gardé pour mémoire (on peut y reprendre une idée si l'utilisateur le décide).
+
 > ✅ = validé par l'utilisateur · 🟡 = proposition de Claude, à valider (questions dans `docs/QUESTIONS.md`, 15 nonies et suivantes).
 > Rien de ce document n'est encore dans le jeu. Il remplace les anciennes sections « lore v0.2 » du GDD une fois validé.
 > Tout est original : les dieux et créatures viennent des vraies mythologies, l'histoire est la nôtre.
