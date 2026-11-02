@@ -34,6 +34,8 @@ par-dessus ; cartes face cachée puis retournées : `BoonScene.revealCard`). Mor
   `stun`, `onExecute`, `zapBurn` (foudre).
 - Brûlure / givre / gel : `src/data/status.ts` + `src/core/combat/status.ts`.
 - Tirage des dons et profil de combat : `src/core/boons/boons.ts` ; effets en jeu : `RunScene` (section « Dons »).
+- Commandes tactiles de la Cage (0.83.0) : `src/game/scenes/HubTouchScene.ts` (`TouchControls` mode `hub`, bouton
+  « Utiliser » → `HubScene.useNearby`), endormie par `HubScene.setTouchAwake` ; toucher bref d'un habitant `isQuickTap`.
 - Salles de temple (0.82.0) : thème `BiomeTheme.temple` (`src/data/biomes.ts`, `MERCHANT_THEME`), dessin commun
   `src/game/fx/temple.ts` (`drawTempleRoom`, `TEMPLE_WALL`) utilisé par `RunScene.drawArena`, `drawHubRoom` (Cage) ;
   décors par monde `src/game/fx/biomeDecor.ts` (`paintGlyphs`, `wallColumns`). `drawNeonArena` reste pour un thème

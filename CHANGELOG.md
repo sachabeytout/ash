@@ -2,6 +2,23 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.83.0 — Le joystick dans la Cage
+
+Ton retour du 02/11, point 7 (option A) : sur téléphone, on se déplace dans la Cage **avec le même joystick que dans les
+salles**.
+
+- **Joystick** à gauche, comme en run (fixe ou flottant selon tes options).
+- **Bouton « Utiliser »** à droite (un ânkh doré) : il s'allume quand Ash est devant un personnage, la porte ou un
+  objet, et l'ouvre.
+- **Toucher un personnage** marche toujours : Ash y va et lui parle. Seul un toucher bref compte : un pouce posé sur le
+  joystick au-dessus d'un personnage n'ouvre rien en se levant.
+- Toucher le sol pour marcher a été retiré (c'est le joystick qui sert).
+- Les commandes disparaissent quand une fenêtre est ouverte, et reviennent ensuite.
+- Clavier et manette : rien ne change (Entrée ou A pour utiliser).
+
+**Quoi tester** : dans la Cage, promène-toi au joystick et parle à Thot avec le bouton « Utiliser ». Est-ce aussi
+naturel que dans les salles ?
+
 ## 0.82.0 — Adieu le néon : des temples éclairés au feu
 
 Ton retour du 02/11, point 6 (option A) : toute l'ambiance néon est remplacée par l'Égypte des temples, éclairée par le

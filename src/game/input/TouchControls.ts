@@ -5,8 +5,20 @@ import { drawGodIcon } from '../icons';
 import type { Action, Controls } from './Controls';
 import { screenPoint, viewSize } from '../view';
 
+/** `use` : bouton « Utiliser » de la Cage (parler, ouvrir une fenêtre), sans action de combat. */
+type ButtonAction = Action | 'use';
+
+/**
+ * `run` (salles) : joystick et les 4 boutons de combat. `hub` (la Cage, retours du 02/11, point 7) :
+ * le même joystick et un seul bouton « Utiliser », qui appelle `onUse`.
+ */
+export interface TouchOptions {
+  mode: 'run' | 'hub';
+  onUse?: () => void;
+}
+
 interface Button {
-  action: Action;
+  action: ButtonAction;
   radius: number;
   /** Position depuis le coin bas-droit de l'écran. */
   fromRight: number;
@@ -39,14 +51,16 @@ export class TouchControls {
   /** Anneau qui pulse autour de la commande à utiliser (premier essai guidé). */
   private readonly focusRing: Phaser.GameObjects.Graphics;
   private focus: Action | 'move' | null = null;
+  private useReady = false;
 
   constructor(
     private readonly scene: Phaser.Scene,
     private readonly controls: Controls,
+    private readonly options: TouchOptions = { mode: 'run' },
   ) {
     const s = settings.touchButtonScale;
     const make = (
-      action: Action,
+      action: ButtonAction,
       radius: number,
       fromRight: number,
       fromBottom: number,
@@ -62,12 +76,15 @@ export class TouchControls {
       y: 0,
     });
     // Quatre boutons de la même taille, disposés en éventail autour de l'attaque.
-    this.buttons = [
-      make('attack', BUTTON_RADIUS, 52, 54, 0xffb02e),
-      make('dash', BUTTON_RADIUS, 124, 40, 0x9ff6ff),
-      make('power', BUTTON_RADIUS, 40, 128, 0xff7a2a),
-      make('super', BUTTON_RADIUS, 118, 112, 0xffe08a),
-    ];
+    this.buttons =
+      options.mode === 'hub'
+        ? [make('use', BUTTON_RADIUS, 60, 62, 0xffd36b)]
+        : [
+            make('attack', BUTTON_RADIUS, 52, 54, 0xffb02e),
+            make('dash', BUTTON_RADIUS, 124, 40, 0x9ff6ff),
+            make('power', BUTTON_RADIUS, 40, 128, 0xff7a2a),
+            make('super', BUTTON_RADIUS, 118, 112, 0xffe08a),
+          ];
     this.base = scene.add
       .circle(0, 0, JOY_RADIUS)
       .setStrokeStyle(2, 0xffe9d6, 0.35)
@@ -128,6 +145,13 @@ export class TouchControls {
     if (b) g.strokeCircle(b.x, b.y, b.radius + 7);
   }
 
+  /** Cage : le bouton « Utiliser » s'allume quand Ash est devant quelque chose à utiliser. */
+  setUseReady(ready: boolean): void {
+    if (ready === this.useReady) return;
+    this.useReady = ready;
+    this.drawButtons();
+  }
+
   /** Dieux qui agissent sur l'attaque, l'attaque puissante et le dash (badge sur chaque bouton). */
   setGods(gods: Partial<Record<Action, GodDef | undefined>>): void {
     this.gods = gods;
@@ -171,6 +195,14 @@ export class TouchControls {
       g.lineStyle(2, b.color, 0.8).strokeCircle(b.x, b.y, b.radius);
       g.lineStyle(2, b.color, 1).fillStyle(b.color, 1);
       const r = b.radius * 0.45;
+      if (b.action === 'use') {
+        // Ânkh doré, plus vif quand Ash est devant quelque chose à utiliser.
+        g.setAlpha(this.useReady ? 1 : 0.45);
+        g.lineStyle(2.5, b.color, 1).strokeEllipse(b.x, b.y - r * 0.55, r * 0.9, r * 1.1);
+        g.lineBetween(b.x - r * 0.75, b.y, b.x + r * 0.75, b.y);
+        g.lineBetween(b.x, b.y, b.x, b.y + r * 1.05);
+        continue;
+      }
       switch (b.action) {
         case 'attack': // entaille
           g.lineBetween(b.x - r, b.y + r, b.x + r, b.y - r);
@@ -233,7 +265,8 @@ export class TouchControls {
     const at = screenPoint(p);
     const btn = this.buttonAt(at.x, at.y);
     if (btn) {
-      this.controls.press(btn.action);
+      if (btn.action === 'use') this.options.onUse?.();
+      else this.controls.press(btn.action);
       this.scene.tweens.add({ targets: btn.g, alpha: 0.5, duration: 60, yoyo: true });
       return;
     }

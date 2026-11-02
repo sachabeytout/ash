@@ -43,6 +43,8 @@ import { newAutoQuality } from '../../core/perf';
 import { markScene } from './markScene';
 import { Controls } from '../input/Controls';
 import { DeparturePanel } from '../ui/DeparturePanel';
+import { onTap } from '../ui/tap';
+import { HubTouchScene } from './HubTouchScene';
 import { TROPHY_COLOR, TrophyPanel, drawTrophyCup, rewardText } from '../ui/TrophyPanel';
 import { claimTrophies } from '../../core/trophies';
 import type { TrophyDef } from '../../data/trophies';
@@ -132,6 +134,13 @@ export class HubScene extends Phaser.Scene {
     this.buildStations(meta);
     this.spawnAsh(meta);
     this.followAsh();
+    // Commandes tactiles de la Cage (joystick + « Utiliser »), au-dessus de la salle (point 7).
+    // Le bouton tactile n'agit que devant quelque chose (jamais « reprendre la run » de loin).
+    this.scene.launch('hubTouch', {
+      controls: this.controls,
+      onUse: () => this.useNearby(),
+    });
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.scene.stop('hubTouch'));
     // Tout ce qui est créé à partir d'ici (boutons, textes, fenêtres) est de l'interface.
     this.uiLayer = true;
     this.cameras.main = this.uiCam;
@@ -235,10 +244,7 @@ export class HubScene extends Phaser.Scene {
         return;
       }
       if (e.code === 'Enter' || e.code === 'Space' || e.code === 'KeyE') {
-        // Station la plus proche ; sinon, une run en cours reprend.
-        const near = this.nearStation();
-        if (near) near.action();
-        else if (session.save.run) this.resume();
+        this.use();
         return;
       }
       if (session.save.run) {
@@ -273,6 +279,7 @@ export class HubScene extends Phaser.Scene {
     // Un menu est ouvert : Ash ne bouge pas, et la marche en cours est annulée.
     if (this.modal || this.starting) {
       this.walkTarget = null;
+      if (!this.menuOpen) this.setTouchAwake(false);
       this.menuOpen = true;
       return;
     }
@@ -281,18 +288,16 @@ export class HubScene extends Phaser.Scene {
       this.menuOpen = false;
       this.walkTarget = null;
       this.controls.resetAfterMenu();
+      this.setTouchAwake(true);
     }
     this.moveAsh(delta);
     this.highlightStations();
+    this.touchScene()?.setUseReady(this.nearStation() !== undefined);
     this.updateBarks();
     // Manette : A agit sur la station la plus proche (ou reprend la run).
     const pad = navigator.getGamepads?.().find((p) => p?.connected);
     const pressed = pad?.buttons[0]?.pressed ?? false;
-    if (pressed && !this.padA) {
-      const near = this.nearStation();
-      if (near) near.action();
-      else if (session.save.run) this.resume();
-    }
+    if (pressed && !this.padA) this.use();
     this.padA = pressed;
   }
 
@@ -619,14 +624,13 @@ export class HubScene extends Phaser.Scene {
     const station: Station = { ...def, labelText, graphics: g };
     this.stations.push(station);
     // Toucher une station : Ash y marche, puis l'ouvre.
-    this.add
-      .zone(def.x, def.y + 4, 44, 40)
-      .setInteractive({ useHandCursor: true })
-      .on('pointerup', () => {
-        if (this.modal || this.starting) return;
-        if (this.distanceTo(station) <= INTERACT_RANGE) station.action();
-        else this.walkTarget = { ...this.approachPoint(station), station };
-      });
+    // Seul un toucher bref et presque immobile compte : un pouce posé sur le joystick au-dessus
+    // d'un habitant n'ouvre rien en se levant (retours du 02/11, point 7).
+    onTap(this.add.zone(def.x, def.y + 4, 44, 40).setInteractive({ useHandCursor: true }), (p) => {
+      if (this.modal || this.starting || !isQuickTap(p)) return;
+      if (this.distanceTo(station) <= INTERACT_RANGE) station.action();
+      else this.walkTarget = { ...this.approachPoint(station), station };
+    });
   }
 
   private spawnAsh(meta: MetaState): void {
@@ -642,12 +646,6 @@ export class HubScene extends Phaser.Scene {
     this.ash = this.add.image(x, y, 'ash').setDepth(10);
     addFlameHair(this, this.ash, -7, 1);
     this.controls = new Controls(this, () => this.time.now);
-    // Toucher le sol : Ash y marche.
-    this.input.on('pointerup', (p: Phaser.Input.Pointer, over: Phaser.GameObjects.GameObject[]) => {
-      if (this.modal || this.starting || over.length > 0) return;
-      const w = this.worldCam.getWorldPoint(p.x, p.y);
-      this.walkTarget = clampToFloor(w.x, w.y);
-    });
     void meta;
   }
 
@@ -711,6 +709,34 @@ export class HubScene extends Phaser.Scene {
       .setText(t('hub.interact'))
       .setPosition(near.x, near.y - 20)
       .setVisible(true);
+  }
+
+  /** « Utiliser » (Entrée, bouton A, bouton tactile) : l'habitant le plus proche, sinon reprendre la run. */
+  private use(): void {
+    if (this.modal || this.starting) return;
+    const near = this.nearStation();
+    if (near) near.action();
+    else if (session.save.run) this.resume();
+  }
+
+  /** Bouton tactile « Utiliser » : seulement l'habitant, la porte ou l'objet devant Ash. */
+  private useNearby(): void {
+    if (this.modal || this.starting) return;
+    this.nearStation()?.action();
+  }
+
+  private touchScene(): HubTouchScene | null {
+    const s = this.scene.get('hubTouch');
+    return s instanceof HubTouchScene && s.sys.isActive() ? s : null;
+  }
+
+  /** Les commandes tactiles dorment pendant les fenêtres (elles passeraient devant, et captureraient le doigt). */
+  private setTouchAwake(awake: boolean): void {
+    if (awake) {
+      if (this.scene.isSleeping('hubTouch')) this.scene.wake('hubTouch');
+    } else if (this.scene.isActive('hubTouch')) {
+      this.scene.sleep('hubTouch');
+    }
   }
 
   /** « Sortir » : la fenêtre de départ, où l'on choisit l'arme de l'évasion (retour F10). */
@@ -1012,6 +1038,14 @@ const FLOOR = {
   top: HUB_ROOM.top + 30,
   bottom: HUB_ROOM.bottom - 8,
 };
+
+/** Toucher bref et presque immobile (un habitant touché), par opposition au pouce du joystick. */
+function isQuickTap(p: Phaser.Input.Pointer): boolean {
+  if (!p.wasTouch) return true;
+  return p.upTime - p.downTime < QUICK_TAP_MS && p.getDistance() < QUICK_TAP_PX * RENDER_SCALE;
+}
+const QUICK_TAP_MS = 300;
+const QUICK_TAP_PX = 10;
 
 function clampToFloor(x: number, y: number): { x: number; y: number } {
   return {

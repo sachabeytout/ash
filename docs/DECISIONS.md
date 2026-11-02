@@ -200,6 +200,11 @@ prennent plus seules à partir de cette date.
   mécaniques de tir (`bounces`, `split`, `explodeEnd`, `hover`) dans `PlayerShots`. Sauvegarde v23. Inspiration de
   fonctionnement : marteau de Hadès, runes de Diablo III, Dead Cells ; contenu original.
 
+- **0.83.0 — Joystick dans la Cage (02/11, point 7 : A)** : `TouchControls` en mode `hub` (joystick + bouton « Utiliser »
+  `onUse`), scène `HubTouchScene` au-dessus de la Cage, endormie pendant les fenêtres ; toucher le sol retiré ; toucher un
+  habitant gardé mais seulement s'il est bref (< 0,3 s, < 10 px, `isQuickTap`). Choix de Claude : le bouton tactile n'agit
+  que devant un habitant (il ne reprend jamais la run de loin, contrairement à Entrée) ; icône d'ânkh.
+
 - **0.82.0 — Temples éclairés au feu (02/11, point 6 : A, maquettes validées, Cage a, Ratatosk a)** : `BiomeTheme.temple`
   (`TempleTheme` : sol, dalles, pierre, joints, frise, lumière, murs en pierre ou planches, braseros ou lanternes) ;
   dessin commun `src/game/fx/temple.ts` (`drawTempleRoom`) pour les salles, la Cage et le comptoir ; décors

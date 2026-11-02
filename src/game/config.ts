@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { BoonScene } from './scenes/BoonScene';
 import { HubScene } from './scenes/HubScene';
+import { HubTouchScene } from './scenes/HubTouchScene';
 import { PauseScene } from './scenes/PauseScene';
 import { ShopScene } from './scenes/ShopScene';
 import { EventScene } from './scenes/EventScene';
@@ -39,6 +40,7 @@ export function createGameConfig(parent: string): Phaser.Types.Core.GameConfig {
     scene: [
       TitleScene,
       HubScene,
+      HubTouchScene,
       RunScene,
       UiScene,
       BoonScene,
