@@ -73,7 +73,17 @@ Dernière mise à jour : 01/11/2026 (version 0.59.0).
 34. **8 duos tirés de la mythologie** (Sobek + Neith sa mère, Râ + Bastet sa fille, Seth qui défend la barque de Râ…) → **faits (0.59.0)**, dis-moi s'ils te plaisent
 35. Les **dons « légendaires »** : plus tard, quand on aura une idée qui nous est propre ? → **plus tard**
 
-## F. Retours après la première run complète (01/11/2026) — traités un par un
+## Suivi des points (directives du 02/11/2026, `docs/DIRECTIVES.md`)
+
+- **Liste en cours** : aucune (en attente de la prochaine demande).
+- **Point en cours** : —
+- **Propositions présentées / solution validée** : —
+- **Fichiers modifiés, tests, erreurs** : —
+- **Points terminés et validés** : F1 à F15 (validés le 02/11/2026).
+- **Points restants** : aucun. Gardés pour plus tard (à proposer quand l'utilisateur le demandera) : amulettes (F2,
+  option B), aspects des armes chez Ptah.
+
+## F. Retours après la première run complète (01/11/2026) — tous validés le 02/11/2026
 
 Règle de l'utilisateur : un point à la fois, plusieurs propositions pour chaque point, rien n'est fait avant sa
 validation. Une fois validé : mise à jour du jeu, et on passe au point suivant en parallèle.

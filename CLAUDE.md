@@ -2,9 +2,16 @@
 
 Roguelite d'action en vue de dessus (inspiré de Hadès, 100 % original), PWA pour téléphone (paysage) et Mac.
 
+## ⚠️ Directives permanentes de l'utilisateur (prioritaires)
+
+**Lire `docs/DIRECTIVES.md` en premier : il passe avant tout ce fichier en cas de contradiction.** En bref : un point à
+la fois, au moins 3 propositions argumentées, rien avant son choix, puis sa validation finale avant le point suivant ;
+aucune décision de conception, d'équilibrage ou d'expérience utilisateur sans lui ; **aucun commit ni mise en ligne
+sans son autorisation (au cas par cas)** ; jamais de reset ni de suppression de branche.
+
 ## Lire d'abord
 
-1. Ce fichier.
+1. Ce fichier, puis `docs/DIRECTIVES.md`.
 2. `docs/ARCHITECTURE.md` pour trouver les bons fichiers **avant** de lire du code.
 3. Selon la tâche : `docs/GDD.md` (design), `docs/DECISIONS.md` (ce qui est tranché), `docs/ROADMAP.md` (où on en est),
    `docs/QUESTIONS.md` (questions en attente de l'utilisateur).

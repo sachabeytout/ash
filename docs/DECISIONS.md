@@ -2,6 +2,12 @@
 
 Format : date — décision — raison — validée par l'utilisateur (oui / non / en attente).
 
+## Directives permanentes (02/11/2026)
+
+L'utilisateur a fixé des directives permanentes : `docs/DIRECTIVES.md`. Elles priment sur toute autre règle. Commit et
+mise en ligne : au cas par cas, avec son autorisation. Les « petites décisions prises par Claude » ci-dessous ne se
+prennent plus seules à partir de cette date.
+
 ## Décisions issues du brief (validées)
 
 | Date       | Décision                                                                                                                  | Raison                                                                     | Validée                                        |
