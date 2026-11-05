@@ -26,6 +26,39 @@ prennent plus seules à partir de cette date.
 | 2026-10-30 | Logique pure dans `src/core/` (sans Phaser), contenu dans `src/data/`, textes dans `src/i18n/`                            | Architecture testable                                                      | oui                                            |
 | 2026-10-30 | Anti-frustration = critère de design central                                                                              | Priorité de l'utilisateur                                                  | oui                                            |
 
+## Direction artistique des décors (chantier du 04/11/2026)
+
+Choix fait par l'utilisateur après comparaison de 3 directions (A diorama, B livre d'aventure peint, C dessin animé
+net) rendues sur une même salle d'essai, puis de 4 variantes de la direction A générées avec Runway.
+
+| Date       | Décision                                                                                                                                                       | Raison                                                                      | Validée     |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- | ----------- |
+| 2026-11-04 | Direction **A « Diorama »** : chaque salle ressemble à une maquette artisanale (formes arrondies et trapues, matières lisibles, lumière chaude, ombres nettes) | Charme accessible, volumes crédibles, cohérence facile entre les mondes     | oui         |
+| 2026-11-04 | Variante **« miniature haut de gamme »** : arêtes nettes, légère usure et peinture écaillée sur les angles, matières riches mais stylisées                     | Préférée aux variantes salle de référence, bois peint et pâte à modeler     | oui         |
+| 2026-11-04 | Caméra en **vue trois-quarts à 50°** (on voit le dessus et la façade des objets)                                                                               | Objets reconnaissables, états des objets cassables lisibles                 | oui         |
+| 2026-11-05 | La direction est déclinée pour **5 mondes** : japonais, nordique, romain, égyptien, hindou                                                                     | Choix de l'utilisateur (question DA-a)                                      | oui         |
+| 2026-11-04 | Pour les décors, cette direction remplace le « pixel art + néons » prévu au brief (`docs/BRIEF.md` reste inchangé)                                             | Conséquence des choix ci-dessus ; le néon avait déjà été retiré en 0.82.0   | oui         |
+| 2026-11-04 | Règles déjà appliquées aux essais : sol en valeur moyenne et calme, rouge-magenta réservé aux dangers et doublé d'une forme (pointillés, triangles)            | Lisibilité de l'action et des pièges ; reprend les règles existantes du jeu | oui (05/11) |
+
+Références (images d'essai, pas des ressources du jeu) :
+
+- Salle d'essai en 3D simple, 3 directions et comparaison des angles : https://claude.ai/artifact/WeLF2Raqv7hR6AWWerEMuN
+  (privée, compte de l'utilisateur).
+- Images Runway du 04/11 (dans l'historique du compte Runway) : n° 1 salle de référence `354ff59e`, n° 2 bois peint
+  `4952b8a7`, n° 3 pâte à modeler `3bc29348`, **n° 4 miniature haut de gamme `c55a91d2` (retenue)**, n° 5 planche
+  d'objets (jarre, caisse, trappe, bombe avant/après) `d6545830`.
+- Phrase de style de l'image retenue, à réutiliser pour les prochaines images : « a handcrafted diorama style: a high-end
+  tabletop miniature painted by a professional model maker, with crisp edges, subtle wear and chipped paint on stone
+  corners, rich but stylized material detail », caméra « orthographic three-quarter top-down game view, tilted about 50
+  degrees above the floor ».
+
+Pas encore décidé (rien n'est changé dans le jeu) :
+
+- La méthode de fabrication finale (objets 3D dans Blender rendus en images, peinture 2D, code, ou un mélange).
+  Blender fonctionne dans les sessions en ligne (module Python `bpy` 5.0.1, réinstallé à chaque session).
+- Le lien entre ces 5 mondes et les 4 mondes actuels du jeu (surtout égyptiens). En attendant, les visuels ne
+  s'appuient pas sur l'histoire (`docs/LORE.md`).
+
 ## Décisions prises par Claude (petites, réversibles)
 
 | Date       | Décision                                                                                                                           | Raison                                                                                                                                                                                              | Validée    |

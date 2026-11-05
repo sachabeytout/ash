@@ -100,6 +100,25 @@ Pas encore enregistré ni mis en ligne (attente d'autorisation).
 
 Points F1 à F15 : validés le 02/11/2026. Gardés pour plus tard : amulettes (F2, option B), aspects des armes.
 
+### Chantier « direction artistique des décors » (depuis le 02/11/2026)
+
+Processus en 7 étapes donné par l'utilisateur : cadrage, exploration, décision, règles communes et cinq mondes,
+conception de production, animation et effets, vérification. Détail des choix : `docs/DECISIONS.md` (« Direction
+artistique des décors »). Aucun fichier du jeu modifié pour l'instant.
+
+| #   | Point                                                                     | État                                                                      |
+| --- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| DA1 | Direction générale des décors (3 directions, angle de vue, images Runway) | **validé** (05/11) : A « Diorama », variante miniature haut de gamme, 50° |
+| DA2 | Visuels des 5 mondes (règles communes appliquées à chaque monde)          | **en cours** (demandé le 05/11)                                           |
+| DA3 | Conception de production : objets, pièges et éléments cassables par monde | à venir                                                                   |
+
+Questions en attente pour ce chantier :
+
+- DA-a. Mondes à décliner : les 5 du texte de direction artistique (japonais, nordique, romain, égyptien, hindou) ou
+  les 4 du jeu actuel ? → ✅ **les 5 mondes** (05/11)
+- DA-b. Décor coloré (direction A) alors qu'une décision du 30/10 demandait des décors sombres : on garde un sol calme
+  en valeur moyenne et le rouge-magenta réservé aux dangers. D'accord ? → ✅ **validé** (05/11)
+
 ## F. Retours après la première run complète (01/11/2026) — tous validés le 02/11/2026
 
 Règle de l'utilisateur : un point à la fois, plusieurs propositions pour chaque point, rien n'est fait avant sa
