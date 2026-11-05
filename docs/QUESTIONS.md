@@ -3,7 +3,7 @@
 Liste tenue à jour par Claude. Réponds quand tu veux, même en vrac (« 3 : oui, 7 : plutôt la B »).
 En attendant ta réponse, Claude applique **ce qui est indiqué en gras** (toujours modifiable ensuite).
 
-Dernière mise à jour : 01/11/2026 (version 0.59.0).
+Dernière mise à jour : 05/11/2026 (version 0.84.0).
 
 ## A. Ressenti de jeu
 
@@ -72,6 +72,62 @@ Dernière mise à jour : 01/11/2026 (version 0.59.0).
 33. ✅ Plus d'amplifications : ce sont maintenant des dons passifs (0.57.0).
 34. **8 duos tirés de la mythologie** (Sobek + Neith sa mère, Râ + Bastet sa fille, Seth qui défend la barque de Râ…) → **faits (0.59.0)**, dis-moi s'ils te plaisent
 35. Les **dons « légendaires »** : plus tard, quand on aura une idée qui nous est propre ? → **plus tard**
+
+## G. Aventure en 5 mondes (analyse du 05/11/2026) — réponses de l'utilisateur
+
+Rien n'est encore fait dans le jeu : ce sont les décisions de conception, à appliquer étape par étape, chacune avec ton
+accord.
+
+**Les mondes, dans l'ordre :** Valhalla (nordique) → Aaru (égyptien, le contenu actuel) → Svarga (hindou) → Yomi
+(japonais) → **Élysium** (romain, nom choisi à la place de « Champs-Élysées »). Seul Valhalla est ouvert au départ ; la
+première victoire contre Flem dans un monde ouvre le suivant.
+
+| #   | Sujet                             | Ta réponse                                                                                                                               |
+| --- | --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| Q1  | Qui est Flem                      | Sombre, avec une cape et une couronne                                                                                                    |
+| D1  | Flem et l'Oiseleur                | **Flem est l'Oiseleur, renommé et repensé**                                                                                              |
+| D2  | Arc des 10 victoires              | Le jeu se termine en arrivant au bout d'Élysium ; **fin cachée** si on bat Flem **10 fois dans chaque monde**                            |
+| D3  | Secteurs d'Aaru                   | Héliopolis (Ammit) → Nil (Shezmu) → Pyramide (**Apophis**) → Douât (**Flem**)                                                            |
+| D4  | Nombre de salles                  | 10 / 10 / 10 / 7 ; fontaines et évènements comptent dans les 10, le comptoir est une salle en plus                                       |
+| D5  | Début d'une partie                | On choisit un monde, on apparaît dans son QG (salle 0, différent pour chaque monde), et on en sort pour commencer la partie au secteur 1 |
+| D6  | Parties interrompues              | **Une seule** pour tout le jeu                                                                                                           |
+| R8  | « Mondes » pendant une partie     | Le jeu demande : garder la partie ou l'abandonner                                                                                        |
+| D7  | Difficulté                        | Chaque monde plus dur que le précédent                                                                                                   |
+| D8  | Flem combattu 5 fois              | Un fond commun, plus une attaque propre à chaque monde                                                                                   |
+| D9  | Dieux                             | 5 ou 6 dieux par monde, effets existants habillés au monde, quelques dons uniques                                                        |
+| D10 | Armes                             | Les 6 familles d'armes dans chaque monde, **plus une arme secrète mythologique par monde**                                               |
+| D11 | Ennemis                           | **Exactement 27 par monde** (Aaru en a 20 aujourd'hui)                                                                                   |
+| D12 | Progression                       | Ash ne garde que **ses compétences** ; forgerons, armes et le reste sont propres à chaque monde                                          |
+| D13 | Compteurs                         | Par monde, plus un total général                                                                                                         |
+| D14 | Habitants des QG                  | Anii et Ratatosk voyagent avec Ash ; les autres personnages sont propres à chaque monde                                                  |
+| D15 | Écran de sélection                | 5 braseros en ligne (allumé = monde ouvert)                                                                                              |
+| D16 | Retour à la sélection             | Bouton « Mondes » en haut, à côté d'Options                                                                                              |
+| D17 | Transition                        | Ash se change en braises qui volent jusqu'au monde choisi                                                                                |
+| D18 | Animation de Flem                 | Sur l'écran de sélection : Flem s'envole vers le monde suivant, qui s'allume                                                             |
+| D19 | Interface                         | **Différente dans chaque monde** (change la décision 0.55.0 : interface égyptienne partout)                                              |
+| D20 | Apparence d'Ash                   | Tenue neutre pour tous les mondes ; tenues par monde plus tard                                                                           |
+| D21 | Écran titre                       | Fond neutre de cendres et de feu                                                                                                         |
+| D22 | Fin du jeu (1re victoire Élysium) | Une scène de fin, qui annonce aussi qu'une autre fin existe, puis le jeu continue                                                        |
+| D23 | Musique                           | Par monde : QG, combat, boss ; un thème commun pour Flem                                                                                 |
+| S1  | Nouveau départ                    | Sauvegarde neuve, mais **tes Papyrus et tes pièces d'arme sont gardés en bonus**                                                         |
+| S2  | Réglages                          | Remis à zéro aussi                                                                                                                       |
+| R1  | Organisation du chantier          | Monde par monde (QG, dieux, dons, secteur 1, puis 2, 3, 4) ; on ne passe au monde suivant qu'une fois le précédent entièrement validé    |
+| R2  | Publication                       | Dans l'ordre : d'abord Valhalla ; Aaru (presque fini) devient jouable une fois Valhalla terminé, etc.                                    |
+| R3  | Raccourcis de test                | Dans le menu de triche caché : « débloquer tous les mondes », « aller à Flem »                                                           |
+| R4  | Respect des cultures              | Les dieux aident Ash ; les ennemis sont des démons tirés des mythes (asuras, oni)                                                        |
+| R5  | Svarga                            | S'inspirer de l'architecture indienne : palais rajputs et temples hindous (voir P5)                                                      |
+| R7  | Ordre des vies (histoire)         | Réécrire le cycle des vies pour suivre les 5 mondes. Tu travailles le lore dans une autre conversation (à lire, sans l'ajouter au jeu)   |
+| Q2  | Direction artistique en cours     | Dans une autre conversation : tu m'enverras les images ou le texte                                                                       |
+
+Précisions données le 05/11/2026 :
+
+| #   | Sujet                        | Ta réponse                                                                                                         |
+| --- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| P1  | Papyrus                      | Gardés et communs à tous les mondes ; **nouveau nom et nouveau design à proposer** pour aller avec tous les mondes |
+| P2  | Pièces d'arme gardées        | Elles vont à **Valhalla**                                                                                          |
+| P3  | Arme secrète de chaque monde | Débloquée à **7 victoires contre Flem** dans ce monde                                                              |
+| P4  | Dernière arme secrète        | Une arme de plus (une **lame**, de préférence), obtenue par une **mission secondaire assez longue**                |
+| P5  | Svarga                       | Palais rajputs et temples hindous (au lieu des palais moghols)                                                     |
 
 ## Suivi des points (directives du 02/11/2026, `docs/DIRECTIVES.md`)
 
