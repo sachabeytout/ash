@@ -63,11 +63,18 @@ export class TitleScene extends Phaser.Scene {
     });
 
     const version = this.add
-      .text(0, 0, t('title.version', { version: __APP_VERSION__ }), {
-        fontFamily: FONT_FAMILY,
-        fontSize: '10px',
-        color: COLORS.textDim,
-      })
+      .text(
+        0,
+        0,
+        t(__APP_CHANNEL__ === 'test' ? 'title.versionTest' : 'title.version', {
+          version: __APP_VERSION__,
+        }),
+        {
+          fontFamily: FONT_FAMILY,
+          fontSize: '10px',
+          color: COLORS.textDim,
+        },
+      )
       .setOrigin(1, 1);
 
     // L'écran peut être plus large que 640 px (mode EXPAND) : on garde la scène centrée.

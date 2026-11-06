@@ -2,6 +2,17 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.84.1 — Une adresse pour tester les nouveautés
+
+Rien ne change dans le jeu.
+
+- Une **deuxième adresse** permet d'essayer le travail en cours avant tout le monde :
+  https://sachabeytout.github.io/ash/test/
+- Elle a **sa propre sauvegarde** : ta partie du jeu public n'est jamais touchée, et inversement.
+- On la reconnaît à l'écran titre : « version … · test », en bas à droite.
+
+**Quoi tester** : rien dans le jeu public. L'adresse de test servira à partir de la prochaine étape.
+
 ## 0.84.0 — La Cage : compteurs à gauche, bouton « Utiliser » discret
 
 Ton retour du 02/11, points 7 et 8 :

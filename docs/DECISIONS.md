@@ -200,6 +200,15 @@ prennent plus seules à partir de cette date.
   mécaniques de tir (`bounces`, `split`, `explodeEnd`, `hover`) dans `PlayerShots`. Sauvegarde v23. Inspiration de
   fonctionnement : marteau de Hadès, runes de Diablo III, Dead Cells ; contenu original.
 
+- **0.84.1 — Adresse de test (05/11, choix de l'utilisateur)** : la branche `test` est servie sous `/ash/test/`
+  (compilée avec `APP_CHANNEL=test` → `__APP_CHANNEL__`), le jeu public reste sur `main` sous `/ash/`. Sauvegarde et
+  télémétrie séparées (`ash-test.*`, préfixe de `SaveStore`), mention « version … · test » sur l'écran titre, nom
+  d'application « ASH (test) ». Le service worker public ignore `/ash/test/` (`navigateFallbackDenylist`), sinon il
+  servirait le jeu public à cette adresse. Publication (`deploy.yml`) : vérifications sur `main` et `test` ; mise en
+  ligne seulement depuis `main` (envoi ou lancement manuel), qui reconstruit les deux versions, car GitHub Pages publie
+  le site en entier et l'environnement `github-pages` n'accepte que `main`. Pour publier la version de test : envoyer
+  sur `test`, puis lancer « Vérifier et déployer » sur `main`. Les deux envois demandent l'accord de l'utilisateur.
+
 - **0.84.0 — Cage : compteurs et bouton « Utiliser » (02/11, points 7 et 8)** : demande de l'utilisateur, compteurs à
   gauche et bouton visible seulement près des interactions. Tous les compteurs regroupés en haut à gauche sous le titre
   (`HubScene.addCounters`), car le joystick fixe occupe le bas à gauche. `setUseReady` règle la visibilité du bouton ;

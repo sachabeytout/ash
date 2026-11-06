@@ -124,6 +124,26 @@ describe('sauvegarde : stockage robuste', () => {
     expect(() => deserialize(storage.data.get('ash.save.bak') ?? '')).not.toThrow();
   });
 
+  it('la version de test a sa propre sauvegarde, sans toucher à celle du jeu public', () => {
+    const storage = memoryStorage();
+    const publicSave = sampleSave();
+    publicSave.meta.xp = 300;
+    new SaveStore(storage).write(publicSave, 1);
+    const test = new SaveStore(storage, 'ash-test');
+    expect(test.load().source).toBe('new');
+    const testSave = sampleSave();
+    testSave.meta.xp = 7;
+    test.write(testSave, 2);
+    test.write(testSave, 3);
+    expect(new SaveStore(storage).load().save.meta.xp).toBe(300);
+    expect(test.load().save.meta.xp).toBe(7);
+    expect([...storage.data.keys()].sort()).toEqual([
+      'ash-test.save',
+      'ash-test.save.bak',
+      'ash.save',
+    ]);
+  });
+
   it("une sauvegarde d'une version future passe en lecture seule", () => {
     const storage = memoryStorage();
     storage.data.set('ash.save', JSON.stringify({ version: 99 }));

@@ -4,11 +4,14 @@ import pkg from './package.json' with { type: 'json' };
 
 // Sur GitHub Pages, le jeu est servi sous /<nom-du-dépôt>/ : la CI fournit BASE_PATH.
 const base = process.env.BASE_PATH ?? '/';
+// Version de test (adresse /<dépôt>/test/, décision du 05/11/2026) : APP_CHANNEL=test à la compilation.
+const channel = process.env.APP_CHANNEL === 'test' ? 'test' : 'public';
 
 export default defineConfig({
   base,
   define: {
     __APP_VERSION__: JSON.stringify(pkg.version),
+    __APP_CHANNEL__: JSON.stringify(channel),
   },
   build: {
     target: 'es2022',
@@ -19,8 +22,8 @@ export default defineConfig({
       registerType: 'prompt',
       includeAssets: ['favicon.ico', 'icon.svg', 'apple-touch-icon-180x180.png'],
       manifest: {
-        name: 'ASH',
-        short_name: 'ASH',
+        name: channel === 'test' ? 'ASH (test)' : 'ASH',
+        short_name: channel === 'test' ? 'ASH test' : 'ASH',
         description: "Roguelite d'action cyberpunk.",
         lang: 'fr',
         start_url: base,
@@ -44,6 +47,8 @@ export default defineConfig({
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,ico,json,ogg,mp3,webp,woff2}'],
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+        // Le jeu public ne doit jamais répondre à la place de la version de test, servie sous /test/.
+        navigateFallbackDenylist: channel === 'public' ? [new RegExp(`^${base}test/`)] : [],
       },
     }),
   ],

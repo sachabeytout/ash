@@ -8,8 +8,8 @@ export interface KeyValueStorage {
   setItem(key: string, value: string): void;
 }
 
-const MAIN = 'ash.save';
-const BACKUP = 'ash.save.bak';
+/** Préfixe des clés : `ash` pour le jeu public, un autre pour la version de test (sauvegardes séparées). */
+export const DEFAULT_SAVE_PREFIX = 'ash';
 
 export interface LoadResult {
   save: SaveData;
@@ -24,12 +24,21 @@ export interface LoadResult {
  * Si l'app est fermée en pleine écriture, l'une des deux reste toujours lisible.
  */
 export class SaveStore {
-  constructor(private readonly storage: KeyValueStorage) {}
+  private readonly main: string;
+  private readonly backup: string;
+
+  constructor(
+    private readonly storage: KeyValueStorage,
+    prefix = DEFAULT_SAVE_PREFIX,
+  ) {
+    this.main = `${prefix}.save`;
+    this.backup = `${prefix}.save.bak`;
+  }
 
   load(): LoadResult {
     for (const [key, source] of [
-      [MAIN, 'main'],
-      [BACKUP, 'backup'],
+      [this.main, 'main'],
+      [this.backup, 'backup'],
     ] as const) {
       const text = this.read(key);
       if (!text) continue;
@@ -47,9 +56,9 @@ export class SaveStore {
   write(save: SaveData, now: number): boolean {
     try {
       const text = serialize({ ...save, savedAt: now });
-      const previous = this.read(MAIN);
-      if (previous && isValid(previous)) this.storage.setItem(BACKUP, previous);
-      this.storage.setItem(MAIN, text);
+      const previous = this.read(this.main);
+      if (previous && isValid(previous)) this.storage.setItem(this.backup, previous);
+      this.storage.setItem(this.main, text);
       return true;
     } catch {
       return false;

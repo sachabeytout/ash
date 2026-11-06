@@ -1,8 +1,13 @@
 name: Vérifier et déployer
 
+# Deux versions sont servies (décision du 05/11/2026) :
+# - le jeu public, sous /<dépôt>/, construit depuis la branche main ;
+# - la version de test, sous /<dépôt>/test/, construite depuis la branche test (sauvegarde séparée).
+# Un envoi sur test ne lance que les vérifications. La mise en ligne passe toujours par main (envoi sur main, ou
+# lancement manuel sur main) : elle reconstruit les deux versions, car GitHub Pages publie le site en entier.
 on:
   push:
-    branches: [main]
+    branches: [main, test]
   pull_request:
   workflow_dispatch:
 
@@ -12,11 +17,11 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
+  group: ci-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  check-and-build:
+  check:
     runs-on: ubuntu-latest
     env:
       BASE_PATH: /${{ github.event.repository.name }}/
@@ -41,14 +46,60 @@ jobs:
           name: captures
           path: tests/e2e/screenshots
           if-no-files-found: ignore
-      - uses: actions/upload-pages-artifact@v5
-        if: github.ref == 'refs/heads/main'
+
+  site:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
         with:
-          path: dist
+          path: main-src
+      - name: La branche test existe-t-elle ?
+        id: test-branch
+        run: |
+          if git -C main-src ls-remote --exit-code --heads origin test > /dev/null; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/checkout@v7
+        if: steps.test-branch.outputs.exists == 'true'
+        with:
+          ref: test
+          path: test-src
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: '*/package-lock.json'
+      - name: Jeu public
+        working-directory: main-src
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}/
+        run: npm ci && npm run build
+      - name: Version de test
+        if: steps.test-branch.outputs.exists == 'true'
+        working-directory: test-src
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}/test/
+          APP_CHANNEL: test
+        run: npm ci && npm run build
+      - name: Assembler le site
+        run: |
+          mkdir -p site
+          cp -r main-src/dist/. site/
+          if [ -d test-src/dist ]; then
+            mkdir -p site/test
+            cp -r test-src/dist/. site/test/
+          fi
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: site
 
   deploy:
-    if: github.ref == 'refs/heads/main'
-    needs: check-and-build
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: site
     runs-on: ubuntu-latest
     environment:
       name: github-pages

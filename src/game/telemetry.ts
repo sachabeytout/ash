@@ -7,7 +7,7 @@ import {
   type TelemetryLog,
 } from '../core/telemetry';
 
-const KEY = 'ash.telemetry';
+const KEY = __APP_CHANNEL__ === 'test' ? 'ash-test.telemetry' : 'ash.telemetry';
 
 /** Journal de jeu local (séparé de la sauvegarde : le perdre n'a aucune importance). */
 class Telemetry {

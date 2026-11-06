@@ -3,6 +3,7 @@
   "title.subtitle": "Ashes of the Dawn",
   "title.tapToStart": "Tap to start",
   "title.version": "version {version}",
+  "title.versionTest": "version {version} · test",
   "hub.name": "The Cage",
   "hub.placeholder": "Ash rises from his ashes…",
   "hub.chooseWeapon": "Pick your weapon and escape",

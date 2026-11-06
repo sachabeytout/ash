@@ -243,6 +243,15 @@ par-dessus ; cartes face cachée puis retournées : `BoonScene.revealCard`). Mor
 └── .github/workflows/        CI : install → lint → typecheck → tests → build → deploy Pages
 ```
 
+## Jeu public et version de test (0.84.1)
+
+- `main` → `/ash/` (jeu public) ; `test` → `/ash/test/` (version de test). Compilation avec `APP_CHANNEL=test` →
+  constante `__APP_CHANNEL__` (`vite.config.ts`, `src/env.d.ts`).
+- Sauvegarde séparée : `SaveStore(storage, prefix)` (`src/core/save/store.ts`), préfixe choisi dans
+  `src/game/session.ts` (`ash` ou `ash-test`) ; télémétrie `src/game/telemetry.ts`. Mention sur l'écran titre :
+  `title.versionTest`.
+- Publication : `.github/workflows/deploy.yml` (job `site` : construit `main` et `test`, puis les assemble).
+
 ## Flux de données
 
 `data/` (contenu) → `core/` (règles, état de la run) → bus d'évènements → `game/` (affichage, sons, entrées)

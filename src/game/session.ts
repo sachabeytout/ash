@@ -14,7 +14,11 @@ class Session {
 
   load(): void {
     try {
-      this.store = new SaveStore(window.localStorage);
+      // La version de test a sa propre sauvegarde : elle ne touche jamais celle du jeu public.
+      this.store = new SaveStore(
+        window.localStorage,
+        __APP_CHANNEL__ === 'test' ? 'ash-test' : 'ash',
+      );
     } catch {
       this.store = null; // stockage indisponible (navigation privée stricte) : on joue sans sauvegarde
       return;
