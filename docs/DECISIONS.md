@@ -52,12 +52,31 @@ Références (images d'essai, pas des ressources du jeu) :
   corners, rich but stylized material detail », caméra « orthographic three-quarter top-down game view, tilted about 50
   degrees above the floor ».
 
-Pas encore décidé (rien n'est changé dans le jeu) :
+La méthode de fabrication est tranchée le 06/11 : vraie 3D dans Godot (section suivante). Blender fonctionne dans
+les sessions en ligne (module Python `bpy` 5.0.1, réinstallé à chaque session).
 
-- La méthode de fabrication finale (objets 3D dans Blender rendus en images, peinture 2D, code, ou un mélange).
-  Blender fonctionne dans les sessions en ligne (module Python `bpy` 5.0.1, réinstallé à chaque session).
-- Le lien entre ces 5 mondes et les 4 mondes actuels du jeu (surtout égyptiens). En attendant, les visuels ne
-  s'appuient pas sur l'histoire (`docs/LORE.md`).
+## Passage à Godot et structure en mondes (05-06/11/2026)
+
+Choix de l'utilisateur après deux essais sur la même salle égyptienne : la démo Phaser 4 avec décors rendus dans
+Blender (https://claude.ai/artifact/6o4J8YU6Yy1FU7ermz5wAu) et le rendu par Godot 4.5.1 en qualités ordinateur,
+téléphone et web (https://claude.ai/artifact/4cfu81ELdXwdvMAEqLtAyb). Aucun fichier du jeu n'est encore modifié.
+
+| Date       | Décision                                                                                                                                                                                                                                                                                   | Raison                                                                                                 | Validée                      |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ | ---------------------------- |
+| 2026-11-06 | Le jeu est **reconstruit dans Godot 4.5.1, en vraie 3D** (joueur, ennemis, boss et décors en 3D affichés en direct)                                                                                                                                                                        | Joueur en vraie 3D voulu par l'utilisateur ; la 3D en direct évite des milliers d'images préparées     | oui                          |
+| 2026-11-06 | Cela remplace « Phaser 4 » et « PWA sur GitHub Pages » du brief (`docs/BRIEF.md` reste inchangé). La version Phaser actuelle n'est pas modifiée en attendant                                                                                                                               | Conséquence du choix ci-dessus                                                                         | oui                          |
+| 2026-11-06 | Ordre de la refonte : **tout le jeu actuel d'abord** (combat, armes, dons, ennemis, boss, progression), l'embellissement ensuite                                                                                                                                                           | Choix de l'utilisateur (Claude conseillait un petit morceau soigné d'abord)                            | oui                          |
+| 2026-11-06 | iPhone : **application native gratuite**, installée depuis le Mac de l'utilisateur et à réinstaller tous les 7 jours ; compte développeur Apple (99 $/an) plus tard                                                                                                                        | Aucun frais au départ ; la version web de Godot est peu fiable sur iPhone                              | oui                          |
+| 2026-11-06 | **Un monde par partie** : le monde se choisit juste après l'écran d'accueil ; pour changer de monde, il faut abandonner la partie                                                                                                                                                          | Choix de l'utilisateur                                                                                 | oui                          |
+| 2026-11-06 | **La Cage n'est plus d'actualité**                                                                                                                                                                                                                                                         | Choix de l'utilisateur ; ce qui reprend ses rôles (compétences, armes, archives…) est en attente (G-a) | oui                          |
+| 2026-11-06 | Mondes **débloqués un par un, le Valhalla en premier**                                                                                                                                                                                                                                     | Choix de l'utilisateur                                                                                 | oui                          |
+| 2026-11-06 | Chaque monde a **plusieurs zones**, chacune d'un style différent mais fidèle au monde et à sa mythologie ; chaque zone se termine par un **boss intermédiaire** ; la dernière salle du monde est à préciser (« flem », question G-c)                                                       | Choix de l'utilisateur                                                                                 | oui (sauf la dernière salle) |
+| 2026-11-06 | Personnages : **modèles 3D libres de droits, retouchés**                                                                                                                                                                                                                                   | Choix de l'utilisateur                                                                                 | oui                          |
+| 2026-11-06 | Animations : bibliothèque **Quaternius** (libre et gratuite) d'abord ; **Mixamo** pour compléter (compte Adobe gratuit à créer par l'utilisateur) ; **Claude dans Blender** pour les créatures et les pièges ; **Rokoko Vision** pour un geste précis ; animateur payé plus tard si budget | Conseil de Claude, suivi par l'utilisateur                                                             | oui                          |
+
+Essais techniques réalisés : Godot 4.5.1 tourne dans les sessions en ligne (rendu par pilote graphique logiciel) ;
+la salle s'exporte de Blender vers Godot (format glTF). Le rendu « téléphone » de l'essai garde des zones d'ombre
+parasites, à vérifier sur un vrai iPhone.
 
 ## Décisions prises par Claude (petites, réversibles)
 

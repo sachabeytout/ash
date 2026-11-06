@@ -109,7 +109,7 @@ artistique des décors »). Aucun fichier du jeu modifié pour l'instant.
 | #   | Point                                                                     | État                                                                      |
 | --- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
 | DA1 | Direction générale des décors (3 directions, angle de vue, images Runway) | **validé** (05/11) : A « Diorama », variante miniature haut de gamme, 50° |
-| DA2 | Visuels des 5 mondes (règles communes appliquées à chaque monde)          | **en cours** (demandé le 05/11)                                           |
+| DA2 | Visuels des 5 mondes (règles communes appliquées à chaque monde)          | images livrées (05/11) ; choix d'un lieu par monde en attente             |
 | DA3 | Conception de production : objets, pièges et éléments cassables par monde | à venir                                                                   |
 
 Questions en attente pour ce chantier :
@@ -118,6 +118,30 @@ Questions en attente pour ce chantier :
   les 4 du jeu actuel ? → ✅ **les 5 mondes** (05/11)
 - DA-b. Décor coloré (direction A) alors qu'une décision du 30/10 demandait des décors sombres : on garde un sol calme
   en valeur moyenne et le rouge-magenta réservé aux dangers. D'accord ? → ✅ **validé** (05/11)
+
+### Chantier « refonte dans Godot » (depuis le 06/11/2026)
+
+Décisions détaillées : `docs/DECISIONS.md` (« Passage à Godot et structure en mondes »). Aucun fichier du jeu modifié.
+
+| #   | Point                                                       | État                                          |
+| --- | ----------------------------------------------------------- | --------------------------------------------- |
+| G1  | Moteur et 3D                                                | **validé** (06/11) : Godot 4.5.1, vraie 3D    |
+| G2  | Structure du jeu : mondes, zones, boss, déblocage           | **validé en partie** (06/11) ; voir G-a à G-d |
+| G3  | Reconstruire tout le jeu actuel dans Godot, puis l'embellir | à venir, une fois G-a à G-d tranchées         |
+
+Questions en attente :
+
+- G-a. La Cage disparaît : où vont ses rôles (compétences de Thot, amélioration des armes, archives, trophées,
+  dialogues et histoire) ? → **en attente**
+- G-b. « Refaire tout le jeu actuel » alors que le premier monde est le Valhalla : le contenu actuel (zones,
+  ennemis, boss, dieux) est égyptien. → **en attente**
+- G-c. « La dernière salle se termine par flem » : que désigne « flem » ? → **en attente**
+- G-d. Les dons viennent-ils des dieux du monde en cours (dieux nordiques au Valhalla) ? → **en attente**
+- Questions encore ouvertes de la page « Essai Godot » (https://claude.ai/artifact/4cfu81ELdXwdvMAEqLtAyb) :
+  2 (appareils visés), 3 (modèle d'iPhone), 4 (reprendre la progression), 5 (version actuelle en ligne pendant la
+  refonte), 9 (changer des règles pendant la refonte), 10 à 13 (caméra), 14 (proportions des personnages), 16
+  (budget), 17 à 21 (effets, son, interface, commandes), 22 à 25 (langage, version de Godot, dépôt, rythme). →
+  **en attente**
 
 ## F. Retours après la première run complète (01/11/2026) — tous validés le 02/11/2026
 
