@@ -5,7 +5,7 @@ import { randomSeed } from '../../core/rng';
 import { newRun, summarize, type RunSummary } from '../../core/run/state';
 import { exportCode, importCode } from '../../core/save/codec';
 import { NewerSaveError } from '../../core/save/migrations';
-import { getBiome } from '../../data/biomes';
+import { sectorOf } from '../../data/worlds';
 import { GOD_IDS } from '../../data/gods';
 import { PLAYER } from '../../data/player';
 import { WEAPON_ORDER, WEAPONS, type WeaponId } from '../../data/weapons';
@@ -374,10 +374,10 @@ export class HubScene extends Phaser.Scene {
     const lines: string[] = [];
     const s = this.summary;
     if (s) {
-      const biome = t(getBiome(s.biome).nameKey as TextKey);
+      const biome = t(sectorOf(s).nameKey as TextKey);
       lines.push(
         s.outcome === 'death'
-          ? s.room > getBiome(s.biome).rooms
+          ? s.room > sectorOf(s).rooms
             ? t('hub.lastDeathBoss', { biome, killer: s.killedBy ?? '?' })
             : t('hub.lastDeath', { biome, room: s.room, killer: s.killedBy ?? '?' })
           : t('hub.lastClearAll'),
@@ -391,7 +391,7 @@ export class HubScene extends Phaser.Scene {
             run.room <= 0
               ? t('hub.atMerchant')
               : t('hub.roomOf', {
-                  biome: t(getBiome(run.biome).nameKey as TextKey),
+                  biome: t(sectorOf(run).nameKey as TextKey),
                   room: run.room,
                 }),
           weapon: t(WEAPONS[run.weapon].nameKey as TextKey),
@@ -759,7 +759,7 @@ export class HubScene extends Phaser.Scene {
   private talkToAnii(): void {
     if (this.modal || this.starting) return;
     const last = this.summary
-      ? { ...this.summary, atBoss: this.summary.room > getBiome(this.summary.biome).rooms }
+      ? { ...this.summary, atBoss: this.summary.room > sectorOf(this.summary).rooms }
       : undefined;
     if (nextDialogue(session.save.meta, last)) {
       this.playStory();
@@ -797,7 +797,7 @@ export class HubScene extends Phaser.Scene {
     if (this.modal || this.starting) return;
     const meta = session.save.meta;
     const last = this.summary
-      ? { ...this.summary, atBoss: this.summary.room > getBiome(this.summary.biome).rooms }
+      ? { ...this.summary, atBoss: this.summary.room > sectorOf(this.summary).rooms }
       : undefined;
     const dialogue = nextDialogue(meta, last);
     if (!dialogue) return;

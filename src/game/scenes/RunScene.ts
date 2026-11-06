@@ -96,7 +96,8 @@ import {
   takeEvent,
   type EventId,
 } from '../../core/run/events';
-import { BIOMES, getBiome, type BiomeDef } from '../../data/biomes';
+import { type BiomeDef } from '../../data/biomes';
+import { getSector, getWorld } from '../../data/worlds';
 import { drawTempleRoom } from '../fx/temple';
 import { DASH_AURA_RADIUS, DASH_BOLT_RANGE, getBoon } from '../../data/boons';
 import { GOD_IDS, GODS } from '../../data/gods';
@@ -441,6 +442,16 @@ export class RunScene extends Phaser.Scene {
     super('run');
   }
 
+  /** Secteur actuel de la run (un « biome » dans le code), dans son monde. */
+  private sector(): BiomeDef {
+    return getSector(this.run.world, this.run.biome);
+  }
+
+  /** Tous les secteurs du monde de la run. */
+  private sectors(): readonly BiomeDef[] {
+    return getWorld(this.run.world).sectors;
+  }
+
   init(data: { run: RunState }): void {
     this.run = data.run;
     this.sim = 0;
@@ -458,7 +469,7 @@ export class RunScene extends Phaser.Scene {
 
   create(): void {
     ensureGameTextures(this);
-    const biome = getBiome(this.run.biome);
+    const biome = this.sector();
     this.rng = createRng((this.run.seed + this.run.room * 7919) >>> 0);
 
     this.kind = roomKind(this.run, biome);
@@ -718,7 +729,7 @@ export class RunScene extends Phaser.Scene {
       }
       if (e.code === 'KeyH') {
         // Monde suivant (salle 2), pour vérifier les décors.
-        this.run.biome = (this.run.biome + 1) % BIOMES.length;
+        this.run.biome = (this.run.biome + 1) % this.sectors().length;
         this.run.room = 2;
         this.leaving = true;
         this.scene.restart({ run: this.run });
@@ -749,10 +760,10 @@ export class RunScene extends Phaser.Scene {
         this.scene.restart({ run: this.run });
       }
       if (e.code === 'KeyM') this.run.shards += 100;
-      if (e.code === 'KeyL') this.spawnWave([getBiome(this.run.biome).elite]);
-      if (e.code === 'KeyY') this.spawnWave(getBiome(this.run.biome).roster.map((r) => r.enemy));
+      if (e.code === 'KeyL') this.spawnWave([this.sector().elite]);
+      if (e.code === 'KeyY') this.spawnWave(this.sector().roster.map((r) => r.enemy));
       if (e.code === 'KeyO') {
-        this.run.room = getBiome(this.run.biome).rooms + 1;
+        this.run.room = this.sector().rooms + 1;
         this.leaving = true;
         this.scene.restart({ run: this.run });
       }
@@ -775,12 +786,7 @@ export class RunScene extends Phaser.Scene {
   private startBoss(): void {
     // Le boss attend la fin de sa présentation avant d'attaquer.
     const intro = BOSS_PRESENT_MS + 300;
-    const def = bossFor(
-      session.save.meta,
-      getBiome(this.run.biome).boss,
-      this.run.seed,
-      this.run.biome,
-    );
+    const def = bossFor(session.save.meta, this.sector().boss, this.run.seed, this.run.biome);
     const boss = new Boss(
       this,
       def,
@@ -851,7 +857,7 @@ export class RunScene extends Phaser.Scene {
       this.ui.bossIntro(
         t(def.nameKey as TextKey),
         def.tint !== undefined ? t('boss.variantSub') : t(def.titleKey as TextKey),
-        def.tint ?? getBiome(this.run.biome).theme.wallGlow,
+        def.tint ?? this.sector().theme.wallGlow,
         ms - 200,
       ),
     );
@@ -1040,7 +1046,7 @@ export class RunScene extends Phaser.Scene {
     const alive = this.enemies.filter((e) => e.alive).length + this.pending.length;
     if (this.sim < sv.nextAt || alive >= SURVIVAL_MAX_ALIVE) return;
     sv.nextAt = this.sim + SURVIVAL_SPAWN_MS;
-    const biome = getBiome(this.run.biome);
+    const biome = this.sector();
     const pool = biome.roster.filter((r) => this.run.room >= r.fromRoom).map((r) => r.enemy);
     if (pool.length > 0) this.spawnWave([this.rng.pick(pool), this.rng.pick(pool)]);
   }
@@ -1298,7 +1304,7 @@ export class RunScene extends Phaser.Scene {
   }
 
   private onEventTaken(id: EventId): void {
-    const biome = getBiome(this.run.biome);
+    const biome = this.sector();
     const hpBefore = this.run.hp;
     this.choosing = false;
     markScene('run');
@@ -2338,7 +2344,7 @@ export class RunScene extends Phaser.Scene {
             KEEP_OUT,
           )
         : [];
-    const theme = getBiome(this.run.biome).theme;
+    const theme = this.sector().theme;
     const g = this.add.graphics().setDepth(2);
     if (theme.temple) {
       // Temple : blocs de pierre, arête éclairée, un joint au milieu et une ombre portée.
@@ -2387,7 +2393,7 @@ export class RunScene extends Phaser.Scene {
       ARENA.height + pad * 2,
       0x07060d,
     );
-    const theme = this.kind === 'shop' ? MERCHANT_THEME : getBiome(this.run.biome).theme;
+    const theme = this.kind === 'shop' ? MERCHANT_THEME : this.sector().theme;
     if (theme.temple) {
       drawTempleRoom(this, ARENA, theme.temple);
     } else {
@@ -3112,10 +3118,10 @@ export class RunScene extends Phaser.Scene {
     if (healed > 0) this.juice.damageNumber(this.player.x, this.player.y - 12, healed, FX.heal);
     // Isis : chaque salle terminée rend un peu de vie.
     if (this.profile.roomHeal > 0 && this.kind !== 'shop') this.healPlayer(this.profile.roomHeal);
-    const biome = getBiome(this.run.biome);
+    const biome = this.sector();
     if (this.kind === 'boss' || this.kind === 'shop') {
       // Après le boss : biome suivant s'il existe ; après le marchand : salle 1.
-      const last = this.kind === 'boss' && this.run.biome + 1 >= BIOMES.length;
+      const last = this.kind === 'boss' && this.run.biome + 1 >= this.sectors().length;
       this.afterLoot(() => this.addDoor(last ? 'exit' : 'next', ARENA.centerX));
       return;
     }
@@ -3304,7 +3310,7 @@ export class RunScene extends Phaser.Scene {
     const kind = typeof reward === 'string' ? reward : reward.kind;
     const god = typeof reward !== 'string' && reward.god ? GODS[reward.god] : undefined;
     const color = god?.color ?? REWARD_STYLE[kind].color;
-    const nextBiome = BIOMES[this.kind === 'boss' ? this.run.biome + 1 : this.run.biome];
+    const nextBiome = this.sectors()[this.kind === 'boss' ? this.run.biome + 1 : this.run.biome];
     const label = god
       ? t('reward.boonOf', { god: t(god.nameKey as TextKey) })
       : kind === 'next' && nextBiome
@@ -3366,7 +3372,7 @@ export class RunScene extends Phaser.Scene {
         this.endRun('cleared');
         return;
       }
-      if (d.reward === 'next' && this.kind === 'boss') afterBoss(this.run, BIOMES.length);
+      if (d.reward === 'next' && this.kind === 'boss') afterBoss(this.run, this.sectors().length);
       else if (d.reward === 'next' || d.reward === 'boss') this.run.room += 1;
       else {
         // La récompense tombera à la fin de la prochaine salle.

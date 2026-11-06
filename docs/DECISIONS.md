@@ -200,6 +200,14 @@ prennent plus seules à partir de cette date.
   mécaniques de tir (`bounces`, `split`, `explodeEnd`, `hover`) dans `PlayerShots`. Sauvegarde v23. Inspiration de
   fonctionnement : marteau de Hadès, runes de Diablo III, Dead Cells ; contenu original.
 
+- **0.85.0 — Fondations des mondes (05/11, étape 1, option A)** : `src/data/worlds.ts` (`WorldId`, `WORLDS`,
+  `WORLD_ORDER`, `getSector`, `sectorOf`) ; seul Aaru existe (ses secteurs = `BIOMES`). `RunState.world` et
+  `RunSummary.world` ; sauvegarde v25 (une run en cours va dans Aaru ; arrêtée devant le boss de la Pyramide, salle 8,
+  elle y reste en salle 11). Structure 10 / 10 / 10 / 7 (réponse D4) : Pyramide 10 salles, Douât 7. Choix de Claude, à
+  signaler : garder la difficulté de la première et de la dernière salle (budget de vagues Pyramide 0,6 → 0,4 par
+  salle, Douât 0,7 → 0,82) ; Pyramide avec 2 élites (salles 4 et 8) et la fontaine en salle 6, comme les autres
+  secteurs de 10 salles. Publiée seulement sur l'adresse de test.
+
 - **0.84.1 — Adresse de test (05/11, choix de l'utilisateur)** : la branche `test` est servie sous `/ash/test/`
   (compilée avec `APP_CHANNEL=test` → `__APP_CHANNEL__`), le jeu public reste sur `main` sous `/ash/`. Sauvegarde et
   télémétrie séparées (`ash-test.*`, préfixe de `SaveStore`), mention « version … · test » sur l'écran titre, nom

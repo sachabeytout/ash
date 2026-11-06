@@ -119,6 +119,9 @@ première victoire contre Flem dans un monde ouvre le suivant.
 | R7  | Ordre des vies (histoire)         | Réécrire le cycle des vies pour suivre les 5 mondes. Tu travailles le lore dans une autre conversation (à lire, sans l'ajouter au jeu)   |
 | Q2  | Direction artistique en cours     | Dans une autre conversation : tu m'enverras les images ou le texte                                                                       |
 
+**Avancement :** étape 1 « fondations des mondes » (option A) faite en 0.85.0, sur l'adresse de test, en attente de
+ta validation finale. Adresse de test ajoutée en 0.84.1 (ta réponse : adresse séparée).
+
 Précisions données le 05/11/2026 :
 
 | #   | Sujet                        | Ta réponse                                                                                                         |

@@ -293,3 +293,39 @@ describe('« Peau de cendre » retirée (v20 → v22)', () => {
     expect(save.meta.skills['thoth_vigor']).toBe(1);
   });
 });
+
+describe('les mondes (v24 → v25)', () => {
+  /** Une run telle qu'une sauvegarde v24 la contenait : sans monde. */
+  function oldRun(biome: number, room: number): Record<string, unknown> {
+    const run: Record<string, unknown> = { ...newRun(3, 'katana', 50, 0, 'ra'), biome, room };
+    delete run.world;
+    return run;
+  }
+
+  it('une run en cours appartient à Aaru et garde sa place', () => {
+    const save = migrate({ version: 24, meta: {}, settings: {}, run: oldRun(1, 6) });
+    expect(save.run?.world).toBe('aaru');
+    expect(save.run?.biome).toBe(1);
+    expect(save.run?.room).toBe(6);
+  });
+
+  it('une run arrêtée devant le boss de la Pyramide (7 salles avant, 10 maintenant) y reste', () => {
+    const save = migrate({ version: 24, meta: {}, settings: {}, run: oldRun(2, 8) });
+    expect(save.run?.room).toBe(11);
+    expect(migrate({ version: 24, meta: {}, settings: {}, run: oldRun(2, 5) }).run?.room).toBe(5);
+  });
+
+  it('une sauvegarde sans run reste sans run', () => {
+    expect(migrate({ version: 24, meta: { xp: 9 }, settings: {} }).run).toBeNull();
+  });
+
+  it('un monde inconnu redevient Aaru', () => {
+    const save = migrate({
+      version: SAVE_VERSION,
+      meta: {},
+      settings: {},
+      run: { ...newRun(3, 'katana', 50, 0, 'ra'), world: 'atlantide' },
+    });
+    expect(save.run?.world).toBe('aaru');
+  });
+});

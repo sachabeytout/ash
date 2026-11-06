@@ -2,6 +2,26 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.85.0 — Les fondations des mondes (version de test)
+
+Seulement sur l'adresse de test : https://sachabeytout.github.io/ash/test/ . Le jeu public ne change pas.
+
+Première étape de l'aventure en 5 mondes (option A, « fondations seules ») :
+
+- Le jeu sait maintenant qu'il existe des **mondes**. Pour l'instant, il n'y en a qu'un : **Aaru**, le jeu actuel.
+- Aaru suit la nouvelle structure : **10, 10, 10 puis 7 salles** avant chaque boss.
+  - **La Pyramide aux cages** passe de 7 à **10 salles**, avec un élite en salles 4 et 8 et la fontaine en salle 6,
+    comme les autres secteurs de 10 salles.
+  - **La Douât** passe de 8 à **7 salles**.
+  - La difficulté de la première et de la dernière salle de ces deux secteurs ne change pas : elle monte simplement
+    plus doucement dans la Pyramide, et un peu plus vite dans la Douât.
+- Rien d'autre ne change : écran de sélection, Valhalla et Flem viendront aux étapes suivantes.
+
+La version de test a sa propre sauvegarde : tu y commences une nouvelle partie, sans toucher à celle du jeu public.
+
+**Quoi tester** : sur l'adresse de test, va jusqu'à la Pyramide aux cages. Compte-t-elle bien 10 salles ? La
+difficulté y monte-t-elle comme il faut ?
+
 ## 0.84.1 — Une adresse pour tester les nouveautés
 
 Rien ne change dans le jeu.

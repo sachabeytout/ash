@@ -3,6 +3,7 @@ import { getBoon } from '../../data/boons';
 import { getEngraving } from '../../data/engravings';
 import type { GodId } from '../../data/gods';
 import type { WeaponId } from '../../data/weapons';
+import { DEFAULT_WORLD, type WorldId } from '../../data/worlds';
 import { OFFERING_HP, mainValue, takeBoon, type BoonOffer, type OwnedBoon } from '../boons/boons';
 import { heatModifiers, type HeatLevels } from '../heat';
 import type { DoorReward, RewardKind } from './rewards';
@@ -60,6 +61,9 @@ export const NO_PERKS: RunPerks = {
 export interface RunState {
   seed: number;
   weapon: WeaponId;
+  /** Monde de la run. Ajouté en v25. */
+  world: WorldId;
+  /** Secteur actuel dans le monde (0 = premier secteur). */
   biome: number;
   /** Salle actuelle, à partir de 1. */
   room: number;
@@ -106,7 +110,9 @@ export interface RunState {
 
 export interface RunSummary {
   outcome: 'death' | 'cleared';
-  /** Biome atteint (0 = Bas-Fonds). */
+  /** Monde de la run (absent d'un résumé d'avant les mondes : Aaru). */
+  world?: WorldId;
+  /** Secteur atteint (0 = premier secteur du monde). */
   biome: number;
   room: number;
   killedBy?: string;
@@ -141,10 +147,12 @@ export function newRun(
   superGauge = 0,
   weaponLevel = 0,
   heat: HeatLevels = {},
+  world: WorldId = DEFAULT_WORLD,
 ): RunState {
   return {
     seed,
     weapon,
+    world,
     biome: 0,
     room: 1,
     hp: maxHp,
@@ -315,6 +323,7 @@ export function summarize(
 ): RunSummary {
   return {
     outcome,
+    world: run.world,
     biome: run.biome,
     room: run.room,
     elapsedMs: run.elapsedMs,

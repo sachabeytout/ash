@@ -1,4 +1,4 @@
-import { BIOMES } from '../../data/biomes';
+import { DEFAULT_WORLD, getWorld, isWorldId } from '../../data/worlds';
 import { getEngraving } from '../../data/engravings';
 import { CODEX_KEYS } from '../codex';
 import { HEAT } from '../../data/heat';
@@ -321,6 +321,14 @@ const MIGRATIONS: Record<number, (save: Raw) => Raw> = {
       : old.run;
     return { ...old, version: 24, run };
   },
+  // v24 → v25 : les mondes (05/11/2026). Une run en cours appartient à Aaru, le seul monde existant. La Pyramide
+  // passe de 7 à 10 salles : une run arrêtée devant son boss (salle 8) y reste (salle 11).
+  24: (old) => {
+    if (!isObject(old.run)) return { ...old, version: 25 };
+    const atPyramidBoss = num(old.run.biome) === 2 && num(old.run.room) >= 8;
+    const run = { ...old.run, world: DEFAULT_WORLD, ...(atPyramidBoss ? { room: 11 } : {}) };
+    return { ...old, version: 25, run };
+  },
 };
 
 function isObject(v: unknown): v is Raw {
@@ -458,10 +466,13 @@ function sanitizeRun(raw: unknown): RunState | null {
     : [];
   const perks = isObject(raw.perks) ? raw.perks : {};
   const pending = raw.pendingBoon;
+  const world = isWorldId(raw.world) ? raw.world : DEFAULT_WORLD;
+  const lastSector = getWorld(world).sectors.length - 1;
   return {
     seed: num(raw.seed, 1) >>> 0,
     weapon: raw.weapon as RunState['weapon'],
-    biome: num(raw.biome, 0, 0, BIOMES.length - 1),
+    world,
+    biome: num(raw.biome, 0, 0, lastSector),
     room: num(raw.room, 1, 0), // 0 = marchand
     hp: num(raw.hp, maxHp, 1, maxHp),
     maxHp,
@@ -481,13 +492,13 @@ function sanitizeRun(raw: unknown): RunState | null {
     weaponLevel: num(raw.weaponLevel, 0, 0, 20),
     lastBreathUsed: raw.lastBreathUsed === true,
     revivesUsed: Math.floor(num(raw.revivesUsed, 0, 0, 9)),
-    amonBiome: Math.round(num(raw.amonBiome, -1, -1, BIOMES.length - 1)),
+    amonBiome: Math.round(num(raw.amonBiome, -1, -1, lastSector)),
     roomReward: sanitizeReward(raw.roomReward),
     engravings: sanitizeEngravings(raw.engravings, raw.weapon as string),
     pendingEngraving: raw.pendingEngraving === true,
-    engravingBiome: Math.round(num(raw.engravingBiome, -1, -1, BIOMES.length - 1)),
+    engravingBiome: Math.round(num(raw.engravingBiome, -1, -1, lastSector)),
     heat: sanitizeHeat(raw.heat),
-    eventTaken: Math.round(num(raw.eventTaken, -1, -1, BIOMES.length - 1)),
+    eventTaken: Math.round(num(raw.eventTaken, -1, -1, lastSector)),
     kills: Math.floor(num(raw.kills, 0, 0)),
     damageTaken: Math.floor(num(raw.damageTaken, 0, 0)),
     perks: {

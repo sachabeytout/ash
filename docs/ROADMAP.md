@@ -2,8 +2,9 @@
 
 ## Prochaine étape
 
-Le lore avec l'utilisateur, puis l'équilibrage selon ses retours. Les questions en attente sont dans `docs/QUESTIONS.md`.
-Retour sur le lore v0.2 toujours attendu (« quand le fond aura avancé »).
+L'aventure en 5 mondes (décisions dans `docs/QUESTIONS.md`, partie G), étape par étape et sur l'adresse de test :
+fondations (0.85.0) → nouvelle sauvegarde → sélection des mondes → Flem et les déblocages → Valhalla complet → Aaru,
+Svarga, Yomi, Élysium. Chaque monde est publié sur le jeu public une fois entièrement validé, dans l'ordre.
 
 ## M0 — Fondations
 
@@ -117,6 +118,7 @@ Retour sur le lore v0.2 toujours attendu (« quand le fond aura avancé »).
 - [x] **0.59.0** : 8 duos tirés de la mythologie (16 duos, 99 dons au total)
 - [x] **0.60.0** : retour F1, Ash immobile pendant les menus (+ 0,5 s d'invincibilité)
 - [x] **0.72.0** : retour F12 (1re partie), prix de Ptah et de Thot relevés, 13 compétences de Thot avec 1 ou 2 niveaux de plus
+- [x] **0.85.0** (version de test) : fondations des 5 mondes, Aaru en 10 / 10 / 10 / 7 salles
 - [x] **0.84.1** : adresse de test (`/ash/test/`, sauvegarde séparée) pour essayer les nouveautés avant le jeu public
 - [x] **0.84.0** : retours du 02/11, points 7 et 8 : compteurs à gauche, bouton « Utiliser » seulement près des interactions
 - [x] **0.83.0** : retours du 02/11, point 7 : joystick et bouton « Utiliser » dans la Cage

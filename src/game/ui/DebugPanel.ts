@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { drawFrame, drawCartoucheRect } from './frame';
 import { summarizeLog } from '../../core/telemetry';
-import { getBiome } from '../../data/biomes';
+import { sectorOf } from '../../data/worlds';
 import { t, type TextKey } from '../../i18n';
 import { sfx } from '../audio/sfx';
 import { telemetry } from '../telemetry';
@@ -42,7 +42,7 @@ export class DebugPanel {
       t('debug.runs', { runs: log.runs, rooms: log.rooms.length }),
       ...summary.biomes.map((b) =>
         t('debug.biome', {
-          biome: t(getBiome(b.biome).nameKey as TextKey),
+          biome: t(sectorOf({ biome: b.biome }).nameKey as TextKey),
           count: b.count,
           seconds: Math.round(b.avgMs / 1000),
           hp: b.avgHpLost,

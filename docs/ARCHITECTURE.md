@@ -243,6 +243,14 @@ par-dessus ; cartes face cachée puis retournées : `BoonScene.revealCard`). Mor
 └── .github/workflows/        CI : install → lint → typecheck → tests → build → deploy Pages
 ```
 
+## Mondes et secteurs (0.85.0)
+
+- Un monde = 4 secteurs (10 / 10 / 10 / 7 salles). Données : `src/data/worlds.ts` (`WORLDS`, `WORLD_ORDER`) ; un
+  secteur est un `BiomeDef` de `src/data/biomes.ts`. Seul Aaru existe pour l'instant.
+- Une run connaît son monde (`RunState.world`) et son secteur (`RunState.biome`, index dans le monde). Toujours lire
+  le secteur avec `getSector(run.world, run.biome)` ou `sectorOf(run)`, jamais `BIOMES[...]` directement
+  (`RunScene.sector()` / `sectors()` dans la scène de combat).
+
 ## Jeu public et version de test (0.84.1)
 
 - `main` → `/ash/` (jeu public) ; `test` → `/ash/test/` (version de test). Compilation avec `APP_CHANNEL=test` →

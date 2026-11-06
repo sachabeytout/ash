@@ -148,7 +148,8 @@ export const BIOMES: readonly BiomeDef[] = [
   {
     id: 'aviary',
     nameKey: 'biome.aviary',
-    rooms: 7,
+    // 10 salles (structure 10 / 10 / 10 / 7 du 05/11/2026, 7 avant) ; même difficulté au début et à la fin.
+    rooms: 10,
     roster: [
       { enemy: 'sparrow', fromRoom: 1 },
       { enemy: 'crow', fromRoom: 1 },
@@ -157,10 +158,10 @@ export const BIOMES: readonly BiomeDef[] = [
       { enemy: 'mender', fromRoom: 3 },
       { enemy: 'warder', fromRoom: 4 },
     ],
-    waveBudget: { base: 3.5, perRoom: 0.6 },
+    waveBudget: { base: 3.5, perRoom: 0.4 },
     wavesPerRoom: { min: 2, max: 3 },
-    eliteRooms: [4],
-    fountainRooms: [5],
+    eliteRooms: [4, 8],
+    fountainRooms: [6],
     elite: 'herald',
     boss: 'oiseleur',
     music: 'aviary',
@@ -190,7 +191,8 @@ export const BIOMES: readonly BiomeDef[] = [
     // La Douât : le monde de la nuit, où Apophis attend la barque de Râ (dernier monde).
     id: 'douat',
     nameKey: 'biome.douat',
-    rooms: 8,
+    // Secteur 4 : 7 salles (8 avant), puis le boss final ; même difficulté au début et à la fin.
+    rooms: 7,
     roster: [
       { enemy: 'harpy', fromRoom: 1 },
       { enemy: 'hoplite', fromRoom: 1 },
@@ -199,7 +201,7 @@ export const BIOMES: readonly BiomeDef[] = [
       { enemy: 'mender', fromRoom: 3 },
       { enemy: 'warder', fromRoom: 4 },
     ],
-    waveBudget: { base: 4, perRoom: 0.7 },
+    waveBudget: { base: 4, perRoom: 0.82 },
     wavesPerRoom: { min: 2, max: 3 },
     eliteRooms: [4, 7],
     fountainRooms: [5],

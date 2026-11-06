@@ -185,6 +185,10 @@ concentré (Serket), Plume de Maât (Anubis), Griffes affûtées (Bastet), Boucl
 37 salles (10/10/10/7) + 4 boss + 3 marchands, **~30–40 min**, rythme varié (salles rapides, coffres, fontaines,
 évènements, élites). Nombre de salles = paramètre de données. Sauvegarde à chaque entrée de salle.
 
+**Aventure en 5 mondes (05/11/2026, `docs/QUESTIONS.md` partie G)** : Valhalla → Aaru → Svarga → Yomi → Élysium. Une
+run = un monde, avec ses 4 secteurs en 10 / 10 / 10 / 7 salles (depuis la 0.85.0, Aaru suit cette structure : la
+Pyramide aux cages a 10 salles, la Douât 7).
+
 ## 7. Combat — ce que retient la recherche « game feel »
 
 1. **Réponse immédiate** : l'action démarre dans la frame de l'appui ; un _buffer_ de ~120 ms garde un appui fait trop tôt.
@@ -213,7 +217,7 @@ par une ligne). Élite : **Minotaure-Ω** (3 charges enchaînées, chacune réan
 **Talos, le Géant de bronze** : **balayage** (rayon qui balaie un arc annoncé, bord de départ en trait épais), onde de choc,
 pluie de débris (cercles à croix), charge ; phase 2 : invoque des Hoplites.
 
-### La Volière (biome 4, 7 salles, 0.8.0)
+### La Volière (biome 4, 7 salles, 0.8.0 ; aujourd'hui la Pyramide aux cages, 10 salles)
 
 Ennemis : **Moineau d'acier** (nuée rapide), **Corbeau-sentinelle** (5 plumes en éventail), **Geôlier** (deux cages qui
 tombent). Élite : **Héraut du Serment** (bouclier frontal + rayon).

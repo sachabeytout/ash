@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { drawFrame } from './frame';
 import type { RunSummary } from '../../core/run/state';
-import { getBiome } from '../../data/biomes';
+import { sectorOf } from '../../data/worlds';
 import { getBoon } from '../../data/boons';
 import { GODS } from '../../data/gods';
 import { WEAPONS } from '../../data/weapons';
@@ -64,10 +64,10 @@ export class RecapPanel {
       hex,
       true,
     ).setOrigin(0.5, 0);
-    const biome = t(getBiome(s.biome).nameKey as TextKey);
+    const biome = t(sectorOf(s).nameKey as TextKey);
     const where = won
       ? t('recap.where.cleared')
-      : s.room > getBiome(s.biome).rooms
+      : s.room > sectorOf(s).rooms
         ? t('recap.where.boss', { biome, killer: s.killedBy ?? '?' })
         : t('recap.where.death', { biome, room: s.room, killer: s.killedBy ?? '?' });
     this.text(cx, top + 36, where, 11, COLORS.text).setOrigin(0.5, 0);

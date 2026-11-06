@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { slotGod } from '../../core/boons/boons';
 import { roomKind, type RunState } from '../../core/run/state';
 import { BOSSES } from '../../data/bosses';
-import { getBiome } from '../../data/biomes';
+import { sectorOf } from '../../data/worlds';
 import { getBoon } from '../../data/boons';
 import { GODS } from '../../data/gods';
 import { t, type TextKey } from '../../i18n';
@@ -245,7 +245,7 @@ export class UiScene extends Phaser.Scene {
     if (ready && !this.superWasReady) sfx.superReady();
     this.superWasReady = ready;
     this.touch.setSuperGauge(run.superGauge);
-    const biome = getBiome(run.biome);
+    const biome = sectorOf(run);
     const kind = roomKind(run, biome);
     this.room.setText(
       kind === 'boss'
