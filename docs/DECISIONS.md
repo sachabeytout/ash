@@ -200,6 +200,12 @@ prennent plus seules à partir de cette date.
   mécaniques de tir (`bounces`, `split`, `explodeEnd`, `hover`) dans `PlayerShots`. Sauvegarde v23. Inspiration de
   fonctionnement : marteau de Hadès, runes de Diablo III, Dead Cells ; contenu original.
 
+- **0.85.1 — Jeu plus dur (06/11, retour « trop facile »)** : l'utilisateur trouve que les ennemis meurent vite et ne
+  sont pas assez nombreux ; choix : tout le jeu, nettement. `src/data/difficulty.ts` : `DIFFICULTY.enemyHp` 1,3 (vie
+  des ennemis et élites, pas des boss) et `DIFFICULTY.waveBudget` 1,3 (vagues), appliqués avant les Mesures
+  d'urgence dans `RunScene`. Réserve d'ennemis portée de 16 à 24 (`MAX_ENEMIES`) pour les vagues plus grosses (test :
+  une vague tient toujours dedans, même avec toutes les Mesures d'urgence). Version de test seulement.
+
 - **0.85.0 — Fondations des mondes (05/11, étape 1, option A)** : `src/data/worlds.ts` (`WorldId`, `WORLDS`,
   `WORLD_ORDER`, `getSector`, `sectorOf`) ; seul Aaru existe (ses secteurs = `BIOMES`). `RunState.world` et
   `RunSummary.world` ; sauvegarde v25 (une run en cours va dans Aaru ; arrêtée devant le boss de la Pyramide, salle 8,

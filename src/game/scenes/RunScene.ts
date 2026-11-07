@@ -98,6 +98,7 @@ import {
 } from '../../core/run/events';
 import { type BiomeDef } from '../../data/biomes';
 import { getSector, getWorld } from '../../data/worlds';
+import { DIFFICULTY, MAX_ENEMIES } from '../../data/difficulty';
 import { drawTempleRoom } from '../fx/temple';
 import { DASH_AURA_RADIUS, DASH_BOLT_RANGE, getBoon } from '../../data/boons';
 import { GOD_IDS, GODS } from '../../data/gods';
@@ -186,7 +187,6 @@ const KEEP_OUT: readonly KeepOut[] = [
   { x: ARENA.centerX, y: ARENA.centerY + 10, r: 44 },
 ];
 /** Zoom de la caméra : Ash fait ~1/13 de la hauteur d'écran, lisible au pouce. */
-const POOL_SIZE = 16;
 /**
  * Salle sombre : obscurité au-dessus des ennemis (8) et de leurs effets (9), sous les attaques, les
  * yeux, la traînée du Super (9,5) et Ash (10). Halo clair jusqu'à `haloInner`, noir complet à
@@ -429,7 +429,7 @@ export class RunScene extends Phaser.Scene {
   private lastChainSwing = -1;
   /** Bonus de la forge de Ptah pour l'arme de la run. */
   private forge: WeaponBonuses = NO_WEAPON_BONUS;
-  private readonly indicatorBuf: Indicator[] = Array.from({ length: POOL_SIZE + 8 }, () => ({
+  private readonly indicatorBuf: Indicator[] = Array.from({ length: MAX_ENEMIES + 8 }, () => ({
     x: 0,
     y: 0,
     angle: 0,
@@ -606,7 +606,7 @@ export class RunScene extends Phaser.Scene {
       this.tutorialEvent({ type: 'super' });
     };
 
-    for (let i = 0; i < POOL_SIZE; i++) {
+    for (let i = 0; i < MAX_ENEMIES; i++) {
       const e = new Enemy(this);
       e.onShoot = (from, angle, enemy) =>
         this.fireShot(from, angle, enemy.def, weakenFactor(enemy.status, this.sim));
@@ -628,7 +628,7 @@ export class RunScene extends Phaser.Scene {
             this.run.room,
             (id) => ENEMIES[id].threat,
             this.rng,
-            this.heat.waveBudget,
+            this.heat.waveBudget * DIFFICULTY.waveBudget,
           )
         : [];
     if (this.kind === 'combat' && trialRoom(this.run.seed, this.run.biome, biome) === this.run.room)
@@ -2639,7 +2639,7 @@ export class RunScene extends Phaser.Scene {
       const affix = s.champion
         ? 'armored'
         : rollAffix(this.rng, this.run.biome, s.def.elite !== undefined);
-      const hpMul = this.heat.enemyHp * (s.champion ? CHAMPION_HP : 1);
+      const hpMul = this.heat.enemyHp * DIFFICULTY.enemyHp * (s.champion ? CHAMPION_HP : 1);
       slot.activate(s.def, s.x, s.y, this.sim, hpMul, this.heat.enemySpeed, affix);
       this.juice.burst(s.x, s.y, s.def.color, 10);
     }

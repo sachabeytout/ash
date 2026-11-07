@@ -270,6 +270,7 @@ et `core/telemetry`. `game/` n'écrit jamais l'état directement : il appelle de
 | Je veux…                               | Fichier(s)                                   |
 | -------------------------------------- | -------------------------------------------- |
 | Équilibrer un don, une arme, un ennemi | `src/data/`                                  |
+| Durcir ou adoucir tout le jeu          | `src/data/difficulty.ts`                     |
 | Changer un texte                       | `src/i18n/fr.json` (+ `en.json`)             |
 | Changer une règle de calcul            | `src/core/` (+ test associé)                 |
 | Changer un visuel / un effet           | `src/game/`                                  |

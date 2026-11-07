@@ -2,6 +2,19 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## 0.85.1 — Un jeu plus dur (version de test)
+
+Seulement sur l'adresse de test : https://sachabeytout.github.io/ash/test/ . Le jeu public ne change pas.
+
+Ton retour : « le jeu me paraît trop facile », parce que les ennemis meurent vite et ne sont pas assez nombreux. Tu as
+choisi de durcir tout le jeu, nettement :
+
+- Les ennemis ont **30 % de vie en plus**, élites comprises.
+- Les vagues sont **30 % plus fournies**.
+- Les boss ne changent pas. Les Mesures d'urgence s'ajoutent toujours par-dessus.
+
+**Quoi tester** : refais une partie sur l'adresse de test. Le défi te paraît-il juste, trop dur, ou encore trop facile ?
+
 ## 0.85.0 — Les fondations des mondes (version de test)
 
 Seulement sur l'adresse de test : https://sachabeytout.github.io/ash/test/ . Le jeu public ne change pas.
