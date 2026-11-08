@@ -123,24 +123,31 @@ Questions en attente pour ce chantier :
 
 Décisions détaillées : `docs/DECISIONS.md` (« Passage à Godot et structure en mondes »). Aucun fichier du jeu modifié.
 
-| #   | Point                                                       | État                                          |
-| --- | ----------------------------------------------------------- | --------------------------------------------- |
-| G1  | Moteur et 3D                                                | **validé** (06/11) : Godot 4.5.1, vraie 3D    |
-| G2  | Structure du jeu : mondes, zones, boss, déblocage           | **validé en partie** (06/11) ; voir G-a à G-d |
-| G3  | Reconstruire tout le jeu actuel dans Godot, puis l'embellir | à venir, une fois G-a à G-d tranchées         |
+| #   | Point                                                       | État                                       |
+| --- | ----------------------------------------------------------- | ------------------------------------------ |
+| G1  | Moteur et 3D                                                | **validé** (06/11) : Godot 4.5.1, vraie 3D |
+| G2  | Structure du jeu : mondes, zones, boss, déblocage           | **validé** (08/11) ; voir G-a à G-g        |
+| G3  | Reconstruire tout le jeu actuel dans Godot, puis l'embellir | **validé** (08/11) : méthode G-h, en cours |
 
 Questions en attente :
 
-- G-a. La Cage disparaît : où vont ses rôles (compétences de Thot, amélioration des armes, archives, trophées,
-  dialogues et histoire) ? → **en attente**
-- G-b. « Refaire tout le jeu actuel » alors que le premier monde est le Valhalla : le contenu actuel (zones,
-  ennemis, boss, dieux) est égyptien. → **en attente**
-- G-c. « La dernière salle se termine par flem » : que désigne « flem » ? → **en attente**
-- G-d. Les dons viennent-ils des dieux du monde en cours (dieux nordiques au Valhalla) ? → **en attente**
+- G-a. La Cage disparaît : où vont ses rôles ? → ✅ **un petit camp par monde**, deux personnages suivent Ash (voir
+  G-e), un forgeron par mythologie (06/11)
+- G-b. Contenu actuel égyptien alors que le premier monde est le Valhalla ? → ✅ **contenu égyptien d'abord, puis
+  Valhalla** (06/11)
+- G-c. Que désigne « flem » ? → ✅ **Flem, l'ennemi juré d'Ash, boss final de chaque monde** (06/11)
+- G-d. Les dons viennent-ils des dieux du monde en cours ? → ✅ **oui, les dieux de chaque mythologie** (06/11)
+- G-e. Qui suit Ash de monde en monde ? → ✅ **Anii et Ratatosk** ; Thot est oublié ; **les compétences s'achètent
+  auprès d'Anii** (08/11)
+- G-f. Progression : tout à zéro, ou Papyrus et pièces d'arme gardés en bonus ? → ✅ **tout à zéro** (08/11)
+- G-g. La conversation « ASH » programme les 5 mondes dans la version Phaser : on met ce travail en pause ? → ✅ **oui,
+  pause** ; ses décisions de jeu sont gardées et serviront pour Godot (08/11)
+- G-h. Méthode de refonte ? → ✅ **traduire le jeu actuel morceau par morceau**, avec des tests automatiques qui
+  vérifient que chaque morceau se comporte comme avant (08/11)
 - Questions encore ouvertes de la page « Essai Godot » (https://claude.ai/artifact/4cfu81ELdXwdvMAEqLtAyb) :
-  2 (appareils visés), 3 (modèle d'iPhone), 4 (reprendre la progression), 5 (version actuelle en ligne pendant la
-  refonte), 9 (changer des règles pendant la refonte), 10 à 13 (caméra), 14 (proportions des personnages), 16
-  (budget), 17 à 21 (effets, son, interface, commandes), 22 à 25 (langage, version de Godot, dépôt, rythme). →
+  2 (appareils visés), 3 (modèle d'iPhone), 5 (version actuelle en ligne pendant la refonte), 9 (changer des
+  règles pendant la refonte), 10 à 13 (caméra), 14 (proportions des personnages), 16 (budget), 17 à 21 (effets, son,
+  interface, commandes), 23 (version de Godot), 25 (rythme). Déjà tranchées ailleurs : 4 (G-f), 22 et 24. →
   **en attente**
 
 ## F. Retours après la première run complète (01/11/2026) — tous validés le 02/11/2026
