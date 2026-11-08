@@ -1,8 +1,28 @@
 # 01 — Fondations
 
-## Le concept en une phrase
+## Le concept en une phrase ✅ (point 2, validé le 08/11/2026)
 
-❓ À écrire ensemble quand les règles du monde seront stables.
+> **« Pour sauver un monde, il doit brûler. Pour le rallumer, elle doit oublier. »**
+
+**La promesse au joueur :** une épopée à travers cinq mythologies, où chaque victoire coûte un souvenir à celle qui
+t'aime.
+
+## Les trois piliers ✅
+
+Chaque scène, personnage ou monde doit servir au moins un pilier. En cas de doute, on se demande : « est-ce que ça sert
+la phrase centrale ? ».
+
+| Pilier         | Thème                                                       | Ce qu'il apporte au joueur                                                                                                       |
+| -------------- | ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| **Le cœur**    | Ce qu'on est prêt à sacrifier pour ceux qu'on aime.         | La romance Ash–Anii : elle choisit ce qu'elle oublie, il retrouve ce qu'elle perd. Vise la vraie fin : touché, conquis, rêveur.  |
+| **Le mystère** | L'identité : qui es-tu quand tu as tout oublié ?            | « Toutes les mythologies ont une légende sur lui. Lui, ne se souvient d'aucune. » Ash enquête sur lui-même. Vise : intrigué.     |
+| **L'ennemi**   | Le mal ne vient pas d'ailleurs : il naît dans chaque monde. | « Flem naît de ce que les mondes ont de pire. Ash renaît de ce qu'ils ont perdu. » Jeux de pouvoir, traîtres avec leurs raisons. |
+
+**L'équilibre du ton :** le cœur porte l'émotion ; la légèreté vient de la personnalité d'Ash (humour pince-sans-rire)
+et des compagnons qui se souviennent de lui alors qu'il les a oubliés (Ratatosk…). Vise : amusé, excité après une
+session.
+
+**À revoir plus tard :** le sous-titre « Les Cendres de l'Aube » vient de l'ancien lore.
 
 ## Ce que le joueur doit ressentir ✅
 
