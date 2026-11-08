@@ -51,6 +51,21 @@ Les lois de l'univers. Toute idée nouvelle doit les respecter.
 13. Flem est né des **émotions mauvaises, des vices, de tout ce qui est négatif** dans les mondes.
 14. Dans chaque monde, il **s'allie avec le traître de la mythologie** pour renverser les dieux et prendre leur place.
 
+### Ce que Flem veut vraiment ✅ (point 3a, C + la faim de B, validé le 08/11/2026)
+
+- **Il est né du monde d'Anii.** Ce monde était parfaitement paisible parce qu'Anii en avait **chassé tout ce qui était
+  mauvais** (colère, jalousie, peur…). Ce qu'elle a chassé ne s'est pas évanoui : cela s'est rassemblé et est devenu
+  Flem. Il a ensuite grandi en se nourrissant des vices de tous les autres mondes.
+- **Il est revenu détruire le monde d'Anii**, celui qui l'avait rejeté.
+- **Pourquoi il renverse les dieux :** tous les dieux font ce qu'Anii a fait, rejeter ce qu'ils ne veulent pas voir. Il
+  veut **la place qu'on lui a refusée**.
+- **La faim :** Flem se nourrit des vices. Quand un monde retrouve son équilibre, il **s'affaiblit et souffre** ; s'il
+  ne trouve plus de monde à faire basculer, il disparaît. Chaque victoire d'Ash est une blessure pour lui.
+- **Le miroir :** Ash n'existe que quand l'équilibre est menacé, Flem dépérit quand il revient.
+- **Le secret (révélé tard) :** Ash et Flem sont **tous deux nés d'Anii**, l'un de son amour, l'autre de son rejet.
+  **Anii le sait** et ne l'a jamais dit à Ash.
+- **À respecter :** Flem doit rester **vraiment menaçant** ; sa souffrance explique ses actes, elle ne les excuse pas.
+
 ## Les mondes ✅
 
 15. Chaque monde correspond à **une mythologie**. **Un monde = un chapitre** du jeu.

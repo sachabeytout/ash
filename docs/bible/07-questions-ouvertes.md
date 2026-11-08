@@ -2,13 +2,13 @@
 
 ## Point en cours
 
-**Point 3 — Flem** : nom, logique, ce qu'il veut vraiment, apparence. Propositions présentées le 08/11/2026, en attente
-du choix.
+**Point 3b — Le nom de Flem** : propositions présentées le 08/11/2026, en attente du choix. Ensuite : 3c (apparence).
 
 ## Points terminés
 
 - **Point 1 — La mémoire** : mélange A + B, **validé le 08/11/2026** (`02-regles-du-monde.md`).
 - **Point 2 — Le concept central** : phrase A + piliers B et C, **validé le 08/11/2026** (`01-fondations.md`).
+- **Point 3a — Ce que Flem veut vraiment** : C + la faim de B, **validé le 08/11/2026** (`02-regles-du-monde.md`).
 
 ## Nouvelle question apparue
 
@@ -16,6 +16,10 @@ du choix.
   jeu) ? Cela change combien de souvenirs Anii a déjà perdus au début du jeu, et explique (ou non) pourquoi chaque mythologie
   a déjà une légende sur Ash (pilier « le mystère » ; sinon : des prophéties). À traiter avec le point 5 (le monde
   d'Anii).
+
+- **Apparue avec le point 3a :** si Flem est fait de ce qu'Anii a rejeté, « battre Flem » à la fin veut-il dire le
+  détruire, ou qu'Anii **reprenne en elle** ce qu'elle a chassé ? À trancher quand on construira la fin (ne rien
+  décider avant).
 
 ## Points suivants (dans l'ordre prévu, modifiable)
 
