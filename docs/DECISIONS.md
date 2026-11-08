@@ -8,6 +8,12 @@ L'utilisateur a fixé des directives permanentes : `docs/DIRECTIVES.md`. Elles p
 mise en ligne : au cas par cas, avec son autorisation. Les « petites décisions prises par Claude » ci-dessous ne se
 prennent plus seules à partir de cette date.
 
+## Outils de travail de Claude
+
+| Date       | Décision                                                                                                                                                                                                | Raison                                                                                                                                                                                 | Validée                                 |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------- |
+| 2026-11-08 | Les 78 fiches de savoir-faire du dépôt `awesome-gamedev-agent-skills` (77 fiches + `router`) sont copiées dans `.claude/skills/` (option C). Copie dans le projet plutôt qu'une installation sur le Mac | Disponibles à chaque séance (Mac et web) sans commande à taper ; version figée et notée dans `docs/CREDITS.md`. Nos décisions et les fiches officielles de Phaser restent prioritaires | oui (choix C, résultat validé le 08/11) |
+
 ## Décisions issues du brief (validées)
 
 | Date       | Décision                                                                                                                  | Raison                                                                     | Validée                                        |

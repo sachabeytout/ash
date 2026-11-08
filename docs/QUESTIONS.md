@@ -158,6 +158,17 @@ Enregistré et mis en ligne en 0.84.0.
 
 **Les 8 points des retours du 02/11 sont terminés** (7 validés, le point 2 annulé).
 
+Liste du 08/11/2026 (1 point) :
+
+| #   | Point                                                                   | État                  |
+| --- | ----------------------------------------------------------------------- | --------------------- |
+| 1   | Fiches de savoir-faire jeu vidéo (dépôt `awesome-gamedev-agent-skills`) | **validé** (option C) |
+
+Point 1 — propositions : A (consulter sans installer), B (~10 fiches utiles), C (les 78 fiches). Choix : **C**.
+Fichiers : `.claude/skills/` (78 dossiers recopiés sans modification + licence et mentions), `.prettierignore`,
+`CLAUDE.md`, `docs/CREDITS.md`, `docs/DECISIONS.md`. Rien ne change dans le jeu. Enregistré et envoyé sur GitHub (branche de travail) avec
+l'accord de l'utilisateur le 08/11/2026. **Point validé.**
+
 Points F1 à F15 : validés le 02/11/2026. Gardés pour plus tard : amulettes (F2, option B), aspects des armes.
 
 ## F. Retours après la première run complète (01/11/2026) — tous validés le 02/11/2026

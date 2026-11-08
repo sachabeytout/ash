@@ -34,6 +34,12 @@ Phaser 4 (WebGL uniquement) · TypeScript strict (6.0, voir DECISIONS) · Vite �
 
 **API Phaser :** consulter `node_modules/phaser/skills/*/SKILL.md` **avant** d'écrire du code Phaser (l'API v4 diffère de la v3 : filtres au lieu de FX/pipelines, `setLighting(true)`, etc.).
 
+**Fiches de savoir-faire jeu vidéo :** `.claude/skills/` (78 fiches du dépôt `gamedev-skills/awesome-gamedev-agent-skills`,
+Apache 2.0, choisies par l'utilisateur le 08/11/2026 ; le `router` indique laquelle lire). Ce sont des conseils
+généraux : en cas de désaccord, `docs/DIRECTIVES.md`, `docs/DECISIONS.md`, ce fichier et les fiches officielles de
+Phaser (`node_modules/phaser/skills/`) l'emportent. Ne pas modifier ces fiches à la main (mise à jour = recopie depuis
+le dépôt d'origine, version notée dans `docs/CREDITS.md`).
+
 ## Commandes
 
 Node.js 24 et gh sont installés dans `~/.local/node` et `~/.local/gh` (pas dans le PATH par défaut) : préfixer chaque commande par
