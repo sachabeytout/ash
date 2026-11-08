@@ -2,6 +2,10 @@
 
 ## Prochaine étape
 
+**Refonte dans Godot (vraie 3D)** : étape 1 faite le 08/11 (projet de départ, déplacement, caméra, version Mac), en
+attente de la validation de l'utilisateur. Suivi détaillé : `docs/QUESTIONS.md` (G3). La version Phaser ci-dessous reste
+en ligne, sans nouveau travail sur les mondes (pause décidée le 08/11).
+
 Le lore avec l'utilisateur, puis l'équilibrage selon ses retours. Les questions en attente sont dans `docs/QUESTIONS.md`.
 Retour sur le lore v0.2 toujours attendu (« quand le fond aura avancé »).
 

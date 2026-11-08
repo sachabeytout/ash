@@ -89,6 +89,22 @@ Essais techniques réalisés : Godot 4.5.1 tourne dans les sessions en ligne (re
 la salle s'exporte de Blender vers Godot (format glTF). Le rendu « téléphone » de l'essai garde des zones d'ombre
 parasites, à vérifier sur un vrai iPhone.
 
+Petits choix techniques de la première étape (08/11, pris par Claude, réversibles) :
+
+| Date       | Décision                                                                                                                                                                                 | Raison                                                                                                                        | Validée    |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| 2026-11-08 | Projet Godot dans `godot/` ; règles gardées dans les unités d'origine (pixels, millisecondes), **1 m = 16 px** pour la 3D                                                                | Les tests comparent les réglages un à un avec la version Phaser ; Ash (rayon 6 px) fait 0,75 m, une dalle du sol 1 m          | à signaler |
+| 2026-11-08 | Caméra : même surface de sol visible que la version Phaser (180 px de profondeur, zoom 2), même suivi (0,14 par image à 60 Hz, aussi juste à 120 Hz) et même marge (36 px)               | Traduction fidèle ; seule l'inclinaison à 50° change (décision validée)                                                       | à signaler |
+| 2026-11-08 | Tests Godot maison (sans module externe) : tests unitaires + scénarios qui font tourner la vraie scène avec des appuis simulés                                                           | Aucune dépendance de plus ; certains tests relisent la version Phaser pour vérifier que les valeurs traduites sont identiques | à signaler |
+| 2026-11-08 | Le mannequin se tourne en 0,1 s environ vers la direction du regard (la version Phaser retournait l'image d'un coup)                                                                     | Purement visuel : en 3D, un demi-tour instantané paraît saccadé ; les règles (direction du regard) ne changent pas            | à signaler |
+| 2026-11-08 | Salle d'essai : la bombe du modèle est retirée ; pièges, jarre cassée et caisse cassée restent comme décor (inactifs) ; jarres, caisse, colonnes, plantes et brasero bloquent le passage | Ils n'ont pas encore de rôle ; ils deviendront actifs avec la traduction des pièges et des objets cassables                   | à signaler |
+| 2026-11-08 | Version Mac signée « ad hoc » depuis la session en ligne (pas de compte développeur Apple) : au premier lancement, autoriser l'app dans Réglages Système                                 | Gratuit ; le compte à 99 $/an n'est pas nécessaire pour l'essayer                                                             | à signaler |
+| 2026-11-08 | Ombre du soleil en une seule zone (« orthogonale ») au lieu de deux                                                                                                                      | Caméra orthographique à distance fixe : une seule zone suffit et coûte moins cher                                             | à signaler |
+
+Vérification du 08/11 : en rendu « téléphone » avec le pilote graphique logiciel de la session en ligne, Ash et le
+muret du bas paraissent à l'ombre à tort ; les rendus « ordinateur » et « compatibilité » sont corrects. À vérifier sur
+un vrai iPhone (la version Mac utilise le rendu « ordinateur »).
+
 ## Décisions prises par Claude (petites, réversibles)
 
 | Date       | Décision                                                                                                                           | Raison                                                                                                                                                                                              | Validée    |

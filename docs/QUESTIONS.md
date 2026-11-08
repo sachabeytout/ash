@@ -123,11 +123,20 @@ Questions en attente pour ce chantier :
 
 Décisions détaillées : `docs/DECISIONS.md` (« Passage à Godot et structure en mondes »). Aucun fichier du jeu modifié.
 
-| #   | Point                                                       | État                                       |
-| --- | ----------------------------------------------------------- | ------------------------------------------ |
-| G1  | Moteur et 3D                                                | **validé** (06/11) : Godot 4.5.1, vraie 3D |
-| G2  | Structure du jeu : mondes, zones, boss, déblocage           | **validé** (08/11) ; voir G-a à G-g        |
-| G3  | Reconstruire tout le jeu actuel dans Godot, puis l'embellir | **validé** (08/11) : méthode G-h, en cours |
+| #   | Point                                                       | État                                                                         |
+| --- | ----------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| G1  | Moteur et 3D                                                | **validé** (06/11) : Godot 4.5.1, vraie 3D                                   |
+| G2  | Structure du jeu : mondes, zones, boss, déblocage           | **validé** (08/11) ; voir G-a à G-g                                          |
+| G3  | Reconstruire tout le jeu actuel dans Godot, puis l'embellir | **validé** (08/11) : méthode G-h ; étape 1 faite, validation finale attendue |
+
+Suivi de la refonte (G3) :
+
+- **Étape 1 — projet de départ** : Ash (mannequin neutre) se déplace dans la salle égyptienne d'essai ; caméra à 50° ;
+  clavier (AZERTY et QWERTY), manette, joystick tactile ; version Mac. → **faite le 08/11, en attente de la validation
+  finale de l'utilisateur**. Fichiers : dossier `godot/` (nouveau), docs. Tests : 31 réussis (unitaires + scénarios).
+  Reste à vérifier : l'ombre en rendu « téléphone » (sur un vrai iPhone).
+- Étapes suivantes, à proposer une à une : dash, attaques et armes, ennemis, dons, salles et portes, boss, interface et
+  menus, sauvegarde, sons et musique, puis le monde égyptien complet.
 
 Questions en attente :
 

@@ -9,6 +9,31 @@
 >
 > - heat, telemetry (core et game), ui/HeatPanel+DebugPanel. Prévu : events, data/validate. Mettre à jour à chaque session.
 
+## Version Godot (refonte en vraie 3D, dossier `godot/`)
+
+Godot 4.5.1, GDScript typé. Même découpage que la version Phaser ; chaque morceau est **traduit** de la version
+d'origine (voir `docs/DECISIONS.md`, « Passage à Godot »). Les règles gardent les unités d'origine (pixels logiques,
+millisecondes) ; la 3D est en mètres, **1 m = 16 px** (`godot/src/core/units.gd`).
+
+- `godot/src/core/` : logique pure, testée. `geometry.gd`, `units.gd`, `motion.gd` (déplacement libre et regard,
+  traduit de `Player.updateFreeMotion`), `camera_math.gd` (suivi 0,14 par image à 60 Hz, marge 36 px),
+  `input/input_buffer.gd`, `input/move_input.gd` (clavier, manette, joystick tactile), `input/release_gate.gd`.
+- `godot/src/data/` : `player_data.gd` (= `src/data/player.ts`), `test_room_data.gd` (sol, obstacles, apparition).
+- `godot/src/game/` : `main.tscn` + `main.gd` (assemble la salle, Ash, commandes, caméra, joystick) ;
+  `input/controls.gd` (touches physiques AZERTY/QWERTY, manette, souris), `input/touch_joystick.gd` (joystick flottant,
+  moitié gauche) ; `player/player.gd` (CharacterBody3D, mannequin neutre, triangle de regard) ;
+  `camera/follow_camera.gd` (orthographique, 50°, 180 px de profondeur visible) ; `rooms/test_room.gd` (décor glTF,
+  collisions, lumière AgX, brasero) + `rooms/egypt_style.gd` (matériaux par nom).
+- `godot/assets/rooms/egypt_test_room.glb` : salle d'essai, fabriquée par `godot/tools/blender/egypt_test_room.py`.
+- Tests : `godot --headless --path godot --script res://tests/run_tests.gd` (unitaires `tests/unit/test_*.gd` +
+  scénarios `tests/scenarios.gd` qui font tourner la vraie scène avec des appuis simulés). Certains tests relisent
+  `src/` pour vérifier que les réglages traduits sont identiques. Captures : `tests/visual/capture.gd`.
+- Version Mac : préréglage « macOS » de `godot/export_presets.cfg` → `godot/build/ASH-mac.zip` (non suivi par git),
+  signature ad hoc (pas de compte développeur Apple).
+- Rendu : Forward+ sur ordinateur, Mobile sur téléphone (`project.godot`) ; interface pensée en 640 × 360 et agrandie.
+
+## Version Phaser (version actuelle, dossier `src/`)
+
 ### Scènes
 
 `title` → `intro` (premier lancement, `IntroScene`, vue = `INTRO_ID` dans `seenDialogues`) → `hub` (Cage) → `run` (une salle ; se relance à chaque porte) + `ui` (calque non zoomé : vie,

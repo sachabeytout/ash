@@ -2,6 +2,21 @@
 
 Une entrée par version mise en ligne, en français simple, avec « Quoi tester ».
 
+## Godot 0.1.0 — Première étape de la nouvelle version en 3D (version Mac)
+
+Début de la refonte dans Godot (la version actuelle sur téléphone ne change pas) :
+
+- **Ash est un mannequin neutre** qui se déplace dans la **salle égyptienne d'essai**, en vraie 3D, vue à 50°.
+- **Mêmes déplacements que la version actuelle** : même vitesse, même démarrage et même freinage.
+- **Commandes** : touches ZQSD ou flèches (les touches WASD d'un clavier QWERTY marchent aussi), manette (stick gauche),
+  souris pour regarder, et joystick tactile (pour l'iPhone, plus tard).
+- La **caméra** suit Ash en douceur, comme dans la version actuelle.
+- Les pièges, la jarre cassée et la caisse cassée ne sont **que du décor** pour l'instant. Jarres, caisse, colonnes,
+  plantes et brasero bloquent le passage.
+
+**Quoi tester** (sur ton Mac) : promène-toi dans la salle au clavier, puis à la manette si tu en as une. Dis-moi si la
+vitesse, la caméra et la lumière te plaisent, et si quelque chose bloque ou passe à travers un objet.
+
 ## 0.84.0 — La Cage : compteurs à gauche, bouton « Utiliser » discret
 
 Ton retour du 02/11, points 7 et 8 :
