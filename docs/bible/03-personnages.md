@@ -7,6 +7,7 @@
 - **Personnalité** : inspirée de **Trafalgar D. Law**, **Shikamaru** et **Kisuke Urahara**. Pas un pitre.
   - 🟡 Lecture de Claude (à confirmer) : calme, très intelligent, stratège, en apparence nonchalant ou détaché, humour
     pince-sans-rire, cache plus qu'il ne montre.
+- Amnésique à chaque monde, il **déduit son passé** à partir d'indices : déjà-vu, cicatrices, rêves, réactions des autres.
 
 ## Anii ✅ (la bien-aimée)
 

@@ -12,7 +12,8 @@ Trois niveaux d'histoire ✅.
 - Romance **compliquée**. Ce qui la complique :
   - tant qu'Ash n'a pas rétabli l'ordre, Anii ne peut pas reprendre sa forme normale ;
   - quand Ash rétablit l'ordre, il se consume et redevient cendres ;
-  - Anii perd peu à peu la mémoire, et cette mémoire revient à Ash.
+  - Anii perd peu à peu la mémoire, et cette mémoire revient à Ash : **à chaque nouveau monde, elle choisit un souvenir
+    à sacrifier pour le rallumer** (règles, « La mémoire »).
 - ✅ **Ils ne peuvent jamais être entiers en même temps**, sauf à la toute fin, quand Flem tombe.
 
 ## 3. Les histoires de chaque monde ✅ (principe)
