@@ -18,7 +18,7 @@ référence. Rien de cette bible n'est encore dans le jeu.
 | -------------------------- | ------------------------------------------------------------------------ |
 | `01-fondations.md`         | L'identité du jeu : promesse, émotions, ton, références, ce qu'on évite. |
 | `02-regles-du-monde.md`    | Les lois de l'univers : elles ne se contredisent jamais.                 |
-| `03-personnages.md`        | Ash, Anii, Flem, les compagnons, et les liens entre eux.                 |
+| `03-personnages.md`        | Ash, Anii, Abso, les compagnons, et les liens entre eux.                 |
 | `04-mondes.md`             | Les 5 mondes (mythologies), leur ordre, leurs traîtres.                  |
 | `05-chronologie.md`        | L'histoire du monde avant et pendant le jeu.                             |
 | `06-intrigues.md`          | Les 3 niveaux d'histoire : principale, romance, histoires des mondes.    |

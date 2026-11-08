@@ -2,13 +2,14 @@
 
 ## Point en cours
 
-**Point 3b — Le nom de Flem** : propositions présentées le 08/11/2026, en attente du choix. Ensuite : 3c (apparence).
+**Point 3c — L'apparence d'Abso** : propositions présentées le 08/11/2026, en attente du choix.
 
 ## Points terminés
 
 - **Point 1 — La mémoire** : mélange A + B, **validé le 08/11/2026** (`02-regles-du-monde.md`).
 - **Point 2 — Le concept central** : phrase A + piliers B et C, **validé le 08/11/2026** (`01-fondations.md`).
-- **Point 3a — Ce que Flem veut vraiment** : C + la faim de B, **validé le 08/11/2026** (`02-regles-du-monde.md`).
+- **Point 3a — Ce que Abso veut vraiment** : C + la faim de B, **validé le 08/11/2026** (`02-regles-du-monde.md`).
+- **Point 3b — Le nom** : **Abso** (sens caché _absolutus_, « absolu »), **validé le 08/11/2026** (`03-personnages.md`).
 
 ## Nouvelle question apparue
 
@@ -17,7 +18,7 @@
   a déjà une légende sur Ash (pilier « le mystère » ; sinon : des prophéties). À traiter avec le point 5 (le monde
   d'Anii).
 
-- **Apparue avec le point 3a :** si Flem est fait de ce qu'Anii a rejeté, « battre Flem » à la fin veut-il dire le
+- **Apparue avec le point 3a :** si Abso est fait de ce qu'Anii a rejeté, « battre Abso » à la fin veut-il dire le
   détruire, ou qu'Anii **reprenne en elle** ce qu'elle a chassé ? À trancher quand on construira la fin (ne rien
   décider avant).
 
@@ -25,7 +26,7 @@
 
 1. La mémoire (validé).
 2. Le concept central en une phrase (validé).
-3. Flem : nom, logique, ce qu'il veut vraiment, apparence (en cours).
+3. Abso (ex-Flem) : nom, logique, ce qu'il veut vraiment, apparence (en cours).
 4. L'ordre des mondes du milieu (égyptien, japonais, hindou).
 5. Le monde d'Anii : le grand mystère.
 6. Les compétences : idées liées à l'histoire.
@@ -39,12 +40,12 @@
 
 ## Risques repérés par Claude (à traiter à l'étape concernée)
 
-| Risque                                                                                    | État                                                                                             |
-| ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| Le nom « Flem » sonne comme « la flemme » (et _phlegm_ = glaire en anglais).              | Claude proposera des noms à l'étape Flem ; sinon on garde Flem.                                  |
-| Un méchant « né du mal » qui veut « prendre la place des dieux » peut paraître classique. | À creuser à l'étape Flem : sa logique, ce qu'il croit, ce qu'il veut vraiment.                   |
-| Traîtres connus = moins de surprise.                                                      | Accepté. Le mystère viendra d'ailleurs (le passé, les secrets, les plans de Flem).               |
-| Anii, toute petite fée, risque d'être passive (« la princesse à sauver »).                | En partie réglé (c'est elle qui a créé Ash). À surveiller : lui donner des choix et des secrets. |
-| Hindouisme et shintoïsme sont des religions pratiquées aujourd'hui.                       | À traiter avec respect à l'étape de ces mondes (choix des traîtres, représentation des dieux).   |
-| La mythologie romaine ressemble beaucoup à la grecque.                                    | À l'étape Rome : trouver ce qui est propre à Rome.                                               |
-| Le jeu actuel est égyptien alors que l'histoire commence dans le monde nordique.          | Question de production, à voir plus tard.                                                        |
+| Risque                                                                                    | État                                                                                                  |
+| ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Le nom « Flem » sonne comme « la flemme » (et _phlegm_ = glaire en anglais).              | Réglé : il s'appelle **Abso** (point 3b). Nouveau risque accepté : ressemblance avec Absol (Pokémon). |
+| Un méchant « né du mal » qui veut « prendre la place des dieux » peut paraître classique. | À creuser à l'étape Abso : sa logique, ce qu'il croit, ce qu'il veut vraiment.                        |
+| Traîtres connus = moins de surprise.                                                      | Accepté. Le mystère viendra d'ailleurs (le passé, les secrets, les plans de Abso).                    |
+| Anii, toute petite fée, risque d'être passive (« la princesse à sauver »).                | En partie réglé (c'est elle qui a créé Ash). À surveiller : lui donner des choix et des secrets.      |
+| Hindouisme et shintoïsme sont des religions pratiquées aujourd'hui.                       | À traiter avec respect à l'étape de ces mondes (choix des traîtres, représentation des dieux).        |
+| La mythologie romaine ressemble beaucoup à la grecque.                                    | À l'étape Rome : trouver ce qui est propre à Rome.                                                    |
+| Le jeu actuel est égyptien alors que l'histoire commence dans le monde nordique.          | Question de production, à voir plus tard.                                                             |

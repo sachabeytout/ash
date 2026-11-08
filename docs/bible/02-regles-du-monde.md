@@ -21,7 +21,7 @@ Les lois de l'univers. Toute idée nouvelle doit les respecter.
 ## La malédiction ✅
 
 9. **Une seule malédiction traverse toute l'histoire.** Personne ne l'a lancée : **c'est le prix du sort d'Anii**. Ce sort
-   ne peut se refermer que si **Flem tombe**, à la fin du jeu.
+   ne peut se refermer que si **Abso tombe**, à la fin du jeu.
 10. Tant qu'Ash n'a pas rétabli l'ordre, **Anii ne peut pas reprendre sa forme normale**.
 11. La malédiction fait **progressivement perdre la mémoire à Anii**, et cette mémoire **revient à Ash**.
 
@@ -41,30 +41,30 @@ Les lois de l'univers. Toute idée nouvelle doit les respecter.
 - **Conséquences voulues :**
   - Ash finit par savoir sur Anii des choses qu'**elle-même a oubliées**.
   - Les compagnons qui le suivent (Ratatosk…) **se souviennent de lui, lui non** : source d'humour et de tristesse.
-  - Les souvenirs d'Anii révèlent peu à peu **son monde et le passé de Flem** : c'est le canal principal des mystères.
+  - Les souvenirs d'Anii révèlent peu à peu **son monde et le passé de Abso** : c'est le canal principal des mystères.
 
 12. **Ash et Anii ne sont jamais entiers en même temps** : quand Ash rétablit l'ordre, Anii retrouve un instant sa forme,
-    mais Ash se consume. Seule la chute de Flem peut les réunir.
+    mais Ash se consume. Seule la chute de Abso peut les réunir.
 
-## Flem ✅
+## Abso ✅
 
-13. Flem est né des **émotions mauvaises, des vices, de tout ce qui est négatif** dans les mondes.
+13. Abso est né des **émotions mauvaises, des vices, de tout ce qui est négatif** dans les mondes.
 14. Dans chaque monde, il **s'allie avec le traître de la mythologie** pour renverser les dieux et prendre leur place.
 
-### Ce que Flem veut vraiment ✅ (point 3a, C + la faim de B, validé le 08/11/2026)
+### Ce que Abso veut vraiment ✅ (point 3a, C + la faim de B, validé le 08/11/2026)
 
 - **Il est né du monde d'Anii.** Ce monde était parfaitement paisible parce qu'Anii en avait **chassé tout ce qui était
   mauvais** (colère, jalousie, peur…). Ce qu'elle a chassé ne s'est pas évanoui : cela s'est rassemblé et est devenu
-  Flem. Il a ensuite grandi en se nourrissant des vices de tous les autres mondes.
+  Abso. Il a ensuite grandi en se nourrissant des vices de tous les autres mondes.
 - **Il est revenu détruire le monde d'Anii**, celui qui l'avait rejeté.
 - **Pourquoi il renverse les dieux :** tous les dieux font ce qu'Anii a fait, rejeter ce qu'ils ne veulent pas voir. Il
   veut **la place qu'on lui a refusée**.
-- **La faim :** Flem se nourrit des vices. Quand un monde retrouve son équilibre, il **s'affaiblit et souffre** ; s'il
+- **La faim :** Abso se nourrit des vices. Quand un monde retrouve son équilibre, il **s'affaiblit et souffre** ; s'il
   ne trouve plus de monde à faire basculer, il disparaît. Chaque victoire d'Ash est une blessure pour lui.
-- **Le miroir :** Ash n'existe que quand l'équilibre est menacé, Flem dépérit quand il revient.
-- **Le secret (révélé tard) :** Ash et Flem sont **tous deux nés d'Anii**, l'un de son amour, l'autre de son rejet.
+- **Le miroir :** Ash n'existe que quand l'équilibre est menacé, Abso dépérit quand il revient.
+- **Le secret (révélé tard) :** Ash et Abso sont **tous deux nés d'Anii**, l'un de son amour, l'autre de son rejet.
   **Anii le sait** et ne l'a jamais dit à Ash.
-- **À respecter :** Flem doit rester **vraiment menaçant** ; sa souffrance explique ses actes, elle ne les excuse pas.
+- **À respecter :** Abso doit rester **vraiment menaçant** ; sa souffrance explique ses actes, elle ne les excuse pas.
 
 ## Les mondes ✅
 

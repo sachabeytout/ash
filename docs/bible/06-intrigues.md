@@ -2,10 +2,10 @@
 
 Trois niveaux d'histoire ✅.
 
-## 1. L'histoire principale : Ash contre Flem ✅
+## 1. L'histoire principale : Ash contre Abso ✅
 
-- Traverse les 5 mondes. Dans chacun, Flem s'allie au traître local.
-- Se conclut dans le monde romain : battre Flem lève la malédiction.
+- Traverse les 5 mondes. Dans chacun, Abso s'allie au traître local.
+- Se conclut dans le monde romain : battre Abso lève la malédiction.
 
 ## 2. La romance : Ash et Anii ✅ (base) / ❓ (déroulé)
 
@@ -14,7 +14,7 @@ Trois niveaux d'histoire ✅.
   - quand Ash rétablit l'ordre, il se consume et redevient cendres ;
   - Anii perd peu à peu la mémoire, et cette mémoire revient à Ash : **à chaque nouveau monde, elle choisit un souvenir
     à sacrifier pour le rallumer** (règles, « La mémoire »).
-- ✅ **Ils ne peuvent jamais être entiers en même temps**, sauf à la toute fin, quand Flem tombe.
+- ✅ **Ils ne peuvent jamais être entiers en même temps**, sauf à la toute fin, quand Abso tombe.
 
 ## 3. Les histoires de chaque monde ✅ (principe)
 

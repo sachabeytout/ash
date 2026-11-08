@@ -13,7 +13,7 @@
 ## Fiches des mondes
 
 À remplir monde par monde. Pour chacun : ambiance visuelle, histoire du monde, traître (connu dans les vrais mythes),
-alliance avec Flem, dieux, **QG**, **forgeron**, compagnon éventuel, mystères.
+alliance avec Abso, dieux, **QG**, **forgeron**, compagnon éventuel, mystères.
 
 | Monde    | Traître                       | Notes                                                           |
 | -------- | ----------------------------- | --------------------------------------------------------------- |

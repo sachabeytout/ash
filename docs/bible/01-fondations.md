@@ -16,7 +16,7 @@ la phrase centrale ? ».
 | -------------- | ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
 | **Le cœur**    | Ce qu'on est prêt à sacrifier pour ceux qu'on aime.         | La romance Ash–Anii : elle choisit ce qu'elle oublie, il retrouve ce qu'elle perd. Vise la vraie fin : touché, conquis, rêveur.  |
 | **Le mystère** | L'identité : qui es-tu quand tu as tout oublié ?            | « Toutes les mythologies ont une légende sur lui. Lui, ne se souvient d'aucune. » Ash enquête sur lui-même. Vise : intrigué.     |
-| **L'ennemi**   | Le mal ne vient pas d'ailleurs : il naît dans chaque monde. | « Flem naît de ce que les mondes ont de pire. Ash renaît de ce qu'ils ont perdu. » Jeux de pouvoir, traîtres avec leurs raisons. |
+| **L'ennemi**   | Le mal ne vient pas d'ailleurs : il naît dans chaque monde. | « Abso naît de ce que les mondes ont de pire. Ash renaît de ce qu'ils ont perdu. » Jeux de pouvoir, traîtres avec leurs raisons. |
 
 **L'équilibre du ton :** le cœur porte l'émotion ; la légèreté vient de la personnalité d'Ash (humour pince-sans-rire)
 et des compagnons qui se souviennent de lui alors qu'il les a oubliés (Ratatosk…). Vise : amusé, excité après une

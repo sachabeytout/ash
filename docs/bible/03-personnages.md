@@ -12,23 +12,26 @@
 ## Anii ✅ (la bien-aimée)
 
 - Déesse d'une mythologie au-dessus de toutes les autres. Elle était **la seule et unique déesse de son monde**.
-- Son monde a été **l'un des premiers détruits par Flem**. Pendant cette destruction, elle a créé Ash par un ultime sort.
+- Son monde a été **l'un des premiers détruits par Abso**. Pendant cette destruction, elle a créé Ash par un ultime sort.
 - Une sorte de **Mère Nature**, une **précurseure** : elle vient d'un des tout premiers mondes.
 - Depuis, elle n'est plus qu'une **toute petite fée faite d'étincelles**. Elle seule peut faire apparaître Ash.
 - Elle **accompagne Ash** partout, combats compris.
 - La malédiction lui fait perdre peu à peu la mémoire.
-- **Son secret :** elle sait que Flem est né de ce qu'elle a chassé de son monde, et ne l'a jamais dit à Ash.
+- **Son secret :** elle sait que Abso est né de ce qu'elle a chassé de son monde, et ne l'a jamais dit à Ash.
 
-## Flem ✅ (l'ennemi juré) — nom provisoire
+## Abso ✅ (l'ennemi juré)
 
 - Né de tout ce qu'**Anii a chassé de son monde** (colère, jalousie, peur…), il a grandi en se nourrissant des vices
   de tous les mondes.
 - A détruit le monde d'Anii, celui qui l'avait rejeté.
 - **Ce qu'il veut :** la place qu'on lui a refusée, et survivre : il s'affaiblit quand un monde retrouve son équilibre
-  (règles, « Ce que Flem veut vraiment »).
+  (règles, « Ce que Abso veut vraiment »).
 - Dans chaque monde, s'allie avec le traître de la mythologie pour renverser les dieux et prendre leur place.
-- **Nom** : l'utilisateur n'y tient pas spécialement. Claude proposera d'autres noms ; si aucun ne convient, on garde
-  « Flem ».
+- **Nom ✅ (point 3b, validé le 08/11/2026) : Abso.** Nom provisoire de départ : « Flem ».
+  - **Sens caché :** le début du latin _absolutus_, « absolu, détaché de tout, sans limite ». C'est son ambition : être
+    au-dessus de tous les dieux.
+  - Comme Ash et Anii, son nom commence par **A** : un indice discret que les trois sont liés.
+  - Risque connu et accepté : ressemblance avec **Absol** (Pokémon de type Ténèbres).
 
 ## Ratatosk ✅ (le marchand)
 
@@ -55,6 +58,6 @@
 | Entre             | Lien                                                                                      |
 | ----------------- | ----------------------------------------------------------------------------------------- |
 | Ash — Anii ✅     | Elle l'a créé ; ils s'aiment ; romance compliquée par la malédiction.                     |
-| Anii — Flem ✅    | Flem est né de ce qu'elle a rejeté ; il a détruit son monde. Elle garde ce secret.        |
-| Ash — Flem ✅     | Ennemis jurés et miroirs : tous deux nés d'Anii, l'un de son amour, l'autre de son rejet. |
+| Anii — Abso ✅    | Abso est né de ce qu'elle a rejeté ; il a détruit son monde. Elle garde ce secret.        |
+| Ash — Abso ✅     | Ennemis jurés et miroirs : tous deux nés d'Anii, l'un de son amour, l'autre de son rejet. |
 | Ash — Ratatosk ✅ | Ratatosk le suit depuis le monde nordique.                                                |
