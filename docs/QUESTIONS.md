@@ -123,19 +123,21 @@ Questions en attente pour ce chantier :
 
 Décisions détaillées : `docs/DECISIONS.md` (« Passage à Godot et structure en mondes »). Aucun fichier du jeu modifié.
 
-| #   | Point                                                       | État                                                                         |
-| --- | ----------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| G1  | Moteur et 3D                                                | **validé** (06/11) : Godot 4.5.1, vraie 3D                                   |
-| G2  | Structure du jeu : mondes, zones, boss, déblocage           | **validé** (08/11) ; voir G-a à G-g                                          |
-| G3  | Reconstruire tout le jeu actuel dans Godot, puis l'embellir | **validé** (08/11) : méthode G-h ; étape 1 faite, validation finale attendue |
+| #   | Point                                                       | État                                                                 |
+| --- | ----------------------------------------------------------- | -------------------------------------------------------------------- |
+| G1  | Moteur et 3D                                                | **validé** (06/11) : Godot 4.5.1, vraie 3D                           |
+| G2  | Structure du jeu : mondes, zones, boss, déblocage           | **validé** (08/11) ; voir G-a à G-g                                  |
+| G3  | Reconstruire tout le jeu actuel dans Godot, puis l'embellir | **validé** (08/11) : méthode G-h ; étape 1 validée, étape 2 en cours |
 
 Suivi de la refonte (G3) :
 
 - **Étape 1 — projet de départ** : Ash (mannequin neutre) se déplace dans la salle égyptienne d'essai ; caméra à 50° ;
-  clavier (AZERTY et QWERTY), manette, joystick tactile ; version Mac. → **faite le 08/11, en attente de la validation
-  finale de l'utilisateur**. Fichiers : dossier `godot/` (nouveau), docs. Tests : 31 réussis (unitaires + scénarios).
-  Reste à vérifier : l'ombre en rendu « téléphone » (sur un vrai iPhone).
-- Étapes suivantes, à proposer une à une : dash, attaques et armes, ennemis, dons, salles et portes, boss, interface et
+  clavier (AZERTY et QWERTY), manette, joystick tactile ; version Mac (Godot 0.1.0). → **validée le 08/11** après essai
+  sur Mac. Fichiers : dossier `godot/` (nouveau), docs. Tests : 31 réussis. Reste à vérifier : l'ombre en rendu
+  « téléphone » (sur un vrai iPhone).
+- **Étape 2 — premier combat** (point en cours) : propositions présentées le 08/11 (A : dash seul ; B : dash, Khépesh et
+  Pilleur de tombes dans la salle d'essai ; C : vraie salle de combat complète), recommandation B. → **choix attendu**.
+- Étapes suivantes, à proposer une à une : autres armes, autres ennemis, dons, salles et portes, boss, interface et
   menus, sauvegarde, sons et musique, puis le monde égyptien complet.
 
 Questions en attente :
